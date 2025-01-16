@@ -25,45 +25,57 @@
     <Filter Include="ヘッダー ファイル\base">
       <UniqueIdentifier>{32273b91-c883-4910-a50f-fc2a17a3f1d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\UI">
+      <UniqueIdentifier>{73bc48b6-8c8f-4cc2-adb6-3899539889ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\UI">
+      <UniqueIdentifier>{d2c5c938-ff52-4288-bd6b-825abc81b48a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Os">
+      <UniqueIdentifier>{4c8a6561-ebd8-430f-9354-b809b0bc016b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Os">
+      <UniqueIdentifier>{f73f37da-2bdf-4e48-a220-b4dc74d6ba76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Damegepop.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
+    <ClCompile Include="Damegepop.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>ソース ファイル\base</Filter>
-    </ClCompile>
-    <ClCompile Include="input.cpp">
-      <Filter>ソース ファイル\base</Filter>
-    </ClCompile>
-    <ClCompile Include="light.cpp">
-      <Filter>ソース ファイル\base</Filter>
+      <Filter>ソース ファイル\Os</Filter>
     </ClCompile>
     <ClCompile Include="fade.cpp">
-      <Filter>ソース ファイル\base</Filter>
+      <Filter>ソース ファイル\Os</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>ソース ファイル\Os</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>ソース ファイル\Os</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Damagepop.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
+    <ClInclude Include="Damagepop.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
     <ClInclude Include="camera.h">
-      <Filter>ヘッダー ファイル\base</Filter>
-    </ClInclude>
-    <ClInclude Include="input.h">
-      <Filter>ヘッダー ファイル\base</Filter>
-    </ClInclude>
-    <ClInclude Include="light.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\Os</Filter>
     </ClInclude>
     <ClInclude Include="fade.h">
-      <Filter>ヘッダー ファイル\base</Filter>
+      <Filter>ヘッダー ファイル\Os</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>ヘッダー ファイル\Os</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>ヘッダー ファイル\Os</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
