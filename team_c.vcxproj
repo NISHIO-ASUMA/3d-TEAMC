@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="Damegepop.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="light.cpp" />
@@ -149,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="Damagepop.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="light.h" />
