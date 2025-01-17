@@ -17,6 +17,11 @@
 #include "light.h"
 #include "input.h"
 #include "fade.h"
+#include "title3d.h"
+#include "tutorial3d.h"
+#include "game.h"
+#include "result.h"
+#include "ranking.h"
 
 //*****************************
 // グローバル変数宣言
@@ -364,9 +369,6 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		DEFAULT_PITCH,
 		"Terminal", &g_pFont);
 
-	// サウンドの初期化
-	//InitSound(hWnd);
-
 	// フェードの初期化
 	InitFade(g_mode);
 
@@ -389,9 +391,6 @@ void Uninit(void)
 
 	// ジョイパッドの終了
 	UninitJoypad();
-
-	// サウンドの終了
-	//UninitSound();
 
 	// フェードの終了
 	UninitFade();
@@ -433,39 +432,39 @@ void Update(void)
 	// ジョイパッドの更新
 	UpdateJoypad();
 
-	//switch (g_mode)
-	//{
-	//case MODE_TITLE://タイトル画面
-	//	UpdateTitle();
-	//	break;
+	switch (g_mode)
+	{
+	case MODE_TITLE://タイトル画面
+		UpdateTitle3d();
+		break;
 
-	//case MODE_TUTORIAL://チュートリアル画面
-	//	UpdateTutorial3D();
-	//	break;
+	case MODE_TUTORIAL://チュートリアル画面
+		UpdateTutorial3d();
+		break;
 
-	//case MODE_GAME://ゲーム画面
-	//	UpdateGame();
-	//	break;
+	case MODE_GAME://ゲーム画面
+		UpdateGame();
+		break;
 
-	//case MODE_RESULT://リザルト画面
-	//	UpdateResult();
-	//	break;
+	case MODE_RESULT://リザルト画面
+		UpdateResult();
+		break;
 
-	//case MODE_RANKING://ランキング画面
-	//	UpdateRanking();
-	//	break;
-	//}
+	case MODE_RANKING://ランキング画面
+		UpdateRanking();
+		break;
+	}
 
 #if _DEBUG
 
-	//if (KeyboardTrigger(DIK_F3))
-	//{
-	//	onWireFrame();
-	//}
-	//else if (KeyboardTrigger(DIK_F4))
-	//{
-	//	offWireFrame();
-	//}
+	if (KeyboardTrigger(DIK_F4) == true)
+	{
+		onWireFrame(); // ワイヤーフレームON
+	}
+	else if (KeyboardTrigger(DIK_F5) == true)
+	{
+		offWireFrame(); // ワイヤーフレームOFF
+	}
 
 #endif // !_DEBUG
 
@@ -492,16 +491,15 @@ void Draw(void)
 		//================
 		// 描画処理
 		//================
-#if 0
 		// 現在の画面の終了
 		switch (g_mode)
 		{
 		case MODE_TITLE: // タイトル画面
-			DrawTitle();
+			DrawTitle3d();
 			break;
 
 		case MODE_TUTORIAL:// チュートリアル画面
-			DrawTutorial3D();
+			DrawTutorial3d();
 			break;
 
 		case MODE_GAME: // ゲーム画面
@@ -527,7 +525,6 @@ void Draw(void)
 		// フェードの描画
 		DrawFade();
 
-#endif
 		// 描画終了
 		g_pD3DDevice->EndScene();
 	}
@@ -653,16 +650,15 @@ void DrawCameraType(void)
 //======================
 void SetMode(MODE mode)
 {
-#if 0
 	// 現在の画面の終了処理
 	switch (g_mode)
 	{
 	case MODE_TITLE:	// タイトル画面
-		UninitTitle();
+		UninitTitle3d();
 		break;
 
 	case MODE_TUTORIAL: // チュートリアル画面
-		UninitTutorial3D();
+		UninitTutorial3d();
 		break;
 
 	case MODE_GAME:		// ゲーム画面
@@ -685,11 +681,11 @@ void SetMode(MODE mode)
 	switch (mode)
 	{
 	case MODE_TITLE:	// タイトル画面
-		InitTitle();
+		InitTitle3d();
 		break;
 
 	case MODE_TUTORIAL: // チュートリアル画面
-		InitTutorial3D();
+		InitTutorial3d();
 		break;
 
 	case MODE_GAME:		// ゲーム画面
@@ -703,9 +699,7 @@ void SetMode(MODE mode)
 	case MODE_RANKING:  // ランキング画面
 		InitRanking();
 		break;
-
 	}
-#endif
 }
 //======================
 // デバイスの取得

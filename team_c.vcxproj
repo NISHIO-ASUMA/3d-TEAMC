@@ -144,19 +144,37 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Damegepop.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="pause.cpp" />
+    <ClCompile Include="ranking.cpp" />
+    <ClCompile Include="RankingScore.cpp" />
+    <ClCompile Include="RankingSet.cpp" />
+    <ClCompile Include="result.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="Shadow.cpp" />
+    <ClCompile Include="title3d.cpp" />
+    <ClCompile Include="tutorial3d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="Damagepop.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="pause.h" />
+    <ClInclude Include="ranking.h" />
+    <ClInclude Include="RankingScore.h" />
+    <ClInclude Include="RankingSet.h" />
+    <ClInclude Include="result.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="Shadow.h" />
+    <ClInclude Include="title3d.h" />
+    <ClInclude Include="tutorial3d.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
