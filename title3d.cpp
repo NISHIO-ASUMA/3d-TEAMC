@@ -9,6 +9,7 @@
 //インクルードファイル
 //****************************
 #include "title3d.h"
+#include "title.h"
 #include "camera.h"
 #include "light.h"
 #include "shadow.h"
@@ -37,6 +38,9 @@ void InitTitle3d(void)
 
 	//メッシュフィールドの初期化処理
 	InitMeshField();
+
+	//タイトルの初期化処理
+	InitTitle();
 }
 //============================
 //タイトル3dの終了処理
@@ -55,6 +59,8 @@ void UninitTitle3d(void)
 	//メッシュフィールドの終了処理
 	UninitMeshField();
 
+	//タイトルの終了処理
+	UninitTitle();
 }
 //============================
 //タイトル3dの更新処理
@@ -67,6 +73,9 @@ void UpdateTitle3d(void)
 
 	//影の更新処理
 	UpdateShadow();
+
+	//タイトルの更新処理
+	UpdateTitle();
 
 	if (KeyboardTrigger(DIK_RETURN))
 	{
@@ -85,4 +94,7 @@ void DrawTitle3d(void)
 
 	//メッシュフィールドの描画処理
 	DrawMeshField();
+
+	//タイトルの描画処理
+	DrawTitle();
 }

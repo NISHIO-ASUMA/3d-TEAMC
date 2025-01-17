@@ -156,6 +156,7 @@
     <ClCompile Include="result.cpp" />
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="Shadow.cpp" />
+    <ClCompile Include="title.cpp" />
     <ClCompile Include="title3d.cpp" />
     <ClCompile Include="tutorial3d.cpp" />
   </ItemGroup>
@@ -175,6 +176,7 @@
     <ClInclude Include="result.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Shadow.h" />
+    <ClInclude Include="title.h" />
     <ClInclude Include="title3d.h" />
     <ClInclude Include="tutorial3d.h" />
   </ItemGroup>
