@@ -1,7 +1,7 @@
 //============================
 //
 // リザルト [result.cpp]
-// Author:YOSHIDA YUUTO
+// Author:TEAM_C
 //
 //============================
 
@@ -33,7 +33,7 @@ void InitResult(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\gameover.png",
+		"data\\TEXTURE\\kari.png",
 		&g_pTextureResult);
 
 	//頂点バッファの生成・頂点情報の設定

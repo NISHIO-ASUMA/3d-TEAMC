@@ -1,7 +1,7 @@
 //============================
 //
 // ƒ‰ƒ“ƒLƒ“ƒO [ranking.h]
-// Author:YOSHIDA YUUTO
+// Author: TEAM_C
 //
 //============================
 #ifndef _RANKING_H_

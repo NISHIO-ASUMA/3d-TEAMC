@@ -1,7 +1,7 @@
 //============================
 //
 // チュートリアル3d [tutorial3e.cpp]
-// Author:YOSHIDA YUUTO
+// Author: TEAM_C
 //
 //============================
 
@@ -14,6 +14,7 @@
 #include "fade.h"
 #include "camera.h"
 #include"damagepop.h"
+#include "meshfield.h"
 
 //****************************
 //グローバル変数
@@ -24,26 +25,38 @@ static int nPressTuto;
 //============================
 void InitTutorial3d(void)
 {
+	//カメラの初期化処理
 	InitCamera();
-
+	
+	//影の初期化処理
 	InitShadow();
+
+	//メッシュフィールドの初期化処理
+	InitMeshField();
 }
 //============================
 //チュートリアル3dの終了処理
 //============================
 void UninitTutorial3d(void)
 {
+	//カメラの終了処理
 	UninitCamera();
 
+	//影の終了処理
 	UninitShadow();
+
+	//メッシュフィールドの終了処理
+	UninitMeshField();
 }
 //============================
 //チュートリアル3dの更新処理
 //============================
 void UpdateTutorial3d(void)
 {
+	//カメラの更新処理
 	UpdateCamera();
 
+	//影の更新処理
 	UpdateShadow();
 
 	if (KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true)
@@ -58,5 +71,9 @@ void DrawTutorial3d(void)
 {
 	SetCamera();
 
+	//影の描画処理
 	DrawShadow();
+
+	//メッシュフィールドの描画処理
+	DrawMeshField();
 }

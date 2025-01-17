@@ -1,7 +1,7 @@
 //============================
 //
 // ランキングスコア [rankingscore.cpp]
-// Author:YOSHIDA YUUTO
+// Author:TEAM_C
 //
 //============================
 

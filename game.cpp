@@ -1,7 +1,7 @@
 //============================
 //
 // ゲーム画面 [game.cpp]
-// Author:YOSHIDA YUUTO
+// Author: TEAM_C
 //
 //============================
 
@@ -19,6 +19,7 @@
 #include "damagepop.h"
 #include "time.h"
 #include"pause.h"
+#include "meshfield.h"
 
 //****************************
 //マクロ定義
@@ -48,6 +49,9 @@ void InitGame(void)
 	//ポーズの初期化処理
 	InitPause();
 
+	//メッシュフィールドの初期化処理
+	InitMeshField();
+
 	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
 	g_nCounterGameState = 0;
 
@@ -71,6 +75,8 @@ void UninitGame(void)
 	//ポーズの終了処理
 	UninitPause();
 
+	//メッシュフィールドの終了処理
+	UninitMeshField();
 }
 //=======================
 //ゲーム画面の更新処理
@@ -122,8 +128,12 @@ void UpdateGame(void)
 
 		//影の更新処理
 		UpdateShadow();
+
+		if (KeyboardTrigger(DIK_RETURN))
+		{
+			g_gameState = GAMESTATE_END;
+		}
 	}
-	
 }
 //=======================
 //ゲーム画面の描画処理
@@ -135,6 +145,9 @@ void DrawGame(void)
 
 	//プレイヤーの影の描画処理
 	DrawShadow();
+
+	//メッシュフィールドの描画処理
+	DrawMeshField();
 
 	if (g_bPause == true)
 	{//ポーズ中

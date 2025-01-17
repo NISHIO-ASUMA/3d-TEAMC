@@ -1,7 +1,7 @@
 //============================
 //
 // ÉQÅ[ÉÄâÊñ  [game.h]
-// Author:YOSHIDA YUUTO
+// Author: TEAM_C
 //
 //============================
 #ifndef _GAME_H_

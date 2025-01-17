@@ -1,8 +1,7 @@
 //============================
 //
 // タイトル3d [title3d.cpp]
-// Author:YOSHIDA YUUTO
-//
+// Author: TEAM_C
 //
 //============================
 
@@ -15,6 +14,7 @@
 #include "shadow.h"
 #include "input.h"
 #include "fade.h"
+#include "meshfield.h"
 
 //****************************
 //グローバル宣言
@@ -34,6 +34,9 @@ void InitTitle3d(void)
 
 	//影の初期化処理
 	InitShadow();
+
+	//メッシュフィールドの初期化処理
+	InitMeshField();
 }
 //============================
 //タイトル3dの終了処理
@@ -48,6 +51,10 @@ void UninitTitle3d(void)
 
 	//影の終了処理
 	UninitShadow();
+
+	//メッシュフィールドの終了処理
+	UninitMeshField();
+
 }
 //============================
 //タイトル3dの更新処理
@@ -71,6 +78,11 @@ void UpdateTitle3d(void)
 //============================
 void DrawTitle3d(void)
 {
+	SetCamera();
+
 	//影の描画処理
 	DrawShadow();
+
+	//メッシュフィールドの描画処理
+	DrawMeshField();
 }
