@@ -19,18 +19,10 @@
 //****************************
 //マクロ定義
 //****************************
-#define MAX_WORD (128)
-#define NUM_CHARATYPE (2)
-
-#define LIFE_HEIGHT (100.0f)
-#define LIFE_WIDTH (100.0f)
-#define MAX_LIFEBAR (32)
-#define NUM_LIFE (3)
-#define PLAYERLIFE (50)
-#define MAX_TEXPLAYER (128)
-#define EXPLOSION_NUM (6)
-#define BULLETOFFPOSY (40.0f)
-#define BULLETMOVE (20.0f)
+#define MAX_WORD (128) // 最大文字数
+#define PLAYERLIFE (50) // プレイヤーの体力
+#define MAX_TEXPLAYER (128) // テクスチャの最大数
+#define MAX_JUMP (15.0f) // ジャンプ量
 
 //****************************
 //グローバル変数宣言
@@ -38,7 +30,6 @@
 LPDIRECT3DTEXTURE9 g_apTexturePlayer[MAX_TEXPLAYER] = {};//プレイヤーのテクスチャへのポインタ
 Player g_player;//プレイヤー構造体
 Player g_LoadPlayer[PLAYERTYPE_MAX];
-int nCounterState;
 
 //****************************
 //プロトタイプ宣言
@@ -73,23 +64,19 @@ void InitPlayer(void)
 	g_player.SwordOffpos.y = 85.0f;
 	g_player.SwordOffpos.z = 0.0f;
 	g_player.nCounterAction = 0;
-	nCounterState = 0;
 
 	D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
 	for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
 	{
+		//必要な情報を設定
 		LoadPlayer(0);
 		g_LoadPlayer[nCntPlayer].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
 		g_LoadPlayer[nCntPlayer].nLife = PLAYERLIFE;
 		g_LoadPlayer[nCntPlayer].bDisp = true;
 		g_LoadPlayer[nCntPlayer].Motion.motionType = MOTIONTYPE_NEUTRAL;
 		g_LoadPlayer[nCntPlayer].Motion.bLoopMotion = true;
-		g_LoadPlayer[nCntPlayer].bImpactCollision = false;
 		g_LoadPlayer[nCntPlayer].bJumpAttack = false;
-		g_LoadPlayer[nCntPlayer].Motion.aMotionInfo[MOTIONTYPE_JUMPACTION].nStartKey = 4;
-		g_LoadPlayer[nCntPlayer].Motion.aMotionInfo[MOTIONTYPE_JUMPACTION].nStartFrame = 4;
-		g_LoadPlayer[nCntPlayer].fShadowSize = 40.0f;
 		g_LoadPlayer[nCntPlayer].HandState = PLAYERHOLD_NO;
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
@@ -258,10 +245,8 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(上)
 		if (GetKeyboardPress(DIK_W) == true)
 		{
-			if (g_player.state != PLAYERSTATE_INVISIBLE)
-			{
-				g_player.state = PLAYERSTATE_MOVE;
-			}
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
+	
 			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.PlayerMove;
 			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.PlayerMove;
 
@@ -270,10 +255,7 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(下)
 		else if (GetKeyboardPress(DIK_S) == true)
 		{
-			if (g_player.state != PLAYERSTATE_INVISIBLE)
-			{
-				g_player.state = PLAYERSTATE_MOVE;
-			}
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.PlayerMove;
 			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.PlayerMove;
@@ -283,10 +265,7 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(左)
 		else
 		{
-			if (g_player.state != PLAYERSTATE_INVISIBLE)
-			{
-				g_player.state = PLAYERSTATE_MOVE;
-			}
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 			g_player.move.z += sinf(pCamera->rot.y) * g_player.PlayerMove;
 			g_player.move.x -= cosf(pCamera->rot.y) * g_player.PlayerMove;
@@ -300,10 +279,7 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(上)
 		if (GetKeyboardPress(DIK_W) == true)
 		{
-			if (g_player.state != PLAYERSTATE_INVISIBLE)
-			{
-				g_player.state = PLAYERSTATE_MOVE;
-			}
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.PlayerMove;
 			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.PlayerMove;
@@ -313,10 +289,7 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(下)
 		else if (GetKeyboardPress(DIK_S) == true)
 		{
-			if (g_player.state != PLAYERSTATE_INVISIBLE)
-			{
-				g_player.state = PLAYERSTATE_MOVE;
-			}
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.PlayerMove;
 			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.PlayerMove;
@@ -326,10 +299,7 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(右)
 		else
 		{
-			if (g_player.state != PLAYERSTATE_INVISIBLE)
-			{
-				g_player.state = PLAYERSTATE_MOVE;
-			}
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 			g_player.move.z -= sinf(pCamera->rot.y) * g_player.PlayerMove;
 			g_player.move.x += cosf(pCamera->rot.y) * g_player.PlayerMove;
@@ -341,10 +311,7 @@ void UpdatePlayer(void)
 	//プレイヤーの移動(上)
 	else if (GetKeyboardPress(DIK_W) == true)
 	{
-		if (g_player.state != PLAYERSTATE_INVISIBLE)
-		{
-			g_player.state = PLAYERSTATE_MOVE;
-		}
+		g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 		g_player.move.x += sinf(pCamera->rot.y) * g_player.PlayerMove;
 		g_player.move.z += cosf(pCamera->rot.y) * g_player.PlayerMove;
@@ -354,10 +321,7 @@ void UpdatePlayer(void)
 	//プレイヤーの移動(下)
 	else if (GetKeyboardPress(DIK_S) == true)
 	{
-		if (g_player.state != PLAYERSTATE_INVISIBLE)
-		{
-			g_player.state = PLAYERSTATE_MOVE;
-		}
+		g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 		g_player.move.x -= sinf(pCamera->rot.y) * g_player.PlayerMove;
 		g_player.move.z -= cosf(pCamera->rot.y) * g_player.PlayerMove;
@@ -366,12 +330,49 @@ void UpdatePlayer(void)
 	}
 	else
 	{
-		if (g_player.Motion.motionType == MOTIONTYPE_MOVE || g_player.Motion.motionType == MOTIONTYPE_NEUTRAL)
+		if (g_player.Motion.motionType == MOTIONTYPE_MOVE ||
+			g_player.Motion.motionType == MOTIONTYPE_NEUTRAL)
 		{
-			g_player.state = PLAYERSTATE_NORMAL;
+			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL; // キーを押していない時にニュートラルになる
 		}
 	}
 	
+	switch (g_player.Motion.motionType)
+	{
+	case MOTIONTYPE_NEUTRAL:
+		break;
+	case MOTIONTYPE_MOVE:
+		if (!g_player.bJump)
+		{
+			g_player.Motion.motionType = MOTIONTYPE_JUMP;
+		}
+		break;
+	case MOTIONTYPE_ACTION:
+		break;
+	case MOTIONTYPE_JUMP:
+		break;
+	case MOTIONTYPE_LANDING:
+		break;
+	default:
+		break;
+	}
+
+	switch (g_player.state)
+	{
+	case PLAYERSTATE_NORMAL:
+		break;
+	case PLAYERSTATE_MOVE:
+		break;
+	case PLAYERSTATE_ATTACK:
+		break;
+	case PLAYERSTATE_JUMP:
+		break;
+	case PLAYERSTATE_LANDING:
+		break;
+	default:
+		break;
+	}
+
 	//移動量を減衰
 	g_player.move.x += (0.0f - g_player.move.x) * 0.25f;
 	g_player.move.z += (0.0f - g_player.move.z) * 0.25f;
@@ -382,39 +383,44 @@ void UpdatePlayer(void)
 	//プレイヤーの位置の更新
 	g_player.pos += g_player.move;
 
+	if (CollisionField())
+	{
+		g_player.bJump = true;
+
+		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
+		{
+			g_player.Motion.nKey = 0;// 0キーから始める
+			g_player.Motion.bLoopMotion = true;
+			g_player.Motion.motionType = MOTIONTYPE_LANDING;
+		}
+	}
+	else
+	{
+		g_player.bJump = false;
+	}
+
 	//if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
 	//{
 	//	g_player.bJump = true;
 	//}
-	//else if (CollisionField())
-	//{
-	//	g_player.bJump = true;
-	//}
-	//else
-	//{
-	//	g_player.bJump = false;
-	//}
-
-	if (g_player.pos.y < 0.0f)
-	{
-		g_player.pos.y = 0.0f;
-	}
+	//プレイヤーの重力ddd
+	g_player.move.y -= 1.0f;
 
 	////壁の衝突判定
 	//CollisionWall();
 
-
-	if (JoypadTrigger(JOYKEY_A) == true||KeyboardTrigger(DIK_SPACE)==true)
+	if (JoypadTrigger(JOYKEY_A) == true || KeyboardTrigger(DIK_SPACE)==true)
 	{
 		if (g_player.bJump == true)
 		{
+			g_player.bJump = false;
+			g_player.Motion.nKey = 0;
+			g_player.Motion.motionType = MOTIONTYPE_JUMP;
 			g_player.move.y = 15.0f;
 		}
 	}
 
-	//プレイヤーの重力ddd
-	g_player.move.y -= 1.0f;
-
+	//プレイヤーの角度の正規化
 	if (g_player.rotDestPlayer.y - g_player.rot.y >= D3DX_PI)
 	{
 		g_player.rot.y += D3DX_PI * 2.0f;
@@ -424,7 +430,11 @@ void UpdatePlayer(void)
 		g_player.rot.y -= D3DX_PI * 2.0f;
 	}
 
+	//モーションの更新
 	UpdateMotion(&g_player.Motion);
+
+	//プレイヤーの向きを目的の向きに近づける
+	g_player.rot.y += (g_player.rotDestPlayer.y - g_player.rot.y) * 0.1f;
 }
 //============================
 //プレイヤーの描画処理
@@ -500,7 +510,6 @@ void DrawPlayer(void)
 				pDevice->SetTransform(D3DTS_WORLD,
 					&g_player.Motion.aModel[nCntModel].mtxWorld);
 
-
 				for (int nCntMat = 0; nCntMat < (int)g_player.Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 				{
 					//マテリアルのデータへのポインタを取得
@@ -525,6 +534,7 @@ void DrawPlayer(void)
 						//マテリアルの設定
 						pDevice->SetMaterial(&color.MatD3D);
 					}
+
 					//テクスチャの設定
 					pDevice->SetTexture(0, g_apTexturePlayer[nCntMat]);
 
@@ -823,12 +833,7 @@ void SetMtxPos(void)
 //======================
 void HitPlayer(int nDamage)
 {
-	MODE mode = GetMode();
-
-	if (g_player.state != PLAYERSTATE_DAMAGE&& mode==MODE_GAME&&g_player.Motion.motionType!=MOTIONTYPE_FALL)
-	{
-		g_player.nLife -= nDamage;
-	}
+	g_player.nLife -= nDamage;
 
 	if (g_player.nLife <= 0)
 	{

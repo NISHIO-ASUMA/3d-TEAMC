@@ -103,5 +103,6 @@ typedef struct
 //プロトタイプ宣言
 //****************************
 void LoadMotion(int nType);
-void UpdateMotion(MOTION* Motion);
+void UpdateMotion(MOTION* pMotion);
+void NoLoopMotion(MOTION* Motion,int Motiontype);
 #endif

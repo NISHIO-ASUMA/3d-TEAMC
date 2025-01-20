@@ -9,100 +9,119 @@
 //インクルードファイル
 //****************************
 #include "motion.h"
+#include"meshfield.h"
 
 //=======================
 // モーションの更新処理
 //=======================
-void UpdateMotion(MOTION *Motion)
+void UpdateMotion(MOTION *pMotion)
 {
 	int nextKey = 0;
 
-	for (int nCntModel = 0; nCntModel < Motion->nNumModel; nCntModel++)
+	for (int nCntModel = 0; nCntModel < pMotion->nNumModel; nCntModel++)
 	{
 		float DiffPosX, DiffPosY, DiffPosZ, DiffRotX, DiffRotY, DiffRotZ;
 
 		DiffPosX = DiffPosY = DiffPosZ = DiffRotX = DiffRotY = DiffRotZ = 0.0f;
 
-		nextKey = (Motion->nKey + 1) % Motion->aMotionInfo[Motion->motionType].nNumkey;//次のキー
+		nextKey = (pMotion->nKey + 1) % pMotion->aMotionInfo[pMotion->motionType].nNumkey;//次のキー
 
-		DiffPosX = Motion->aMotionInfo[Motion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosX - Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fPosX;
-		DiffPosY = Motion->aMotionInfo[Motion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosY - Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fPosY;
-		DiffPosZ = Motion->aMotionInfo[Motion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosZ - Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fPosZ;
-		DiffRotX = Motion->aMotionInfo[Motion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotX - Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fRotX;
-		DiffRotY = Motion->aMotionInfo[Motion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotY - Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fRotY;
-		DiffRotZ = Motion->aMotionInfo[Motion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotZ - Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fRotZ;
+		DiffPosX = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosX - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosX;
+		DiffPosY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosY - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosY;
+		DiffPosZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosZ - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosZ;
+		DiffRotX = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotX - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX;
+		DiffRotY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotY - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY;
+		DiffRotZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotZ - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ;
 
 //**********************************
 // パーツの位置を設定
 //**********************************
 
-		Motion->aModel[nCntModel].pos.x =
-			Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fPosX +
+		pMotion->aModel[nCntModel].pos.x =
+			pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosX +
 			DiffPosX *
-			((float)Motion->nCountMotion /
-				(float)Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].nFrame);
+			((float)pMotion->nCountMotion /
+				(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-		Motion->aModel[nCntModel].pos.y =
-			Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fPosY +
+		pMotion->aModel[nCntModel].pos.y =
+			pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosY +
 			DiffPosY *
-			((float)Motion->nCountMotion /
-				(float)Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].nFrame);
+			((float)pMotion->nCountMotion /
+				(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-		Motion->aModel[nCntModel].pos.z =
-			Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fPosZ +
+		pMotion->aModel[nCntModel].pos.z =
+			pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosZ +
 			DiffPosZ *
-			((float)Motion->nCountMotion /
-				(float)Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].nFrame);
+			((float)pMotion->nCountMotion /
+				(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
 //**********************************
 // パーツの向きを設定
 //**********************************
-		Motion->aModel[nCntModel].rot.x =
-			Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fRotX +
+		pMotion->aModel[nCntModel].rot.x =
+			pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX +
 			DiffRotX *
-			((float)Motion->nCountMotion /
-				(float)Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].nFrame);
+			((float)pMotion->nCountMotion /
+				(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-		Motion->aModel[nCntModel].rot.y =
-			Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fRotY +
+		pMotion->aModel[nCntModel].rot.y =
+			pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY +
 			DiffRotY *
-			((float)Motion->nCountMotion /
-				(float)Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].nFrame);
+			((float)pMotion->nCountMotion /
+				(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-		Motion->aModel[nCntModel].rot.z =
-			Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].aKey[nCntModel].fRotZ +
+		pMotion->aModel[nCntModel].rot.z =
+			pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ +
 			DiffRotZ *
-			((float)Motion->nCountMotion /
-				(float)Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].nFrame);
+			((float)pMotion->nCountMotion /
+				(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
 //**********************************
 //オフセット
 //**********************************
 		
-		//g_player.Motion.aModel[nCntModel].rot += g_player.Motion.aModel[nCntModel].offrot;
-		Motion->aModel[nCntModel].pos += Motion->aModel[nCntModel].offpos;
+		//g_player.pMotion.aModel[nCntModel].rot += g_player.pMotion.aModel[nCntModel].offrot;
+		pMotion->aModel[nCntModel].pos += pMotion->aModel[nCntModel].offpos;
 	}
 
-	if (Motion->nCountMotion >= Motion->aMotionInfo[Motion->motionType].aKeyInfo[Motion->nKey].nFrame)
+	if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame)
 	{
 		//モーションカウントが最大になったら0に戻す
-		Motion->nKey = (Motion->nKey + 1) % Motion->aMotionInfo[Motion->motionType].nNumkey;
-		Motion->nCountMotion = 0;
+		pMotion->nKey = (pMotion->nKey + 1) % pMotion->aMotionInfo[pMotion->motionType].nNumkey;
+		pMotion->nCountMotion = 0;
 	}
 
-	if (Motion->nKey > Motion->aMotionInfo[Motion->motionType].nNumkey)
-	{
-		if (Motion->aMotionInfo[Motion->motionType].bLoop == false && Motion->nKey >= Motion->aMotionInfo[Motion->motionType].nNumkey - 1)
-		{
-			Motion->nKey = 0;
-		}
-		//モーションカウントが最大になったら0に戻す
-		Motion->nKey = 0;
+	if (pMotion->nKey > pMotion->aMotionInfo[pMotion->motionType].nNumkey)
+	{	//モーションのキーを0に戻す
+		pMotion->nKey = 0;
 	}
 
-	if (Motion->bLoopMotion == true)
+	// ループしないモーションの処理
+	NoLoopMotion(pMotion,pMotion->motionType);
+
+	if (pMotion->bLoopMotion)
 	{
 		//モーションカウントを加算
-		Motion->nCountMotion++;
+		pMotion->nCountMotion++;
 	}
+
+}
+//==================================
+// ループしないモーションの処理
+//==================================
+void NoLoopMotion(MOTION *Motion,int Motiontype)
+{
+	if (Motion->nKey >= Motion->aMotionInfo[Motion->motionType].nNumkey - 1 &&
+		!Motion->aMotionInfo[Motion->motionType].bLoop && Motion->bLoopMotion)
+	{
+		if (Motiontype == MOTIONTYPE_JUMP)
+		{
+			Motion->bLoopMotion = false; // モーションのカウントを止める
+		}
+		else if (Motiontype == MOTIONTYPE_LANDING)
+		{
+			Motion->motionType = MOTIONTYPE_NEUTRAL;
+		}
+	}
+
 }

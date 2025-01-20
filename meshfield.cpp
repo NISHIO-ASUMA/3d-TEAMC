@@ -10,6 +10,7 @@
 //****************************
 #include "meshfield.h"
 #include "input.h"
+#include "player.h"
 
 //****************************
 //グローバル変数宣言
@@ -202,49 +203,51 @@ void DrawMeshField(void)
 
 bool CollisionField(void)
 {
-	//VERTEX_3D* pVtx;
+	VERTEX_3D* pVtx;
 
-	//bool bLanding = false;
+	bool bLanding = false;
 
-	//int nCntPos = 0;
-	//int nNextWall = 1;
+	int nCntPos = 0;
+	int nNextWall = 1;
 
-	////if (pPlayer->bDisp == true)
-	////{
-	//	D3DXVECTOR3 VecALine;
+	Player* pPlayer = GetPlayer();
 
-	//	D3DXVECTOR3 pos, pos1;
+	//if (pPlayer->bDisp == true)
+	//{
+		D3DXVECTOR3 VecALine;
 
-	//	g_MeshField.vtxPos[0].x = (MAX_WIDTH / XVTX) * 0 - (MAX_WIDTH * 0.5f);
-	//	g_MeshField.vtxPos[0].y = 0.0f;
-	//	g_MeshField.vtxPos[0].z = MAX_HEIGHT - ((MAX_HEIGHT / ZVTX) * 0) - (MAX_HEIGHT * 0.5f);
+		D3DXVECTOR3 pos, pos1;
 
-	//	g_MeshField.vtxPos[1].x = (MAX_WIDTH / XVTX) * 1 - (MAX_WIDTH * 0.5f);
-	//	g_MeshField.vtxPos[1].y = 0.0f;
-	//	g_MeshField.vtxPos[1].z = MAX_HEIGHT - ((MAX_HEIGHT / ZVTX) * 1) - (MAX_HEIGHT * 0.5f);
+		g_MeshField.vtxPos[0].x = (MAX_WIDTH / XVTX) * 0 - (MAX_WIDTH * 0.5f);
+		g_MeshField.vtxPos[0].y = 0.0f;
+		g_MeshField.vtxPos[0].z = MAX_HEIGHT - ((MAX_HEIGHT / ZVTX) * 0) - (MAX_HEIGHT * 0.5f);
 
-	//	VecALine = g_MeshField.vtxPos[1] - g_MeshField.vtxPos[0];//0-1...
+		g_MeshField.vtxPos[1].x = (MAX_WIDTH / XVTX) * 1 - (MAX_WIDTH * 0.5f);
+		g_MeshField.vtxPos[1].y = 0.0f;
+		g_MeshField.vtxPos[1].z = MAX_HEIGHT - ((MAX_HEIGHT / ZVTX) * 1) - (MAX_HEIGHT * 0.5f);
 
-	//	D3DXVec3Normalize(&VecALine, &VecALine);
+		VecALine = g_MeshField.vtxPos[1] - g_MeshField.vtxPos[0];//0-1...
 
-	//	D3DXVECTOR3 PlayerVec;
+		D3DXVec3Normalize(&VecALine, &VecALine);
 
-	//	D3DXVECTOR3 VecBLine;//壁からプレイヤー
+		D3DXVECTOR3 PlayerVec;
 
-	//	VecBLine = pPlayer->pos - g_MeshField.vtxPos[0];
+		D3DXVECTOR3 VecBLine;//壁からプレイヤー
 
-	//	D3DXVec3Normalize(&VecBLine, &VecBLine);
+		VecBLine = pPlayer->pos - g_MeshField.vtxPos[0];
 
-	//	D3DXVECTOR3 Cross = {};
+		D3DXVec3Normalize(&VecBLine, &VecBLine);
 
-	//	D3DXVec3Cross(&Cross, &VecALine, &VecBLine);
+		D3DXVECTOR3 Cross = {};
 
-	//	if (Cross.x < 0)
-	//	{
-	//		bLanding = true;
-	//		pPlayer->pos.y = pPlayer->posOld.y;
-	//	}
-	////}
-	return false;
+		D3DXVec3Cross(&Cross, &VecALine, &VecBLine);
+
+		if (Cross.x < 0)
+		{
+			bLanding = true;
+			pPlayer->pos.y = pPlayer->posOld.y;
+		}
+	//}
+	return bLanding;
 }
 
