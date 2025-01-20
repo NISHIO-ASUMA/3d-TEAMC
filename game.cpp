@@ -20,6 +20,7 @@
 #include "time.h"
 #include"pause.h"
 #include "meshfield.h"
+#include "player.h"
 
 //****************************
 //マクロ定義
@@ -52,6 +53,9 @@ void InitGame(void)
 	//メッシュフィールドの初期化処理
 	InitMeshField();
 
+	//プレイヤーの初期化処理
+	InitPlayer();
+
 	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
 	g_nCounterGameState = 0;
 
@@ -77,6 +81,9 @@ void UninitGame(void)
 
 	//メッシュフィールドの終了処理
 	UninitMeshField();
+
+	//プレイヤーの終了処理
+	UninitPlayer();
 }
 //=======================
 //ゲーム画面の更新処理
@@ -129,6 +136,9 @@ void UpdateGame(void)
 		//影の更新処理
 		UpdateShadow();
 
+		//プレイヤーの更新処理
+		UpdatePlayer();
+
 		if (KeyboardTrigger(DIK_RETURN))
 		{
 			g_gameState = GAMESTATE_END;
@@ -148,6 +158,9 @@ void DrawGame(void)
 
 	//メッシュフィールドの描画処理
 	DrawMeshField();
+
+	//プレイヤーの描画処理
+	DrawPlayer();
 
 	if (g_bPause == true)
 	{//ポーズ中

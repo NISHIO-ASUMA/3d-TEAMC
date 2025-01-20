@@ -148,7 +148,6 @@ void UpdateTitle(void)
 			{
 				SetFade(MODE_TUTORIAL);
 			}
-
 			break;
 		default:
 			break;
