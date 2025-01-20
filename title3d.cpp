@@ -76,11 +76,6 @@ void UpdateTitle3d(void)
 
 	//タイトルの更新処理
 	UpdateTitle();
-
-	if (KeyboardTrigger(DIK_RETURN))
-	{
-		SetFade(MODE_TUTORIAL);
-	}
 }
 //============================
 //タイトル3dの描画処理

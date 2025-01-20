@@ -10,6 +10,7 @@
 //****************************
 #include "title.h"
 #include "input.h"
+#include "fade.h"
 
 //****************************
 //É}ÉNÉçíËã`
@@ -60,7 +61,7 @@ void InitTitle(void)
 		g_Title[nCnt].fHeight = 0.0f;
 		g_Title[nCnt].fWidth = 0.0f;
 		g_Title[nCnt].nType = TITLETYPE_TITLE;
-		g_Title[nCnt].TitleMenu = TITLESELECT_TITLE;
+		g_Title[nCnt].TitleMenu = TITLESELECT_GAME;
 
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -122,20 +123,32 @@ void UpdateTitle(void)
 	{
 		switch (g_Title[nCnt].TitleMenu)
 		{
-		case TITLESELECT_TITLE:
+		case TITLESELECT_GAME:
 			if (KeyboardTrigger(DIK_DOWN))
 			{
 				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO;
 			}
-			SelectTitle(0);
+			SelectTitle(TITLESELECT_GAME);
+
+			if (KeyboardTrigger(DIK_RETURN))
+			{
+				SetFade(MODE_GAME);
+			}
 
 			break;
 		case TITLESELECT_TUTO:
 			if (KeyboardTrigger(DIK_UP))
 			{
-				g_Title[nCnt].TitleMenu = TITLESELECT_TITLE;
+				g_Title[nCnt].TitleMenu = TITLESELECT_GAME;
 			}
-			SelectTitle(1);
+
+			SelectTitle(TITLESELECT_TUTO);
+
+			if (KeyboardTrigger(DIK_RETURN))
+			{
+				SetFade(MODE_TUTORIAL);
+			}
+
 			break;
 		default:
 			break;

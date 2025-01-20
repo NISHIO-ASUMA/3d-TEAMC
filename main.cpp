@@ -24,6 +24,11 @@
 #include "ranking.h"
 
 //*****************************
+// プロトタイプ宣言
+//*****************************
+void DrawMode(void); // 現在の画面の表示
+
+//*****************************
 // グローバル変数宣言
 //*****************************
 LPDIRECT3D9 g_pD3D = NULL;				// Direct3Dオブジェクトへのポインタ
@@ -504,15 +509,7 @@ void Draw(void)
 
 		case MODE_GAME: // ゲーム画面
 			DrawGame();
-
-#ifdef _DEBUG
-	
-		// プレイヤーの座標表示
-		//DrawDebugPlayerPos();
-	
-#endif
 			break;
-
 		case MODE_RESULT: // リザルト
 			DrawResult();
 			break;
@@ -521,6 +518,15 @@ void Draw(void)
 			DrawRanking();
 			break;
 		}
+
+#ifdef _DEBUG
+
+		//現在の画面の表示
+		DrawMode();
+		// プレイヤーの座標表示
+		//DrawDebugPlayerPos();
+
+#endif
 
 		// フェードの描画
 		DrawFade();
@@ -743,3 +749,40 @@ void offWireFrame()
 //// カメラの種類
 //DrawCameraType();
 
+//===========================
+// 現在の画面の表示
+//===========================
+void DrawMode(void)
+{
+	RECT rectMode = { 0,20,SCREEN_WIDTH,SCREEN_HEIGHT };
+	char aStr[128];
+
+	switch (g_mode)
+	{
+	case MODE_TITLE:
+		//文字列に代入
+		wsprintf(&aStr[0], "現在のモード[ タイトル ]\n");
+		break;
+	case MODE_TUTORIAL:
+		//文字列に代入
+		wsprintf(&aStr[0], "現在のモード[ チュートリアル ]\n");
+		break;
+	case MODE_GAME:
+		//文字列に代入
+		wsprintf(&aStr[0], "現在のモード[ ゲーム ]\n");
+		break;
+	case MODE_RESULT:
+		//文字列に代入
+		wsprintf(&aStr[0], "現在のモード[ リザルト ]\n");
+		break;
+	case MODE_RANKING:
+		//文字列に代入
+		wsprintf(&aStr[0], "現在のモード[ ランキング ]\n");
+		break;
+	default:
+		break;
+	}
+
+	g_pFont->DrawText(NULL, &aStr[0], -1, &rectMode, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+
+}

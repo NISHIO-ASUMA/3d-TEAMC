@@ -18,7 +18,7 @@
 //****************************
 typedef enum
 {
-	TITLESELECT_TITLE = 0,
+	TITLESELECT_GAME = 0,
 	TITLESELECT_TUTO,
 	TITLESELECT_MAX
 }TITLESELECT;
@@ -35,7 +35,7 @@ typedef enum
 
 static const char* TITLE_TYPE[TITLETYPE_MAX] =
 {
-	"data\\TEXTURE\\title000.png",
+	"data\\TEXTURE\\start.png",
 	"data\\TEXTURE\\tutorial000.png",
 };
 
