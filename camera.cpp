@@ -10,6 +10,13 @@
 //****************************
 #include "camera.h"
 #include "input.h"
+#include "mouse.h"
+
+//*****************************
+// マクロ定義
+//*****************************
+#define MAX_VIEWUP (3.10f) // カメラの制限
+#define MAX_VIEWDOWN (0.1f) // カメラの制限
 
 //*****************************
 // グローバル変数宣言
@@ -81,6 +88,9 @@ void UpdateCamera(void)
 
 	// カメラの右スティック:::
 	StickCamera();
+
+	//マウスの視点移動
+	MouseView();
 #if 0
 	//******************
 	// 視点の旋回
@@ -299,4 +309,49 @@ void StickCamera(void)
 		}
 	}
 #endif
+}
+//=========================
+// マウスの視点移動処理
+//=========================
+void MouseView(void)
+{
+	D3DXVECTOR2 MouseVelocity = GetMouseVelocity();
+	D3DXVECTOR2 MouseOldVelocity = GetMouseOldVelocity();
+
+	D3DXVECTOR2 fAngle;
+	fAngle.x = MouseVelocity.x - MouseOldVelocity.x;
+	fAngle.y = MouseVelocity.y - MouseOldVelocity.y;
+
+	g_camera.rot.y += fAngle.x * 0.001f;
+	g_camera.rot.x += fAngle.y * 0.001f;
+
+	if (g_camera.rot.y < -D3DX_PI)
+	{
+		g_camera.rot.y += D3DX_PI * 2.0f;
+	}
+	if (g_camera.rot.y > D3DX_PI)
+	{
+		g_camera.rot.y += -D3DX_PI * 2.0f;
+	}
+	if (g_camera.rot.x < -D3DX_PI)
+	{
+		g_camera.rot.x += D3DX_PI * 2.0f;
+	}
+	if (g_camera.rot.x > D3DX_PI)
+	{
+		g_camera.rot.x += -D3DX_PI * 2.0f;
+	}
+
+	if (g_camera.rot.x > MAX_VIEWUP)
+	{
+		g_camera.rot.x -= fAngle.y * 0.001f;
+	}
+	if (g_camera.rot.x < MAX_VIEWDOWN)
+	{
+		g_camera.rot.x -= fAngle.y * 0.001f;
+	}
+
+	g_camera.posR.x = g_camera.posV.x + sinf(g_camera.rot.x) * sinf(g_camera.rot.y) * g_camera.fDistance;
+	g_camera.posR.y = g_camera.posV.y + cosf(g_camera.rot.x) * g_camera.fDistance;
+	g_camera.posR.z = g_camera.posV.z + sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * g_camera.fDistance;
 }

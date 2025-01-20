@@ -1,3 +1,2 @@
-﻿  player.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\player.cpp(707,23): warning C4477: 'fscanf' : 書式文字列 '%d' には、型 'int *' の引数が必要ですが、可変個引数 1 は型 'bool *' です
+﻿  camera.cpp
   team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe

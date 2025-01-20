@@ -22,6 +22,7 @@
 #include "game.h"
 #include "result.h"
 #include "ranking.h"
+#include"mouse.h"
 
 //*****************************
 // プロトタイプ宣言
@@ -362,7 +363,10 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	if (FAILED(InitJoypad()))
 	{
 		return E_FAIL;
-
+	}
+	if (FAILED(InitMouse(hInstance,hWnd)))
+	{
+		return E_FAIL;
 	}
 
 	// デバッグ表示用のフォントを設定
@@ -396,6 +400,9 @@ void Uninit(void)
 
 	// ジョイパッドの終了
 	UninitJoypad();
+
+	//マウスの終了
+	UninitMouse();
 
 	// フェードの終了
 	UninitFade();
@@ -436,6 +443,9 @@ void Update(void)
 
 	// ジョイパッドの更新
 	UpdateJoypad();
+
+	//マウスの更新
+	UpdateMouse();
 
 	switch (g_mode)
 	{
