@@ -15,7 +15,7 @@
 //*****************************
 // マクロ定義
 //*****************************
-#define MAX_VIEWUP (3.10f) // カメラの制限
+#define MAX_VIEWUP (3.00f) // カメラの制限
 #define MAX_VIEWDOWN (0.1f) // カメラの制限
 
 //*****************************
@@ -91,6 +91,7 @@ void UpdateCamera(void)
 
 	//マウスの視点移動
 	MouseView();
+
 #if 0
 	//******************
 	// 視点の旋回
@@ -315,43 +316,66 @@ void StickCamera(void)
 //=========================
 void MouseView(void)
 {
-	D3DXVECTOR2 MouseVelocity = GetMouseVelocity();
-	D3DXVECTOR2 MouseOldVelocity = GetMouseOldVelocity();
+	DIMOUSESTATE mouseState;
 
-	D3DXVECTOR2 fAngle;
-	fAngle.x = MouseVelocity.x - MouseOldVelocity.x;
-	fAngle.y = MouseVelocity.y - MouseOldVelocity.y;
+	if (GetMouseState(&mouseState))
+	{
+		static POINT prevCursorPos = { SCREEN_WIDTH / 1.5f,SCREEN_HEIGHT / 1.5f };
 
-	g_camera.rot.y += fAngle.x * 0.001f;
-	g_camera.rot.x += fAngle.y * 0.001f;
+		POINT cursorPos;
+		GetCursorPos(&cursorPos);
 
-	if (g_camera.rot.y < -D3DX_PI)
-	{
-		g_camera.rot.y += D3DX_PI * 2.0f;
-	}
-	if (g_camera.rot.y > D3DX_PI)
-	{
-		g_camera.rot.y += -D3DX_PI * 2.0f;
-	}
-	if (g_camera.rot.x < -D3DX_PI)
-	{
-		g_camera.rot.x += D3DX_PI * 2.0f;
-	}
-	if (g_camera.rot.x > D3DX_PI)
-	{
-		g_camera.rot.x += -D3DX_PI * 2.0f;
-	}
+		//カーソルの移動量を計算
+		float deltaX = (float)cursorPos.x - prevCursorPos.x;
+		float deltaY = (float)cursorPos.y - prevCursorPos.y;
 
-	if (g_camera.rot.x > MAX_VIEWUP)
-	{
-		g_camera.rot.x -= fAngle.y * 0.001f;
-	}
-	if (g_camera.rot.x < MAX_VIEWDOWN)
-	{
-		g_camera.rot.x -= fAngle.y * 0.001f;
-	}
+		//感度を設定
+		const float mouseSensitivity = 0.0059f;
+		deltaX *= mouseSensitivity;
+		deltaY *= mouseSensitivity;
 
-	g_camera.posR.x = g_camera.posV.x + sinf(g_camera.rot.x) * sinf(g_camera.rot.y) * g_camera.fDistance;
-	g_camera.posR.y = g_camera.posV.y + cosf(g_camera.rot.x) * g_camera.fDistance;
-	g_camera.posR.z = g_camera.posV.z + sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * g_camera.fDistance;
+		//回転量を更新
+		g_camera.rot.y += deltaX;
+		g_camera.rot.x += deltaY;
+
+		//回転量を制限
+		if (g_camera.rot.x > MAX_VIEWUP)
+		{
+			g_camera.rot.x -= deltaY;
+		}
+		else if (g_camera.rot.x < MAX_VIEWDOWN)
+		{
+			g_camera.rot.x -= deltaY;
+		}
+
+		//正規化
+		if (g_camera.rot.y < -D3DX_PI)
+		{
+			g_camera.rot.y += D3DX_PI * 2.0f;
+		}
+		else if (g_camera.rot.y > D3DX_PI)
+		{
+			g_camera.rot.y += -D3DX_PI * 2.0f;
+		}
+		if (g_camera.rot.x < -D3DX_PI)
+		{
+			g_camera.rot.x += D3DX_PI * 2.0f;
+		}
+		else if (g_camera.rot.x > D3DX_PI)
+		{
+			g_camera.rot.x += -D3DX_PI * 2.0f;
+		}
+
+		//カーソルを中心に固定
+		SetCursorPos(SCREEN_WIDTH / 1.5f, SCREEN_HEIGHT / 1.5f);
+
+		//計算用変数に代入
+		prevCursorPos.x = SCREEN_WIDTH / 1.5f;
+		prevCursorPos.y = SCREEN_HEIGHT / 1.5f;
+
+		//カメラ座標を更新
+		g_camera.posR.x = g_camera.posV.x + sinf(g_camera.rot.x) * sinf(g_camera.rot.y) * g_camera.fDistance;
+		g_camera.posR.y = g_camera.posV.y + cosf(g_camera.rot.x) * g_camera.fDistance;
+		g_camera.posR.z = g_camera.posV.z + sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * g_camera.fDistance;
+	}
 }

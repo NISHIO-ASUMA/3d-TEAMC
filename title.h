@@ -40,6 +40,16 @@ static const char* TITLE_TYPE[TITLETYPE_MAX] =
 };
 
 //****************************
+// タイトルの状態
+//****************************
+typedef enum
+{
+	TITLESTATE_NORMAL = 0,
+	TITLESTATE_FLASH,
+	TITLESTATE_MAX
+}TITLESTATE;
+
+//****************************
 // タイトルの構造体
 //****************************
 typedef struct
@@ -51,6 +61,7 @@ typedef struct
 	int nType; //種類
 	bool bUse; //使用状態
 	int TitleMenu; // タイトル
+	int state;
 }TITLE;
 
 //****************************
@@ -62,4 +73,5 @@ void UpdateTitle(void);//タイトル画面の更新処理
 void DrawTitle(void);//タイトル画面の描画処理
 void SetTitle(D3DXVECTOR3 pos,int nType,float fWidth,float fHeight);//タイトルの設定処理
 void SelectTitle(int select);// タイトル画面の選択
+void TitleFlash(int state,int nSelect,int nIdx); // タイトルの点滅
 #endif

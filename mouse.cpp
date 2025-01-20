@@ -19,7 +19,7 @@
 // グローバル変数宣言
 //****************************
 LPDIRECTINPUT8 g_pInputInterface = NULL;
-LPDIRECTINPUTDEVICE8 g_pKeyDevice = NULL;
+LPDIRECTINPUTDEVICE8 g_pMouseDevice = NULL;
 DIMOUSESTATE g_MouseState;
 DIMOUSESTATE g_MouseOldState;
 DIMOUSESTATE g_PrevMouseState;
@@ -41,19 +41,19 @@ HRESULT InitMouse(HINSTANCE hInstance,HWND hWnd)
 	
 	if (FAILED(g_pInputInterface->CreateDevice(
 		GUID_SysMouse,
-		&g_pKeyDevice,
+		&g_pMouseDevice,
 		NULL)))
 	{
 		return E_FAIL;
 	}
 	
-	if (FAILED(g_pKeyDevice->SetDataFormat(&c_dfDIMouse)))
+	if (FAILED(g_pMouseDevice->SetDataFormat(&c_dfDIMouse)))
 	{
 		return E_FAIL;
 	}
 
 	// 協調モードの設定
-	if (FAILED(g_pKeyDevice->SetCooperativeLevel(
+	if (FAILED(g_pMouseDevice->SetCooperativeLevel(
 		hWnd,
 		DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)))
 	{
@@ -61,7 +61,7 @@ HRESULT InitMouse(HINSTANCE hInstance,HWND hWnd)
 	}
 
 	//キーボードのアクセス権を獲得
-	g_pKeyDevice->Acquire();
+	g_pMouseDevice->Acquire();
 
 	return S_OK;
 }
@@ -71,11 +71,11 @@ HRESULT InitMouse(HINSTANCE hInstance,HWND hWnd)
 void UninitMouse(void)
 {
 	//入力デバイス(マウス)の破棄
-	if (g_pKeyDevice != NULL)
+	if (g_pMouseDevice != NULL)
 	{
-		g_pKeyDevice->Unacquire();//キーボードへのアクセス権を放棄
-		g_pKeyDevice->Release();
-		g_pKeyDevice = NULL;
+		g_pMouseDevice->Unacquire();//キーボードへのアクセス権を放棄
+		g_pMouseDevice->Release();
+		g_pMouseDevice = NULL;
 	}
 
 	//DirectInputオブジェクトの攻撃
@@ -97,12 +97,11 @@ void UpdateMouse(void)
 	g_PrevMouseState = g_CurrentMouseState;
 
 	// 最新のマウスの状態を更新
-	HRESULT	hr = g_pKeyDevice->GetDeviceState(sizeof(DIMOUSESTATE), &g_CurrentMouseState);
+	HRESULT	hr = g_pMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), &g_CurrentMouseState);
 
 	if (FAILED(hr))
 	{
-		g_pKeyDevice->Acquire();
-		hr = g_pKeyDevice->GetDeviceState(sizeof(DIMOUSESTATE), &g_CurrentMouseState);
+		g_pMouseDevice->Acquire();
 	}
 
 	// マウス座標を取得する
@@ -114,10 +113,6 @@ void UpdateMouse(void)
 
 	g_CurrentMouseState.lX = p.x;
 	g_CurrentMouseState.lY = p.y;
-	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
-
-	pDevice = GetDevice();
-	pDevice->SetCursorPosition(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, false);
 }
 //============================
 //クリックされた
@@ -195,4 +190,49 @@ bool OnMousePress(int button_type)
 BOOL IsMouseWheelPresent(void)
 {
 	return (GetSystemMetrics(SM_MOUSEWHEELPRESENT) != 0);
+}
+//=====================================================
+//マウスの状態取得
+//=====================================================
+LPDIRECTINPUTDEVICE8 GetMouseDevice(void)
+{
+	return g_pMouseDevice;
+}
+//=====================================================
+//マウスの状態
+//=====================================================
+bool GetMouseState(DIMOUSESTATE* mouseState)
+{
+	// マウスデバイスを取得
+	LPDIRECTINPUTDEVICE8 pMouse = GetMouseDevice();
+	if (pMouse == NULL)
+	{
+		return false;
+	}
+
+	// マウスの状態を取得(長いから代入した)
+	HRESULT hr = pMouse->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)mouseState);
+
+	if (FAILED(hr))
+	{
+		// 入力デバイスがリセットされている場合、再取得を試みる
+		if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED)
+		{
+			pMouse->Acquire();
+
+			// 再取得を試みる
+			hr = pMouse->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)mouseState);
+			if (FAILED(hr))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			//エラーの場合
+			return false;
+		}
+	}
+
+	return true; // 正常に取得できた場合
 }

@@ -33,4 +33,6 @@ D3DXVECTOR2 GetMouseOldVelocity();
 bool OnMousePress(int button_type);
 BOOL IsMouseWheelPresent(void);
 void SetCursorVisibility(bool visible);
+LPDIRECTINPUTDEVICE8 GetMouseDevice(void);
+bool GetMouseState(DIMOUSESTATE* mouseState);
 #endif

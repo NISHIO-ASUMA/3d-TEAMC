@@ -62,6 +62,7 @@ void InitTitle(void)
 		g_Title[nCnt].fWidth = 0.0f;
 		g_Title[nCnt].nType = TITLETYPE_TITLE;
 		g_Title[nCnt].TitleMenu = TITLESELECT_GAME;
+		g_Title[nCnt].state = TITLESTATE_NORMAL;
 
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -133,6 +134,7 @@ void UpdateTitle(void)
 			if (KeyboardTrigger(DIK_RETURN))
 			{
 				SetFade(MODE_GAME);
+				g_Title[nCnt].state = TITLESTATE_FLASH;
 			}
 
 			break;
@@ -147,11 +149,14 @@ void UpdateTitle(void)
 			if (KeyboardTrigger(DIK_RETURN))
 			{
 				SetFade(MODE_TUTORIAL);
+				g_Title[nCnt].state = TITLESTATE_FLASH;
 			}
 			break;
 		default:
 			break;
 		}
+
+		TitleFlash(g_Title[nCnt].state,g_Title[nCnt].TitleMenu,nCnt);
 	}
 }
 //============================
@@ -216,7 +221,6 @@ void SetTitle(D3DXVECTOR3 pos, int nType,float fWidth, float fHeight)
 			}
 			break;
 		}
-
 		pVtx += 4;
 	}
 
@@ -251,6 +255,72 @@ void SelectTitle(int select)
 			pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 100);
 		}
 		pVtx += 4;
+	}
+	//頂点バッファをアンロック
+	g_pVtxBuffTitle->Unlock();
+}
+//============================
+//タイトルの点滅処理
+//============================
+void TitleFlash(int state,int nSelect,int nIdx)
+{
+	VERTEX_2D* pVtx;
+	static int nCounterFlash = 0;
+
+	//頂点バッファをロック
+	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	{
+		if (state != TITLESTATE_FLASH)
+		{
+			continue; // 点滅じゃなかったら飛ばす
+		}
+
+		nCounterFlash++; // カウントを加算
+
+		if (nSelect==TITLESELECT_GAME)
+		{
+			if (nCounterFlash == 5)
+			{
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
+
+			}
+			else if (nCounterFlash == 10)
+			{
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				nCounterFlash = 0;
+			}
+		}
+		else if (nSelect == TITLESELECT_TUTO)
+		{
+			if (nCounterFlash == 5)
+			{
+				pVtx += 4 * nIdx;
+
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
+
+			}
+			else if (nCounterFlash == 10)
+			{
+				pVtx += 4 * nIdx;
+
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				nCounterFlash = 0;
+			}
+		}
 	}
 	//頂点バッファをアンロック
 	g_pVtxBuffTitle->Unlock();

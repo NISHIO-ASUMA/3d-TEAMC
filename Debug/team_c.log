@@ -1,2 +1,10 @@
 ﻿  camera.cpp
+C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(323,47): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
+C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(323,47): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(323,68): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
+C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(323,68): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(370,51): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(370,29): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(373,34): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(374,35): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
   team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe

@@ -267,9 +267,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
-	case WM_SETCURSOR:	// カーソルの設定
-		SetCursor(NULL);
-		return TRUE;
+	//case WM_SETCURSOR:	// カーソルの設定
+	//	SetCursor(NULL);
+	//	return TRUE;
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam); // 既定の処理を繰り返す
 }
