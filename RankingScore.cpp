@@ -387,6 +387,9 @@ void RankingTexture(void)
 	
 	g_pVtxBuffRankScore->Unlock();
 }
+//===========================
+//I—¹”»’è‚Ìæ“¾
+//===========================
 END* GetStageEnd(void)
 {
 	return &g_End;

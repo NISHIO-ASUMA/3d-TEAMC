@@ -31,25 +31,27 @@ int g_NumBlock;
 //=============================
 void InitBlock(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
-		g_Block[nCntBlock].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Block[nCntBlock].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Block[nCntBlock].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Block[nCntBlock].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-		g_Block[nCntBlock].nType = BLOCKTYPE_ONE;
-		g_Block[nCntBlock].bUse = false;
-		g_Block[nCntBlock].nLife = 20;
-		g_Block[nCntBlock].state = BLOCKSTATE_NORMAL;
-		g_Block[nCntBlock].fRadius = 100.0f;
-		g_Block[nCntBlock].nLife = 180;
+		g_Block[nCntBlock].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //座標
+		g_Block[nCntBlock].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//移動量
+		g_Block[nCntBlock].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //角度
+		g_Block[nCntBlock].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
+		g_Block[nCntBlock].nType = BLOCKTYPE_ONE;				//種類
+		g_Block[nCntBlock].bUse = false;						//未使用状態
+		g_Block[nCntBlock].nLife = 20;							//体力
+		g_Block[nCntBlock].state = BLOCKSTATE_NORMAL;			//状態
+		g_Block[nCntBlock].fRadius = 100.0f;					//半径
+
+		// TODO : この体力の初期化、どっちが正しいの?
+		//g_Block[nCntBlock].nLife = 180;						
 	}
-	g_NumBlock = 0;
-	nCounterStateBlock = 0;
+
+	//グローバル変数の初期化
+	g_NumBlock = 0;		   //ブロックの数
+	nCounterStateBlock = 0;//状態カウンター
 
 	//g_Block.vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	//g_Block.vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);

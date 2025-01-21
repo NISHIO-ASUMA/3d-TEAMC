@@ -98,7 +98,8 @@ void UpdateResult(void)
 {
 
 	if (KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_A)==true)
-	{
+	{// Enterキー or パッドのAボタンが押された
+		// ランキングに遷移
 		SetFade(MODE_RANKING);
 	}
 

@@ -60,33 +60,38 @@ void InitTitle(void)
 	//頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
+	//構造体変数の初期化
 	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
 	{
-		g_Title[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Title[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Title[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Title[nCnt].bUse = false;
-		g_Title[nCnt].fHeight = 0.0f;
-		g_Title[nCnt].fWidth = 0.0f;
-		g_Title[nCnt].nType = TITLETYPE_TITLE;
-		g_Title[nCnt].TitleMenu = TITLESELECT_GAME;
-		g_Title[nCnt].state = TITLESTATE_NORMAL;
+		g_Title[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //座標
+		g_Title[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //角度
+		g_Title[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//移動量
+		g_Title[nCnt].bUse = false;						   //未使用状態
+		g_Title[nCnt].fHeight = 0.0f;					   //横幅
+		g_Title[nCnt].fWidth = 0.0f;					   //高さ
+		g_Title[nCnt].nType = TITLETYPE_TITLE;			   //種類
+		g_Title[nCnt].TitleMenu = TITLESELECT_GAME;		   //タイトルのメニュー
+		g_Title[nCnt].state = TITLESTATE_NORMAL;		   //状態
 
+		//頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
+		//rhwの設定
 		pVtx[0].rhw = 1.0f;
 		pVtx[1].rhw = 1.0f;
 		pVtx[2].rhw = 1.0f;
 		pVtx[3].rhw = 1.0f;
 
+		//頂点カラーの設定
 		pVtx[0].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 		pVtx[1].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 		pVtx[3].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 
+		//テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f,0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f,0.0f);
 		pVtx[2].tex = D3DXVECTOR2(0.0f,1.0f);
@@ -95,6 +100,7 @@ void InitTitle(void)
 		pVtx += 4;
 	}
 
+	//タイトルをセット
 	SetTitle(D3DXVECTOR3(640.0f, 450.0f, 0.0f), TITLETYPE_TITLE, 200.0f, 50.0f);
 	SetTitle(D3DXVECTOR3(640.0f, 600.0f, 0.0f), TITLETYPE_TUTO, 200.0f, 50.0f);
 
@@ -145,7 +151,8 @@ void UpdateTitle(void)
 			}
 
 			if (KeyboardTrigger(DIK_RETURN))
-			{
+			{//Enterキーを押したら
+				//ゲーム画面へ
 				SetFade(MODE_GAME);
 				g_Title[nCnt].state = TITLESTATE_FLASH;
 			}
@@ -165,7 +172,8 @@ void UpdateTitle(void)
 			}
 
 			if (KeyboardTrigger(DIK_RETURN))
-			{
+			{//Enterキーを押したら
+				//チュートリアル画面へ
 				SetFade(MODE_TUTORIAL);
 				g_Title[nCnt].state = TITLESTATE_FLASH; // ゲーム点滅
 			}
@@ -183,7 +191,7 @@ void UpdateTitle(void)
 //============================
 void DrawTitle(void)
 {
-	LPDIRECT3DDEVICE9 	pDevice = GetDevice();//デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスへのポインタ
 
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffTitle, 0, sizeof(VERTEX_2D));
@@ -205,7 +213,7 @@ void DrawTitle(void)
 //============================
 void SetTitle(D3DXVECTOR3 pos, int nType,float fWidth, float fHeight)
 {
-	VERTEX_2D* pVtx;
+	VERTEX_2D* pVtx;//頂点情報のポインタ
 
 	//頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
@@ -215,15 +223,16 @@ void SetTitle(D3DXVECTOR3 pos, int nType,float fWidth, float fHeight)
 		//未使用だったら
 		if (!g_Title[nCnt].bUse)
 		{
-			g_Title[nCnt].pos = pos;
-			g_Title[nCnt].nType = nType;
-			g_Title[nCnt].bUse = true;
+			g_Title[nCnt].pos = pos;	//座標
+			g_Title[nCnt].nType = nType;//種類
+			g_Title[nCnt].bUse = true;	//使用判定
 
 			//頂点座標の更新
 			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
 			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
+
 			break;
 		}
 		pVtx += 4;
@@ -232,13 +241,12 @@ void SetTitle(D3DXVECTOR3 pos, int nType,float fWidth, float fHeight)
 	//頂点バッファをアンロック
 	g_pVtxBuffTitle->Unlock();
 }
-
 //============================
 //タイトルの選択処理
 //============================
 void SelectTitle(int select)
 {
-	VERTEX_2D* pVtx;
+	VERTEX_2D* pVtx;//頂点情報のポインタ
 
 	//頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
@@ -247,6 +255,7 @@ void SelectTitle(int select)
 	{
 		if (nCnt == select)
 		{
+			//頂点カラーの設定
 			pVtx[0].col = D3DCOLOR_RGBA(255,255,255,255);
 			pVtx[1].col = D3DCOLOR_RGBA(255,255,255,255);
 			pVtx[2].col = D3DCOLOR_RGBA(255,255,255,255);
@@ -254,6 +263,7 @@ void SelectTitle(int select)
 		}
 		else
 		{
+			//頂点カラーの設定
 			pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 100);
 			pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 100);
 			pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 100);
@@ -269,8 +279,8 @@ void SelectTitle(int select)
 //============================
 void TitleFlash(int state,int nSelect,int nIdx)
 {
-	VERTEX_2D* pVtx;
-	static int nCounterFlash = 0;
+	VERTEX_2D* pVtx;//頂点情報のポインタ
+	static int nCounterFlash = 0;//点滅カウント用の変数
 
 	//頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
@@ -287,7 +297,8 @@ void TitleFlash(int state,int nSelect,int nIdx)
 		if (nSelect==TITLESELECT_GAME)
 		{
 			if (nCounterFlash == 5)
-			{
+			{//カウントが5の時
+				//頂点カラーの設定
 				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
 				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
 				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
@@ -295,20 +306,25 @@ void TitleFlash(int state,int nSelect,int nIdx)
 
 			}
 			else if (nCounterFlash == 10)
-			{
+			{//カウントが10の時
+				//頂点カラーの設定
 				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+				//初期化する
 				nCounterFlash = 0;
 			}
 		}
 		else if (nSelect == TITLESELECT_TUTO)
 		{
 			if (nCounterFlash == 5)
-			{
+			{//カウントが5の時
+
 				pVtx += 4 * nSelect;
 
+				//頂点カラーの設定
 				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
 				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
 				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
@@ -316,13 +332,16 @@ void TitleFlash(int state,int nSelect,int nIdx)
 
 			}
 			else if (nCounterFlash == 10)
-			{
+			{//カウントが10の時
 				pVtx += 4 * nSelect;
 
+				//頂点カラーの設定
 				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+				//初期化
 				nCounterFlash = 0;
 			}
 		}
@@ -335,7 +354,7 @@ void TitleFlash(int state,int nSelect,int nIdx)
 //============================
 void TitleMenuFlash(int nSelect)
 {
-	VERTEX_2D* pVtx;
+	VERTEX_2D* pVtx;//頂点情報のポインタ
 	static float fA = 1.0f;
 	static bool bAlv = false;
 

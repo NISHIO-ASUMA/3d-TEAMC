@@ -34,7 +34,6 @@ void DrawOperation(void); // 操作方法
 // グローバル変数宣言
 //*****************************
 LPDIRECT3D9 g_pD3D = NULL;				// Direct3Dオブジェクトへのポインタ
-
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	// Direct3Dデバイスへのポインタ
 MODE g_mode = MODE_TITLE;				// 現在のモード
 bool g_isFullscreen = false;			// ウィンドウを切り替えるためのフラグ
@@ -554,7 +553,7 @@ void Draw(void)
 
 #endif
 
-		// フェードの描画
+			// フェードの描画
 			DrawFade();
 
 			// 描画終了
