@@ -23,6 +23,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "block.h"
+#include "item.h"
 
 //****************************
 //マクロ定義
@@ -64,6 +65,9 @@ void InitGame(void)
 	//ブロックの初期化処理
 	InitBlock();
 
+	//アイテムの初期化処理
+	InitItem();
+
 	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 20.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetEnemy(D3DXVECTOR3(50.0f, 0.0f, 80.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -72,10 +76,10 @@ void InitGame(void)
 	SetBlock(D3DXVECTOR3(50.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
 	SetBlock(D3DXVECTOR3(-100.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
 	SetBlock(D3DXVECTOR3(100.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-	SetBlock(D3DXVECTOR3(110.0f, 0.0f, 60.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-	SetBlock(D3DXVECTOR3(120.0f, 0.0f, 20.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-	SetBlock(D3DXVECTOR3(130.0f, 0.0f, 40.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-	SetBlock(D3DXVECTOR3(140.0f, 0.0f, 90.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
+
+	SetItem(D3DXVECTOR3(-50.0f, 0.0f, 60.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
+	SetItem(D3DXVECTOR3(-100.0f, 0.0f, 100.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
+	SetItem(D3DXVECTOR3(100.0f, 0.0f, 200.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
 
 	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
 	g_nCounterGameState = 0;
@@ -111,6 +115,9 @@ void UninitGame(void)
 
 	//ブロックの終了処理
 	UninitBlock();
+
+	//アイテムの終了処理
+	UninitItem();
 
 }
 //=======================
@@ -182,6 +189,9 @@ void UpdateGame(void)
 		//ブロックの更新処理
 		UpdateBlock();
 
+		//アイテムの更新処理
+		UpdateItem();
+
 		if (KeyboardTrigger(DIK_F8))
 		{
 			g_gameState = GAMESTATE_END;
@@ -207,6 +217,9 @@ void DrawGame(void)
 
 	//ブロックの描画処理
 	DrawBlock();
+
+	//アイテムの描画処理
+	DrawItem();
 
 	if (g_bPause == true)
 	{//ポーズ中

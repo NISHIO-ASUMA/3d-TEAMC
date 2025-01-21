@@ -19,11 +19,6 @@
 #define MOUSE_SIZE (50.0f)
 
 //****************************
-//プロトタイプ宣言
-//****************************
-void SetMtxBlock(int nCnt);
-
-//****************************
 //グローバル変数宣言
 //****************************
 BLOCK g_Block[MAX_BLOCK];
@@ -195,58 +190,6 @@ void UninitBlock(void)
 //=============================
 void UpdateBlock(void)
 {
-	Player* pPlayer = GetPlayer();
-
-	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
-	{
-		if (!g_Block[nCntBlock].bUse)
-		{
-			//使用中じゃなかったら
-			continue;
-		}
-
-		if (g_Block[nCntBlock].state == BLOCKSTATE_HOLD && KeyboardTrigger(DIK_RETURN))
-		{
-			//プレイヤーの向いている方向に飛ばす
-			g_Block[nCntBlock].move.x = sinf(pPlayer->rot.y + D3DX_PI) * 10.0f;
-			g_Block[nCntBlock].move.y = 0.0f;
-			g_Block[nCntBlock].move.z = cosf(pPlayer->rot.y + D3DX_PI) * 10.0f;
-
-			//発射地点を親の位置にする
-			g_Block[nCntBlock].pos.x = pPlayer->Motion.aModel[INDXPARENT].mtxWorld._41;
-			g_Block[nCntBlock].pos.y = pPlayer->Motion.aModel[INDXPARENT].mtxWorld._42;
-			g_Block[nCntBlock].pos.z = pPlayer->Motion.aModel[INDXPARENT].mtxWorld._43;
-
-			//ブロックの投げられている状態にする
-			g_Block[nCntBlock].state = BLOCKSTATE_THROW;
-
-			//プレイヤーを何も持っていない状態にする
-			pPlayer->HandState = PLAYERHOLD_NO;
-		}
-		if (g_Block[nCntBlock].state == BLOCKSTATE_HOLD && KeyboardTrigger(DIK_O))
-		{
-			g_Block[nCntBlock].state = BLOCKSTATE_NORMAL;
-			pPlayer->HandState = PLAYERHOLD_NO;
-
-			//発射地点を親の位置にする
-			g_Block[nCntBlock].pos.x = pPlayer->pos.x;
-			g_Block[nCntBlock].pos.y = 0.0f;
-			g_Block[nCntBlock].pos.z = pPlayer->pos.z;
-
-		}
-
-		if (g_Block[nCntBlock].state == BLOCKSTATE_THROW)
-		{
-			g_Block[nCntBlock].nLife--;
-
-			if (g_Block[nCntBlock].nLife <= 0)
-			{
-				g_Block[nCntBlock].bUse = false;
-			}
-		}
-		//位置の更新
-		g_Block[nCntBlock].pos += g_Block[nCntBlock].move;
-	}
 
 }
 //=============================
@@ -277,30 +220,24 @@ void DrawBlock(void)
 				continue;
 			}
 
-			if (g_Block[nCntBlock].state == BLOCKSTATE_HOLD)
-			{
-				SetMtxBlock(nCntBlock);
-			}
-			else
-			{
-				//ワールドマトリックスの初期化
-				D3DXMatrixIdentity(&g_Block[nCntBlock].mtxWorldBlock);
+			//ワールドマトリックスの初期化
+			D3DXMatrixIdentity(&g_Block[nCntBlock].mtxWorldBlock);
 
-				//大きさを反映
-				D3DXMatrixScaling(&mtxScal, g_Block[nCntBlock].Scal.y, g_Block[nCntBlock].Scal.x, g_Block[nCntBlock].Scal.z);
-				D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxScal);
+			//大きさを反映
+			D3DXMatrixScaling(&mtxScal, g_Block[nCntBlock].Scal.y, g_Block[nCntBlock].Scal.x, g_Block[nCntBlock].Scal.z);
+			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxScal);
 
-				//向きを反映
-				D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCntBlock].rot.y, g_Block[nCntBlock].rot.x, g_Block[nCntBlock].rot.z);
-				D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxRot);
+			//向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCntBlock].rot.y, g_Block[nCntBlock].rot.x, g_Block[nCntBlock].rot.z);
+			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxRot);
 
-				//位置を反映
-				D3DXMatrixTranslation(&mtxTrans, g_Block[nCntBlock].pos.x, g_Block[nCntBlock].pos.y, g_Block[nCntBlock].pos.z);
-				D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxTrans);
+			//位置を反映
+			D3DXMatrixTranslation(&mtxTrans, g_Block[nCntBlock].pos.x, g_Block[nCntBlock].pos.y, g_Block[nCntBlock].pos.z);
+			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxTrans);
 
-				//ワールドマトリックスの設定
-				pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].mtxWorldBlock);
-			}
+			//ワールドマトリックスの設定
+			pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].mtxWorldBlock);
+			
 
 			//現在のマテリアルを取得
 			pDevice->GetMaterial(&matDef);
@@ -372,29 +309,12 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 					&& pPos->x + pSize->x * 0.5f > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.y)
 				{
 					pPos->x = g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x - pSize->x * 0.5f - 0.1f;
-
-					//岩を持つ処理
-					if (KeyboardTrigger(DIK_L)&& pPlayer->HandState != PLAYERHOLD_HOLD)
-					{
-						g_Block[nCntBlock].state = BLOCKSTATE_HOLD;
-						g_Block[nCntBlock].pos = pPlayer->Motion.aModel[INDXPARENT].pos;
-						SetMtxBlock(nCntBlock);
-						pPlayer->HandState = PLAYERHOLD_HOLD;
-					}
 				}
 				//xが右から左にめり込んだ	
 				else if (pPosOld->x - pSize->x * 0.5f > g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x
 					&& pPos->x - pSize->x * 0.5f < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x)
 				{
 					pPos->x = g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x + pSize->x * 0.5f + 0.1f;
-					//岩を持つ処理
-					if (KeyboardTrigger(DIK_L) && pPlayer->HandState != PLAYERHOLD_HOLD)
-					{
-						g_Block[nCntBlock].state = BLOCKSTATE_HOLD;
-						g_Block[nCntBlock].pos = pPlayer->Motion.aModel[INDXPARENT].pos;
-						SetMtxBlock(nCntBlock);
-						pPlayer->HandState = PLAYERHOLD_HOLD;
-					}
 				}
 			}
 
@@ -407,30 +327,12 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 					&& pPos->z + pSize->z * 0.5f > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z)
 				{
 					pPos->z = g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z - pSize->z * 0.5f - 0.1f;
-
-					//岩を持つ処理
-					if (KeyboardTrigger(DIK_L) && pPlayer->HandState != PLAYERHOLD_HOLD)
-					{
-						g_Block[nCntBlock].state = BLOCKSTATE_HOLD;
-						g_Block[nCntBlock].pos = pPlayer->Motion.aModel[INDXPARENT].pos;
-						SetMtxBlock(nCntBlock);
-						pPlayer->HandState = PLAYERHOLD_HOLD;
-					}
 				}
 				//zが後方からめり込んだ
 				else if (pPosOld->z - pSize->z * 0.5f > g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z
 					&& pPos->z - pSize->z * 0.5f < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z)
 				{
 					pPos->z = g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z + pSize->z * 0.5f + 0.5f;
-
-					//岩を持つ処理
-					if (KeyboardTrigger(DIK_L) && pPlayer->HandState != PLAYERHOLD_HOLD)
-					{
-						g_Block[nCntBlock].state = BLOCKSTATE_HOLD;
-						g_Block[nCntBlock].pos = pPlayer->Motion.aModel[INDXPARENT].pos;
-						SetMtxBlock(nCntBlock);
-						pPlayer->HandState = PLAYERHOLD_HOLD;
-					}
 				}
 			}
 		}
@@ -464,79 +366,16 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 	return bLanding;
 }
 //=======================
-//ブロックと敵の判定
-//=======================
-bool CollisionEnemy(D3DXVECTOR3* pPos, float BlockRadius, float EnemyRadius)
-{
-	bool bHit = false; // 判定を返す変数
-
-	for (int nCnt = 0; nCnt < MAX_BLOCK; nCnt++)
-	{
-		float fDistanceX = g_Block[nCnt].pos.x - pPos->x; // 距離Xを算出
-		float fDistanceY = g_Block[nCnt].pos.y - pPos->y; // 距離Yを算出
-		float fDistanceZ = g_Block[nCnt].pos.z - pPos->z; // 距離Zを算出
-
-		float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
-
-		float Radius = BlockRadius + EnemyRadius;
-
-		Radius = Radius * Radius;
-
-		if (fDistance <= Radius && g_Block[nCnt].state == BLOCKSTATE_THROW)
-		{
-			bHit = true;
-			g_Block[nCnt].bUse = false;
-		}
-	}
-
-	return bHit;
-}
-//=======================
 //ブロックの取得処理
 //=======================
 BLOCK* GetBlock()
 {
 	return &g_Block[0];
 }
+//=======================
+//ブロックの数取得処理
+//=======================
 int NumBlock(void)
 {
 	return g_NumBlock;
-}
-//=======================
-//ブロックの親処理
-//=======================
-void SetMtxBlock(int nCnt)
-{
-	LPDIRECT3DDEVICE9 pDevice;
-
-	pDevice = GetDevice();
-
-	//計算用のマトリックス
-	D3DXMATRIX mtxRot, mtxTrans, mtxScal, mtxParent;
-	Player* pPlayer = GetPlayer();
-
-	//ワールドマトリックスの初期化
-	D3DXMatrixIdentity(&g_Block[nCnt].mtxWorldBlock);
-
-	//大きさを反映
-	D3DXMatrixScaling(&mtxScal, g_Block[nCnt].Scal.y, g_Block[nCnt].Scal.x, g_Block[nCnt].Scal.z);
-	D3DXMatrixMultiply(&g_Block[nCnt].mtxWorldBlock, &g_Block[nCnt].mtxWorldBlock, &mtxScal);
-
-	//向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCnt].rot.y, g_Block[nCnt].rot.x, g_Block[nCnt].rot.z);
-	D3DXMatrixMultiply(&g_Block[nCnt].mtxWorldBlock, &g_Block[nCnt].mtxWorldBlock, &mtxRot);
-
-	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, g_Block[nCnt].pos.x, g_Block[nCnt].pos.y, g_Block[nCnt].pos.z);
-	D3DXMatrixMultiply(&g_Block[nCnt].mtxWorldBlock, &g_Block[nCnt].mtxWorldBlock, &mtxTrans);
-
-	g_Block[nCnt].mtxParent = pPlayer->Motion.aModel[INDXPARENT].mtxWorld;
-
-	//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
-	D3DXMatrixMultiply(&g_Block[nCnt].mtxWorldBlock,
-		&g_Block[nCnt].mtxWorldBlock,
-		&g_Block[nCnt].mtxParent);//自分自分親
-
-	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCnt].mtxWorldBlock);
 }

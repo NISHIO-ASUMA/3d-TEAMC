@@ -15,6 +15,7 @@
 #include "input.h"
 #include "damagepop.h"
 #include "block.h"
+#include "item.h"
 
 //****************************
 //マクロ定義
@@ -24,7 +25,7 @@
 #define TYPEONE_MOVE (2.5f) //敵0の移動量
 #define TYPETWO_MOVE (1.5f) //敵1の移動量
 #define TYPETHREE_MOVE (1.0f) //敵2の移動量
-#define MAX_TEX (128) //テクスチャの最大数
+#define MAX_TEXENEMY (128) //テクスチャの最大数
 
 //****************************
 //グローバル変数宣言
@@ -173,7 +174,7 @@ void UninitEnemy(void)
 		{
 			for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
 			{
-				for (int TexCnt = 0; TexCnt < MAX_TEX; TexCnt++)
+				for (int TexCnt = 0; TexCnt < MAX_TEXENEMY; TexCnt++)
 				{
 					if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
 					{

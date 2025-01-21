@@ -16,6 +16,7 @@
 #include "motion.h"
 #include "meshfield.h"
 #include "block.h"
+#include "item.h"
 
 //****************************
 //マクロ定義
@@ -384,7 +385,8 @@ void UpdatePlayer(void)
 	//プレイヤーの位置の更新
 	g_player.pos += g_player.move;
 
-	if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
+	if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size)||
+		CollisionItem(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
 	{
 		g_player.bJump = true;
 

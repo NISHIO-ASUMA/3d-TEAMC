@@ -87,7 +87,6 @@ void UpdateBlock(void);
 void DrawBlock(void);
 void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal);
 bool CollisionBlock(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld,D3DXVECTOR3 *pMove,D3DXVECTOR3 *pSize);
-bool CollisionEnemy(D3DXVECTOR3* pPos, float BlockRadius,float EnemyRadius);
 int NumBlock(void);
 BLOCK* GetBlock();
 #endif
