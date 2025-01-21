@@ -117,6 +117,9 @@
     <ClCompile Include="item.cpp">
       <Filter>ソース ファイル\obj</Filter>
     </ClCompile>
+    <ClCompile Include="edit.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -196,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="item.h">
       <Filter>ヘッダー ファイル\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="edit.h">
+      <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

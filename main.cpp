@@ -23,12 +23,14 @@
 #include "result.h"
 #include "ranking.h"
 #include"mouse.h"
+#include "edit.h"
 
 //*****************************
 // プロトタイプ宣言
 //*****************************
 void DrawMode(void); // 現在の画面の表示
 void DrawOperation(void); // 操作方法
+void DrawEditMode(void);
 
 //*****************************
 // グローバル変数宣言
@@ -542,12 +544,18 @@ void Draw(void)
 
 #ifdef _DEBUG
 
-			//現在の画面の表示
-			DrawMode();
+			if (!GetEditState())
+			{
+				//現在の画面の表示
+				DrawMode();
 
-			//操作方法
-			DrawOperation();
-
+				//操作方法
+				DrawOperation();
+			}
+			else if (GetEditState())
+			{
+				DrawEditMode();
+			}
 			// プレイヤーの座標表示
 			//DrawDebugPlayerPos();
 
@@ -784,8 +792,16 @@ void offWireFrame()
 //===========================
 void DrawMode(void)
 {
-	RECT rectMode = { 0,20,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectState = { 0,20,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectMode = { 0,80,SCREEN_WIDTH,SCREEN_HEIGHT };
+
 	char aStr[128];
+	char aStrState[256];
+
+	wsprintf(&aStrState[0],
+		"+=================================================+\n"
+		"+   現在のモード[プレイモード]::編集モード[F2]    +\n"
+		"+=================================================+\n");
 
 	switch (g_mode)
 	{
@@ -813,6 +829,7 @@ void DrawMode(void)
 		break;
 	}
 
+	g_pFont->DrawText(NULL, &aStrState[0], -1, &rectState, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 	g_pFont->DrawText(NULL, &aStr[0], -1, &rectMode, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 
 }
@@ -821,8 +838,8 @@ void DrawMode(void)
 //===========================
 void DrawOperation(void)
 {
-	RECT rectPlayer = { 0,40,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rectThrow = { 0,60,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectPlayer = { 0,100,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectThrow = { 0,120,SCREEN_WIDTH,SCREEN_HEIGHT };
 
 	char aStr[128];
 	char aStrthrow[128];
@@ -830,7 +847,72 @@ void DrawOperation(void)
 	wsprintf(&aStr[0], "移動 [ WASD ]\n");
 	wsprintf(&aStrthrow[0],"ブロック :拾う[ L ]:飛ばす[ ENTER ]:置く[ O ]\n");
 
-	g_pFont->DrawText(NULL, &aStr[0], -1, &rectPlayer, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 	g_pFont->DrawText(NULL, &aStrthrow[0], -1, &rectThrow, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 
+}
+//===========================
+// エディットモード
+//===========================
+void DrawEditMode(void)
+{
+	EDIT_INFO* pEdit = GetEdit();
+	int nNumBlock = GetNumobj();
+
+	RECT rectGameMode = { 0, 20, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectBlockNum = { 0, 80, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectBlockType = { 0, 100, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectBlockKill = { 0, 120, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectSet = { 0, 140, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectScal = { 0, 160, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectMove = { 0, 180, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectSave = { 0, 200, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+	char aStrGame[256];
+	char aStrType[256];
+	char aStrNum[256];
+	char aStrKill[256];
+	char aStrSet[256];
+	char aStrScal[256];
+	char aStrMove[256];
+	char aStrSave[256];
+
+	wsprintf(&aStrGame[0],
+		"+=================================================+\n"
+		"+   現在のモード[編集モード]::ゲームモード[F2]    +\n"
+		"+=================================================+\n");
+
+	if (pEdit->nType == 0)
+	{
+		wsprintf(&aStrType[0], "設置するブロック[ 石 ]:[ + F / - G ]\n");
+	}
+	else if (pEdit->nType == 1)
+	{
+		wsprintf(&aStrType[0], "設置するブロック[ 仮 ]:[ + F / - G ]\n");
+	}
+	else if (pEdit->nType == 2)
+	{
+		wsprintf(&aStrType[0], "設置するブロック[ 仮 ]:[ + F / - G ]\n");
+	}
+	else if (pEdit->nType == 3)
+	{
+		wsprintf(&aStrType[0], "設置するブロック[ 仮 ]:[ + F / - G ]\n");
+	}
+
+	wsprintf(&aStrNum[0], "ブロックの設置数[%d]\n", nNumBlock);
+	wsprintf(&aStrKill[0], "ブロックを消去:[ BACKSPACE ]\n");
+	wsprintf(&aStrSet[0], "ブロックを設置:[ ENTER ]\n");
+	wsprintf(&aStrScal[0], "ブロックの大きさ変更:[ + V / - B ]\n");
+	wsprintf(&aStrMove[0], "移動:[ WASD ]\n");
+	wsprintf(&aStrSave[0], "セーブ[ F7 ]:前回の配置物読み込み[ F8 ] <data/saveEdit.txt>\n");
+
+	//テキストの描画
+	g_pFont->DrawText(NULL, &aStrType[0], -1, &rectBlockType, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
+	g_pFont->DrawText(NULL, &aStrNum[0], -1, &rectBlockNum, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
+	g_pFont->DrawText(NULL, &aStrKill[0], -1, &rectBlockKill, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
+	g_pFont->DrawText(NULL, &aStrSet[0], -1, &rectSet, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
+
+	g_pFont->DrawText(NULL, &aStrGame[0], -1, &rectGameMode, DT_LEFT, D3DCOLOR_RGBA(0, 200, 0, 255));
+	g_pFont->DrawText(NULL, &aStrScal[0], -1, &rectScal, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
+	g_pFont->DrawText(NULL, &aStrMove[0], -1, &rectMove, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
+	g_pFont->DrawText(NULL, &aStrSave[0], -1, &rectSave, DT_LEFT, D3DCOLOR_RGBA(225, 0, 0, 255));
 }

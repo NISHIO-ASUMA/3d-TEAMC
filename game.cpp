@@ -24,6 +24,7 @@
 #include "enemy.h"
 #include "block.h"
 #include "item.h"
+#include "edit.h"
 
 //****************************
 //マクロ定義
@@ -35,6 +36,7 @@
 GAMESTATE g_gameState = GAMESTATE_NONE;//ゲームの状態
 int g_nCounterGameState = 0;//状態管理カウンター
 bool g_bPause = false;//ポーズ中かどうか
+bool g_bEditMode = false; // エディットモードかどうか
 
 //=======================
 //ゲーム画面の初期化処理
@@ -68,6 +70,12 @@ void InitGame(void)
 	//アイテムの初期化処理
 	InitItem();
 
+	//エディットの初期化処理
+	InitEdit();
+
+	//エディットのロード処理
+	LoadEdit();
+
 	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 20.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetEnemy(D3DXVECTOR3(50.0f, 0.0f, 80.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -85,7 +93,7 @@ void InitGame(void)
 	g_nCounterGameState = 0;
 
 	g_bPause = false;//ポーズ解除
-
+	g_bEditMode = false;//エディットモード解除
 }
 //=======================
 //ゲーム画面の終了処理
@@ -119,6 +127,8 @@ void UninitGame(void)
 	//アイテムの終了処理
 	UninitItem();
 
+	//エディットの終了処理
+	UninitEdit();
 }
 //=======================
 //ゲーム画面の更新処理
@@ -168,35 +178,71 @@ void UpdateGame(void)
 		//ポーズ中の更新処理
 		UpdatePause();
 	}
+	if (g_bPause == true)
+	{//ポーズ中
+		//ポーズ中の更新処理
+	}
+
+
+	int nNumObj = GetNumobj(); // オブジェクトの数を取得
+
+	//エディットモードだったら
+	if (KeyboardTrigger(DIK_F2) && g_bEditMode)
+	{
+		g_bEditMode = false;
+		InitBlock();
+		LoadEdit();
+	}
+	//エディットモードじゃなかったら
+	else if (KeyboardTrigger(DIK_F2) && !g_bEditMode)
+	{
+		g_bEditMode = true;
+	}
+
 	if (g_bPause == false)
 	{//ポーズ中でなければ
 
-		//カメラの更新処理
-		UpdateCamera();
-
-		//ライトの更新処理
-		UpdateLight();
-
-		//影の更新処理
-		UpdateShadow();
-
-		//プレイヤーの更新処理
-		UpdatePlayer();
-
-		//敵の更新処理
-		UpdateEnemy();
-
-		//ブロックの更新処理
-		UpdateBlock();
-
-		//アイテムの更新処理
-		UpdateItem();
-
-		if (KeyboardTrigger(DIK_F8))
+		if (!g_bEditMode)
 		{
-			g_gameState = GAMESTATE_END;
+			//カメラの更新処理
+			UpdateCamera();
+
+			//ライトの更新処理
+			UpdateLight();
+
+			//影の更新処理
+			UpdateShadow();
+
+			//プレイヤーの更新処理
+			UpdatePlayer();
+
+			//敵の更新処理
+			UpdateEnemy();
+
+			//ブロックの更新処理
+			UpdateBlock();
+
+			//アイテムの更新処理
+			UpdateItem();
 		}
+		else if (g_bEditMode)
+		{
+			//エディットの更新処理
+			UpdateEdit();
+
+			UpdateCamera();
+		}	
 	}
+
+#ifdef _DEBUG
+
+	if (KeyboardTrigger(DIK_F10))
+	{
+		g_gameState = GAMESTATE_END;
+	}
+
+#endif // _DEBUG
+
 }
 //=======================
 //ゲーム画面の描画処理
@@ -220,6 +266,12 @@ void DrawGame(void)
 
 	//アイテムの描画処理
 	DrawItem();
+
+	if (g_bEditMode)
+	{
+		//エディットの描画処理
+		DrawEdit();
+	}
 
 	if (g_bPause == true)
 	{//ポーズ中
@@ -250,4 +302,11 @@ GAMESTATE GetGameState(void)
 void SetEnablePause(bool bPause)
 {
 	g_bPause = bPause;
+}
+//========================
+// エディットモードの取得
+//=====================
+bool GetEditState(void)
+{
+	return g_bEditMode;
 }

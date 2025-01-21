@@ -112,7 +112,7 @@ void UpdateCamera(void)
 
 	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
 	{
-		if (mode != MODE_TITLE)
+		if (mode != MODE_TITLE&&mode!=MODE_EDIT)
 		{
 			//ƒvƒŒƒCƒ„[’Ç]
 			g_camera[nCnt].posRDest.x = pPlayer->pos.x + sinf(pPlayer->rotDestPlayer.y) * 1.0f;

@@ -144,6 +144,7 @@
     <ClCompile Include="block.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Damegepop.cpp" />
+    <ClCompile Include="edit.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="block.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="Damagepop.h" />
+    <ClInclude Include="edit.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
