@@ -35,8 +35,8 @@ typedef enum
 
 static const char* TITLE_TYPE[TITLETYPE_MAX] =
 {
-	"data\\TEXTURE\\start.png",
-	"data\\TEXTURE\\tutorial000.png",
+	"data\\TEXTURE\\title001.png",
+	"data\\TEXTURE\\title002.png",
 };
 
 //****************************
@@ -72,6 +72,4 @@ void UninitTitle(void);//タイトル画面の終了処理
 void UpdateTitle(void);//タイトル画面の更新処理
 void DrawTitle(void);//タイトル画面の描画処理
 void SetTitle(D3DXVECTOR3 pos,int nType,float fWidth,float fHeight);//タイトルの設定処理
-void SelectTitle(int select);// タイトル画面の選択
-void TitleFlash(int state,int nSelect,int nIdx); // タイトルの点滅
 #endif

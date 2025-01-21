@@ -48,7 +48,7 @@ void InitRankingScore(void)
 
 	//テクスチャの読み込み(スコア)
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\rankscore.png",
+		"data\\TEXTURE\\score000.png",
 		&g_pTextureRankScore);
 
 	//初期化

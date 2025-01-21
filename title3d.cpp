@@ -16,6 +16,7 @@
 #include "input.h"
 #include "fade.h"
 #include "meshfield.h"
+#include "gameui.h"
 
 //****************************
 //グローバル宣言
@@ -40,6 +41,12 @@ void InitTitle3d(void)
 
 	//タイトルの初期化処理
 	InitTitle();
+
+	//ゲームUIの初期化処理
+	InitGameUI();
+
+	SetGameUI(D3DXVECTOR3(640.0f, -200.0f, 0.0f), UITYPE_TITLE, 300.0f, 100.0f, 0);
+	SetGameUI(D3DXVECTOR3(380.0f, 450.0f, 0.0f), UITYPE_TITLE2, 50.0f, 30.0f, 0);
 }
 //============================
 //タイトル3dの終了処理
@@ -60,6 +67,9 @@ void UninitTitle3d(void)
 
 	//タイトルの終了処理
 	UninitTitle();
+
+	//ゲームUIの終了処理
+	UninitGameUI();
 }
 //============================
 //タイトル3dの更新処理
@@ -75,6 +85,9 @@ void UpdateTitle3d(void)
 
 	//タイトルの更新処理
 	UpdateTitle();
+
+	//ゲームUIの更新処理
+	UpdateGameUI();
 }
 //============================
 //タイトル3dの描画処理
@@ -91,4 +104,7 @@ void DrawTitle3d(void)
 
 	//タイトルの描画処理
 	DrawTitle();
+
+	//ゲームUIの描画処理
+	DrawGameUI();
 }

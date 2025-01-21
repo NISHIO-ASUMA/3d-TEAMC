@@ -11,11 +11,19 @@
 #include "title.h"
 #include "input.h"
 #include "fade.h"
+#include "gameui.h"
 
 //****************************
 //マクロ定義
 //****************************
 #define NUM_TITLE (2) // タイトルのテクスチャの数
+
+//****************************
+//プロとタイプ宣言
+//****************************
+void SelectTitle(int select);// タイトル画面の選択
+void TitleFlash(int state, int nSelect, int nIdx); // タイトルの点滅
+void TitleMenuFlash(int nSelect); // タイトルメニューの点滅
 
 //****************************
 //グローバル宣言
@@ -87,8 +95,8 @@ void InitTitle(void)
 		pVtx += 4;
 	}
 
-	SetTitle(D3DXVECTOR3(640.0f, 200.0f, 0.0f), TITLETYPE_TITLE, 200.0f, 50.0f);
-	SetTitle(D3DXVECTOR3(640.0f, 500.0f, 0.0f), TITLETYPE_TUTO, 200.0f, 50.0f);
+	SetTitle(D3DXVECTOR3(640.0f, 450.0f, 0.0f), TITLETYPE_TITLE, 200.0f, 50.0f);
+	SetTitle(D3DXVECTOR3(640.0f, 600.0f, 0.0f), TITLETYPE_TUTO, 200.0f, 50.0f);
 
 	//頂点バッファをアンロック
 	g_pVtxBuffTitle->Unlock();
@@ -125,32 +133,43 @@ void UpdateTitle(void)
 		switch (g_Title[nCnt].TitleMenu)
 		{
 		case TITLESELECT_GAME:
+
 			if (KeyboardTrigger(DIK_DOWN))
 			{
-				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO;
+				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO; // メニューチュートリアル
 			}
-			SelectTitle(TITLESELECT_GAME);
+			//SelectTitle(TITLESELECT_GAME);
+			if (g_Title[nCnt].state != TITLESTATE_FLASH)
+			{
+				TitleMenuFlash(TITLESELECT_GAME); // チュートリアル点滅
+			}
 
 			if (KeyboardTrigger(DIK_RETURN))
 			{
 				SetFade(MODE_GAME);
 				g_Title[nCnt].state = TITLESTATE_FLASH;
 			}
+			FlashGameUI(TITLESELECT_GAME);
 
 			break;
 		case TITLESELECT_TUTO:
 			if (KeyboardTrigger(DIK_UP))
 			{
-				g_Title[nCnt].TitleMenu = TITLESELECT_GAME;
+				g_Title[nCnt].TitleMenu = TITLESELECT_GAME;// メニューゲーム
 			}
 
-			SelectTitle(TITLESELECT_TUTO);
+			//SelectTitle(TITLESELECT_TUTO);
+			if (g_Title[nCnt].state != TITLESTATE_FLASH)
+			{
+				TitleMenuFlash(TITLESELECT_TUTO); // メニューチュートリアル
+			}
 
 			if (KeyboardTrigger(DIK_RETURN))
 			{
 				SetFade(MODE_TUTORIAL);
-				g_Title[nCnt].state = TITLESTATE_FLASH;
+				g_Title[nCnt].state = TITLESTATE_FLASH; // ゲーム点滅
 			}
+			FlashGameUI(TITLESELECT_TUTO);
 			break;
 		default:
 			break;
@@ -200,25 +219,11 @@ void SetTitle(D3DXVECTOR3 pos, int nType,float fWidth, float fHeight)
 			g_Title[nCnt].nType = nType;
 			g_Title[nCnt].bUse = true;
 
-			switch (nType)
-			{
-			case TITLETYPE_TITLE:
-				//頂点座標の更新
-				pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
-				pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
-				pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
-				pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
-				break;
-			case TITLETYPE_TUTO:
-				//頂点座標の更新
-				pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
-				pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
-				pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
-				pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
-				break;
-			default:
-				break;
-			}
+			//頂点座標の更新
+			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
 			break;
 		}
 		pVtx += 4;
@@ -302,7 +307,7 @@ void TitleFlash(int state,int nSelect,int nIdx)
 		{
 			if (nCounterFlash == 5)
 			{
-				pVtx += 4 * nIdx;
+				pVtx += 4 * nSelect;
 
 				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
 				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
@@ -312,7 +317,7 @@ void TitleFlash(int state,int nSelect,int nIdx)
 			}
 			else if (nCounterFlash == 10)
 			{
-				pVtx += 4 * nIdx;
+				pVtx += 4 * nSelect;
 
 				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -322,6 +327,63 @@ void TitleFlash(int state,int nSelect,int nIdx)
 			}
 		}
 	}
+	//頂点バッファをアンロック
+	g_pVtxBuffTitle->Unlock();
+}
+//============================
+//タイトルのメニューの点滅処理
+//============================
+void TitleMenuFlash(int nSelect)
+{
+	VERTEX_2D* pVtx;
+	static float fA = 1.0f;
+	static bool bAlv = false;
+
+	//頂点バッファをロック
+	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	{
+		if (nSelect == nCnt)
+		{
+			// falseの時に透明化
+			if (fA > 0.3f && !bAlv)
+			{
+				fA -= 0.005f; // 減算
+
+				if (fA <= 0.3f)
+				{
+					bAlv = true;
+				}
+			}
+			//trueの時にだんだん見えるようになる
+			else if (fA <= 1.0f && bAlv)
+			{
+				fA += 0.005f; // 加算
+
+				if (fA >= 1.0f)
+				{
+					bAlv = false;
+				}
+			}
+
+			//頂点カラーの設定
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fA);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fA);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fA);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fA);
+		}
+		else
+		{
+			//頂点カラーの設定
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+		pVtx += 4;
+	}
+
 	//頂点バッファをアンロック
 	g_pVtxBuffTitle->Unlock();
 }
