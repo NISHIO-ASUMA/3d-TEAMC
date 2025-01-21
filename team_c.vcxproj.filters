@@ -108,6 +108,9 @@
     <ClCompile Include="enemy.cpp">
       <Filter>ソース ファイル\obj</Filter>
     </ClCompile>
+    <ClCompile Include="block.cpp">
+      <Filter>ソース ファイル\obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -177,6 +180,9 @@
       <Filter>ヘッダー ファイル\Os</Filter>
     </ClInclude>
     <ClInclude Include="enemy.h">
+      <Filter>ヘッダー ファイル\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="block.h">
       <Filter>ヘッダー ファイル\obj</Filter>
     </ClInclude>
   </ItemGroup>

@@ -22,6 +22,7 @@
 #include "meshfield.h"
 #include "player.h"
 #include "enemy.h"
+#include "block.h"
 
 //****************************
 //マクロ定義
@@ -60,7 +61,11 @@ void InitGame(void)
 	//敵の初期化処理
 	InitEnemy();
 
+	//ブロックの初期化処理
+	InitBlock();
+
 	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 0.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetBlock(D3DXVECTOR3(100.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
 
 	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
 	g_nCounterGameState = 0;
@@ -93,6 +98,10 @@ void UninitGame(void)
 
 	//敵の終了処理
 	UninitEnemy();
+
+	//ブロックの終了処理
+	UninitBlock();
+
 }
 //=======================
 //ゲーム画面の更新処理
@@ -151,7 +160,10 @@ void UpdateGame(void)
 		//敵の更新処理
 		UpdateEnemy();
 
-		if (KeyboardTrigger(DIK_RETURN))
+		//ブロックの更新処理
+		UpdateBlock();
+
+		if (KeyboardTrigger(DIK_F4))
 		{
 			g_gameState = GAMESTATE_END;
 		}
@@ -176,6 +188,9 @@ void DrawGame(void)
 
 	//敵の描画処理
 	DrawEnemy();
+
+	//ブロックの描画処理
+	DrawBlock();
 
 	if (g_bPause == true)
 	{//ポーズ中

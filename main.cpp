@@ -28,6 +28,7 @@
 // プロトタイプ宣言
 //*****************************
 void DrawMode(void); // 現在の画面の表示
+void DrawOperation(void); // 操作方法
 
 //*****************************
 // グローバル変数宣言
@@ -537,6 +538,10 @@ void Draw(void)
 
 		//現在の画面の表示
 		DrawMode();
+
+		//操作方法
+		DrawOperation();
+
 		// プレイヤーの座標表示
 		//DrawDebugPlayerPos();
 
@@ -798,5 +803,23 @@ void DrawMode(void)
 	}
 
 	g_pFont->DrawText(NULL, &aStr[0], -1, &rectMode, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+
+}
+//===========================
+// 操作方法表示
+//===========================
+void DrawOperation(void)
+{
+	RECT rectPlayer = { 0,40,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectThrow = { 0,60,SCREEN_WIDTH,SCREEN_HEIGHT };
+
+	char aStr[128];
+	char aStrthrow[128];
+
+	wsprintf(&aStr[0], "移動 [ WASD ]\n");
+	wsprintf(&aStrthrow[0],"ブロック :拾う[ L ]:飛ばす[ ENTER ]:置く[ O ]\n");
+
+	g_pFont->DrawText(NULL, &aStr[0], -1, &rectPlayer, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+	g_pFont->DrawText(NULL, &aStrthrow[0], -1, &rectThrow, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 
 }
