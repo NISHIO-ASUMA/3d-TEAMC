@@ -50,7 +50,7 @@ void InitRankingScore(void)
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\score000.png",
 		&g_pTextureRankScore);
-
+	
 	//‰Šú‰»
 	//g_nRankUpdate = -1;
 	g_nTimerRanking = 0;

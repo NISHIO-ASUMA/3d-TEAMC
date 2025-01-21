@@ -497,7 +497,6 @@ void Update(void)
 //===================
 void Draw(void)
 {
-
 	//画面クリア(バックバッファ&Zバッファのクリア)
 	g_pD3DDevice->Clear(0,
 		NULL,

@@ -35,8 +35,8 @@ typedef enum
 
 static const char* TITLE_TYPE[TITLETYPE_MAX] =
 {
-	"data\\TEXTURE\\title001.png",
 	"data\\TEXTURE\\title002.png",
+	"data\\TEXTURE\\title001.png",
 };
 
 //****************************
