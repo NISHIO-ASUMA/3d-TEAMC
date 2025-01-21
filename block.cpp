@@ -74,9 +74,10 @@ void InitBlock(void)
 		//g_TexBlock[nCntNum].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//g_TexBlock[nCntNum].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//g_TexBlock[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_TexBlock[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-		g_TexBlock[nCntNum].bUse = true;
-		g_TexBlock[nCntNum].nLife = 120;
+
+		g_TexBlock[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
+		g_TexBlock[nCntNum].bUse = true;						 //使用判定
+		g_TexBlock[nCntNum].nLife = 120;						 //体力
 
 		D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
@@ -88,7 +89,7 @@ void InitBlock(void)
 			if (pMat[nCntMat].pTextureFilename != NULL)
 			{
 				//このファイル名を使用してテクスチャを読み込む
-					//テクスチャの読み込み
+				//テクスチャの読み込み
 				D3DXCreateTextureFromFile(pDevice,
 					pMat[nCntMat].pTextureFilename,
 					&g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntMat]);
@@ -146,6 +147,7 @@ void InitBlock(void)
 			//頂点フォーマットのサイズ分ポインタを進める
 			pVtxBuff += sizeFVF;
 
+			//サイズに代入
 			g_TexBlock[nCntNum].Size.x = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.x - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.x;
 			g_TexBlock[nCntNum].Size.y = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.y - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.y;
 			g_TexBlock[nCntNum].Size.z = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.z - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.z;
@@ -163,6 +165,7 @@ void UninitBlock(void)
 {
 	for (int nCntNum = 0; nCntNum < BLOCKTYPE_MAX; nCntNum++)
 	{
+		//テクスチャの破棄
 		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
 		{
 			if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntTex] != NULL)
@@ -179,7 +182,7 @@ void UninitBlock(void)
 			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock = NULL;
 		}
 
-		//マテリアル
+		//マテリアルの破棄
 		if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock != NULL)
 		{
 			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock->Release();
@@ -199,12 +202,11 @@ void UpdateBlock(void)
 //=============================
 void DrawBlock(void)
 {
-	MODE mode = GetMode();
-	Player* pPlayer = GetPlayer();
+	MODE mode = GetMode();//現在のモードを取得
 
-	LPDIRECT3DDEVICE9 pDevice;
+	Player* pPlayer = GetPlayer();//プレイヤー取得
 
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタを取得
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal,mtxParent;
@@ -218,7 +220,8 @@ void DrawBlock(void)
 		for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 		{
 			if (!g_Block[nCntBlock].bUse)
-			{
+			{//未使用だったら
+				//読み飛ばしてカウントを進める
 				continue;
 			}
 
@@ -271,15 +274,15 @@ void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal)
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
 		if (!g_Block[nCntBlock].bUse)
-		{
-			g_Block[nCntBlock] = g_TexBlock[nType];
+		{//未使用状態だったら
+			g_Block[nCntBlock] = g_TexBlock[nType];//テクスチャタイプ
 
-			g_Block[nCntBlock].pos = pos;
-			g_Block[nCntBlock].Scal = Scal;
-			g_Block[nCntBlock].nType = nType;
-			g_Block[nCntBlock].bUse = true;
+			g_Block[nCntBlock].pos = pos;	 //座標
+			g_Block[nCntBlock].Scal = Scal;	 //拡大率
+			g_Block[nCntBlock].nType = nType;//種類
+			g_Block[nCntBlock].bUse = true;  //使用状態
 
-			g_NumBlock++;
+			g_NumBlock++;//インクリメント
 			break;
 		}
 	}
@@ -295,7 +298,8 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
 		if (!g_Block[nCntBlock].bUse)
-		{
+		{//未使用だったら
+			//読み飛ばしてカウントを進める
 			continue;
 		}
 
@@ -365,7 +369,7 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 		}		
 	}
 
-	return bLanding;
+	return bLanding;//着地判定を返す
 }
 //=======================
 //ブロックの取得処理

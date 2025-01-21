@@ -1,6 +1,6 @@
 //============================
 //
-// score [score.cpp]
+// スコア処理 [score.cpp]
 // Author:YOSHIDA YUUTO
 //
 //============================
@@ -126,13 +126,13 @@ void InitScore(void)
 //=====================
 void UninitScore(void)
 {
-	
 	//テクスチャの破棄
 	if (g_pTextureScore != NULL)
 	{
 		g_pTextureScore->Release();
 		g_pTextureScore = NULL;
 	}
+	//バッファの破棄
 	if (g_pVtxBuffScore != NULL)
 	{
 		g_pVtxBuffScore->Release();
@@ -171,7 +171,7 @@ void DrawScore(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
 
-	//デバイスの習得
+	//デバイスの取得
 	pDevice = GetDevice();
 
 	int nCntScore;
@@ -208,7 +208,7 @@ void SetScore(int nScore)
 
 	for (int nCntScore = 0; nCntScore < MAX_NUM_SCORE; nCntScore++)
 	{
-		if (nCntScore == 0)//０番目
+		if (nCntScore == 0)//0番目
 		{
 			aPosTexU[0] = g_nScore / aData;
 		}
@@ -219,6 +219,7 @@ void SetScore(int nScore)
 			aData = aData / 10;
 			aData2 = aData2 / 10;
 		}
+
 		//テクスチャの設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f + (0.1f * aPosTexU[nCntScore]), 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(0.1f + (0.1f * aPosTexU[nCntScore]), 0.0f);
@@ -228,6 +229,7 @@ void SetScore(int nScore)
 		pVtx += 4;
 	}
 
+	//アンロック
 	g_pVtxBuffScore->Unlock();
 
 }
@@ -253,7 +255,7 @@ void AddScore(int nValue)
 
 	for (int nCntScore = 0; nCntScore < MAX_NUM_SCORE; nCntScore++)
 	{
-		if (nCntScore == 0)//０番目
+		if (nCntScore == 0)//0番目
 		{
 			aPosTexU[0] = g_nScore / aData;
 		}
@@ -264,6 +266,7 @@ void AddScore(int nValue)
 			aData = aData / 10;
 			aData2 = aData2 / 10;
 		}
+
 		//テクスチャの設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f + (0.1f * aPosTexU[nCntScore]), 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(0.1f + (0.1f * aPosTexU[nCntScore]), 0.0f);
@@ -273,6 +276,7 @@ void AddScore(int nValue)
 		pVtx += 4;
 	}
 
+	//アンロック
 	g_pVtxBuffScore->Unlock();
 }
 //=================

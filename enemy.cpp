@@ -10,7 +10,7 @@
 //****************************
 #include "enemy.h"
 #include "player.h"
-#include<stdio.h>
+#include <stdio.h>
 #include "Score.h"
 #include "input.h"
 #include "damagepop.h"
@@ -37,45 +37,46 @@ int g_nNumEnemy;//敵の総数カウント
 //****************************
 //プロトタイプ宣言
 //****************************
-void LoadEnemy(int nType);
+void LoadEnemy(int nType);    //読み込み処理
+
 //=============================
 //ブロックの初期化処理
 //=============================
 void InitEnemy(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-	
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタを取得
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		g_Enemy[nCntEnemy].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Enemy[nCntEnemy].AttackEnemy = D3DXVECTOR3(5.0f, 10.0f, 5.0f);
-		g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Enemy[nCntEnemy].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_Enemy[nCntEnemy].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//座標
+		g_Enemy[nCntEnemy].AttackEnemy = D3DXVECTOR3(5.0f, 10.0f, 5.0f);//
+		g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//移動量
+		g_Enemy[nCntEnemy].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//角度
 		//g_Enemy[nCntEnemy].nType = ENEMYTYPE_ONE;
-		g_Enemy[nCntEnemy].bUse = false;
-		g_Enemy[nCntEnemy].Motion.bLoopMotion = true;
-		g_Enemy[nCntEnemy].nLife = 10;
-		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;	
+		g_Enemy[nCntEnemy].bUse = false;								//未使用状態
+		g_Enemy[nCntEnemy].Motion.bLoopMotion = true;					//ループするか否か
+		g_Enemy[nCntEnemy].nLife = 10;									//体力
+		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;					//状態
 	}
 
+	//グローバル変数の初期化
 	g_nNumEnemy = 0;
 
 	//敵の読み込み
 	for (int nCntEnemyType= 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
 	{
+		//読み込み
 		LoadEnemy(0);
 
 		//g_LoadEnemy[nCntEnemyType].
 		//g_LoadEnemy[nCntEnemyType].nLife = 20;
 		//g_LoadEnemy[nCntEnemyType].nType = ENEMYTYPE_ONE;
-		g_LoadEnemy[nCntEnemyType].Motion.motionType = MOTIONTYPE_NEUTRAL;
-		g_LoadEnemy[nCntEnemyType].Motion.nKey = 0;
-		g_LoadEnemy[nCntEnemyType].g_bDamage = true;
-		g_LoadEnemy[nCntEnemyType].Motion.bLoopMotion = true;
-		g_LoadEnemy[nCntEnemyType].Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_LoadEnemy[nCntEnemyType].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_LoadEnemy[nCntEnemyType].Motion.motionType = MOTIONTYPE_NEUTRAL;//モーションの種類
+		g_LoadEnemy[nCntEnemyType].Motion.nKey = 0;						  //キー数
+		g_LoadEnemy[nCntEnemyType].g_bDamage = true;					  //ダメージか否か
+		g_LoadEnemy[nCntEnemyType].Motion.bLoopMotion = true;			  //ループか否か
+		g_LoadEnemy[nCntEnemyType].Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  //サイズ
+		g_LoadEnemy[nCntEnemyType].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	  //座標
 
 		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
 		{
@@ -89,7 +90,7 @@ void InitEnemy(void)
 				if (pMat[nCntMat].pTextureFilename != NULL)
 				{
 					//このファイル名を使用してテクスチャを読み込む
-						//テクスチャの読み込み
+					//テクスチャの読み込み
 					D3DXCreateTextureFromFile(pDevice,
 						pMat[nCntMat].pTextureFilename,
 						&g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[nCntMat]);
@@ -159,6 +160,8 @@ void InitEnemy(void)
 			//頂点バッファのアンロック
 			g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy->UnlockVertexBuffer();		
 		}
+
+		//サイズに代入
 		g_LoadEnemy[nCntEnemyType].Size.x = g_LoadEnemy[nCntEnemyType].vtxMax.x - g_LoadEnemy[nCntEnemyType].vtxMin.x;
 		g_LoadEnemy[nCntEnemyType].Size.y = g_LoadEnemy[nCntEnemyType].vtxMax.y - g_LoadEnemy[nCntEnemyType].vtxMin.y;
 		g_LoadEnemy[nCntEnemyType].Size.z = g_LoadEnemy[nCntEnemyType].vtxMax.z - g_LoadEnemy[nCntEnemyType].vtxMin.z;
@@ -174,6 +177,7 @@ void UninitEnemy(void)
 		{
 			for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
 			{
+				//テクスチャの破棄
 				for (int TexCnt = 0; TexCnt < MAX_TEXENEMY; TexCnt++)
 				{
 					if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
@@ -207,7 +211,8 @@ void UpdateEnemy(void)
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		if (!g_Enemy[nCntEnemy].bUse)
-		{
+		{//未使用状態だったら
+			//とばしてカウントを進める
 			continue;
 		}
 
@@ -218,6 +223,7 @@ void UpdateEnemy(void)
 			HitEnemy(nCntEnemy, 1);
 		}
 
+		//モーションの更新
 		UpdateMotion(&g_Enemy[nCntEnemy].Motion);
 	}
 }
@@ -226,9 +232,7 @@ void UpdateEnemy(void)
 //=============================
 void DrawEnemy(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタを取得
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal;
@@ -334,9 +338,11 @@ void DrawEnemy(void)
 					//ブロック(パーツ)の描画
 					g_Enemy[nCntEnemy].EnemyModel[nNumEnemy].pMeshEnemy->DrawSubset(nCntMat);
 				}
+				//インクリメント
 				nNumEnemy++;
 			}
 		}
+		//初期化
 		nNumEnemy = 0;
 	}
 }
@@ -355,10 +361,12 @@ void HitEnemy(int nCnt,int nDamage)
 	g_Enemy[nCnt].nLife -= nDamage;
 
 	if (g_Enemy[nCnt].nLife <=0)
-	{
-		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;
-		g_Enemy[nCnt].bUse = false;
-		g_nNumEnemy--;
+	{//体力が0以下なら
+		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//敵の状態を死亡状態にする
+
+		g_Enemy[nCnt].bUse = false;			   //未使用判定
+
+		g_nNumEnemy--;						   //デクリメント
 	}
 	else
 	{
@@ -374,21 +382,21 @@ void HitEnemy(int nCnt,int nDamage)
 //=======================
 void SetEnemy(D3DXVECTOR3 pos, ENEMYTYPE nType,int nLife,D3DXVECTOR3 move)
 {
-	MODE mode = GetMode();
+	MODE mode = GetMode();//現在のモードの取得
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		if (g_Enemy[nCntEnemy].bUse == false)
+		if (!g_Enemy[nCntEnemy].bUse)
 		{
 			g_Enemy[nCntEnemy] = g_LoadEnemy[nType]; // 情報を代入
 
-			g_Enemy[nCntEnemy].pos = pos;
-			g_Enemy[nCntEnemy].move = move;
-			g_Enemy[nCntEnemy].nType = nType;
-			g_Enemy[nCntEnemy].nLife = nLife;
-			g_Enemy[nCntEnemy].bUse = true;
+			g_Enemy[nCntEnemy].pos = pos;	 //座標
+			g_Enemy[nCntEnemy].move = move;  //移動量
+			g_Enemy[nCntEnemy].nType = nType;//種類
+			g_Enemy[nCntEnemy].nLife = nLife;//体力
+			g_Enemy[nCntEnemy].bUse = true;  //使用状態
 
-			g_nNumEnemy++;
+			g_nNumEnemy++;//インクリメント
 			break;
 		}
 	}
@@ -405,12 +413,12 @@ int GetNumEnemy(void)
 //=============================
 void LoadEnemy(int nType)
 {
-	LPDIRECT3DDEVICE9 pDevice;
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスポインタ
 
-	pDevice = GetDevice();
+	FILE* pFile;//ファイルポインタ
+	char aStr[ENEMY_WORD];//文字型の配列
 
-	FILE* pFile;
-	char aStr[ENEMY_WORD];
+	//ローカル変数
 	int nNumModel = 0;
 	int nCnt = 0;
 	char gomi[3];
@@ -425,6 +433,8 @@ void LoadEnemy(int nType)
 	int nCntMotion = 0;
 	int nCntNum = 0;
 	int EnenKey = 0;
+
+	//種類ごとにファイルを読み込む
 	switch (nType)
 	{
 	case 0:
@@ -442,7 +452,7 @@ void LoadEnemy(int nType)
 	}
 
 	if (pFile != NULL)
-	{
+	{//ファイルが開けたら
 		while (1)
 		{
 			fscanf(pFile, "%s", &aStr[0]);

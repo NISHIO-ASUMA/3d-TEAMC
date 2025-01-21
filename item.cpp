@@ -1,6 +1,6 @@
 //============================
 //
-// ブロック[block.cpp]
+// アイテム[item.cpp]
 // Author:YOSHIDA YUUTO
 //
 //============================
@@ -34,22 +34,20 @@ Item g_TexItem[ITEMTYPE_MAX];
 //=============================
 void InitItem(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		g_Item[nCntItem].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Item[nCntItem].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Item[nCntItem].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Item[nCntItem].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-		g_Item[nCntItem].nType = ITEMTYPE_ONE;
-		g_Item[nCntItem].bUse = false;
-		g_Item[nCntItem].nLife = 20;
-		g_Item[nCntItem].state = ITEMSTATE_NORMAL;
-		g_Item[nCntItem].fRadius = 100.0f;
-		g_Item[nCntItem].nLife = 180;
+		g_Item[nCntItem].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //座標
+		g_Item[nCntItem].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//移動量
+		g_Item[nCntItem].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //角度
+		g_Item[nCntItem].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
+		g_Item[nCntItem].nType = ITEMTYPE_ONE;				  //種類
+		g_Item[nCntItem].bUse = false;						  //未使用判定
+		g_Item[nCntItem].nLife = 20;						  //体力
+		g_Item[nCntItem].state = ITEMSTATE_NORMAL;			  //状態
+		g_Item[nCntItem].fRadius = 100.0f;					  //半径
+		g_Item[nCntItem].nLife = 180;						  //体力
 	}
 
 	//g_Item.vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -73,9 +71,9 @@ void InitItem(void)
 		//g_TexItem[nCntNum].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//g_TexItem[nCntNum].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//g_TexItem[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-		g_TexItem[nCntNum].bUse = true;
-		g_TexItem[nCntNum].nLife = 120;
+		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
+		g_TexItem[nCntNum].bUse = true;							//使用判定
+		g_TexItem[nCntNum].nLife = 120;							//体力
 
 		D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
@@ -145,6 +143,7 @@ void InitItem(void)
 			//頂点フォーマットのサイズ分ポインタを進める
 			pVtxBuff += sizeFVF;
 
+			//サイズを代入
 			g_TexItem[nCntNum].Size.x = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.x - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.x;
 			g_TexItem[nCntNum].Size.y = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.y - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.y;
 			g_TexItem[nCntNum].Size.z = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.z - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.z;
@@ -162,6 +161,7 @@ void UninitItem(void)
 {
 	for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
 	{
+		//テクスチャの破棄
 		for (int nCntTex = 0; nCntTex < 32; nCntTex++)
 		{
 			if (g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureItem[nCntTex] != NULL)
@@ -191,7 +191,7 @@ void UninitItem(void)
 //=============================
 void UpdateItem(void)
 {
-	Player* pPlayer = GetPlayer();
+	Player* pPlayer = GetPlayer();//プレイヤー取得
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
@@ -233,13 +233,16 @@ void UpdateItem(void)
 
 		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
 		{
+			//体力を減らす
 			g_Item[nCntItem].nLife--;
 
 			if (g_Item[nCntItem].nLife <= 0)
-			{
+			{//体力が0以下なら
+				//未使用判定
 				g_Item[nCntItem].bUse = false;
 			}
 		}
+
 		//位置の更新
 		g_Item[nCntItem].pos += g_Item[nCntItem].move;
 	}
@@ -250,12 +253,11 @@ void UpdateItem(void)
 //=============================
 void DrawItem(void)
 {
-	MODE mode = GetMode();
-	Player* pPlayer = GetPlayer();
+	MODE mode = GetMode();//現在のモードを取得
 
-	LPDIRECT3DDEVICE9 pDevice;
+	Player* pPlayer = GetPlayer();//プレイヤーの取得
 
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal, mtxParent;
@@ -269,12 +271,14 @@ void DrawItem(void)
 		for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 		{
 			if (!g_Item[nCntItem].bUse)
-			{
+			{//未使用状態なら
+				//下の処理を通さずカウントを進める
 				continue;
 			}
 
 			if (g_Item[nCntItem].state == ITEMSTATE_HOLD)
 			{
+				//取得処理
 				SetMtxItem(nCntItem);
 			}
 			else
@@ -328,13 +332,13 @@ void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal)
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		if (!g_Item[nCntItem].bUse)
-		{
+		{//未使用状態なら
 			g_Item[nCntItem] = g_TexItem[nType]; // 必要な情報を代入
 
-			g_Item[nCntItem].pos = pos;
-			g_Item[nCntItem].nType = nType;
-			g_Item[nCntItem].Scal = Scal;
-			g_Item[nCntItem].bUse = true;
+			g_Item[nCntItem].pos = pos;	   //座標
+			g_Item[nCntItem].nType = nType;//種類
+			g_Item[nCntItem].Scal = Scal;  //拡大率
+			g_Item[nCntItem].bUse = true;  //使用判定
 
 			break;
 		}
@@ -345,13 +349,15 @@ void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal)
 //=======================
 bool CollisionItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize)
 {
-	bool bLanding = false;
-	Player* pPlayer = GetPlayer();
+	bool bLanding = false;// 判定を返す変数
+
+	Player* pPlayer = GetPlayer();//プレイヤーの取得
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		if (!g_Item[nCntItem].bUse)
-		{
+		{//未使用状態なら
+			//下の処理を通さずカウントを進める
 			continue;
 		}
 
@@ -456,7 +462,7 @@ bool CollisionItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, 
 		}
 	}
 
-	return bLanding;
+	return bLanding;//判定を返す
 }
 //=======================
 //ブロックと敵の判定
@@ -484,7 +490,7 @@ bool CollisionEnemy(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 		}
 	}
 
-	return bHit;
+	return bHit;//判定を返す
 }
 ////=======================
 ////ブロックの取得処理
@@ -502,13 +508,12 @@ bool CollisionEnemy(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 //=======================
 void SetMtxItem(int nCnt)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal, mtxParent;
-	Player* pPlayer = GetPlayer();
+
+	Player* pPlayer = GetPlayer();//プレイヤーの取得
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&g_Item[nCnt].mtxWorldItem);

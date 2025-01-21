@@ -11,8 +11,8 @@
 #include "player.h"
 #include "input.h"
 #include "camera.h"
-#include<stdio.h>
-#include<string.h>
+#include <stdio.h>
+#include <string.h>
 #include "motion.h"
 #include "meshfield.h"
 #include "block.h"
@@ -42,30 +42,28 @@ Player g_LoadPlayer[PLAYERTYPE_MAX];
 //============================
 void InitPlayer(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
-	pDevice = GetDevice();
-
-	MODE mode = GetMode();
+	MODE mode = GetMode();//現在のモードを取得
 
 	//プレイヤーの初期化
-	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);
-	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_player.rotDestPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_player.bJump = false;
-	g_player.bDisp = true;
-	g_player.bMove = false;
-	g_player.nLife = PLAYERLIFE;
-	g_player.state = PLAYERSTATE_NORMAL;
-	g_player.Motion.bLoopMotion = true;
-	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_player.Motion.nKey = 0;
-	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
-	g_player.SwordOffpos.x = 0.0f;
-	g_player.SwordOffpos.y = 85.0f;
-	g_player.SwordOffpos.z = 0.0f;
-	g_player.nCounterAction = 0;
+	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);		   //座標
+	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		   //角度
+	g_player.rotDestPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//目的の角度
+	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		   //移動量
+	g_player.bJump = false;								   //ジャンプ中か否か
+	g_player.bDisp = true;								   //使用状態
+	g_player.bMove = false;								   //
+	g_player.nLife = PLAYERLIFE;						   //体力
+	g_player.state = PLAYERSTATE_NORMAL;				   //状態
+	g_player.Motion.bLoopMotion = true;					   //
+	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	   //剣の角度
+	g_player.Motion.nKey = 0;							   //キー数
+	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;	   //モーションの種類
+	g_player.SwordOffpos.x = 0.0f;						   //剣のオフセットの座標x
+	g_player.SwordOffpos.y = 85.0f;						   //剣のオフセットの座標y
+	g_player.SwordOffpos.z = 0.0f;						   //剣のオフセットの座標z
+	g_player.nCounterAction = 0;						   //アクションカウント
 
 	D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
@@ -73,6 +71,7 @@ void InitPlayer(void)
 	{
 		//必要な情報を設定
 		LoadPlayer(0);
+
 		g_LoadPlayer[nCntPlayer].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
 		g_LoadPlayer[nCntPlayer].nLife = PLAYERLIFE;
 		g_LoadPlayer[nCntPlayer].bDisp = true;
@@ -91,8 +90,9 @@ void InitPlayer(void)
 				if (pMat[nCntMat].pTextureFilename != NULL)
 				{
 					//このファイル名を使用してテクスチャを読み込む
-						//テクスチャの読み込み
+					//テクスチャの読み込み
 					D3DXCreateTextureFromFile(pDevice,
+						
 						pMat[nCntMat].pTextureFilename,
 						&g_apTexturePlayer[nCntMat]);
 				}
@@ -184,10 +184,13 @@ void InitPlayer(void)
 				//頂点フォーマットのサイズ分ポインタを進める
 				pVtxBuff += sizeFVF;
 			}
+
+			//サイズを代入
 			g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
 			g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
 			g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
 
+			//各モデルごとのサイズを代入
 			g_player.Motion.aModel[nCntModel].Size.x = g_player.Motion.aModel[nCntModel].vtxMax.x - g_player.Motion.aModel[nCntModel].vtxMin.x;
 			g_player.Motion.aModel[nCntModel].Size.y = g_player.Motion.aModel[nCntModel].vtxMax.y - g_player.Motion.aModel[nCntModel].vtxMin.y;
 			g_player.Motion.aModel[nCntModel].Size.z = g_player.Motion.aModel[nCntModel].vtxMax.z - g_player.Motion.aModel[nCntModel].vtxMin.z;
@@ -204,6 +207,7 @@ void InitPlayer(void)
 //============================
 void UninitPlayer(void)
 {
+	//テクスチャの破棄
 	for (int nCntMat = 0; nCntMat < MAX_TEXPLAYER; nCntMat++)
 	{
 		if (g_apTexturePlayer[nCntMat] != NULL)
@@ -417,14 +421,14 @@ void UpdatePlayer(void)
 	//{
 	//	g_player.bJump = true;
 	//}
-	//プレイヤーの重力ddd
+	//プレイヤーの重力
 	g_player.move.y -= 1.0f;
 
 	////壁の衝突判定
 	//CollisionWall();
 
 	if (JoypadTrigger(JOYKEY_A) == true || KeyboardTrigger(DIK_SPACE)==true)
-	{
+	{//aボタン or Enterキーが押された
 		if (g_player.bJump == true)
 		{
 			g_player.bJump = false;
@@ -455,9 +459,7 @@ void UpdatePlayer(void)
 //============================
 void DrawPlayer(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans,mtxSize;

@@ -1,9 +1,9 @@
-//=================================
+//===================================
 //
 // メッシュフィールド[meshfield.cpp]
 // Author: TEAM_C
 //
-//=================================
+//===================================
 
 //****************************
 //インクルードファイル
@@ -27,11 +27,9 @@ void InitMeshField(void)
 {
 	int nCnt = 0;
 
-	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
-	pDevice = GetDevice();//デバイスを取得
-	
-		//テクスチャの読み込み
+	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\kari.png",
 		&g_pTextureMeshField);
@@ -157,16 +155,12 @@ void UpdateMeshField(void)
 {
 
 }
-
-
 //===============================
 //メッシュフィールドの描画処理
 //===============================
 void DrawMeshField(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
@@ -200,17 +194,20 @@ void DrawMeshField(void)
 	//ポリゴンの描画
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0,VERTEX,0,POLYGON);
 }
-
+//================================
+//メッシュフィールドの当たり判定
+//================================
 bool CollisionField(void)
 {
-	VERTEX_3D* pVtx;
+	VERTEX_3D* pVtx;//頂点情報のポインタ
+
+	Player* pPlayer = GetPlayer();//プレイヤーの取得
 
 	bool bLanding = false;
 
 	int nCntPos = 0;
 	int nNextWall = 1;
 
-	Player* pPlayer = GetPlayer();
 
 	//if (pPlayer->bDisp == true)
 	//{
@@ -248,6 +245,6 @@ bool CollisionField(void)
 			pPlayer->pos.y = pPlayer->posOld.y;
 		}
 	//}
-	return bLanding;
+	return bLanding;//判定を返す
 }
 
