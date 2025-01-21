@@ -3,33 +3,32 @@ SCRIPT
 #     読み込むモデル数
 #--------------------------
 
-NUM_MODEL = 16
+NUM_MODEL = 15
 
 #-------------------------
 # モデルファイル
 #-------------------------
-MODEL_FILENAME = data/MODEL/Player/00_waist.x	# [0]腰
-MODEL_FILENAME = data/MODEL/Player/01_chest.x	# [1]胸
-MODEL_FILENAME = data/MODEL/Player/02_head.x	# [2]頭
-MODEL_FILENAME = data/MODEL/Player/03_armUR.x	# [3]右上腕
-MODEL_FILENAME = data/MODEL/Player/04_armFR.x	# [4]右前腕
-MODEL_FILENAME = data/MODEL/Player/05_handR.x	# [5]右手
-MODEL_FILENAME = data/MODEL/Player/06_handUL.x	# [6]左上腕
-MODEL_FILENAME = data/MODEL/Player/07_armFL.x	# [7]左前腕
-MODEL_FILENAME = data/MODEL/Player/08_handL.x	# [8]左手
-MODEL_FILENAME = data/MODEL/Player/09_legUR.x	# [9]右腿
-MODEL_FILENAME = data/MODEL/Player/010_legDR.x	# [10]右脛
-MODEL_FILENAME = data/MODEL/Player/011_footR.x	# [11]右足
-MODEL_FILENAME = data/MODEL/Player/012_legUL.x	# [12]左腿
-MODEL_FILENAME = data/MODEL/Player/013_legDL.x	# [13]左脛
-MODEL_FILENAME = data/MODEL/Player/014_footL.x	# [14]左足
-MODEL_FILENAME = data/MODEL/Player/ken.x	# [15]武器
+MODEL_FILENAME = data/MODEL/samurai/MODEL/00_samurai_waist.x	# [0]腰
+MODEL_FILENAME = data/MODEL/samurai/MODEL/01_samurai_body.x	# [1]胸
+MODEL_FILENAME = data/MODEL/samurai/MODEL/02_samurai_head.x	# [2]頭
+MODEL_FILENAME = data/MODEL/samurai/MODEL/03_samurai_shoulderR.x	# [3]右上腕
+MODEL_FILENAME = data/MODEL/samurai/MODEL/04_samurai_armR.x	# [4]右前腕
+MODEL_FILENAME = data/MODEL/samurai/MODEL/05_samurai_handR.x	# [5]右手
+MODEL_FILENAME = data/MODEL/samurai/MODEL/06_samurai_shoulderL.x	# [6]左上腕
+MODEL_FILENAME = data/MODEL/samurai/MODEL/07_samurai_armL.x	# [7]左前腕
+MODEL_FILENAME = data/MODEL/samurai/MODEL/08_samurai_handL.x	# [8]左手
+MODEL_FILENAME = data/MODEL/samurai/MODEL/09_samurai_thighR.x	# [9]右腿
+MODEL_FILENAME = data/MODEL/samurai/MODEL/10_samurai_legR.x	# [10]右脛
+MODEL_FILENAME = data/MODEL/samurai/MODEL/11_samurai_footR.x	# [11]右足
+MODEL_FILENAME = data/MODEL/samurai/MODEL/12_samurai_thighL.x	# [12]左腿
+MODEL_FILENAME = data/MODEL/samurai/MODEL/13_samurai_legL.x	# [13]左脛
+MODEL_FILENAME = data/MODEL/samurai/MODEL/14_samurai_footL.x	# [14]左足
 
 #-------------------------
 # キャラクター情報
 #-------------------------
 CHARACTERSET
-	NUM_PARTS = 16
+	NUM_PARTS = 15
 	MOVE = 1.2
 	
 	PARTSSET
@@ -137,13 +136,6 @@ CHARACTERSET
 	   ROT = 0.0 0.0 0.0
 	END_PARTSSET
 	
-	PARTSSET
-	   INDEX = 15
-	   PARENT = 8
-	   POS = -3.0 0.0 0.0
-	   ROT = 0.0 0.0 0.0
-	END_PARTSSET
-
 #[0]
 MOTIONSET
 	NUM_KEY = 2

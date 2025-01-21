@@ -316,9 +316,11 @@ void StickCamera(void)
 //=========================
 void MouseView(void)
 {
+	MODE mode = GetMode();
+
 	DIMOUSESTATE mouseState;
 
-	if (GetMouseState(&mouseState))
+	if (GetMouseState(&mouseState)&& mode != MODE_TITLE)
 	{
 		static POINT prevCursorPos = { SCREEN_WIDTH / 1.5f,SCREEN_HEIGHT / 1.5f };
 
