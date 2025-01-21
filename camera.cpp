@@ -11,12 +11,15 @@
 #include "camera.h"
 #include "input.h"
 #include "mouse.h"
+#include "player.h"
 
 //*****************************
 // マクロ定義
 //*****************************
 #define MAX_VIEWUP (3.00f) // カメラの制限
 #define MAX_VIEWDOWN (0.1f) // カメラの制限
+#define MAIN (0) // プレイヤーを見るカメラのインデックス
+#define MAP (1) // ミニマップのカメラのインデックス
 
 //*****************************
 // プロトタイプ宣言
@@ -26,8 +29,8 @@ void MouseView(void);       // マウスの視点移動
 //*****************************
 // グローバル変数宣言
 //*****************************
-//Camera g_camera[2];				// カメラ情報
-Camera g_camera;				// カメラ情報
+Camera g_camera[MAX_CAMERA];		// カメラ情報
+//Camera g_camera;						// カメラ情報
 D3DXVECTOR3 Zoom;
 //=========================
 // カメラの初期化処理
@@ -35,29 +38,41 @@ D3DXVECTOR3 Zoom;
 void InitCamera(void)
 {
 	// 変数の初期化
-	//for (int nCnt = 0; nCnt < 2; nCnt++)
-	//{
-		g_camera.posV = D3DXVECTOR3(0.0f, 65.0f, -250.0f);			// カメラの位置
-		g_camera.posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// カメラの見ている位置
-		g_camera.vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
-		g_camera.rot = D3DXVECTOR3(D3DX_PI * 0.65f, 0.0f, 0.0f);	    // 角度
-		g_camera.g_CameraMode = CAMERAMODE_PLAYER;						// 初期状態
+
+	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 65.0f, -250.0f);			// カメラの位置
+	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 300.0f, -5.0f);			// カメラの位置
+
+	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
+	{
+		g_camera[nCnt].posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// カメラの見ている位置
+		g_camera[nCnt].vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
+		g_camera[nCnt].rot = D3DXVECTOR3(D3DX_PI * 0.65f, 0.0f, 0.0f);	    // 角度
+		g_camera[nCnt].g_CameraMode = CAMERAMODE_PLAYER;						// 初期状態
 		Zoom = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	//}
 
-	//g_camera[0].viewport.X = 0.0f; // 2DX座標
-	//g_camera[0].viewport.Y = 0.0f; // 2DY座標
-	//g_camera[0].viewport.Width = 640.0f; // 幅
-	//g_camera[0].viewport.Height = 720.0f; // 高さ
-	//g_camera[0].viewport.MinZ = 0.0f;
-	//g_camera[0].viewport.MaxZ = 1.0f;
+		float fRotx = g_camera[nCnt].posV.x - g_camera[nCnt].posR.x;
+		float fRoty = g_camera[nCnt].posV.y - g_camera[nCnt].posR.y;
+		float fRotz = g_camera[nCnt].posV.z - g_camera[nCnt].posR.z;
 
-	//g_camera[1].viewport.X = 640.0f; // 2DX座標
-	//g_camera[1].viewport.Y = 0.0f; // 2DY座標
-	//g_camera[1].viewport.Width = 640.0f; // 幅
-	//g_camera[1].viewport.Height = 720.0f; // 高さ
-	//g_camera[1].viewport.MinZ = 0.0f;
-	//g_camera[1].viewport.MaxZ = 1.0f;
+		g_camera[nCnt].fDistance = sqrtf((fRotx * fRotx) + (fRoty * fRoty) + (fRotz * fRotz));	// 視点から注視点までの距離
+
+	}
+
+	g_camera[MAIN].viewport.X = 0.0f; // 2DX座標
+	g_camera[MAIN].viewport.Y = 0.0f; // 2DY座標
+	g_camera[MAIN].viewport.Width = 1280.0f; // 幅
+	g_camera[MAIN].viewport.Height = 720.0f; // 高さ
+	g_camera[MAIN].viewport.MinZ = 0.0f;
+	g_camera[MAIN].viewport.MaxZ = 1.0f;
+
+	g_camera[MAP].viewport.X = 1000.0f; // 2DX座標
+	g_camera[MAP].viewport.Y = 100.0f; // 2DY座標
+	g_camera[MAP].viewport.Width = 200.0f; // 幅
+	g_camera[MAP].viewport.Height = 200.0f; // 高さ
+	g_camera[MAP].viewport.MinZ = 0.0f;
+	g_camera[MAP].viewport.MaxZ = 1.0f;
+	
+
 	//g_camera[2].viewport.X = 0.0f; // 2DX座標
 	//g_camera[2].viewport.Y = 360.0f; // 2DY座標
 	//g_camera[2].viewport.Width = 640.0f; // 幅
@@ -70,11 +85,6 @@ void InitCamera(void)
 
 	//for (int nCnt = 0; nCnt < 2; nCnt++)
 	//{
-		float fRotx = g_camera.posV.x - g_camera.posR.x;
-		float fRoty = g_camera.posV.y - g_camera.posR.y;
-		float fRotz = g_camera.posV.z - g_camera.posR.z;
-
-		g_camera.fDistance = sqrtf((fRotx * fRotx) + (fRoty * fRoty) + (fRotz * fRotz));	// 視点から注視点までの距離
 	//}
 }
 //=========================
@@ -90,13 +100,37 @@ void UninitCamera(void)
 void UpdateCamera(void)
 {
 	// プレイヤーを取得
-	//PLAYER* pPlayer = GetPlayer();
+	Player* pPlayer = GetPlayer();
 
 	// カメラの右スティック:::
 	StickCamera();
 
 	//マウスの視点移動
 	MouseView();
+
+	MODE mode = GetMode();
+
+	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
+	{
+		if (mode != MODE_TITLE)
+		{
+			//プレイヤー追従
+			g_camera[nCnt].posRDest.x = pPlayer->pos.x + sinf(pPlayer->rotDestPlayer.y) * 1.0f;
+			g_camera[nCnt].posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
+			g_camera[nCnt].posRDest.z = pPlayer->pos.z + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
+
+			g_camera[nCnt].posVDest.x = pPlayer->pos.x - sinf(g_camera[nCnt].rot.y) * g_camera[nCnt].fDistance;
+			g_camera[nCnt].posVDest.y = pPlayer->pos.y - cosf(g_camera[nCnt].rot.y) * g_camera[nCnt].fDistance;
+			g_camera[nCnt].posVDest.z = pPlayer->pos.z - cosf(g_camera[nCnt].rot.y) * g_camera[nCnt].fDistance;
+
+			g_camera[nCnt].posR.x += ((g_camera[nCnt].posRDest.x - g_camera[nCnt].posR.x) * 0.3f);
+			g_camera[nCnt].posR.z += ((g_camera[nCnt].posRDest.z - g_camera[nCnt].posR.z) * 0.3f);
+			g_camera[nCnt].posR.y += ((g_camera[nCnt].posRDest.y - g_camera[nCnt].posR.y) * 0.3f);
+
+			g_camera[nCnt].posV.x += ((g_camera[nCnt].posVDest.x - g_camera[nCnt].posV.x) * 0.3f);
+			g_camera[nCnt].posV.z += ((g_camera[nCnt].posVDest.z - g_camera[nCnt].posV.z) * 0.3f);
+		}
+	}
 
 #if 0
 	//******************
@@ -223,7 +257,7 @@ void UpdateCamera(void)
 //=========================
 // カメラの設定処理
 //=========================
-void SetCamera(void)
+void SetCamera(int nCnt)
 {
 	// デバイスポインタを宣言
 	LPDIRECT3DDEVICE9 pDevice;
@@ -232,29 +266,29 @@ void SetCamera(void)
 	pDevice = GetDevice();
 
 	// ビューマトリックスの初期化
-	D3DXMatrixIdentity(&g_camera.mtxView);
+	D3DXMatrixIdentity(&g_camera[nCnt].mtxView);
 
 	// ビューマトリックスの作成
-	D3DXMatrixLookAtLH(&g_camera.mtxView,
-		&g_camera.posV,
-		&g_camera.posR,
-		&g_camera.vecU);
+	D3DXMatrixLookAtLH(&g_camera[nCnt].mtxView,
+		&g_camera[nCnt].posV,
+		&g_camera[nCnt].posR,
+		&g_camera[nCnt].vecU);
 
 	// ビューマトリックスの設定
-	pDevice->SetTransform(D3DTS_VIEW, &g_camera.mtxView);
+	pDevice->SetTransform(D3DTS_VIEW, &g_camera[nCnt].mtxView);
 
 	// プロジェクションマトリックスの初期化
-	D3DXMatrixIdentity(&g_camera.mtxProjection);
+	D3DXMatrixIdentity(&g_camera[nCnt].mtxProjection);
 
 	// プロジェクションマトリックスの作成
-	D3DXMatrixPerspectiveFovLH(&g_camera.mtxProjection,
+	D3DXMatrixPerspectiveFovLH(&g_camera[nCnt].mtxProjection,
 		D3DXToRadian(45.0f),
 		(float)SCREEN_WIDTH / (float)SCREEN_HEIGHT,
 		10.0f,
 		1450.0f);
 
 	// プロジェクションマトリックスの設定
-	pDevice->SetTransform(D3DTS_PROJECTION, &g_camera.mtxProjection);
+	pDevice->SetTransform(D3DTS_PROJECTION, &g_camera[nCnt].mtxProjection);
 	
 }
 //=========================
@@ -262,7 +296,7 @@ void SetCamera(void)
 //=========================
 Camera* GetCamera()
 {
-	return &g_camera;
+	return &g_camera[0];
 }
 //==================================
 // カメラのための右スティック処理
@@ -343,35 +377,35 @@ void MouseView(void)
 		deltaY *= mouseSensitivity;
 
 		//回転量を更新
-		g_camera.rot.y += deltaX;
-		g_camera.rot.x += deltaY;
+		g_camera[MAIN].rot.y += deltaX;
+		g_camera[MAIN].rot.x += deltaY;
 
 		//回転量を制限
-		if (g_camera.rot.x > MAX_VIEWUP)
+		if (g_camera[MAIN].rot.x > MAX_VIEWUP)
 		{
-			g_camera.rot.x -= deltaY;
+			g_camera[MAIN].rot.x -= deltaY;
 		}
-		else if (g_camera.rot.x < MAX_VIEWDOWN)
+		else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
 		{
-			g_camera.rot.x -= deltaY;
+			g_camera[MAIN].rot.x -= deltaY;
 		}
 
 		//正規化
-		if (g_camera.rot.y < -D3DX_PI)
+		if (g_camera[MAIN].rot.y < -D3DX_PI)
 		{
-			g_camera.rot.y += D3DX_PI * 2.0f;
+			g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
 		}
-		else if (g_camera.rot.y > D3DX_PI)
+		else if (g_camera[MAIN].rot.y > D3DX_PI)
 		{
-			g_camera.rot.y += -D3DX_PI * 2.0f;
+			g_camera[MAIN].rot.y += -D3DX_PI * 2.0f;
 		}
-		if (g_camera.rot.x < -D3DX_PI)
+		if (g_camera[MAIN].rot.x < -D3DX_PI)
 		{
-			g_camera.rot.x += D3DX_PI * 2.0f;
+			g_camera[MAIN].rot.x += D3DX_PI * 2.0f;
 		}
-		else if (g_camera.rot.x > D3DX_PI)
+		else if (g_camera[MAIN].rot.x > D3DX_PI)
 		{
-			g_camera.rot.x += -D3DX_PI * 2.0f;
+			g_camera[MAIN].rot.x += -D3DX_PI * 2.0f;
 		}
 
 		//カーソルを中心に固定
@@ -382,9 +416,9 @@ void MouseView(void)
 		prevCursorPos.y = SCREEN_HEIGHT / 1.5f;
 
 		//カメラ座標を更新
-		g_camera.posR.x = g_camera.posV.x + sinf(g_camera.rot.x) * sinf(g_camera.rot.y) * g_camera.fDistance;
-		g_camera.posR.y = g_camera.posV.y + cosf(g_camera.rot.x) * g_camera.fDistance;
-		g_camera.posR.z = g_camera.posV.z + sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * g_camera.fDistance;
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.y = g_camera[MAIN].posV.y + cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 	}
 }
 //=========================
@@ -392,16 +426,16 @@ void MouseView(void)
 //=========================
 void MouseWheel(int zDelta)
 {
-	Zoom = g_camera.posV - g_camera.posR;
+	Zoom = g_camera[MAIN].posV - g_camera[MAIN].posR;
 	D3DXVec3Normalize(&Zoom, &Zoom);
 
 	if (zDelta < 0)
 	{
-		g_camera.posV += Zoom * g_camera.fDistance * 0.1f;
+		g_camera[MAIN].posV += Zoom * g_camera[MAIN].fDistance * 0.1f;
 	}
 	else if (zDelta > 0)
 	{
-		g_camera.posV -= Zoom * g_camera.fDistance * 0.1f;
+		g_camera[MAIN].posV -= Zoom * g_camera[MAIN].fDistance * 0.1f;
 	}
 
 }

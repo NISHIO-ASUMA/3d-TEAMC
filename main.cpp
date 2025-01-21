@@ -497,64 +497,77 @@ void Update(void)
 //===================
 void Draw(void)
 {
-	//画面クリア(バックバッファ&Zバッファのクリア)
-	g_pD3DDevice->Clear(0,
-		NULL,
-		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	Camera* pCamera = GetCamera();
 
-	//描画開始
-	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
+	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
 	{
-		// 描画成功時
-		//================
-		// 描画処理
-		//================
-		// 現在の画面の終了
-		switch (g_mode)
+		g_pD3DDevice->SetViewport(&pCamera[nCnt].viewport); // ビューポートの設定
+		
+		//画面クリア(バックバッファ&Zバッファのクリア)
+		g_pD3DDevice->Clear(0,
+			NULL,
+			(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
+			D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+
+		//描画開始
+		if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 		{
-		case MODE_TITLE: // タイトル画面
-			DrawTitle3d();
-			break;
+			SetCamera(nCnt); // カメラをセット
 
-		case MODE_TUTORIAL:// チュートリアル画面
-			DrawTutorial3d();
-			break;
+			// 描画成功時
+			//================
+			// 描画処理
+			//================
+			// 現在の画面の終了
+			switch (g_mode)
+			{
+			case MODE_TITLE: // タイトル画面
+				DrawTitle3d();
+				break;
 
-		case MODE_GAME: // ゲーム画面
-			DrawGame();
-			break;
-		case MODE_RESULT: // リザルト
-			DrawResult();
-			break;
+			case MODE_TUTORIAL:// チュートリアル画面
+				DrawTutorial3d();
+				break;
 
-		case MODE_RANKING: // ランキング画面
-			DrawRanking();
-			break;
-		}
+			case MODE_GAME: // ゲーム画面
+				DrawGame();
+				break;
+			case MODE_RESULT: // リザルト
+				DrawResult();
+				break;
+
+			case MODE_RANKING: // ランキング画面
+				DrawRanking();
+				break;
+			}
 
 #ifdef _DEBUG
 
-		//現在の画面の表示
-		DrawMode();
+			//現在の画面の表示
+			DrawMode();
 
-		//操作方法
-		DrawOperation();
+			//操作方法
+			DrawOperation();
 
-		// プレイヤーの座標表示
-		//DrawDebugPlayerPos();
+			// プレイヤーの座標表示
+			//DrawDebugPlayerPos();
 
 #endif
 
 		// フェードの描画
-		DrawFade();
+			DrawFade();
 
-		// 描画終了
-		g_pD3DDevice->EndScene();
+			// 描画終了
+			g_pD3DDevice->EndScene();
+
+			if (g_mode == MODE_TITLE || g_mode == MODE_TUTORIAL)
+			{
+				break; // 一つ目をセットしたら抜ける
+			}
+		}
 	}
-	// バックバッファとフロントバッファの入れ替え
-	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
-
+		// バックバッファとフロントバッファの入れ替え
+		g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 }
 //======================
 // FPSの表示

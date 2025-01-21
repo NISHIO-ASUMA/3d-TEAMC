@@ -94,8 +94,6 @@ void UpdateTitle3d(void)
 //============================
 void DrawTitle3d(void)
 {
-	SetCamera();
-
 	//‰e‚Ì•`‰æˆ—
 	DrawShadow();
 

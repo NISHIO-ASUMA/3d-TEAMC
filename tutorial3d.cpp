@@ -69,8 +69,6 @@ void UpdateTutorial3d(void)
 //============================
 void DrawTutorial3d(void)
 {
-	SetCamera();
-
 	//‰e‚Ì•`‰æˆ—
 	DrawShadow();
 

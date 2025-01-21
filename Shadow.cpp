@@ -10,7 +10,7 @@
 #include "Shadow.h"
 
 // •\Ž¦‚·‚éÅ‘å”‚Æ‚»‚ÌŒ…”
-#define SHADOW_AMOUNT (4000)
+#define SHADOW_AMOUNT (100)
 Shadow g_aShadow[SHADOW_AMOUNT];
 
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffShadow = NULL;

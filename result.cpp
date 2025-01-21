@@ -12,6 +12,7 @@
 #include"fade.h"
 #include"input.h"
 #include "time.h"
+#include "camera.h"
 
 //****************************
 //ƒOƒ[ƒoƒ‹•Ï”

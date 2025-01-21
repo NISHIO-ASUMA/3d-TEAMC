@@ -193,9 +193,6 @@ void UpdateGame(void)
 //=======================
 void DrawGame(void)
 {
-	//カメラの設定処理
-	SetCamera();
-
 	//プレイヤーの影の描画処理
 	DrawShadow();
 

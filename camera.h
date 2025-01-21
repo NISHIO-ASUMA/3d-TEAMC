@@ -12,6 +12,21 @@
 //****************************
 #include "main.h"
 
+//*****************************
+// マクロ定義
+//*****************************
+#define MAX_CAMERA (2) // カメラの最大数
+
+//****************************
+// カメラ列挙型を定義
+//****************************
+typedef enum
+{
+	CAMERATYPE_PLAYER = 0,
+	CAMERATYPE_MAP,
+	CAMERATYPE_MAX
+}CAMERATYPE;
+
 //****************************
 // カメラ列挙型を定義
 //****************************
@@ -46,7 +61,7 @@ typedef struct
 void InitCamera(void);		// カメラの初期化
 void UninitCamera(void);	// カメラの終了
 void UpdateCamera(void);	// カメラの更新
-void SetCamera(void);		// カメラの設定
+void SetCamera(int nCnt);		// カメラの設定
 Camera* GetCamera();		// カメラの取得
 void StickCamera(void);		// 右スティックのカメラ処理
 void MouseWheel(int zDelta);// マウスホイール
