@@ -229,11 +229,6 @@ void UpdateEdit(void)
 	{
 		nLoad = 0;
 	}
-
-	if (KeyboardTrigger(DIK_O))
-	{
-		g_EditCount--;
-	}
 }
 
 //===========================
