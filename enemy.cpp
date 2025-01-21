@@ -14,6 +14,7 @@
 #include "Score.h"
 #include "input.h"
 #include "damagepop.h"
+#include "block.h"
 
 //****************************
 //マクロ定義
@@ -209,6 +210,13 @@ void UpdateEnemy(void)
 			continue;
 		}
 
+		if(CollisionEnemy(&g_Enemy[nCntEnemy].pos, // 敵の位置
+			30.0f, // ブロックの半径
+			30.0f)) // 敵の半径 
+		{
+			HitEnemy(nCntEnemy, 1);
+		}
+
 		UpdateMotion(&g_Enemy[nCntEnemy].Motion);
 	}
 }
@@ -360,10 +368,40 @@ void HitEnemy(int nCnt,int nDamage)
 		g_Enemy[nCnt].nCounterState = 30;//ダメージ状態からノーマルに戻るまでの時間
 	}
 }
+//=======================
+//敵の設定処理
+//=======================
+void SetEnemy(D3DXVECTOR3 pos, ENEMYTYPE nType,int nLife,D3DXVECTOR3 move)
+{
+	MODE mode = GetMode();
+
+	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
+	{
+		if (g_Enemy[nCntEnemy].bUse == false)
+		{
+			g_Enemy[nCntEnemy] = g_LoadEnemy[nType]; // 情報を代入
+
+			g_Enemy[nCntEnemy].pos = pos;
+			g_Enemy[nCntEnemy].move = move;
+			g_Enemy[nCntEnemy].nType = nType;
+			g_Enemy[nCntEnemy].nLife = nLife;
+			g_Enemy[nCntEnemy].bUse = true;
+
+			g_nNumEnemy++;
+			break;
+		}
+	}
+}
+//=======================
+//敵の総数取得処理
+//=======================
+int GetNumEnemy(void)
+{
+	return g_nNumEnemy;
+}
 //=============================
 //敵のロード処理
 //=============================
-
 void LoadEnemy(int nType)
 {
 	LPDIRECT3DDEVICE9 pDevice;
@@ -430,22 +468,22 @@ void LoadEnemy(int nType)
 
 						MODEL_FILE = aStr;
 
-							//Xファイルの読み込み
-							D3DXLoadMeshFromX(MODEL_FILE,
-								D3DXMESH_SYSTEMMEM,
-								pDevice,
-								NULL,
-								&g_LoadEnemy[nType].EnemyModel[nCntNum].pBuffMatEnemy,
-								NULL,
-								&g_LoadEnemy[nType].EnemyModel[nCntNum].dwNumMatEnemy,
-								&g_LoadEnemy[nType].EnemyModel[nCntNum].pMeshEnemy);
+						//Xファイルの読み込み
+						D3DXLoadMeshFromX(MODEL_FILE,
+							D3DXMESH_SYSTEMMEM,
+							pDevice,
+							NULL,
+							&g_LoadEnemy[nType].EnemyModel[nCntNum].pBuffMatEnemy,
+							NULL,
+							&g_LoadEnemy[nType].EnemyModel[nCntNum].dwNumMatEnemy,
+							&g_LoadEnemy[nType].EnemyModel[nCntNum].pMeshEnemy);
 
 						if (nCntNum < g_LoadEnemy[nType].Motion.nNumModel)
 						{
 							nCntNum++;
 						}
 
-						if(nCntNum >= g_LoadEnemy[nType].Motion.nNumModel)
+						if (nCntNum >= g_LoadEnemy[nType].Motion.nNumModel)
 						{
 							nCntNum = 0;
 						}
@@ -462,7 +500,7 @@ void LoadEnemy(int nType)
 								fscanf(pFile, "%s", &gomi[0]);
 
 								fscanf(pFile, "%d", &g_LoadEnemy[nType].Motion.nNumModel);
-								
+
 								break;
 							}
 						}
@@ -484,7 +522,7 @@ void LoadEnemy(int nType)
 							{
 								fscanf(pFile, "%s", &gomi[0]);
 								fscanf(pFile, "%d", &g_LoadEnemy[nType].Motion.aModel[nIdx].nIdxModelParent);
-								
+
 							}
 							else if (strcmp(aStr, "POS") == 0)
 							{
@@ -558,7 +596,7 @@ void LoadEnemy(int nType)
 												fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[EnenKey].aKey[nCntPartsPos].fPosX);
 												fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[EnenKey].aKey[nCntPartsPos].fPosY);
 												fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[EnenKey].aKey[nCntPartsPos].fPosZ);
-												
+
 												nCntPartsPos++;
 											}
 											else if (strcmp(aStr6, "ROT") == 0)
@@ -613,36 +651,5 @@ void LoadEnemy(int nType)
 		return;
 	}
 	fclose(pFile);
-	
-}
-//=======================
-//敵の設定処理
-//=======================
-void SetEnemy(D3DXVECTOR3 pos, ENEMYTYPE nType,int nLife,D3DXVECTOR3 move)
-{
-	MODE mode = GetMode();
 
-	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
-	{
-		if (g_Enemy[nCntEnemy].bUse == false)
-		{
-			g_Enemy[nCntEnemy] = g_LoadEnemy[nType]; // 情報を代入
-
-			g_Enemy[nCntEnemy].pos = pos;
-			g_Enemy[nCntEnemy].move = move;
-			g_Enemy[nCntEnemy].nType = nType;
-			g_Enemy[nCntEnemy].nLife = nLife;
-			g_Enemy[nCntEnemy].bUse = true;
-
-			g_nNumEnemy++;
-			break;
-		}
-	}
-}
-//=======================
-//敵の総数取得処理
-//=======================
-int GetNumEnemy(void)
-{
-	return g_nNumEnemy;
 }

@@ -19,6 +19,11 @@
 #define MOUSE_SIZE (50.0f)
 
 //****************************
+//プロトタイプ宣言
+//****************************
+void SetMtxBlock(int nCnt);
+
+//****************************
 //グローバル変数宣言
 //****************************
 BLOCK g_Block[MAX_BLOCK];
@@ -457,6 +462,34 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 	}
 
 	return bLanding;
+}
+//=======================
+//ブロックと敵の判定
+//=======================
+bool CollisionEnemy(D3DXVECTOR3* pPos, float BlockRadius, float EnemyRadius)
+{
+	bool bHit = false; // 判定を返す変数
+
+	for (int nCnt = 0; nCnt < MAX_BLOCK; nCnt++)
+	{
+		float fDistanceX = g_Block[nCnt].pos.x - pPos->x; // 距離Xを算出
+		float fDistanceY = g_Block[nCnt].pos.y - pPos->y; // 距離Yを算出
+		float fDistanceZ = g_Block[nCnt].pos.z - pPos->z; // 距離Zを算出
+
+		float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
+
+		float Radius = BlockRadius + EnemyRadius;
+
+		Radius = Radius * Radius;
+
+		if (fDistance <= Radius && g_Block[nCnt].state == BLOCKSTATE_THROW)
+		{
+			bHit = true;
+			g_Block[nCnt].bUse = false;
+		}
+	}
+
+	return bHit;
 }
 //=======================
 //ブロックの取得処理

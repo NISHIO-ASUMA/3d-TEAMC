@@ -64,8 +64,18 @@ void InitGame(void)
 	//ブロックの初期化処理
 	InitBlock();
 
-	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 0.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 20.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetEnemy(D3DXVECTOR3(50.0f, 0.0f, 80.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+	//仮置き
+	SetBlock(D3DXVECTOR3(50.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
+	SetBlock(D3DXVECTOR3(-100.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
 	SetBlock(D3DXVECTOR3(100.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
+	SetBlock(D3DXVECTOR3(110.0f, 0.0f, 60.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
+	SetBlock(D3DXVECTOR3(120.0f, 0.0f, 20.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
+	SetBlock(D3DXVECTOR3(130.0f, 0.0f, 40.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
+	SetBlock(D3DXVECTOR3(140.0f, 0.0f, 90.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
 
 	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
 	g_nCounterGameState = 0;
@@ -108,6 +118,15 @@ void UninitGame(void)
 //=======================
 void UpdateGame(void)
 {
+	int nNumEnemy = GetNumEnemy();
+
+	//敵が全滅したらゲーム終了
+
+	if (nNumEnemy <= 0)
+	{
+		g_gameState = GAMESTATE_END;
+	}
+
 	switch (g_gameState)
 	{
 	case GAMESTATE_NORMAL://通常状態
@@ -163,7 +182,7 @@ void UpdateGame(void)
 		//ブロックの更新処理
 		UpdateBlock();
 
-		if (KeyboardTrigger(DIK_F4))
+		if (KeyboardTrigger(DIK_F8))
 		{
 			g_gameState = GAMESTATE_END;
 		}

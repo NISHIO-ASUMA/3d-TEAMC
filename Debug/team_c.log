@@ -1,10 +1,2 @@
 ﻿  game.cpp
-  meshfield.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\meshfield.cpp(206,13): warning C4101: 'pVtx': ローカル変数は 1 度も使われていません。
-  motion.cpp
-  player.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\player.cpp(719,23): warning C4477: 'fscanf' : 書式文字列 '%d' には、型 'int *' の引数が必要ですが、可変個引数 1 は型 'bool *' です
-  title3d.cpp
-  tutorial3d.cpp
-  コードを生成中...
   team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe
