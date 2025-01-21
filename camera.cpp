@@ -19,11 +19,16 @@
 #define MAX_VIEWDOWN (0.1f) // カメラの制限
 
 //*****************************
+// プロトタイプ宣言
+//*****************************
+void MouseView(void);       // マウスの視点移動
+
+//*****************************
 // グローバル変数宣言
 //*****************************
 //Camera g_camera[2];				// カメラ情報
 Camera g_camera;				// カメラ情報
-
+D3DXVECTOR3 Zoom;
 //=========================
 // カメラの初期化処理
 //=========================
@@ -36,7 +41,8 @@ void InitCamera(void)
 		g_camera.posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// カメラの見ている位置
 		g_camera.vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
 		g_camera.rot = D3DXVECTOR3(D3DX_PI * 0.65f, 0.0f, 0.0f);	    // 角度
-		g_camera.g_CameraMode = CAMERAMODE_PLAYER;					// 初期状態
+		g_camera.g_CameraMode = CAMERAMODE_PLAYER;						// 初期状態
+		Zoom = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	//}
 
 	//g_camera[0].viewport.X = 0.0f; // 2DX座標
@@ -320,7 +326,7 @@ void MouseView(void)
 
 	DIMOUSESTATE mouseState;
 
-	if (GetMouseState(&mouseState)&& mode != MODE_TITLE)
+	if (mode != MODE_TITLE && GetMouseState(&mouseState))
 	{
 		static POINT prevCursorPos = { SCREEN_WIDTH / 1.5f,SCREEN_HEIGHT / 1.5f };
 
@@ -380,4 +386,22 @@ void MouseView(void)
 		g_camera.posR.y = g_camera.posV.y + cosf(g_camera.rot.x) * g_camera.fDistance;
 		g_camera.posR.z = g_camera.posV.z + sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * g_camera.fDistance;
 	}
+}
+//=========================
+// マウスの視点移動処理
+//=========================
+void MouseWheel(int zDelta)
+{
+	Zoom = g_camera.posV - g_camera.posR;
+	D3DXVec3Normalize(&Zoom, &Zoom);
+
+	if (zDelta < 0)
+	{
+		g_camera.posV += Zoom * g_camera.fDistance * 0.1f;
+	}
+	else if (zDelta > 0)
+	{
+		g_camera.posV -= Zoom * g_camera.fDistance * 0.1f;
+	}
+
 }

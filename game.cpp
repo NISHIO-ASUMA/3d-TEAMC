@@ -21,6 +21,7 @@
 #include"pause.h"
 #include "meshfield.h"
 #include "player.h"
+#include "enemy.h"
 
 //****************************
 //マクロ定義
@@ -56,6 +57,11 @@ void InitGame(void)
 	//プレイヤーの初期化処理
 	InitPlayer();
 
+	//敵の初期化処理
+	InitEnemy();
+
+	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 0.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
 	g_nCounterGameState = 0;
 
@@ -84,6 +90,9 @@ void UninitGame(void)
 
 	//プレイヤーの終了処理
 	UninitPlayer();
+
+	//敵の終了処理
+	UninitEnemy();
 }
 //=======================
 //ゲーム画面の更新処理
@@ -139,6 +148,9 @@ void UpdateGame(void)
 		//プレイヤーの更新処理
 		UpdatePlayer();
 
+		//敵の更新処理
+		UpdateEnemy();
+
 		if (KeyboardTrigger(DIK_RETURN))
 		{
 			g_gameState = GAMESTATE_END;
@@ -161,6 +173,9 @@ void DrawGame(void)
 
 	//プレイヤーの描画処理
 	DrawPlayer();
+
+	//敵の描画処理
+	DrawEnemy();
 
 	if (g_bPause == true)
 	{//ポーズ中

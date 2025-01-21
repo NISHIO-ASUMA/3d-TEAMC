@@ -105,6 +105,9 @@
     <ClCompile Include="mouse.cpp">
       <Filter>ソース ファイル\Os</Filter>
     </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>ソース ファイル\obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -172,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="mouse.h">
       <Filter>ヘッダー ファイル\Os</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
+      <Filter>ヘッダー ファイル\obj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

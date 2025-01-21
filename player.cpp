@@ -98,8 +98,6 @@ void InitPlayer(void)
 		}
 	}
 
-	g_player = g_LoadPlayer[0];
-
 	//頂点座標の取得
 	int nNumVtx;//頂点数
 	DWORD sizeFVF;//頂点フォーマットのサイズ
@@ -196,6 +194,8 @@ void InitPlayer(void)
 			g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->UnlockVertexBuffer();
 		}
 	}
+	//最初に描画したいプレイヤーの情報を代入
+	g_player = g_LoadPlayer[0];
 }
 //============================
 //プレイヤーの終了処理

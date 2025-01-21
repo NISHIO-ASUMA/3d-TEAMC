@@ -266,6 +266,10 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			ToggleFullscreen(hWnd);	// F11でフルスクリーン
 			break;
 		}
+	case WM_MOUSEWHEEL:
+		int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		MouseWheel(zDelta);
+			break;
 		break;
 	//case WM_SETCURSOR:	// カーソルの設定
 	//	SetCursor(NULL);
