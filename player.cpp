@@ -17,6 +17,7 @@
 #include "meshfield.h"
 #include "block.h"
 #include "item.h"
+#include "enemy.h"
 
 //****************************
 //ƒ}ƒNƒ’è‹`

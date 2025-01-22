@@ -863,7 +863,10 @@ void DrawEditMode(void)
 	RECT rectSet = { 0, 140, SCREEN_WIDTH, SCREEN_HEIGHT };
 	RECT rectScal = { 0, 160, SCREEN_WIDTH, SCREEN_HEIGHT };
 	RECT rectMove = { 0, 180, SCREEN_WIDTH, SCREEN_HEIGHT };
-	RECT rectSave = { 0, 200, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectSave = { 0, 220, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectCategory = { 0, 200, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectCamera = { 0, 240, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectpMove = { 0, 260, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 	char aStrGame[256];
 	char aStrType[256];
@@ -873,28 +876,17 @@ void DrawEditMode(void)
 	char aStrScal[256];
 	char aStrMove[256];
 	char aStrSave[256];
+	char aStrCategory[256];
+	char aStrCamera[256];
+	char aStrpMove[256];
 
 	wsprintf(&aStrGame[0],
 		"+=================================================+\n"
 		"+   現在のモード[編集モード]::ゲームモード[F2]    +\n"
 		"+=================================================+\n");
 
-	if (pEdit->nType == 0)
-	{
-		wsprintf(&aStrType[0], "設置するブロック[ 石 ]:[ + F / - G ]\n");
-	}
-	else if (pEdit->nType == 1)
-	{
-		wsprintf(&aStrType[0], "設置するブロック[ 仮 ]:[ + F / - G ]\n");
-	}
-	else if (pEdit->nType == 2)
-	{
-		wsprintf(&aStrType[0], "設置するブロック[ 仮 ]:[ + F / - G ]\n");
-	}
-	else if (pEdit->nType == 3)
-	{
-		wsprintf(&aStrType[0], "設置するブロック[ 仮 ]:[ + F / - G ]\n");
-	}
+	wsprintf(&aStrType[0], "設置するブロック変更[ %d種類目 ]:[ + F / - G ]\n",pEdit->nType);
+	
 
 	wsprintf(&aStrNum[0], "ブロックの設置数[%d]\n", nNumBlock);
 	wsprintf(&aStrKill[0], "ブロックを消去:[ BACKSPACE ]\n");
@@ -902,15 +894,21 @@ void DrawEditMode(void)
 	wsprintf(&aStrScal[0], "ブロックの大きさ変更:[ + V / - B ]\n");
 	wsprintf(&aStrMove[0], "移動:[ WASD ]\n");
 	wsprintf(&aStrSave[0], "セーブ[ F7 ]:前回の配置物読み込み[ F8 ] <data/saveEdit.txt>\n");
+	wsprintf(&aStrCategory[0], "カテゴリー変更:[ + Y / - U ]\n");
+	wsprintf(&aStrCamera[0], "注視点移動:[ 右クリック ]:視点移動:[ 左クリック ]:ズーム:[ ホイール ]\n");
+	sprintf(&aStrpMove[0], "移動量変更:[ %3.2f ]:[ + H / -J ]\n",pEdit->fMove);
 
 	//テキストの描画
-	g_pFont->DrawText(NULL, &aStrType[0], -1, &rectBlockType, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
-	g_pFont->DrawText(NULL, &aStrNum[0], -1, &rectBlockNum, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
-	g_pFont->DrawText(NULL, &aStrKill[0], -1, &rectBlockKill, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
-	g_pFont->DrawText(NULL, &aStrSet[0], -1, &rectSet, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
+	g_pFont->DrawText(NULL, &aStrType[0], -1, &rectBlockType, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrNum[0], -1, &rectBlockNum, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrKill[0], -1, &rectBlockKill, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrSet[0], -1, &rectSet, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 
 	g_pFont->DrawText(NULL, &aStrGame[0], -1, &rectGameMode, DT_LEFT, D3DCOLOR_RGBA(0, 200, 0, 255));
-	g_pFont->DrawText(NULL, &aStrScal[0], -1, &rectScal, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
-	g_pFont->DrawText(NULL, &aStrMove[0], -1, &rectMove, DT_LEFT, D3DCOLOR_RGBA(255, 165, 0, 255));
+	g_pFont->DrawText(NULL, &aStrScal[0], -1, &rectScal, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrMove[0], -1, &rectMove, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrSave[0], -1, &rectSave, DT_LEFT, D3DCOLOR_RGBA(225, 0, 0, 255));
+	g_pFont->DrawText(NULL, &aStrCategory[0], -1, &rectCategory, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrCamera[0], -1, &rectCamera, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrpMove[0], -1, &rectpMove, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 }

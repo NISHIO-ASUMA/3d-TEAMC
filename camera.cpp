@@ -41,7 +41,6 @@ D3DXVECTOR3 Zoom;
 void InitCamera(void)
 {
 	// 変数の初期化
-
 	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 80.0f, -250.0f);			// カメラの位置
 	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 700.0f, 0.0f);			// カメラの位置
 
@@ -528,7 +527,7 @@ void MouseWheel(int zDelta)
 	// 現在のモードを取得
 	MODE nMode = GetMode();
 
-	if (nMode == MODE_TUTORIAL || nMode == MODE_EDIT)
+	if (nMode == MODE_TUTORIAL || GetEditState())
 	{// ゲーム チュートリアル 編集モード
 		// TODO : ここのズームの処理変更の可能性あり
 

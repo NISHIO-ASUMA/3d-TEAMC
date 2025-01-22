@@ -1,18 +1,2 @@
-﻿  camera.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(64,30): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(65,30): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(66,34): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(67,35): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(71,29): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(72,29): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(73,33): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(74,34): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(387,47): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(387,47): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(387,68): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(387,68): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(434,51): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(434,29): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(437,34): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\20250114\3d-TEAMC\camera.cpp(438,35): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+﻿  edit.cpp
   team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe

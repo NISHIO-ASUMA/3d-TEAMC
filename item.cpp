@@ -42,7 +42,7 @@ void InitItem(void)
 		g_Item[nCntItem].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//ˆÚ“®—Ê
 		g_Item[nCntItem].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //Šp“x
 		g_Item[nCntItem].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//Šg‘å—¦
-		g_Item[nCntItem].nType = ITEMTYPE_ONE;				  //í—Ş
+		g_Item[nCntItem].nType = ITEMTYPE_BAT;				  //í—Ş
 		g_Item[nCntItem].bUse = false;						  //–¢g—p”»’è
 		g_Item[nCntItem].nLife = 20;						  //‘Ì—Í
 		g_Item[nCntItem].state = ITEMSTATE_NORMAL;			  //ó‘Ô

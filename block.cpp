@@ -39,7 +39,7 @@ void InitBlock(void)
 		g_Block[nCntBlock].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//ˆÚ“®—Ê
 		g_Block[nCntBlock].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //Šp“x
 		g_Block[nCntBlock].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//Šg‘å—¦
-		g_Block[nCntBlock].nType = BLOCKTYPE_ONE;				//í—Ş
+		g_Block[nCntBlock].nType = BLOCKTYPE_APARTMENT;				//í—Ş
 		g_Block[nCntBlock].bUse = false;						//–¢g—pó‘Ô
 		g_Block[nCntBlock].nLife = 20;							//‘Ì—Í
 		g_Block[nCntBlock].state = BLOCKSTATE_NORMAL;			//ó‘Ô

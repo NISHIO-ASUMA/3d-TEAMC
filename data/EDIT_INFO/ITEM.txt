@@ -1,0 +1,12 @@
+NUM_MODEL = 5
+
+#-------------------------
+# モデルファイル
+#-------------------------
+MODEL_FILENAME = data/MODEL/ITEM/wepon_bat.x	# [0]バット
+MODEL_FILENAME = data/MODEL/ITEM/wepon_golf.x	# [1]ゴルフ
+MODEL_FILENAME = data/MODEL/ITEM/wepon_hunmer.x	# [2]ハンマー
+MODEL_FILENAME = data/MODEL/ITEM/wepon_stone.x	# [3]石
+MODEL_FILENAME = data/MODEL/ITEM/wepon_wood.x	# [4]木
+
+END_SCRIPT

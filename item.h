@@ -26,13 +26,22 @@
 //***************************
 typedef enum
 {
-	ITEMTYPE_ONE = 0,
+	ITEMTYPE_BAT = 0,
+	ITEMTYPE_GOLF,
+	ITEMTYPE_HUNMER,
+	ITEMTYPE_STONE,
+	ITEMTYPE_WOOD,
 	ITEMTYPE_MAX
 }ITEMTYPE;
 
 static const char* ITEMTYPE_INFO[ITEMTYPE_MAX] =
 {
-	"data\\MODEL\\OBJ\\wepon_stone.x",
+	"data\\MODEL\\ITEM\\wepon_bat.x",
+	"data\\MODEL\\ITEM\\wepon_golf.x",
+	"data\\MODEL\\ITEM\\wepon_hunmer.x",
+	"data\\MODEL\\ITEM\\wepon_stone.x",
+	"data\\MODEL\\ITEM\\wepon_wood.x",
+
 };
 
 //***************************

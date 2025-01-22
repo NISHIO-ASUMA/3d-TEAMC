@@ -82,15 +82,6 @@ void InitGame(void)
 	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-	//âºíuÇ´
-	SetBlock(D3DXVECTOR3(50.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-	SetBlock(D3DXVECTOR3(-100.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-	SetBlock(D3DXVECTOR3(100.0f, 0.0f, 0.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-
-	SetItem(D3DXVECTOR3(-50.0f, 0.0f, 60.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-	SetItem(D3DXVECTOR3(-100.0f, 0.0f, 100.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-	SetItem(D3DXVECTOR3(100.0f, 0.0f, 200.0f), 0, D3DXVECTOR3(2.0f, 2.0f, 2.0f));
-
 	g_gameState = GAMESTATE_NORMAL;//í èÌèÛë‘Ç…ê›íË
 	g_nCounterGameState = 0;
 

@@ -14,6 +14,12 @@
 
 #include"main.h"
 #include"block.h"
+#include "item.h"
+
+//*******************
+//マクロ定義
+//*******************
+#define MAX_TYPE (20) // ブロックの数 + アイテムの数
 
 //*******************
 //エディットの種類
@@ -21,9 +27,32 @@
 typedef enum
 {
 	EDITMODE_BLOCK = 0,
-	EDITMODE_WALL,
+	EDITMODE_ITEM,
 	EDITMODE_MAX
 }EDITMODE;
+
+const int EDIT_COUNT[EDITMODE_MAX] =
+{
+	BLOCKTYPE_MAX,
+	ITEMTYPE_MAX,
+};
+
+typedef struct
+{
+	LPD3DXMESH g_pMeshEdit;//メッシュ(頂点座標)へのポインタ
+	LPD3DXBUFFER g_pBuffMatEdit;//マテリアルへのポインタ
+	DWORD g_dwNumMatEdit;//マテリアルの数
+	LPDIRECT3DTEXTURE9 g_apTextureEdit[MAX_TEX];
+	D3DXVECTOR3 vtxMin, vtxMax;
+}EditModel;
+//*****************************
+//エディットのテクスチャ構造体
+//*****************************
+typedef struct
+{
+	EditModel pModel[MAX_TYPE];
+	int nNumModel;
+}EditTex;
 
 //*******************
 //エディットの構造体
@@ -36,11 +65,12 @@ typedef struct
 	D3DXMATRIX mtxWorld;
 	D3DXVECTOR3 Scal;
 	bool bUse;
-	int nEditMode;
+	int EditObj;
 	int ObjCnt;
 	int nBlockTypeNumber;
 	int nType;
-	BLOCKTEX ModelTex[BLOCKTYPE_MAX];
+	EditTex Category[EDITMODE_MAX];
+	float fMove;
 }EDIT_INFO;
 
 //*********************

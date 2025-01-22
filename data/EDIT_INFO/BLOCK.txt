@@ -1,0 +1,11 @@
+NUM_MODEL = 4
+
+#-------------------------
+# モデルファイル
+#-------------------------
+MODEL_FILENAME = data/MODEL/OBJ/apartment.x	# [0]アパート
+MODEL_FILENAME = data/MODEL/OBJ/bill000.x	# [1]アパート
+MODEL_FILENAME = data/MODEL/OBJ/bill001.x	# [2]アパート
+MODEL_FILENAME = data/MODEL/OBJ/bill002.x	# [3]アパート
+
+END_SCRIPT

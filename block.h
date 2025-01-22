@@ -26,13 +26,20 @@
 //***************************
 typedef enum
 {
-	BLOCKTYPE_ONE = 0,
+	BLOCKTYPE_APARTMENT = 0,
+	BLOCKTYPE_BILL000,
+	BLOCKTYPE_BILL001,
+	BLOCKTYPE_BILL002,
 	BLOCKTYPE_MAX
 }BLOCKTYPE;
 
 static const char* MODELTYPE[BLOCKTYPE_MAX] =
 {
-	"data\\MODEL\\OBJ\\wepon_stone.x",
+	"data\\MODEL\\OBJ\\apartment.x",
+	"data\\MODEL\\OBJ\\bill000.x",
+	"data\\MODEL\\OBJ\\bill001.x",
+	"data\\MODEL\\OBJ\\bill002.x",
+
 };
 
 //***************************
