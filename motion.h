@@ -13,6 +13,7 @@
 //****************************
 #include "main.h"
 #include"model.h"
+#include<stdio.h>
 
 //****************************
 //マクロ定義
@@ -25,10 +26,10 @@
 //**************************
 typedef enum
 {
-	TYPE_PLAYER = 0,
-	TYPE_ENEMY,
-	TYPE_MAX
-}TYPE;
+	LOADTYPE_PLAYER = 0,
+	LOADTYPE_ENEMY,
+	LOADTYPE_MAX
+}LOADTYPE;
 
 //**************************
 //モデルのモーション
@@ -102,7 +103,6 @@ typedef struct
 //****************************
 //プロトタイプ宣言
 //****************************
-void LoadMotion(int nType);
 void UpdateMotion(MOTION* pMotion);
 void NoLoopMotion(MOTION* Motion,int Motiontype);
 #endif

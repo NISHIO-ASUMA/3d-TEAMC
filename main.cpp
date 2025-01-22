@@ -715,7 +715,6 @@ void SetMode(MODE mode)
 	case MODE_RANKING:  // ƒ‰ƒ“ƒLƒ“ƒO‰æ–Ê
 		UninitRanking();
 		break;
-
 	}
 
 	g_mode = mode;		// ‰æ–ÊØ‚è‘Ö‚¦

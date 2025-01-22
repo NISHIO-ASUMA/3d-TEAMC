@@ -10,6 +10,12 @@
 //****************************
 #include "motion.h"
 #include"meshfield.h"
+#include <stdio.h>
+
+//****************************
+//マクロ定義
+//****************************
+#define MAX_WORD (128) // 最大の文字数
 
 //=======================
 // モーションの更新処理
@@ -123,5 +129,4 @@ void NoLoopMotion(MOTION *Motion,int Motiontype)
 			Motion->motionType = MOTIONTYPE_NEUTRAL;
 		}
 	}
-
 }
