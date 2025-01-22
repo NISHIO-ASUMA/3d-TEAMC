@@ -114,11 +114,11 @@ void UpdateCamera(void)
 	// ゲームの時のカメラの更新
 	if (mode != MODE_TITLE && !GetEditState())
 	{
-		// カメラの右スティック:::
-		StickCamera();
+		//// カメラの右スティック:::
+		//StickCamera();
 
 		//マウスの視点移動
-		MouseView();
+		//MouseView();
 
 		for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
 		{
