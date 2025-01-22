@@ -42,8 +42,8 @@ void InitCamera(void)
 {
 	// 変数の初期化
 
-	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 65.0f, -250.0f);			// カメラの位置
-	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 300.0f, -5.0f);			// カメラの位置
+	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 80.0f, -250.0f);			// カメラの位置
+	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 700.0f, 0.0f);			// カメラの位置
 
 	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
 	{
@@ -75,7 +75,6 @@ void InitCamera(void)
 	g_camera[MAP].viewport.MinZ = 0.0f;
 	g_camera[MAP].viewport.MaxZ = 1.0f;
 	
-
 	//g_camera[2].viewport.X = 0.0f; // 2DX座標
 	//g_camera[2].viewport.Y = 360.0f; // 2DY座標
 	//g_camera[2].viewport.Width = 640.0f; // 幅
@@ -118,27 +117,40 @@ void UpdateCamera(void)
 		//StickCamera();
 
 		//マウスの視点移動
-		//MouseView();
+		MouseView();
 
-		for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
-		{
+//****************************************
+//      プレイヤー追従(MAINカメラ)
+//****************************************
+		g_camera[MAIN].posRDest.x = pPlayer->pos.x + sinf(pPlayer->rotDestPlayer.y) * 1.0f;
+		g_camera[MAIN].posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
+		g_camera[MAIN].posRDest.z = pPlayer->pos.z + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
 
-			//プレイヤー追従
-			g_camera[nCnt].posRDest.x = pPlayer->pos.x + sinf(pPlayer->rotDestPlayer.y) * 1.0f;
-			g_camera[nCnt].posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
-			g_camera[nCnt].posRDest.z = pPlayer->pos.z + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
+		g_camera[MAIN].posVDest.x = pPlayer->pos.x - sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posVDest.y = pPlayer->pos.y - cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posVDest.z = pPlayer->pos.z - cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 
-			g_camera[nCnt].posVDest.x = pPlayer->pos.x - sinf(g_camera[nCnt].rot.y) * g_camera[nCnt].fDistance;
-			g_camera[nCnt].posVDest.y = pPlayer->pos.y - cosf(g_camera[nCnt].rot.y) * g_camera[nCnt].fDistance;
-			g_camera[nCnt].posVDest.z = pPlayer->pos.z - cosf(g_camera[nCnt].rot.y) * g_camera[nCnt].fDistance;
+		g_camera[MAIN].posR.x += ((g_camera[MAIN].posRDest.x - g_camera[MAIN].posR.x) * 0.3f);
+		g_camera[MAIN].posR.y += ((g_camera[MAIN].posRDest.y - g_camera[MAIN].posR.y) * 0.3f);
+		g_camera[MAIN].posR.z += ((g_camera[MAIN].posRDest.z - g_camera[MAIN].posR.z) * 0.3f);
 
-			g_camera[nCnt].posR.x += ((g_camera[nCnt].posRDest.x - g_camera[nCnt].posR.x) * 0.3f);
-			g_camera[nCnt].posR.z += ((g_camera[nCnt].posRDest.z - g_camera[nCnt].posR.z) * 0.3f);
-			g_camera[nCnt].posR.y += ((g_camera[nCnt].posRDest.y - g_camera[nCnt].posR.y) * 0.3f);
+		g_camera[MAIN].posV.x += ((g_camera[MAIN].posVDest.x - g_camera[MAIN].posV.x) * 0.3f);
+		g_camera[MAIN].posV.z += ((g_camera[MAIN].posVDest.z - g_camera[MAIN].posV.z) * 0.3f);
 
-			g_camera[nCnt].posV.x += ((g_camera[nCnt].posVDest.x - g_camera[nCnt].posV.x) * 0.3f);
-			g_camera[nCnt].posV.z += ((g_camera[nCnt].posVDest.z - g_camera[nCnt].posV.z) * 0.3f);
-		}
+//****************************************
+//      プレイヤー追従(MAPカメラ)
+//****************************************
+		g_camera[MAP].posRDest.x = pPlayer->pos.x + sinf(pPlayer->rotDestPlayer.y) * 1.0f;
+		g_camera[MAP].posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
+		g_camera[MAP].posRDest.z = pPlayer->pos.z + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
+
+		g_camera[MAP].posVDest.x = pPlayer->pos.x - sinf(g_camera[MAP].rot.y) * g_camera[MAP].fDistance;
+		g_camera[MAP].posVDest.y = pPlayer->pos.y - cosf(g_camera[MAP].rot.y) * g_camera[MAP].fDistance;
+		g_camera[MAP].posVDest.z = pPlayer->pos.z - cosf(g_camera[MAP].rot.y) * g_camera[MAP].fDistance;
+
+		g_camera[MAP].posR.x += ((g_camera[MAP].posRDest.x - g_camera[MAP].posR.x) * 0.3f);
+		g_camera[MAP].posR.y += ((g_camera[MAP].posRDest.y - g_camera[MAP].posR.y) * 0.3f);
+		g_camera[MAP].posR.z += ((g_camera[MAP].posRDest.z - g_camera[MAP].posR.z) * 0.3f);
 	}
 	
 
@@ -535,6 +547,5 @@ void MouseWheel(int zDelta)
 		g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 		g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
 		g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-
 	}
 }

@@ -16,8 +16,8 @@
 //****************************
 //マクロ定義
 //****************************
-#define MAX_WIDTH (500.0f) //横幅
-#define MAX_HEIGHT (500.0f) //高さ
+#define MAX_WIDTH (1000.0f) //横幅
+#define MAX_HEIGHT (1000.0f) //高さ
 
 #define XVTX (5) //Xの値
 #define ZVTX (5) //yの値

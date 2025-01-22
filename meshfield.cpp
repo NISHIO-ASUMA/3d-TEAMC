@@ -31,7 +31,7 @@ void InitMeshField(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\kari.png",
+		"data\\TEXTURE\\feild.png",
 		&g_pTextureMeshField);
 
 	//頂点バッファの生成

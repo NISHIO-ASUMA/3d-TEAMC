@@ -86,8 +86,8 @@ void UpdateMotion(MOTION *pMotion)
 //オフセット
 //**********************************
 		
-		//g_player.pMotion.aModel[nCntModel].rot += g_player.pMotion.aModel[nCntModel].offrot;
 		pMotion->aModel[nCntModel].pos += pMotion->aModel[nCntModel].offpos;
+		pMotion->aModel[nCntModel].rot += pMotion->aModel[nCntModel].offrot;
 	}
 
 	if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame)

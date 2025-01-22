@@ -16,13 +16,13 @@ NUM_MODEL = 10
 #------------------------------------------------------------------------------
 MODEL_FILENAME = data/MODEL/enemy000/00_enemy000_body.x		# [0]体
 MODEL_FILENAME = data/MODEL/enemy000/01_enemy000_head.x		# [1]頭
-MODEL_FILENAME = data/MODEL/enemy000/02_enemy000_armR.x		# [2]右腕
+MODEL_FILENAME = data/MODEL/enemy000/04_enemy000_armL.x		# [2]右腕
 MODEL_FILENAME = data/MODEL/enemy000/03_enemy000_handR.x		# [3]右手
-MODEL_FILENAME = data/MODEL/enemy000/04_enemy000_armL.x		# [4]左腕
+MODEL_FILENAME = data/MODEL/enemy000/02_enemy000_armR.x		# [4]左腕
 MODEL_FILENAME = data/MODEL/enemy000/05_enemy000_handL.x		# [5]左手
-MODEL_FILENAME = data/MODEL/enemy000/06_enemy000_legR.x		# [6]右腿
+MODEL_FILENAME = data/MODEL/enemy000/08_enemy000_legL.x		# [6]右腿
 MODEL_FILENAME = data/MODEL/enemy000/07_enemy000_footR.x		# [7]右足
-MODEL_FILENAME = data/MODEL/enemy000/08_enemy000_legL.x		# [8]左腿
+MODEL_FILENAME = data/MODEL/enemy000/06_enemy000_legR.x		# [8]左腿
 MODEL_FILENAME = data/MODEL/enemy000/09_enemy000_footL.x		# [9]左足
 
 #------------------------------------------------------------------------------
@@ -52,13 +52,13 @@ CHARACTERSET
 		INDEX = 2					# 右腕
 		PARENT = 0					# (親)体
 		POS = -6.5 12.5 0.0
-		ROT = 0.0 0.0 0.0
+		ROT = 0.0.0 0.0 0.0
 	END_PARTSSET
 
 	PARTSSET
 		INDEX = 3					# 右手
 		PARENT = 2					# (親)右腕
-		POS = -13.0 0.0 0.0
+		POS = -18.0 0.0 0.0
 		ROT = 0.0 0.0 0.0
 	END_PARTSSET
 
@@ -72,7 +72,7 @@ CHARACTERSET
 	PARTSSET
 		INDEX = 5					# 左手
 		PARENT = 4					# (親)左腕
-		POS = 13.0 0.0 0.0
+		POS = 18.0 0.0 0.0
 		ROT = 0.0 0.0 0.0
 	END_PARTSSET
 

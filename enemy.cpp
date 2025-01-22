@@ -37,7 +37,8 @@ int g_nNumEnemy;//敵の総数カウント
 //****************************
 //プロトタイプ宣言
 //****************************
-void LoadEnemy(int nType);    //読み込み処理
+void LoadEnemy(int nType);		   //読み込み処理
+bool AgentRange(float plrange, float Agentrange, int nCntEnemy);
 
 //=============================
 //ブロックの初期化処理
@@ -224,6 +225,10 @@ void UpdateEnemy(void)
 			HitEnemy(nCntEnemy, 1);
 		}
 
+		if (AgentRange(50.0f, 200.0f, nCntEnemy))
+		{
+
+		}
 		//モーションの更新
 		UpdateMotion(&g_Enemy[nCntEnemy].Motion);
 	}
@@ -570,9 +575,9 @@ void LoadEnemy(int nType)
 
 										if (strcmp(&aString[0], "=") == 0)
 										{// 角度を代入
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].rot.x);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].rot.y);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].rot.z);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offrot.x);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offrot.y);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offrot.z);
 										}
 									}
 
@@ -739,4 +744,34 @@ void LoadEnemy(int nType)
 		}// while文末
 	}
 
+}
+//=============================
+// 敵のホーミング処理
+//=============================
+bool AgentRange(float plrange,float Agentrange,int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	bool bHorming = false; // ホーミングしてくるかしないか
+
+	float fDistanceX = g_Enemy[nCntEnemy].pos.x - pPlayer->pos.x; // 距離Xを求める
+	float fDistanceY = g_Enemy[nCntEnemy].pos.y - pPlayer->pos.y; // 距離Yを求める
+	float fDistanceZ = g_Enemy[nCntEnemy].pos.z - pPlayer->pos.z; // 距離Zを求める
+
+	// 距離を求める
+	float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
+
+	// ホーミングしてくる半径
+	float Radius = Agentrange + plrange;
+
+	// 半径を算出
+	Radius = Radius * Radius;
+
+	//範囲内に入った
+	if (fDistance <= Radius)
+	{
+		bHorming = true; // ホーミングしている
+	}
+
+	return bHorming;
 }

@@ -16,13 +16,13 @@ NUM_MODEL = 10
 #------------------------------------------------------------------------------
 MODEL_FILENAME = data/MODEL/enemy400/00_enemy400_body.x		# [0]体
 MODEL_FILENAME = data/MODEL/enemy400/01_enemy400_head.x		# [1]頭
-MODEL_FILENAME = data/MODEL/enemy400/02_enemy400_armR.x		# [2]右腕
+MODEL_FILENAME = data/MODEL/enemy400/04_enemy400_armL.x		# [2]右腕
 MODEL_FILENAME = data/MODEL/enemy400/03_enemy400_handR.x		# [3]右手
-MODEL_FILENAME = data/MODEL/enemy400/04_enemy400_armL.x		# [4]左腕
+MODEL_FILENAME = data/MODEL/enemy400/02_enemy400_armR.x		# [4]左腕
 MODEL_FILENAME = data/MODEL/enemy400/05_enemy400_handL.x		# [5]左手
-MODEL_FILENAME = data/MODEL/enemy400/06_enemy400_legR.x		# [6]右腿
+MODEL_FILENAME = data/MODEL/enemy400/08_enemy400_legL.x		# [6]右腿
 MODEL_FILENAME = data/MODEL/enemy400/07_enemy400_footR.x		# [7]右足
-MODEL_FILENAME = data/MODEL/enemy400/08_enemy400_legL.x		# [8]左腿
+MODEL_FILENAME = data/MODEL/enemy400/06_enemy400_legR.x		# [8]左腿
 MODEL_FILENAME = data/MODEL/enemy400/09_enemy400_footL.x		# [9]左足
 
 #------------------------------------------------------------------------------
