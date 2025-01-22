@@ -513,19 +513,28 @@ void MouseEditMode(void)
 //=========================
 void MouseWheel(int zDelta)
 {
-	Zoom = g_camera[MAIN].posV - g_camera[MAIN].posR;
-	D3DXVec3Normalize(&Zoom, &Zoom);
+	// 現在のモードを取得
+	MODE nMode = GetMode();
 
-	if (zDelta < 0)
-	{
-		g_camera[MAIN].fDistance += 10.0f;
+	if (nMode == MODE_TUTORIAL || nMode == MODE_EDIT)
+	{// ゲーム チュートリアル 編集モード
+		// TODO : ここのズームの処理変更の可能性あり
+
+		Zoom = g_camera[MAIN].posV - g_camera[MAIN].posR;
+		D3DXVec3Normalize(&Zoom, &Zoom);
+
+		if (zDelta < 0)
+		{
+			g_camera[MAIN].fDistance += 10.0f;
+		}
+		else if (zDelta > 0)
+		{
+			g_camera[MAIN].fDistance -= 10.0f;
+		}
+		// カメラの視点の情報
+		g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+
 	}
-	else if (zDelta > 0)
-	{
-		g_camera[MAIN].fDistance -= 10.0f;
-	}
-	// カメラの視点の情報
-	g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-	g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
-	g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 }
