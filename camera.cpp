@@ -12,6 +12,7 @@
 #include "input.h"
 #include "mouse.h"
 #include "player.h"
+#include "game.h"
 
 //*****************************
 // マクロ定義
@@ -24,7 +25,8 @@
 //*****************************
 // プロトタイプ宣言
 //*****************************
-void MouseView(void);       // マウスの視点移動
+void MouseView(void);       // ゲームの時のマウスの視点移動
+void MouseEditMode(void); // 編集モードの時のマウス移動
 
 //*****************************
 // グローバル変数宣言
@@ -32,6 +34,7 @@ void MouseView(void);       // マウスの視点移動
 Camera g_camera[MAX_CAMERA];		// カメラ情報
 //Camera g_camera;						// カメラ情報
 D3DXVECTOR3 Zoom;
+
 //=========================
 // カメラの初期化処理
 //=========================
@@ -101,19 +104,25 @@ void UpdateCamera(void)
 {
 	// プレイヤーを取得
 	Player* pPlayer = GetPlayer();
-
-	// カメラの右スティック:::
-	StickCamera();
-
-	//マウスの視点移動
-	MouseView();
-
 	MODE mode = GetMode();
 
-	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
+	if (GetEditState())
 	{
-		if (mode != MODE_TITLE&&mode!=MODE_EDIT)
+		MouseEditMode();	//編集モード中のカメラ移動
+	}
+
+	// ゲームの時のカメラの更新
+	if (mode != MODE_TITLE && !GetEditState())
+	{
+		// カメラの右スティック:::
+		StickCamera();
+
+		//マウスの視点移動
+		MouseView();
+
+		for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
 		{
+
 			//プレイヤー追従
 			g_camera[nCnt].posRDest.x = pPlayer->pos.x + sinf(pPlayer->rotDestPlayer.y) * 1.0f;
 			g_camera[nCnt].posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
@@ -131,6 +140,7 @@ void UpdateCamera(void)
 			g_camera[nCnt].posV.z += ((g_camera[nCnt].posVDest.z - g_camera[nCnt].posV.z) * 0.3f);
 		}
 	}
+	
 
 #if 0
 	//******************
@@ -421,6 +431,83 @@ void MouseView(void)
 		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 	}
 }
+//============================
+// 編集モードの時のマウス移動
+//============================
+void MouseEditMode(void)
+{
+	if (OnMousePress(RIGHT_MOUSE))
+	{
+		D3DXVECTOR2 Move = GetMouseVelocity();
+		D3DXVECTOR2 MoveOld = GetMouseOldVelocity();
+
+		D3DXVECTOR2 fAngle = Move - MoveOld;
+
+		//回転量を更新
+		g_camera[MAIN].rot.y += fAngle.x * 0.01f;
+		g_camera[MAIN].rot.x += fAngle.y * 0.01f;
+
+		//回転量を制限
+		if (g_camera[MAIN].rot.x > MAX_VIEWUP)
+		{
+			g_camera[MAIN].rot.x -= fAngle.y * 0.01f;
+		}
+		else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
+		{
+			g_camera[MAIN].rot.x -= fAngle.y * 0.01f;
+		}
+
+		//カメラ座標を更新
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.y = g_camera[MAIN].posV.y + cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+	}
+	else if (OnMousePress(LEFT_MOUSE))
+	{
+		D3DXVECTOR2 Move = GetMouseVelocity();
+		D3DXVECTOR2 MoveOld = GetMouseOldVelocity();
+
+		D3DXVECTOR2 fAngle = Move - MoveOld;
+
+		//回転量を更新
+		g_camera[MAIN].rot.y += fAngle.x * 0.01f;
+		g_camera[MAIN].rot.x += fAngle.y * 0.01f;
+
+		//回転量を制限
+		if (g_camera[MAIN].rot.x > MAX_VIEWUP)
+		{
+			g_camera[MAIN].rot.x -= fAngle.y * 0.01f;
+		}
+		else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
+		{
+			g_camera[MAIN].rot.x -= fAngle.y * 0.01f;
+		}
+
+		// カメラの視点の情報
+		g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+	}
+
+	//正規化
+	if (g_camera[MAIN].rot.y < -D3DX_PI)
+	{
+		g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
+	}
+	else if (g_camera[MAIN].rot.y > D3DX_PI)
+	{
+		g_camera[MAIN].rot.y += -D3DX_PI * 2.0f;
+	}
+	if (g_camera[MAIN].rot.x < -D3DX_PI)
+	{
+		g_camera[MAIN].rot.x += D3DX_PI * 2.0f;
+	}
+	else if (g_camera[MAIN].rot.x > D3DX_PI)
+	{
+		g_camera[MAIN].rot.x += -D3DX_PI * 2.0f;
+	}
+
+}
 //=========================
 // マウスの視点移動処理
 //=========================
@@ -431,11 +518,14 @@ void MouseWheel(int zDelta)
 
 	if (zDelta < 0)
 	{
-		g_camera[MAIN].posV += Zoom * g_camera[MAIN].fDistance * 0.1f;
+		g_camera[MAIN].fDistance += 10.0f;
 	}
 	else if (zDelta > 0)
 	{
-		g_camera[MAIN].posV -= Zoom * g_camera[MAIN].fDistance * 0.1f;
+		g_camera[MAIN].fDistance -= 10.0f;
 	}
-
+	// カメラの視点の情報
+	g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+	g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+	g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 }
