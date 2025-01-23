@@ -150,6 +150,7 @@
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameui.cpp" />
+    <ClCompile Include="HPGauge.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="item.cpp" />
     <ClCompile Include="light.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameui.h" />
+    <ClInclude Include="HPGauge.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="light.h" />

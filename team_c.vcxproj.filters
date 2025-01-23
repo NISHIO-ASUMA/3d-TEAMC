@@ -124,7 +124,10 @@
       <Filter>ソース ファイル\obj</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="HPGauge.cpp">
+      <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="Particle.h">
       <Filter>ヘッダー ファイル\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="HPGauge.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
