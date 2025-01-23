@@ -26,6 +26,15 @@
 #define TYPETWO_MOVE (1.5f) //敵1の移動量
 #define TYPETHREE_MOVE (1.0f) //敵2の移動量
 #define MAX_TEXENEMY (128) //テクスチャの最大数
+#define MAX_ENEMYMOVE (1.0f) // 敵の移動量
+
+//****************************
+//プロトタイプ宣言
+//****************************
+void LoadEnemy(int nType);											// 読み込み処理
+bool AgentRange(float plrange, float playerrange, int nCntEnemy);   // ホーミングの範囲にいるかどうか
+void AgentEnemy(int nCntEnemy);										// 敵のホーミング処理
+void CollisionToEnemy(int nCntEnemy);								// 敵と敵の当たり判定
 
 //****************************
 //グローバル変数宣言
@@ -33,12 +42,6 @@
 ENEMY g_Enemy[MAX_ENEMY];
 ENEMY g_LoadEnemy[ENEMYTYPE_MAX];
 int g_nNumEnemy;//敵の総数カウント
-
-//****************************
-//プロトタイプ宣言
-//****************************
-void LoadEnemy(int nType);		   //読み込み処理
-bool AgentRange(float plrange, float Agentrange, int nCntEnemy);
 
 //=============================
 //ブロックの初期化処理
@@ -218,6 +221,22 @@ void UpdateEnemy(void)
 			continue;
 		}
 
+		//移動量の減衰
+		g_Enemy[nCntEnemy].move.x += (0.0f - g_Enemy[nCntEnemy].move.x) * 0.5f;
+		g_Enemy[nCntEnemy].move.z += (0.0f - g_Enemy[nCntEnemy].move.z) * 0.5f;
+
+		//前回の位置を保存
+		g_Enemy[nCntEnemy].posOld = g_Enemy[nCntEnemy].pos;
+
+		//位置の更新
+		g_Enemy[nCntEnemy].pos += g_Enemy[nCntEnemy].move;
+
+		//ブロックの当たり判定
+		if (CollisionBlock(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, &g_Enemy[nCntEnemy].Size))
+		{
+
+		}
+
 		if(CollisionEnemy(&g_Enemy[nCntEnemy].pos, // 敵の位置
 			30.0f, // ブロックの半径
 			30.0f)) // 敵の半径 
@@ -227,8 +246,16 @@ void UpdateEnemy(void)
 
 		if (AgentRange(50.0f, 200.0f, nCntEnemy))
 		{
-
+			AgentEnemy(nCntEnemy);
+			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
 		}
+		else
+		{
+			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL;
+		}
+
+		CollisionToEnemy(nCntEnemy); // 敵と敵の当たり判定
+
 		//モーションの更新
 		UpdateMotion(&g_Enemy[nCntEnemy].Motion);
 	}
@@ -745,10 +772,10 @@ void LoadEnemy(int nType)
 	}
 
 }
-//=============================
-// 敵のホーミング処理
-//=============================
-bool AgentRange(float plrange,float Agentrange,int nCntEnemy)
+//================================
+// ホーミングの範囲にいるかどうか
+//================================
+bool AgentRange(float playerrange,float Agentrange,int nCntEnemy)
 {
 	Player* pPlayer = GetPlayer();
 
@@ -762,7 +789,7 @@ bool AgentRange(float plrange,float Agentrange,int nCntEnemy)
 	float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
 
 	// ホーミングしてくる半径
-	float Radius = Agentrange + plrange;
+	float Radius = Agentrange + playerrange;
 
 	// 半径を算出
 	Radius = Radius * Radius;
@@ -775,3 +802,55 @@ bool AgentRange(float plrange,float Agentrange,int nCntEnemy)
 
 	return bHorming;
 }
+//=============================
+// 敵のホーミング処理
+//=============================
+void AgentEnemy(int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	D3DXVECTOR3 fDest = pPlayer->pos - g_Enemy[nCntEnemy].pos; // 敵からプレイヤーまでのベクトルを引く
+	D3DXVec3Normalize(&fDest, &fDest); // 正規化
+
+	float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+
+	g_Enemy[nCntEnemy].rot.y = fAngle + D3DX_PI; // 角度を代入
+
+	// 移動量の更新
+	g_Enemy[nCntEnemy].move.x += fDest.x * MAX_ENEMYMOVE; 
+	g_Enemy[nCntEnemy].move.z += fDest.z * MAX_ENEMYMOVE; 
+}
+//=============================
+// 敵と敵の当たり判定
+//=============================
+void CollisionToEnemy(int nCntEnemy)
+{
+	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
+	{
+		if (g_Enemy[nCnt].bUse && nCnt != nCntEnemy)
+		{
+			float fDistanceX = g_Enemy[nCntEnemy].pos.x - g_Enemy[nCnt].pos.x; // 距離Xを求める
+			float fDistanceY = g_Enemy[nCntEnemy].pos.y - g_Enemy[nCnt].pos.y; // 距離Yを求める
+			float fDistanceZ = g_Enemy[nCntEnemy].pos.z - g_Enemy[nCnt].pos.z; // 距離Zを求める
+
+			// 距離を求める
+			float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
+
+			float Eradius = 50.0f; // 半径を設定
+
+			// ホーミングしてくる半径
+			float Radius = Eradius + Eradius;
+
+			// 半径を算出
+			Radius = Radius * Radius;
+
+			//範囲内に入った
+			if (fDistance <= Radius)
+			{
+				g_Enemy[nCnt].move.x -= sinf(g_Enemy[nCnt].rot.y) * (float)(rand() % 3 - 1) * 0.6f;
+				g_Enemy[nCnt].move.z += cosf(g_Enemy[nCnt].rot.z) * (float)(rand() % 3 - 1) * 0.6f;
+			}
+		}
+	}
+}
+

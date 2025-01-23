@@ -62,7 +62,6 @@ void InitItem(void)
 		//g_TexItem[nCntNum].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//g_TexItem[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
-		g_TexItem[nCntNum].bUse = true;							//使用判定
 		g_TexItem[nCntNum].nLife = 120;							//体力
 
 		D3DXMATERIAL* pMat;//マテリアルへのポインタ

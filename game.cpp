@@ -176,7 +176,6 @@ void UpdateGame(void)
 		//ポーズ中の更新処理
 	}
 
-
 	int nNumObj = GetNumobj(); // オブジェクトの数を取得
 
 	//エディットモードだったら
@@ -184,6 +183,7 @@ void UpdateGame(void)
 	{
 		g_bEditMode = false;
 		InitBlock();
+		InitItem();
 		LoadEdit();
 	}
 	//エディットモードじゃなかったら

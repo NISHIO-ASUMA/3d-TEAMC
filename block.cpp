@@ -62,22 +62,6 @@ void InitBlock(void)
 	g_NumBlock = 0;		   //ブロックの数
 	nCounterStateBlock = 0;//状態カウンター
 
-	//g_Block.vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	//g_Block.vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
-	//for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
-	//{
-	//	//Xファイルの読み込み
-	//	D3DXLoadMeshFromX(MODELTYPE[nCntNum],
-	//		D3DXMESH_SYSTEMMEM,
-	//		pDevice,
-	//		NULL,
-	//		&g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock,
-	//		NULL,
-	//		&g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatBlock,
-	//		&g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock);
-	//}
-
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
 		D3DXMATERIAL* pMat;//マテリアルへのポインタ
