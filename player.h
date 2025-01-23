@@ -118,6 +118,7 @@ typedef struct
 	PLAYERSTATE state;
 	int nCounterState;
 	int nLife;
+	int nMaxLife;
 
 	D3DXVECTOR3 SwordOffpos;
 	D3DXVECTOR3 Swordpos, Swordrot;
