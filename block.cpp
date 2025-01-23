@@ -51,9 +51,6 @@ void InitBlock(void)
 		g_Block[nCntBlock].nLife = 20;							//体力
 		g_Block[nCntBlock].state = BLOCKSTATE_NORMAL;			//状態
 		g_Block[nCntBlock].fRadius = 100.0f;					//半径
-
-		// TODO : この体力の初期化、どっちが正しいの?
-		//g_Block[nCntBlock].nLife = 180;						
 	}
 
 	LoadBlockModel(); // ブロックのロード
