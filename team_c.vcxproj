@@ -145,6 +145,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Damegepop.cpp" />
     <ClCompile Include="edit.cpp" />
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="model.cpp" />
     <ClCompile Include="motion.cpp" />
     <ClCompile Include="mouse.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="ranking.cpp" />
@@ -174,6 +176,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="Damagepop.h" />
     <ClInclude Include="edit.h" />
+    <ClInclude Include="Effect.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
@@ -186,6 +189,7 @@
     <ClInclude Include="model.h" />
     <ClInclude Include="motion.h" />
     <ClInclude Include="mouse.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="ranking.h" />

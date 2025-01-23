@@ -9,7 +9,7 @@
 #include "main.h"
 #include "Shadow.h"
 
-// •\¦‚·‚éÅ‘å”‚Æ‚»‚ÌŒ…”
+// •\¦‚·‚éÅ‘å”
 #define SHADOW_AMOUNT (100)
 Shadow g_aShadow[SHADOW_AMOUNT];
 
