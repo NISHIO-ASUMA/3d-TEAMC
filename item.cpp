@@ -581,6 +581,7 @@ void LoadItemModel(void)
 			}
 			else if (strcmp(aString, "END_SCRIPT") == 0)
 			{
+				fclose(pFile);
 				break;
 			}
 		}

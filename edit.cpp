@@ -228,8 +228,16 @@ void UpdateEdit(void)
 		// カテゴリー変更
 		if (KeyboardTrigger(DIK_Y) && g_Edit[g_EditCount].EditCategory < EDITMODE_MAX - 1)
 		{
-			g_Edit[g_EditCount].EditCategory++;			// カテゴリー + 1
+			g_Edit[g_EditCount].EditCategory++;																											// カテゴリー + 1
 			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;		// 現在のカテゴリーの情報を代入
+
+			// 次のカテゴリーの全種類数が現在のモデルのカテゴリー全種類数より少なかったら
+			if (g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel < g_Edit[g_EditCount].Category[category].nNumModel)
+			{
+				int nNumModel = g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel - 1; // 代入
+				g_Edit[g_EditCount].nType = nNumModel; //一番最後の種類にする
+			}
+
 			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];		// 現在のカテゴリーの情報を代入
 		}
 		else if (KeyboardTrigger(DIK_U) && g_Edit[g_EditCount].EditCategory > 0)
@@ -237,6 +245,14 @@ void UpdateEdit(void)
 			g_Edit[g_EditCount].EditCategory--;	// カテゴリー + 1
 
 			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;		// 現在のカテゴリーの情報を代入
+
+			// 次のカテゴリーの全種類数が現在のモデルのカテゴリー全種類数より少なかったら
+			if (g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel < g_Edit[g_EditCount].Category[category].nNumModel)
+			{
+				int nNumModel = g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel - 1; // 代入
+				g_Edit[g_EditCount].nType = nNumModel; //一番最後の種類にする
+			}
+
 			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];		// 現在のカテゴリーの情報を代入
 		}
 
@@ -264,11 +280,6 @@ void UpdateEdit(void)
 	if (KeyboardTrigger(DIK_F2) && nLoad == 1)
 	{
 		nLoad = 0; // 回数制限解除
-	}
-
-	if (KeyboardTrigger(DIK_O))
-	{
-		g_EditCount--;
 	}
 }
 

@@ -39,7 +39,7 @@ particle g_aParticle[MAX_PARTICLE];
 void InitParticle(void)
 {
 	//—”í¶¬
-	srand(time(NULL));
+	//srand(time(NULL));
 	LPDIRECT3DDEVICE9 pDevice;
 	int nCntParticle;
 	pDevice = GetDevice();

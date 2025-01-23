@@ -98,31 +98,31 @@ void UninitGauge(void)
 //=================
 void UpdateGauge(void)
 {
-	// Žc‚èHP‚ÆÅ‘åHP‚ð‘ª‚è”½‰f
-	float fLeftHP;
-	float fMaxHP;
-	Player* pPlayer = GetPlayer();
-	fLeftHP = pPlayer->nLeftHP;
-	fMaxHP = pPlayer->nMaxHP;
+	//// Žc‚èHP‚ÆÅ‘åHP‚ð‘ª‚è”½‰f
+	//float fLeftHP;
+	//float fMaxHP;
+	//Player* pPlayer = GetPlayer();
+	//fLeftHP = pPlayer->nLeftHP;
+	//fMaxHP = pPlayer->nMaxHP;
 
-	// ‚»‚±‚©‚ç‚»‚ÌŠ„‡‚ðŒvŽZ‚µ’·‚³‚É‚·‚é
-	g_fPer = fLeftHP / fMaxHP;
-	g_fLength = g_fPer * 940;
-	LPDIRECT3DDEVICE9 pDevice;
-	pDevice = GetDevice();
-	VERTEX_2D* pVtx;
-	g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
+	//// ‚»‚±‚©‚ç‚»‚ÌŠ„‡‚ðŒvŽZ‚µ’·‚³‚É‚·‚é
+	//g_fPer = fLeftHP / fMaxHP;
+	//g_fLength = g_fPer * 940;
+	//LPDIRECT3DDEVICE9 pDevice;
+	//pDevice = GetDevice();
+	//VERTEX_2D* pVtx;
+	//g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
 
-	// ‚»‚ê‚ð•`ŽÊ‚µ’¼‚·
-	pVtx[4].pos = D3DXVECTOR3(20.0f, 15.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(g_fLength + 20.0f, 15.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(20.0f, 26.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(g_fLength + 20.0f, 26.0f, 0.0f);
-	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
-	pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[7].tex = D3DXVECTOR2(g_fPer, 1.0f);
-	g_pVtxBuffGauge->Unlock();
+	//// ‚»‚ê‚ð•`ŽÊ‚µ’¼‚·
+	//pVtx[4].pos = D3DXVECTOR3(20.0f, 15.0f, 0.0f);
+	//pVtx[5].pos = D3DXVECTOR3(g_fLength + 20.0f, 15.0f, 0.0f);
+	//pVtx[6].pos = D3DXVECTOR3(20.0f, 26.0f, 0.0f);
+	//pVtx[7].pos = D3DXVECTOR3(g_fLength + 20.0f, 26.0f, 0.0f);
+	//pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
+	//pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
+	//pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
+	//pVtx[7].tex = D3DXVECTOR2(g_fPer, 1.0f);
+	//g_pVtxBuffGauge->Unlock();
 }
 
 //=================
@@ -147,24 +147,24 @@ void DrawGauge(void)
 //=================
 void SetGauge(void)
 {
-	float fLeftHP;
-	float fMaxHP;
-	Player* pPlayer = GetPlayer();
-	fLeftHP = pPlayer->nLeftHP;
-	fMaxHP = pPlayer->nMaxHP;
-	g_fPer = fLeftHP / fMaxHP;
-	g_fLength = g_fPer * 940;
-	LPDIRECT3DDEVICE9 pDevice;
-	pDevice = GetDevice();
-	VERTEX_2D* pVtx;
-	g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
-	pVtx[4].pos = D3DXVECTOR3(20.0f, 15.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(g_fLength + 20.0f, 15.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(20.0f, 26.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(g_fLength + 20.0f, 26.0f, 0.0f);
-	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
-	pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[7].tex = D3DXVECTOR2(g_fPer, 1.0f);
-	g_pVtxBuffGauge->Unlock();
+	//float fLeftHP;
+	//float fMaxHP;
+	//Player* pPlayer = GetPlayer();
+	//fLeftHP = pPlayer->nLeftHP;
+	//fMaxHP = pPlayer->nMaxHP;
+	//g_fPer = fLeftHP / fMaxHP;
+	//g_fLength = g_fPer * 940;
+	//LPDIRECT3DDEVICE9 pDevice;
+	//pDevice = GetDevice();
+	//VERTEX_2D* pVtx;
+	//g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
+	//pVtx[4].pos = D3DXVECTOR3(20.0f, 15.0f, 0.0f);
+	//pVtx[5].pos = D3DXVECTOR3(g_fLength + 20.0f, 15.0f, 0.0f);
+	//pVtx[6].pos = D3DXVECTOR3(20.0f, 26.0f, 0.0f);
+	//pVtx[7].pos = D3DXVECTOR3(g_fLength + 20.0f, 26.0f, 0.0f);
+	//pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
+	//pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
+	//pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
+	//pVtx[7].tex = D3DXVECTOR2(g_fPer, 1.0f);
+	//g_pVtxBuffGauge->Unlock();
 }
