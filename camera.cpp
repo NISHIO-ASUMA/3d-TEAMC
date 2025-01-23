@@ -57,7 +57,7 @@ void InitCamera(void)
 		float fRotz = g_camera[nCnt].posV.z - g_camera[nCnt].posR.z;
 
 		g_camera[nCnt].fDistance = sqrtf((fRotx * fRotx) + (fRoty * fRoty) + (fRotz * fRotz));	// 視点から注視点までの距離
-
+		g_camera[nCnt].oldDistance = g_camera[nCnt].fDistance;	// 距離を保存しておく
 	}
 
 	g_camera[MAIN].viewport.X = 0.0f; // 2DX座標
@@ -112,6 +112,8 @@ void UpdateCamera(void)
 	// ゲームの時のカメラの更新
 	if (mode != MODE_TITLE && !GetEditState())
 	{
+		g_camera[MAIN].fDistance = g_camera[MAIN].oldDistance; // 距離をリセット
+		
 		//// カメラの右スティック:::
 		//StickCamera();
 
@@ -383,58 +385,24 @@ void MouseView(void)
 
 	if (mode != MODE_TITLE && GetMouseState(&mouseState))
 	{
-		static POINT prevCursorPos = { SCREEN_WIDTH / 1.5f,SCREEN_HEIGHT / 1.5f };
+		D3DXVECTOR2 Move = GetMouseVelocity();
+		D3DXVECTOR2 MoveOld = GetMouseOldVelocity();
 
-		POINT cursorPos;
-		GetCursorPos(&cursorPos);
-
-		//カーソルの移動量を計算
-		float deltaX = (float)cursorPos.x - prevCursorPos.x;
-		float deltaY = (float)cursorPos.y - prevCursorPos.y;
-
-		//感度を設定
-		const float mouseSensitivity = 0.0059f;
-		deltaX *= mouseSensitivity;
-		deltaY *= mouseSensitivity;
+		D3DXVECTOR2 fAngle = Move - MoveOld;
 
 		//回転量を更新
-		g_camera[MAIN].rot.y += deltaX;
-		g_camera[MAIN].rot.x += deltaY;
+		g_camera[MAIN].rot.y += fAngle.x * 0.01f;
+		g_camera[MAIN].rot.x += fAngle.y * 0.01f;
 
 		//回転量を制限
 		if (g_camera[MAIN].rot.x > MAX_VIEWUP)
 		{
-			g_camera[MAIN].rot.x -= deltaY;
+			g_camera[MAIN].rot.x -= fAngle.y * 0.01f;
 		}
 		else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
 		{
-			g_camera[MAIN].rot.x -= deltaY;
+			g_camera[MAIN].rot.x -= fAngle.y * 0.01f;
 		}
-
-		//正規化
-		if (g_camera[MAIN].rot.y < -D3DX_PI)
-		{
-			g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
-		}
-		else if (g_camera[MAIN].rot.y > D3DX_PI)
-		{
-			g_camera[MAIN].rot.y += -D3DX_PI * 2.0f;
-		}
-		if (g_camera[MAIN].rot.x < -D3DX_PI)
-		{
-			g_camera[MAIN].rot.x += D3DX_PI * 2.0f;
-		}
-		else if (g_camera[MAIN].rot.x > D3DX_PI)
-		{
-			g_camera[MAIN].rot.x += -D3DX_PI * 2.0f;
-		}
-
-		//カーソルを中心に固定
-		SetCursorPos(SCREEN_WIDTH / 1.5f, SCREEN_HEIGHT / 1.5f);
-
-		//計算用変数に代入
-		prevCursorPos.x = SCREEN_WIDTH / 1.5f;
-		prevCursorPos.y = SCREEN_HEIGHT / 1.5f;
 
 		//カメラ座標を更新
 		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;

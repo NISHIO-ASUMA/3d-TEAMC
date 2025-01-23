@@ -178,6 +178,8 @@ void UpdateEdit(void)
 			g_Edit[g_EditCount].move.z += sinf(-pCamera->rot.y) * g_Edit[g_EditCount].fMove;
 		}
 
+		int category = g_Edit[g_EditCount].EditCategory; // タイプ保存用(Old)
+
 		//配置
 		if (KeyboardTrigger(DIK_RETURN))
 		{
@@ -196,8 +198,6 @@ void UpdateEdit(void)
 			g_EditCount--;                    // オブジェクトのカウントを減らす
 			g_nNumBlock--;                    // オブジェクト数を減らす
 		}
-
-		int category = g_Edit[g_EditCount].EditCategory; // タイプ保存用
 
 		if (KeyboardTrigger(DIK_F)|| KeyboardTrigger(DIK_G))
 		{
@@ -263,6 +263,15 @@ void UpdateEdit(void)
 		else if (GetKeyboardPress(DIK_J) && g_Edit[g_EditCount].fMove > 0.0f)
 		{
 			g_Edit[g_EditCount].fMove -= 0.1f; // 移動量変更
+		}
+
+		if (GetKeyboardPress(DIK_UP))
+		{
+			g_Edit[g_EditCount].pos.y += g_Edit[g_EditCount].fMove;
+		}
+		else if (GetKeyboardPress(DIK_DOWN))
+		{
+			g_Edit[g_EditCount].pos.y -= g_Edit[g_EditCount].fMove;
 		}
 	}
 
@@ -347,7 +356,7 @@ void DrawEdit(void)
 				color.MatD3D.Diffuse.r = 1.0f;
 				color.MatD3D.Diffuse.g = 1.0f;
 				color.MatD3D.Diffuse.b = 1.0f;
-				color.MatD3D.Diffuse.a = 0.2f;
+				color.MatD3D.Diffuse.a = 0.5f;
 
 				//マテリアルの設定
 				pDevice->SetMaterial(&color.MatD3D);

@@ -421,7 +421,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\TEAMC data\\TEXTURE\\vending machine000.jpg";
+    "data\\TEXTURE\\vendingmachine000.jpg";
    }
   }
  }

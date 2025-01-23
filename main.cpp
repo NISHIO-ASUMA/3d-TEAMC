@@ -885,17 +885,17 @@ void DrawEditMode(void)
 		"+   現在のモード[編集モード]::ゲームモード[F2]    +\n"
 		"+=================================================+\n");
 
-	wsprintf(&aStrType[0], "設置するブロック変更[ %d種類目 ]:[ + F / - G ]\n",pEdit->nType);
+	wsprintf(&aStrType[0], "設置するブロック変更:[ %d種類目 ]:[ + F / - G ]\n",pEdit[nNumBlock].nType);
 	
 	wsprintf(&aStrNum[0], "ブロックの設置数[%d]\n", nNumBlock);
 	wsprintf(&aStrKill[0], "ブロックを消去:[ BACKSPACE ]\n");
 	wsprintf(&aStrSet[0], "ブロックを設置:[ ENTER ]\n");
 	wsprintf(&aStrScal[0], "ブロックの大きさ変更:[ + V / - B ]\n");
-	wsprintf(&aStrMove[0], "移動:[ WASD ]\n");
+	wsprintf(&aStrMove[0], "移動:[ WASD ]:高さ変更:[ +↑ / -↓ ]\n");
 	wsprintf(&aStrSave[0], "セーブ[ F7 ]:前回の配置物読み込み[ F8 ] <data/saveEdit.txt>\n");
-	wsprintf(&aStrCategory[0], "カテゴリー変更:[ + Y / - U ]\n");
+	wsprintf(&aStrCategory[0], "カテゴリー変更:[ 現在のカテゴリー **%d番目** ][ + Y / - U ]\n",pEdit[nNumBlock].EditCategory);
 	wsprintf(&aStrCamera[0], "注視点移動:[ 右クリック ]:視点移動:[ 左クリック ]:ズーム:[ ホイール ]\n");
-	sprintf(&aStrpMove[0], "移動量変更:[ %3.2f ]:[ + H / -J ]\n",pEdit->fMove);
+	sprintf(&aStrpMove[0], "移動量変更:[ %3.2f ]:[ + H / -J ]\n",pEdit[nNumBlock].fMove);
 
 	//テキストの描画
 	g_pFont->DrawText(NULL, &aStrType[0], -1, &rectBlockType, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
