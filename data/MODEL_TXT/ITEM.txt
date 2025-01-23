@@ -2,7 +2,7 @@
 +   アイテムの読み込み処理(種類追加したら一応報告お願いします)   +     
 +----------------------------------------------------------------+
 
-MAX_TYPE = 16 # 読み込むモデル数
+MAX_TYPE = 23 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -23,6 +23,13 @@ MODEL_FILENAME = data/MODEL/ITEM/wepon_ironbat.x					# [12]金属バット
 MODEL_FILENAME = data/MODEL/ITEM/wepon_surfboard.x					# [13]サーフボード
 MODEL_FILENAME = data/MODEL/ITEM/wepon_torch.x						# [14]松明
 MODEL_FILENAME = data/MODEL/ITEM/wepon_torchsword.x					# [15]炎をつかさどる刀
+MODEL_FILENAME = data/MODEL/ITEM/wepon_bar.x						# [16]バール
+MODEL_FILENAME = data/MODEL/ITEM/wepon_headstatue.x					# [17]頭だけの像
+MODEL_FILENAME = data/MODEL/ITEM/wepon_headstatutorso.x				# [18]マネキン
+MODEL_FILENAME = data/MODEL/ITEM/wepon_megaphone.x					# [19]メガホン
+MODEL_FILENAME = data/MODEL/ITEM/wepon_rubbercup.x					# [20]すっぽん
+MODEL_FILENAME = data/MODEL/ITEM/wepon_telephonepole.x				# [21]電柱
+MODEL_FILENAME = data/MODEL/ITEM/wepon_torso.x						# [22]トルソー
 
 # もしやり方わかるならITEM.hの列挙型追加頼む
 
