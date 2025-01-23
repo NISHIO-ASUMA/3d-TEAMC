@@ -12,21 +12,25 @@
 #include "mouse.h"
 #include "camera.h"
 #include "item.h"
+#include "block.h"
 
 //****************************
 //マクロ定義
 //****************************
 #define MOUSE_SIZE (50.0f)
+#define MAX_WORD (256)
 
 //****************************
 //プロトタイプ宣言
 //****************************
 void SetMtxItem(int nCnt);
+void LoadItemModel(void); // アイテムのロード処理
 
 //****************************
 //グローバル変数宣言
 //****************************
 Item g_Item[MAX_ITEM];
+int g_ItemTypeMax;
 Item g_TexItem[ITEMTYPE_MAX];
 
 //=============================
@@ -50,23 +54,9 @@ void InitItem(void)
 		g_Item[nCntItem].nLife = 180;						  //体力
 	}
 
-	//g_Item.vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	//g_Item.vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	LoadItemModel(); // アイテムのロード処理
 
-	for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
-	{
-		//Xファイルの読み込み
-		D3DXLoadMeshFromX(ITEMTYPE_INFO[nCntNum],
-			D3DXMESH_SYSTEMMEM,
-			pDevice,
-			NULL,
-			&g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatItem,
-			NULL,
-			&g_TexItem[nCntNum].ItemTex[nCntNum].g_dwNumMatItem,
-			&g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem);
-	}
-
-	for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
+	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		//g_TexItem[nCntNum].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//g_TexItem[nCntNum].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -98,7 +88,7 @@ void InitItem(void)
 	DWORD sizeFVF;//頂点フォーマットのサイズ
 	BYTE* pVtxBuff;//頂点バッファへのポインタ
 
-	for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
+	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		//頂点数の取得
 		nNumVtx = g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->GetNumVertices();
@@ -159,10 +149,10 @@ void InitItem(void)
 //=============================
 void UninitItem(void)
 {
-	for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
+	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		//テクスチャの破棄
-		for (int nCntTex = 0; nCntTex < 32; nCntTex++)
+		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
 		{
 			if (g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureItem[nCntTex] != NULL)
 			{
@@ -266,7 +256,7 @@ void DrawItem(void)
 
 	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
 
-	for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
+	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 		{
@@ -539,4 +529,60 @@ void SetMtxItem(int nCnt)
 
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD, &g_Item[nCnt].mtxWorldItem);
+}
+//============================
+// アイテムのロード処理
+//============================
+void LoadItemModel(void)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+
+	FILE* pFile; // ファイルのポインタ
+
+	char skip[5];
+	int nType = 0;
+
+	pFile = fopen("data\\MODEL_TXT\\ITEM.txt", "r");
+
+	if (pFile != NULL)
+	{
+		char aString[MAX_WORD];
+
+		while (1)
+		{
+			fscanf(pFile, "%s", &aString[0]);
+
+			if (strcmp(aString, "MAX_TYPE") == 0)
+			{
+				fscanf(pFile, "%s", &skip[0]);
+				fscanf(pFile, "%d", &g_ItemTypeMax);
+			}
+			else if (strcmp(aString, "MODEL_FILENAME") == 0)
+			{
+				fscanf(pFile, "%s", &skip[0]);
+
+				fscanf(pFile, "%s", &aString[0]);
+
+				const char* MODEL_FILENAME = {};
+
+				MODEL_FILENAME = aString;
+
+				//Xファイルの読み込み
+				D3DXLoadMeshFromX(MODEL_FILENAME,
+					D3DXMESH_SYSTEMMEM,
+					pDevice,
+					NULL,
+					&g_TexItem[nType].ItemTex[nType].g_pBuffMatItem,
+					NULL,
+					&g_TexItem[nType].ItemTex[nType].g_dwNumMatItem,
+					&g_TexItem[nType].ItemTex[nType].g_pMeshItem);
+
+				nType++;
+			}
+			else if (strcmp(aString, "END_SCRIPT") == 0)
+			{
+				break;
+			}
+		}
+	}
 }

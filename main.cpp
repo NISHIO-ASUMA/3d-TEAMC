@@ -887,7 +887,6 @@ void DrawEditMode(void)
 
 	wsprintf(&aStrType[0], "設置するブロック変更[ %d種類目 ]:[ + F / - G ]\n",pEdit->nType);
 	
-
 	wsprintf(&aStrNum[0], "ブロックの設置数[%d]\n", nNumBlock);
 	wsprintf(&aStrKill[0], "ブロックを消去:[ BACKSPACE ]\n");
 	wsprintf(&aStrSet[0], "ブロックを設置:[ ENTER ]\n");

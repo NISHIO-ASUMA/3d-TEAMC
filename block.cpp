@@ -17,6 +17,12 @@
 //マクロ定義
 //****************************
 #define MOUSE_SIZE (50.0f)
+#define MAX_WORD (256)
+
+//****************************
+//プロトタイプ宣言
+//****************************
+void LoadBlockModel(void);
 
 //****************************
 //グローバル変数宣言
@@ -25,6 +31,7 @@ BLOCK g_Block[MAX_BLOCK];
 BLOCK g_TexBlock[BLOCKTYPE_MAX];
 int nCounterStateBlock;
 int g_NumBlock;
+int g_BlockTypeMax;
 
 //=============================
 //ブロックの初期化処理
@@ -49,6 +56,8 @@ void InitBlock(void)
 		//g_Block[nCntBlock].nLife = 180;						
 	}
 
+	LoadBlockModel(); // ブロックのロード
+
 	//グローバル変数の初期化
 	g_NumBlock = 0;		   //ブロックの数
 	nCounterStateBlock = 0;//状態カウンター
@@ -56,29 +65,21 @@ void InitBlock(void)
 	//g_Block.vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	//g_Block.vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	for (int nCntNum = 0; nCntNum < BLOCKTYPE_MAX; nCntNum++)
+	//for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
+	//{
+	//	//Xファイルの読み込み
+	//	D3DXLoadMeshFromX(MODELTYPE[nCntNum],
+	//		D3DXMESH_SYSTEMMEM,
+	//		pDevice,
+	//		NULL,
+	//		&g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock,
+	//		NULL,
+	//		&g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatBlock,
+	//		&g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock);
+	//}
+
+	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
-		//Xファイルの読み込み
-		D3DXLoadMeshFromX(MODELTYPE[nCntNum],
-			D3DXMESH_SYSTEMMEM,
-			pDevice,
-			NULL,
-			&g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock,
-			NULL,
-			&g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatBlock,
-			&g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock);
-	}
-
-	for (int nCntNum = 0; nCntNum < BLOCKTYPE_MAX; nCntNum++)
-	{
-		//g_TexBlock[nCntNum].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//g_TexBlock[nCntNum].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//g_TexBlock[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
-		g_TexBlock[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
-		g_TexBlock[nCntNum].bUse = true;						 //使用判定
-		g_TexBlock[nCntNum].nLife = 120;						 //体力
-
 		D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
 		//マテリアルのデータへのポインタを取得
@@ -102,7 +103,7 @@ void InitBlock(void)
 	DWORD sizeFVF;//頂点フォーマットのサイズ
 	BYTE* pVtxBuff;//頂点バッファへのポインタ
 
-	for (int nCntNum = 0; nCntNum < BLOCKTYPE_MAX; nCntNum++)
+	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
 		//頂点数の取得
 		nNumVtx = g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->GetNumVertices();
@@ -153,7 +154,6 @@ void InitBlock(void)
 			g_TexBlock[nCntNum].Size.z = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.z - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.z;
 		}
 
-
 		//頂点バッファのアンロック
 		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->UnlockVertexBuffer();
 	}
@@ -163,7 +163,7 @@ void InitBlock(void)
 //=============================
 void UninitBlock(void)
 {
-	for (int nCntNum = 0; nCntNum < BLOCKTYPE_MAX; nCntNum++)
+	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
 		//テクスチャの破棄
 		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
@@ -215,7 +215,7 @@ void DrawBlock(void)
 
 	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
 
-	for (int nCntNum = 0; nCntNum < BLOCKTYPE_MAX; nCntNum++)
+	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
 		for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 		{
@@ -384,4 +384,60 @@ BLOCK* GetBlock()
 int NumBlock(void)
 {
 	return g_NumBlock;
+}
+//=============================
+//ブロックのモデルのロード処理
+//=============================
+void LoadBlockModel(void)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+
+	FILE* pFile; // ファイルのポインタ
+
+	char skip[5];
+	int nType = 0;
+
+	pFile = fopen("data\\MODEL_TXT\\BLOCK.txt", "r");
+
+	if (pFile != NULL)
+	{
+		char aString[MAX_WORD];
+
+		while (1)
+		{
+			fscanf(pFile, "%s", &aString[0]);
+
+			if (strcmp(aString, "MAX_TYPE") == 0)
+			{
+				fscanf(pFile, "%s", &skip[0]);
+				fscanf(pFile, "%d", &g_BlockTypeMax);
+			}
+			else if (strcmp(aString, "MODEL_FILENAME") == 0)
+			{
+				fscanf(pFile, "%s", &skip[0]);
+
+				fscanf(pFile, "%s", &aString[0]);
+
+				const char* MODEL_FILENAME = {};
+
+				MODEL_FILENAME = aString;
+
+				//Xファイルの読み込み
+				D3DXLoadMeshFromX(MODEL_FILENAME,
+					D3DXMESH_SYSTEMMEM,
+					pDevice,
+					NULL,
+					&g_TexBlock[nType].BlockTex[nType].g_pBuffMatBlock,
+					NULL,
+					&g_TexBlock[nType].BlockTex[nType].g_dwNumMatBlock,
+					&g_TexBlock[nType].BlockTex[nType].g_pMeshBlock);
+
+				nType++;
+			}
+			else if (strcmp(aString, "END_SCRIPT") == 0)
+			{
+				break;
+			}
+		}
+	}
 }

@@ -31,18 +31,20 @@ typedef enum
 	ITEMTYPE_HUNMER,
 	ITEMTYPE_STONE,
 	ITEMTYPE_WOOD,
+	ITEMTYPE_STONEBAT,
+	ITEMTYPE_LIGHT,
+	ITEMTYPE_LIGHTWOOD,
+	ITEMTYPE_HARISEN,
+	ITEMTYPE_ICEBLOCK,
+	ITEMTYPE_ICEBLOCKSOWRD,
+	ITEMTYPE_IRON,
+	ITEMTYPE_IRONBAT,
+	ITEMTYPE_SURFBOARD,
+	ITEMTYPE_TORCH,
+	ITEMTYPE_TORCHSWORD,
+
 	ITEMTYPE_MAX
 }ITEMTYPE;
-
-static const char* ITEMTYPE_INFO[ITEMTYPE_MAX] =
-{
-	"data\\MODEL\\ITEM\\wepon_bat.x",
-	"data\\MODEL\\ITEM\\wepon_golf.x",
-	"data\\MODEL\\ITEM\\wepon_hunmer.x",
-	"data\\MODEL\\ITEM\\wepon_stone.x",
-	"data\\MODEL\\ITEM\\wepon_wood.x",
-
-};
 
 //***************************
 //ÉuÉçÉbÉNÇÃèÛë‘ÇÃéÌóﬁ

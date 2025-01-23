@@ -1,0 +1,29 @@
++----------------------------------------------------------------+
++   アイテムの読み込み処理(種類追加したら一応報告お願いします)   +     
++----------------------------------------------------------------+
+
+MAX_TYPE = 16 # 読み込むモデル数
+
+#-------------------------
+# モデルファイル
+#-------------------------
+MODEL_FILENAME = data/MODEL/ITEM/wepon_bat.x						# [0]バット
+MODEL_FILENAME = data/MODEL/ITEM/wepon_golf.x						# [1]ゴルフ
+MODEL_FILENAME = data/MODEL/ITEM/wepon_hunmer.x						# [2]ハンマー
+MODEL_FILENAME = data/MODEL/ITEM/wepon_stone.x						# [3]石
+MODEL_FILENAME = data/MODEL/ITEM/wepon_wood.x						# [4]木
+MODEL_FILENAME = data/MODEL/ITEM/wepon_stonebat.x					# [5]石バット
+MODEL_FILENAME = data/MODEL/ITEM/wepon_fluorescentlight.x			# [6]蛍光灯
+MODEL_FILENAME = data/MODEL/ITEM/wepon_fluorescentlightsword.x		# [7]電気をまとった木
+MODEL_FILENAME = data/MODEL/ITEM/wepon_harisen.x					# [8]ハリセン
+MODEL_FILENAME = data/MODEL/ITEM/wepon_iceblock.x					# [9]氷のブロック
+MODEL_FILENAME = data/MODEL/ITEM/wepon_iceblocksword.x				# [10]氷の力を宿した刀
+MODEL_FILENAME = data/MODEL/ITEM/wepon_iron.x						# [11]鉄パイプ
+MODEL_FILENAME = data/MODEL/ITEM/wepon_ironbat.x					# [12]金属バット
+MODEL_FILENAME = data/MODEL/ITEM/wepon_surfboard.x					# [13]サーフボード
+MODEL_FILENAME = data/MODEL/ITEM/wepon_torch.x						# [14]松明
+MODEL_FILENAME = data/MODEL/ITEM/wepon_torchsword.x					# [15]炎をつかさどる刀
+
+# もしやり方わかるならITEM.hの列挙型追加頼む
+
+END_SCRIPT # この行は消さないでください

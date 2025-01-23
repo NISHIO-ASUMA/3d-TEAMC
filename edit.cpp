@@ -55,7 +55,7 @@ void InitEdit(void)
 		g_Edit[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 回転量の初期化
 		g_Edit[nCnt].bUse = false;							// 未使用状態
 		g_Edit[nCnt].ObjCnt = 0;							// オブジェの数の保存用変数の初期化
-		g_Edit[nCnt].EditObj = EDITMODE_BLOCK;				// 現在のオブジェクトのカテゴリーの初期化
+		g_Edit[nCnt].EditCategory = EDITMODE_BLOCK;				// 現在のオブジェクトのカテゴリーの初期化
 		g_Edit[nCnt].fMove = 10.0f;							// オブジェクトの移動量
 	}
 
@@ -197,7 +197,7 @@ void UpdateEdit(void)
 			g_nNumBlock--;                    // オブジェクト数を減らす
 		}
 
-		int category = g_Edit[g_EditCount].EditObj; // タイプ保存用
+		int category = g_Edit[g_EditCount].EditCategory; // タイプ保存用
 
 		if (KeyboardTrigger(DIK_F)|| KeyboardTrigger(DIK_G))
 		{
@@ -226,19 +226,18 @@ void UpdateEdit(void)
 		}
 
 		// カテゴリー変更
-		if (KeyboardTrigger(DIK_Y) && g_Edit[g_EditCount].EditObj < EDITMODE_MAX - 1)
+		if (KeyboardTrigger(DIK_Y) && g_Edit[g_EditCount].EditCategory < EDITMODE_MAX - 1)
 		{
-			g_Edit[g_EditCount].EditObj++;																// カテゴリー + 1
-			int nCategory = g_Edit[g_EditCount].EditObj;												// カテゴリーを保存
-			g_Edit[g_EditCount].Category[nCategory].nNumModel = g_BlockTexInfo[nCategory].nNumModel;	// 現在のカテゴリーの情報を代入
-			g_Edit[g_EditCount].Category[nCategory].pModel[0] = g_BlockTexInfo[nCategory].pModel[0];	// 現在のカテゴリーの情報を代入
+			g_Edit[g_EditCount].EditCategory++;			// カテゴリー + 1
+			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;		// 現在のカテゴリーの情報を代入
+			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];		// 現在のカテゴリーの情報を代入
 		}
-		else if (KeyboardTrigger(DIK_U) && g_Edit[g_EditCount].EditObj > 0)
+		else if (KeyboardTrigger(DIK_U) && g_Edit[g_EditCount].EditCategory > 0)
 		{
-			g_Edit[g_EditCount].EditObj--;															    // カテゴリー + 1
-			int nCategory = g_Edit[g_EditCount].EditObj;											    // カテゴリーを保存
-			g_Edit[g_EditCount].Category[nCategory].nNumModel = g_BlockTexInfo[nCategory].nNumModel;    // 現在のカテゴリーの情報を代入
-			g_Edit[g_EditCount].Category[nCategory].pModel[0] = g_BlockTexInfo[nCategory].pModel[0];    // 現在のカテゴリーの情報を代入
+			g_Edit[g_EditCount].EditCategory--;	// カテゴリー + 1
+
+			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;		// 現在のカテゴリーの情報を代入
+			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];		// 現在のカテゴリーの情報を代入
 		}
 
 		if (GetKeyboardPress(DIK_H))
@@ -266,6 +265,11 @@ void UpdateEdit(void)
 	{
 		nLoad = 0; // 回数制限解除
 	}
+
+	if (KeyboardTrigger(DIK_O))
+	{
+		g_EditCount--;
+	}
 }
 
 //===========================
@@ -273,7 +277,6 @@ void UpdateEdit(void)
 //===========================
 void DrawEdit(void)
 {
-
 	MODE mode = GetMode();
 	EDIT_INFO* pEdit = GetEdit();
 
@@ -295,7 +298,7 @@ void DrawEdit(void)
 		}
 
 		int nType = g_Edit[nCntBlock].nType;
-		int EditCategory = g_Edit[nCntBlock].EditObj;
+		int EditCategory = g_Edit[nCntBlock].EditCategory;
 
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_Edit[nCntBlock].mtxWorld);
@@ -318,40 +321,37 @@ void DrawEdit(void)
 		//現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
-		for (int nCntModel = 0; nCntModel < g_Edit[nCntBlock].Category[EditCategory].nNumModel; nCntModel++)
+		for (int nCntMat = 0; nCntMat < (int)g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_dwNumMatEdit; nCntMat++)
 		{
-			for (int nCntMat = 0; nCntMat < (int)g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_dwNumMatEdit; nCntMat++)
+			//マテリアルのデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pBuffMatEdit->GetBufferPointer();
+
+			//選択中のブロックだったら
+			if (nCntBlock == g_EditCount)
 			{
 				D3DXMATERIAL color;
 
-				//マテリアルのデータへのポインタを取得
-				pMat = (D3DXMATERIAL*)g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pBuffMatEdit->GetBufferPointer();
+				color = pMat[nCntMat];
 
-				//選択中のブロックだったら
-				if (nCntBlock == g_EditCount)
-				{
-					color = pMat[nCntMat];
+				color.MatD3D.Diffuse.r = 1.0f;
+				color.MatD3D.Diffuse.g = 1.0f;
+				color.MatD3D.Diffuse.b = 1.0f;
+				color.MatD3D.Diffuse.a = 0.2f;
 
-					color.MatD3D.Diffuse.r = 1.0f;
-					color.MatD3D.Diffuse.g = 1.0f;
-					color.MatD3D.Diffuse.b = 1.0f;
-					color.MatD3D.Diffuse.a = 0.2f;
-
-					//マテリアルの設定
-					pDevice->SetMaterial(&color.MatD3D);
-				}
-				else
-				{
-					//マテリアルの設定
-					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-				}
-
-				//テクスチャの設定
-				pDevice->SetTexture(0, g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_apTextureEdit[nCntMat]);
-
-				//ブロック(パーツ)の描画
-				g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pMeshEdit->DrawSubset(nCntMat);
+				//マテリアルの設定
+				pDevice->SetMaterial(&color.MatD3D);
 			}
+			else
+			{
+				//マテリアルの設定
+				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+			}
+
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_apTextureEdit[nCntMat]);
+
+			//ブロック(パーツ)の描画
+			g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pMeshEdit->DrawSubset(nCntMat);
 		}
 	}
 
@@ -379,11 +379,11 @@ void SaveEdit(void)
 
 		for (int nCnt = 0; nCnt < g_EditCount; nCnt++)
 		{
-			if (g_Edit[nCnt].bUse && g_Edit[nCnt].EditObj == EDITMODE_BLOCK)
+			if (g_Edit[nCnt].bUse && g_Edit[nCnt].EditCategory == EDITMODE_BLOCK)
 			{
 				fprintf(pFile, "BLOCKSET\n");
 
-				fprintf(pFile, "EDITCATEGORY = %d\n", g_Edit[nCnt].EditObj);
+				fprintf(pFile, "EDITCATEGORY = %d\n", g_Edit[nCnt].EditCategory);
 
 				fprintf(pFile, "   BLOCKTYPE = %d\n", g_Edit[nCnt].nType);
 
@@ -393,11 +393,11 @@ void SaveEdit(void)
 
 				fprintf(pFile, "END_BLOCKSET\n\n");
 			}
-			else if (g_Edit[nCnt].bUse && g_Edit[nCnt].EditObj == EDITMODE_ITEM)
+			else if (g_Edit[nCnt].bUse && g_Edit[nCnt].EditCategory == EDITMODE_ITEM)
 			{
 				fprintf(pFile, "ITEMSET\n");
 
-				fprintf(pFile, "EDITCATEGORY = %d\n", g_Edit[nCnt].EditObj);
+				fprintf(pFile, "EDITCATEGORY = %d\n", g_Edit[nCnt].EditCategory);
 
 				fprintf(pFile, "   ITEMTYPE = %d\n", g_Edit[nCnt].nType);
 
@@ -589,7 +589,7 @@ void ReLoadEdit(void)
 					else if (strcmp(aString, "EDITCATEGORY") == 0)
 					{
 						fscanf(pFile, "%s", &skip[0]);
-						fscanf(pFile, "%d", &g_Edit[nIdx].EditObj);
+						fscanf(pFile, "%d", &g_Edit[nIdx].EditCategory);
 					}
 					else if (strcmp(aString, "POS") == 0)
 					{
@@ -639,8 +639,8 @@ void ReLoadEdit(void)
 	for (int nCnt = 0; nCnt < nCntobj; nCnt++)
 	{
 		g_Edit[g_EditCount + 1].bUse = true; // 置かれていたブロックを使用状態にする
-		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditObj].pModel[0] = g_BlockTexInfo[0].pModel[0]; // 情報を代入
-		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditObj].nNumModel = g_BlockTexInfo[0].nNumModel; // 情報を代入
+		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].pModel[0] = g_BlockTexInfo[0].pModel[0]; // 情報を代入
+		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].nNumModel = g_BlockTexInfo[0].nNumModel; // 情報を代入
 		g_EditCount++;
 		g_nNumBlock++;
 	}
@@ -675,10 +675,10 @@ void LoadEditObj(int category)
 	switch (category)
 	{
 	case EDITMODE_BLOCK:
-		pFile = fopen("data\\EDIT_INFO\\BLOCK.txt", "r");
+		pFile = fopen("data\\MODEL_TXT\\BLOCK.txt", "r");
 		break;
 	case EDITMODE_ITEM:
-		pFile = fopen("data\\EDIT_INFO\\ITEM.txt", "r");
+		pFile = fopen("data\\MODEL_TXT\\ITEM.txt", "r");
 		break;
 	default:
 		pFile = NULL;
@@ -693,7 +693,7 @@ void LoadEditObj(int category)
 		{
 			fscanf(pFile, "%s", &aString[0]);
 
-			if (strcmp(aString, "NUM_MODEL") == 0)
+			if (strcmp(aString, "MAX_TYPE") == 0)
 			{
 				fscanf(pFile, "%s", &Skip[0]);
 				fscanf(pFile, "%d", &g_BlockTexInfo[category].nNumModel);

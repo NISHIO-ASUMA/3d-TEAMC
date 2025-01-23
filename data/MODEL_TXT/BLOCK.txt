@@ -1,0 +1,31 @@
++----------------------------------------------------------------+
++   ブロックの読み込み処理(種類追加したら一応報告お願いします)   +
++----------------------------------------------------------------+
+
+MAX_TYPE = 18 # 読み込むモデル数
+
+#-------------------------
+# モデルファイル
+#-------------------------
+MODEL_FILENAME = data/MODEL/OBJ/apartment.x				# [0]アパート
+MODEL_FILENAME = data/MODEL/OBJ/bill000.x				# [1]アパート
+MODEL_FILENAME = data/MODEL/OBJ/bill001.x				# [2]アパート
+MODEL_FILENAME = data/MODEL/OBJ/bill002.x				# [3]アパート
+MODEL_FILENAME = data/MODEL/OBJ/bannerflag.x			# [4]バーナー
+MODEL_FILENAME = data/MODEL/OBJ/busstop.x				# [5]バス停
+MODEL_FILENAME = data/MODEL/OBJ/dumpster.x				# [6]でかいゴミ箱
+MODEL_FILENAME = data/MODEL/OBJ/Hydrant.x				# [7]消火栓
+MODEL_FILENAME = data/MODEL/OBJ/orvis.x					# [8]オービス
+MODEL_FILENAME = data/MODEL/OBJ/phonebooth.x			# [9]電話ボックス
+MODEL_FILENAME = data/MODEL/OBJ/publictoilet.x			# [10]公衆トイレ
+MODEL_FILENAME = data/MODEL/OBJ/pylon000.x				# [11]赤いパイロン
+MODEL_FILENAME = data/MODEL/OBJ/pylon001.x				# [12]白いパイロン
+MODEL_FILENAME = data/MODEL/OBJ/pylonbar000.x			# [13]赤いパイロンガードバー付き
+MODEL_FILENAME = data/MODEL/OBJ/pylonbar001.x			# [14]白いパイロンガードバー付き
+MODEL_FILENAME = data/MODEL/OBJ/vendingmachine000.x		# [15]赤い自動販売機
+MODEL_FILENAME = data/MODEL/OBJ/vendingmachine001.x		# [16]青い自動販売機
+MODEL_FILENAME = data/MODEL/OBJ/vendingmachine002.x		# [17]白い自動販売機
+
+# もしやり方わかるならBLOCK.hの列挙型追加頼む
+
+END_SCRIPT #この行は消さないでください

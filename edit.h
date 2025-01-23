@@ -65,7 +65,7 @@ typedef struct
 	D3DXMATRIX mtxWorld;
 	D3DXVECTOR3 Scal;
 	bool bUse;
-	int EditObj;
+	int EditCategory;
 	int ObjCnt;
 	int nBlockTypeNumber;
 	int nType;
