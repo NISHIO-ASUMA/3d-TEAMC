@@ -1,3 +1,1 @@
-﻿  item.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\item.cpp(299,18): warning C4101: 'color': ローカル変数は 1 度も使われていません。
-  team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe
+﻿  team_c.vcxproj -> C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\team_c.exe

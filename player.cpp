@@ -78,6 +78,7 @@ void InitPlayer(void)
 
 		g_LoadPlayer[nCntPlayer].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
 		g_LoadPlayer[nCntPlayer].nLife = PLAYERLIFE;
+		g_LoadPlayer[nCntPlayer].nMaxLife = PLAYERLIFE;
 		g_LoadPlayer[nCntPlayer].bDisp = true;
 		g_LoadPlayer[nCntPlayer].Motion.motionType = MOTIONTYPE_NEUTRAL;
 		g_LoadPlayer[nCntPlayer].Motion.bLoopMotion = true;
