@@ -129,6 +129,9 @@
     <ClCompile Include="HPGauge.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="wall.cpp">
+      <Filter>ソース ファイル\obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="HPGauge.h">
       <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="wall.h">
+      <Filter>ヘッダー ファイル\obj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

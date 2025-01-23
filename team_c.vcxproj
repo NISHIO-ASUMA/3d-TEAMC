@@ -171,6 +171,7 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="title3d.cpp" />
     <ClCompile Include="tutorial3d.cpp" />
+    <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="title.h" />
     <ClInclude Include="title3d.h" />
     <ClInclude Include="tutorial3d.h" />
+    <ClInclude Include="wall.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

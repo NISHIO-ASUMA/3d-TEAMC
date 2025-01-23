@@ -385,29 +385,59 @@ void MouseView(void)
 
 	if (mode != MODE_TITLE && GetMouseState(&mouseState))
 	{
-		D3DXVECTOR2 Move = GetMouseVelocity();
-		D3DXVECTOR2 MoveOld = GetMouseOldVelocity();
+		DIMOUSESTATE mouseState;
 
-		D3DXVECTOR2 fAngle = Move - MoveOld;
+			static POINT prevCursorPos = { SCREEN_WIDTH / 1.5f,SCREEN_HEIGHT / 1.5f };
 
-		//回転量を更新
-		g_camera[MAIN].rot.y += fAngle.x * 0.01f;
-		g_camera[MAIN].rot.x += fAngle.y * 0.01f;
+			POINT cursorPos;
+			GetCursorPos(&cursorPos);
 
-		//回転量を制限
-		if (g_camera[MAIN].rot.x > MAX_VIEWUP)
-		{
-			g_camera[MAIN].rot.x -= fAngle.y * 0.01f;
-		}
-		else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
-		{
-			g_camera[MAIN].rot.x -= fAngle.y * 0.01f;
-		}
+			float X = (float)cursorPos.x - prevCursorPos.x;
+			float Y = (float)cursorPos.y - prevCursorPos.y;
 
-		//カメラ座標を更新
-		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-		g_camera[MAIN].posR.y = g_camera[MAIN].posV.y + cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
-		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+			const float mouseSensitivity = 0.009f;
+
+			X *= mouseSensitivity;
+			Y *= mouseSensitivity;
+
+			g_camera[MAIN].rot.y += X;
+			g_camera[MAIN].rot.x += Y;
+
+			if (g_camera[MAIN].rot.y < -D3DX_PI)
+			{
+				g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
+			}
+			else if (g_camera[MAIN].rot.y > D3DX_PI)
+			{
+				g_camera[MAIN].rot.y += -D3DX_PI * 2.0f;
+			}
+
+			if (g_camera[MAIN].rot.x < -D3DX_PI)
+			{
+				g_camera[MAIN].rot.x += D3DX_PI * 2.0f;
+			}
+			else if (g_camera[MAIN].rot.x > D3DX_PI)
+			{
+				g_camera[MAIN].rot.x += -D3DX_PI * 2.0f;
+			}
+
+			if (g_camera[MAIN].rot.x > MAX_VIEWUP)
+			{
+				g_camera[MAIN].rot.x -= Y;
+			}
+			else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
+			{
+				g_camera[MAIN].rot.x -= Y;
+			}
+			SetCursorPos(SCREEN_WIDTH / 1.5f, SCREEN_HEIGHT / 1.5f);
+
+			prevCursorPos.x = SCREEN_WIDTH / 1.5f;
+			prevCursorPos.y = SCREEN_HEIGHT / 1.5f;
+
+			g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+			g_camera[MAIN].posR.y = g_camera[MAIN].posV.y + cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+			g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		
 	}
 }
 //============================

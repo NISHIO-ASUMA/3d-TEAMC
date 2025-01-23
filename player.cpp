@@ -18,6 +18,7 @@
 #include "block.h"
 #include "item.h"
 #include "enemy.h"
+#include "wall.h"
 
 //****************************
 //É}ÉNÉçíËã`
@@ -421,6 +422,8 @@ void UpdatePlayer(void)
 	{
 		g_player.bJump = false;
 	}
+
+	CollisionWall();
 
 	//if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
 	//{

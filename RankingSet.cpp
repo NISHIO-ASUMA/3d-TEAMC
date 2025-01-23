@@ -35,7 +35,7 @@ void InitRankingSet(void)
 
 	//テクスチャの読み込み(順位)
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\ranking.png",
+		"data\\TEXTURE\\rankingback.png",
 		&g_pTextureRankSet);
 
 	//頂点バッファの生成・頂点情報の設定///順位

@@ -41,17 +41,17 @@ void InitPause(void)
 
 	//テクスチャ1の読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\continue.png",
+		"data\\TEXTURE\\pause_continue.png",
 		&g_apTexturePause[0]);
 
 	//テクスチャ2の読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\retry.png",
+		"data\\TEXTURE\\pause_retry.png",
 		&g_apTexturePause[1]);
 
 	//テクスチャ3の読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\quit.png",
+		"data\\TEXTURE\\pause_quit.png",
 		&g_apTexturePause[2]);
 
 	//頂点バッファの生成

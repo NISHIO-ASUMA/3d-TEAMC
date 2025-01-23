@@ -25,6 +25,7 @@
 #include "block.h"
 #include "item.h"
 #include "edit.h"
+#include "wall.h"
 
 //****************************
 //マクロ定義
@@ -70,6 +71,9 @@ void InitGame(void)
 	//アイテムの初期化処理
 	InitItem();
 
+	//壁の初期化処理
+	InitWall();
+
 	//エディットの初期化処理
 	InitEdit();
 
@@ -81,6 +85,11 @@ void InitGame(void)
 	SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 280.0f), ENEMYTYPE_THREE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+	SetWall(D3DXVECTOR3(500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(-500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -500.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
 
 	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
 	g_nCounterGameState = 0;
@@ -119,6 +128,9 @@ void UninitGame(void)
 
 	//アイテムの終了処理
 	UninitItem();
+
+	//壁の終了処理
+	UninitWall();
 
 	//エディットの終了処理
 	UninitEdit();
@@ -217,6 +229,9 @@ void UpdateGame(void)
 
 			//アイテムの更新処理
 			UpdateItem();
+
+			//壁の更新処理
+			UpdateWall();
 		}
 		else if (g_bEditMode)
 		{
@@ -259,6 +274,9 @@ void DrawGame(void)
 
 	//アイテムの描画処理
 	DrawItem();
+
+	//壁の描画処理
+	DrawWall();
 
 	if (g_bEditMode)
 	{
