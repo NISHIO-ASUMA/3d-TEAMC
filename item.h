@@ -104,7 +104,7 @@ void UninitItem(void);
 void UpdateItem(void);
 void DrawItem(void);
 void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal);
-bool CollisionItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize);
 bool CollisionEnemy(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius);
-//Item* GetItem();
+void Itemchange(int nType);
+Item* GetItem(void);
 #endif

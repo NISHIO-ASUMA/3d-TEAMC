@@ -385,7 +385,6 @@ void MouseView(void)
 
 	if (mode != MODE_TITLE && GetMouseState(&mouseState))
 	{
-		DIMOUSESTATE mouseState;
 
 			static POINT prevCursorPos = { SCREEN_WIDTH / 1.5f,SCREEN_HEIGHT / 1.5f };
 
@@ -429,7 +428,7 @@ void MouseView(void)
 			{
 				g_camera[MAIN].rot.x -= Y;
 			}
-			SetCursorPos(SCREEN_WIDTH / 1.5f, SCREEN_HEIGHT / 1.5f);
+			SetCursorPos((float)SCREEN_WIDTH / 1.5f, (float)SCREEN_HEIGHT / 1.5f);
 
 			prevCursorPos.x = SCREEN_WIDTH / 1.5f;
 			prevCursorPos.y = SCREEN_HEIGHT / 1.5f;

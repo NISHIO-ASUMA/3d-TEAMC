@@ -258,7 +258,7 @@ void ResetRanking(void)
 	else
 	{//開けなかったとき
 		//メッセージボックス
-		MessageBox(NULL, "ファイルが開けません。", "エラー", MB_OK);
+		MessageBox(NULL, "ファイルが開けません。", "エラー(RankingScore.cpp)", MB_OK);
 		return;
 	}
 	//ファイル閉じる

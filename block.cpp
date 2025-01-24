@@ -230,8 +230,6 @@ void DrawBlock(void)
 
 			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nCntNum].g_dwNumMatBlock; nCntMat++)
 			{
-				D3DXMATERIAL color;
-
 				//マテリアルのデータへのポインタを取得
 				pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nCntNum].g_pBuffMatBlock->GetBufferPointer();
 
@@ -420,6 +418,12 @@ void LoadBlockModel(void)
 				break;
 			}
 		}
+	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Block.cpp)", MB_OK);
+		return;
 	}
 	fclose(pFile);
 }

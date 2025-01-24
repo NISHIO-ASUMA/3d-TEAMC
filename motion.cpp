@@ -39,6 +39,33 @@ void UpdateMotion(MOTION *pMotion)
 		DiffRotY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotY - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY;
 		DiffRotZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotZ - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ;
 
+		if (DiffRotX > D3DX_PI)
+		{
+			DiffRotX += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotX < -D3DX_PI)
+		{
+			DiffRotX += D3DX_PI * 2.0f;
+		}
+
+		if (DiffRotY > D3DX_PI)
+		{
+			DiffRotY += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotY < -D3DX_PI)
+		{
+			DiffRotY += D3DX_PI * 2.0f;
+		}
+
+		if (DiffRotZ > D3DX_PI)
+		{
+			DiffRotZ += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotZ < -D3DX_PI)
+		{
+			DiffRotZ += D3DX_PI * 2.0f;
+		}
+
 //**********************************
 // パーツの位置を設定
 //**********************************

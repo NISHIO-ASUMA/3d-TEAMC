@@ -28,6 +28,8 @@
 #define TYPETHREE_MOVE (1.0f) //敵2の移動量
 #define MAX_TEXENEMY (128) //テクスチャの最大数
 #define MAX_ENEMYMOVE (1.0f) // 敵の移動量
+#define SHADOWSIZESET (40.0f) // 影のサイズのオフセット
+#define SHADOW_A (1.0f) // 影のアルファ
 
 //****************************
 //プロトタイプ宣言
@@ -238,14 +240,9 @@ void UpdateEnemy(void)
 
 		}
 
-		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), 20.0f, 0.5f);
+		// 影の計算
+		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZESET + SHADOWSIZESET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 
-		if(CollisionEnemy(&g_Enemy[nCntEnemy].pos, // 敵の位置
-			30.0f, // ブロックの半径
-			30.0f)) // 敵の半径 
-		{
-			HitEnemy(nCntEnemy, 1);
-		}
 
 		if (AgentRange(50.0f, 200.0f, nCntEnemy))
 		{
@@ -760,9 +757,6 @@ void LoadEnemy(int nType)
 
 					else if (strcmp(&aString[0], "END_SCRIPT") == 0)
 					{
-						// ファイルを閉じる
-						fclose(pFile);
-
 						break;
 					}
 					else
@@ -775,6 +769,14 @@ void LoadEnemy(int nType)
 			}
 		}// while文末
 	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(enemy.cpp)", MB_OK);
+		return;
+    }
+	// ファイルを閉じる
+	fclose(pFile);
 
 }
 //================================

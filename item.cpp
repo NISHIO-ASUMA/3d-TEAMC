@@ -13,6 +13,7 @@
 #include "camera.h"
 #include "item.h"
 #include "block.h"
+#include"player.h"
 
 //****************************
 //マクロ定義
@@ -234,6 +235,10 @@ void UpdateItem(void)
 
 		//位置の更新
 		g_Item[nCntItem].pos += g_Item[nCntItem].move;
+
+		CollisionItem(nCntItem,// アイテムのインデックスを渡す
+			20.0f, // アイテムの半径
+			20.0f); // プレイヤーの半径
 	}
 
 }
@@ -296,8 +301,6 @@ void DrawItem(void)
 
 			for (int nCntMat = 0; nCntMat < (int)g_Item[nCntItem].ItemTex[nCntNum].g_dwNumMatItem; nCntMat++)
 			{
-				D3DXMATERIAL color;
-
 				//マテリアルのデータへのポインタを取得
 				pMat = (D3DXMATERIAL*)g_Item[nCntItem].ItemTex[nCntNum].g_pBuffMatItem->GetBufferPointer();
 
@@ -334,152 +337,22 @@ void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal)
 	}
 }
 //=======================
-//ブロックの判定処理
+//ブロックの取得処理
 //=======================
-bool CollisionItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize)
+void Itemchange(int nType)
 {
-	bool bLanding = false;// 判定を返す変数
+	Player* pPlayer = GetPlayer();
 
-	Player* pPlayer = GetPlayer();//プレイヤーの取得
-
-	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
-	{
-		if (!g_Item[nCntItem].bUse)
-		{//未使用状態なら
-			//下の処理を通さずカウントを進める
-			continue;
-		}
-
-		if (pPosOld->y <= g_Item[nCntItem].pos.y + g_Item[nCntItem].Size.y * g_Item[nCntItem].Scal.y
-			&& pPosOld->y + pSize->y >= g_Item[nCntItem].pos.y)
-		{
-			//左右のめり込み判定
-			if (pPos->z - pSize->z * 0.5f < g_Item[nCntItem].pos.z + g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z
-				&& pPos->z + pSize->z * 0.5f > g_Item[nCntItem].pos.z - g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z)
-			{
-				//xが左から右にめり込んだ	
-				if (pPosOld->x + pSize->x * 0.5f < g_Item[nCntItem].pos.x - g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.y
-					&& pPos->x + pSize->x * 0.5f > g_Item[nCntItem].pos.x - g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.y)
-				{
-					pPos->x = g_Item[nCntItem].pos.x - g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.x - pSize->x * 0.5f - 0.1f;
-
-					//岩を持つ処理
-					if (KeyboardTrigger(DIK_L) && pPlayer->HandState != PLAYERHOLD_HOLD)
-					{
-						g_Item[nCntItem].state = ITEMSTATE_HOLD;
-						g_Item[nCntItem].pos = pPlayer->Motion.aModel[PARENT].pos;
-						SetMtxItem(nCntItem);
-						pPlayer->HandState = PLAYERHOLD_HOLD;
-					}
-				}
-				//xが右から左にめり込んだ	
-				else if (pPosOld->x - pSize->x * 0.5f > g_Item[nCntItem].pos.x + g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.x
-					&& pPos->x - pSize->x * 0.5f < g_Item[nCntItem].pos.x + g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.x)
-				{
-					pPos->x = g_Item[nCntItem].pos.x + g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.x + pSize->x * 0.5f + 0.1f;
-					//岩を持つ処理
-					if (KeyboardTrigger(DIK_L) && pPlayer->HandState != PLAYERHOLD_HOLD)
-					{
-						g_Item[nCntItem].state = ITEMSTATE_HOLD;
-						g_Item[nCntItem].pos = pPlayer->Motion.aModel[PARENT].pos;
-						SetMtxItem(nCntItem);
-						pPlayer->HandState = PLAYERHOLD_HOLD;
-					}
-				}
-			}
-
-			//前と後ろの判定
-			if (pPos->x - pSize->x * 0.5f < g_Item[nCntItem].pos.x + g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.x
-				&& pPos->x + pSize->x * 0.5f > g_Item[nCntItem].pos.x - g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.x)
-			{
-				//zが前方からめり込んだ
-				if (pPosOld->z + pSize->z * 0.5f < g_Item[nCntItem].pos.z - g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z
-					&& pPos->z + pSize->z * 0.5f > g_Item[nCntItem].pos.z - g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z)
-				{
-					pPos->z = g_Item[nCntItem].pos.z - g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z - pSize->z * 0.5f - 0.1f;
-
-					//岩を持つ処理
-					if (KeyboardTrigger(DIK_L) && pPlayer->HandState != PLAYERHOLD_HOLD)
-					{
-						g_Item[nCntItem].state = ITEMSTATE_HOLD;
-						g_Item[nCntItem].pos = pPlayer->Motion.aModel[PARENT].pos;
-						SetMtxItem(nCntItem);
-						pPlayer->HandState = PLAYERHOLD_HOLD;
-					}
-				}
-				//zが後方からめり込んだ
-				else if (pPosOld->z - pSize->z * 0.5f > g_Item[nCntItem].pos.z + g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z
-					&& pPos->z - pSize->z * 0.5f < g_Item[nCntItem].pos.z + g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z)
-				{
-					pPos->z = g_Item[nCntItem].pos.z + g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z + pSize->z * 0.5f + 0.5f;
-
-					//岩を持つ処理
-					if (KeyboardTrigger(DIK_L) && pPlayer->HandState != PLAYERHOLD_HOLD)
-					{
-						g_Item[nCntItem].state = ITEMSTATE_HOLD;
-						g_Item[nCntItem].pos = pPlayer->Motion.aModel[PARENT].pos;
-						SetMtxItem(nCntItem);
-						pPlayer->HandState = PLAYERHOLD_HOLD;
-					}
-				}
-			}
-		}
-
-		if (pPos->x - pSize->x * 0.5f <= g_Item[nCntItem].pos.x + g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.x
-			&& pPos->x + pSize->x * 0.5f >= g_Item[nCntItem].pos.x - g_Item[nCntItem].Size.x * 0.5f * g_Item[nCntItem].Scal.x)
-		{
-			if (pPos->z - pSize->z * 0.5f <= g_Item[nCntItem].pos.z + g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z
-				&& pPos->z + pSize->z * 0.5f >= g_Item[nCntItem].pos.z - g_Item[nCntItem].Size.z * 0.5f * g_Item[nCntItem].Scal.z)
-			{
-				//上から下
-				if (pPosOld->y >= g_Item[nCntItem].pos.y + g_Item[nCntItem].Size.y * g_Item[nCntItem].Scal.y
-					&& pPos->y < g_Item[nCntItem].pos.y + g_Item[nCntItem].Size.y * g_Item[nCntItem].Scal.y)
-				{
-					bLanding = true;
-					pPos->y = pPosOld->y;
-					pMove->y = 0.0f;
-				}
-				//下から上
-				else if (pPosOld->y + pSize->y * 0.5f <= g_Item[nCntItem].pos.y - g_Item[nCntItem].Size.y * 0.5f * g_Item[nCntItem].Scal.y
-					&& pPos->y + pSize->y * 0.5f > g_Item[nCntItem].pos.y - g_Item[nCntItem].Size.y * 0.5f * g_Item[nCntItem].Scal.y)
-				{
-					pPos->y = pPosOld->y;
-					pMove->y = 0.0f;
-				}
-
-			}
-		}
-	}
-
-	return bLanding;//判定を返す
+	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].ItemTex[nType].g_dwNumMatItem;
+	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].ItemTex[nType].g_pBuffMatItem;
+	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].ItemTex[nType].g_pMeshItem;
 }
 //=======================
-//ブロックと敵の判定
+//アイテムの取得
 //=======================
-bool CollisionEnemy(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
+Item* GetItem(void)
 {
-	bool bHit = false; // 判定を返す変数
-
-	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
-	{
-		float fDistanceX = g_Item[nCnt].pos.x - pPos->x; // 距離Xを算出
-		float fDistanceY = g_Item[nCnt].pos.y - pPos->y; // 距離Yを算出
-		float fDistanceZ = g_Item[nCnt].pos.z - pPos->z; // 距離Zを算出
-
-		float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
-
-		float Radius = ItemRadius + EnemyRadius;
-
-		Radius = Radius * Radius;
-
-		if (fDistance <= Radius && g_Item[nCnt].state == ITEMSTATE_THROW)
-		{
-			bHit = true;
-			g_Item[nCnt].bUse = false;
-		}
-	}
-
-	return bHit;//判定を返す
+	return &g_Item[0];
 }
 ////=======================
 ////ブロックの取得処理
@@ -580,9 +453,15 @@ void LoadItemModel(void)
 			}
 			else if (strcmp(aString, "END_SCRIPT") == 0)
 			{
-				fclose(pFile);
 				break;
 			}
 		}
 	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(item.cpp)", MB_OK);
+		return;
+	}
+	fclose(pFile);
 }

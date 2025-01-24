@@ -287,6 +287,7 @@ void DrawGame(void)
 
 	//HPゲージの描写処理
     DrawGauge();
+
     //プレイヤーの影の描画処理
     DrawShadow();
 

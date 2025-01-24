@@ -434,6 +434,8 @@ void SaveEdit(void)
 	}
 	else
 	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
 		return;
 	}
 	fclose(pFile);
@@ -541,6 +543,8 @@ void LoadEdit(void)
 	}
 	else
 	{//開けなかったとき	
+				//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
 		return;
 	}
 	fclose(pFile);
@@ -652,6 +656,8 @@ void ReLoadEdit(void)
 	}
 	else
 	{//開けなかったとき	
+				//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
 		return;
 	}
 	fclose(pFile);
@@ -742,9 +748,15 @@ void LoadEditObj(int category)
 			}
 			else if (strcmp(aString, "END_SCRIPT") == 0)
 			{
-				fclose(pFile);
 				break;
 			}
 		}
 	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
+		return;
+	}
+	fclose(pFile);
 }

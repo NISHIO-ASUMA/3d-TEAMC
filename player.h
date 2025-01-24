@@ -15,6 +15,8 @@
 #include"model.h"
 #include"motion.h"
 #include "enemy.h"
+#include"item.h"
+
 //**************************
 //マクロ定義
 //**************************
@@ -73,8 +75,8 @@ typedef enum
 //**************************
 typedef enum
 {
-	PLAYERTYPE_ONE = 0,
-	PLAYERTYPE_TWO,
+	PLAYERTYPE_WEPON = 0,
+	PLAYERTYPE_NOHAND,
 	PLAYERTYPE_MAX
 }PLAYERTYPE;
 
@@ -107,6 +109,19 @@ typedef enum
 	PLAYERSTATE_INVISIBLE,
 	PLAYERSTATE_MAX
 }PLAYERSTATE;
+
+//*******************************
+//プレイヤーの武器モーションの数
+//*******************************
+typedef enum
+{
+	MOTION_KATANA = 0,
+	MOTION_BIGWEPON,
+	MOTION_DBHAND,
+	MOTION_NO_HOLD,
+	MOTION_THROW,
+	MOTION_MAX
+}WEPONMOTION; // 使いまわせるものは使いまわす
 
 //**************************
 //プレイヤー構造体
@@ -157,6 +172,6 @@ Player* GetPlayer(void);//プレイヤーの取得処理
 void SetMtxPos(void);//ワールドマトリックスのオフセット設定処理
 void HitPlayer(int nDamage);//プレイヤーのヒット処理
 void StickPad(void);//パッドの移動処理
-void LoadPlayer(int nType);
+bool CollisionItem(int nIdx, float Itemrange, float plrange);
 void HitSowrd(ENEMY *pEnemy);
 #endif
