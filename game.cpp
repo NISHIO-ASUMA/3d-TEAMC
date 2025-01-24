@@ -26,6 +26,7 @@
 #include "item.h"
 #include "edit.h"
 #include "wall.h"
+#include "HPGauge.h"
 
 //****************************
 //マクロ定義
@@ -73,6 +74,9 @@ void InitGame(void)
 
 	//壁の初期化処理
 	InitWall();
+
+	//HPゲージの初期化処理
+	InitGauge();
 
 	//エディットの初期化処理
 	InitEdit();
@@ -131,6 +135,9 @@ void UninitGame(void)
 
 	//壁の終了処理
 	UninitWall();
+
+	//HPゲージの終了処理
+	UninitGauge();
 
 	//エディットの終了処理
 	UninitEdit();
@@ -230,6 +237,9 @@ void UpdateGame(void)
 			//アイテムの更新処理
 			UpdateItem();
 
+			//HPゲージの更新処理
+			UpdateGauge();
+
 			//壁の更新処理
 			UpdateWall();
 		}
@@ -277,6 +287,9 @@ void DrawGame(void)
 
 	//壁の描画処理
 	DrawWall();
+
+	//HPゲージの描写処理
+	DrawGauge();
 
 	if (g_bEditMode)
 	{
