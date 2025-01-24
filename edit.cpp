@@ -185,8 +185,8 @@ void UpdateEdit(void)
 		{
 			g_Edit[g_EditCount + 1].pos = g_Edit[g_EditCount].pos;							// 次のオブジェクトに現在のオブジェクトの位置を代入
 			g_Edit[g_EditCount + 1].bUse = true;											// 次のオブジェクトを使用状態にする
-			g_Edit[g_EditCount + 1].Category[0].pModel[0] = g_BlockTexInfo[0].pModel[0];	// 次のオブジェクトにカテゴリー0、種類0番の情報を代入
-			g_Edit[g_EditCount + 1].Category[0].nNumModel = g_BlockTexInfo[0].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
+			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount +1].EditCategory].pModel[g_Edit[g_EditCount + 1].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];	// 次のオブジェクトにカテゴリー0、種類0番の情報を代入
+			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount + 1].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
 			g_nNumBlock++;																	// オブジェクト数 + 1
 			g_EditCount++;																	// オブジェクトのカウント + 1
 		}
@@ -434,6 +434,8 @@ void SaveEdit(void)
 	}
 	else
 	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
 		return;
 	}
 	fclose(pFile);
@@ -541,6 +543,8 @@ void LoadEdit(void)
 	}
 	else
 	{//開けなかったとき	
+				//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
 		return;
 	}
 	fclose(pFile);
@@ -652,6 +656,8 @@ void ReLoadEdit(void)
 	}
 	else
 	{//開けなかったとき	
+				//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
 		return;
 	}
 	fclose(pFile);
@@ -659,8 +665,8 @@ void ReLoadEdit(void)
 	for (int nCnt = 0; nCnt < nCntobj; nCnt++)
 	{
 		g_Edit[g_EditCount + 1].bUse = true; // 置かれていたブロックを使用状態にする
-		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].pModel[0] = g_BlockTexInfo[0].pModel[0]; // 情報を代入
-		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].nNumModel = g_BlockTexInfo[0].nNumModel; // 情報を代入
+		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].pModel[g_Edit[nCnt].nType] = g_BlockTexInfo[g_Edit[nCnt].EditCategory].pModel[g_Edit[nCnt].nType]; // 情報を代入
+		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[nCnt].EditCategory].nNumModel; // 情報を代入
 		g_EditCount++;
 		g_nNumBlock++;
 	}
@@ -742,9 +748,15 @@ void LoadEditObj(int category)
 			}
 			else if (strcmp(aString, "END_SCRIPT") == 0)
 			{
-				fclose(pFile);
 				break;
 			}
 		}
 	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
+		return;
+	}
+	fclose(pFile);
 }

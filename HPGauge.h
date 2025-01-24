@@ -14,5 +14,6 @@ void UninitGauge(void);
 void UpdateGauge(void);
 void DrawGauge(void);
 void SetGauge(void);
+void AddFever(float Add);
 
 #endif

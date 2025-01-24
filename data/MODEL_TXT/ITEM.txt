@@ -2,34 +2,41 @@
 +   アイテムの読み込み処理(種類追加したら一応報告お願いします)   +     
 +----------------------------------------------------------------+
 
-MAX_TYPE = 23 # 読み込むモデル数
+MAX_TYPE = 30 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
 #-------------------------
-MODEL_FILENAME = data/MODEL/ITEM/wepon_bat.x						# [0]バット
-MODEL_FILENAME = data/MODEL/ITEM/wepon_golf.x						# [1]ゴルフ
-MODEL_FILENAME = data/MODEL/ITEM/wepon_hunmer.x						# [2]ハンマー
-MODEL_FILENAME = data/MODEL/ITEM/wepon_stone.x						# [3]石
-MODEL_FILENAME = data/MODEL/ITEM/wepon_wood.x						# [4]木
-MODEL_FILENAME = data/MODEL/ITEM/wepon_stonebat.x					# [5]石バット
-MODEL_FILENAME = data/MODEL/ITEM/wepon_fluorescentlight.x			# [6]蛍光灯
-MODEL_FILENAME = data/MODEL/ITEM/wepon_fluorescentlightsword.x		# [7]電気をまとった木
-MODEL_FILENAME = data/MODEL/ITEM/wepon_harisen.x					# [8]ハリセン
-MODEL_FILENAME = data/MODEL/ITEM/wepon_iceblock.x					# [9]氷のブロック
-MODEL_FILENAME = data/MODEL/ITEM/wepon_iceblocksword.x				# [10]氷の力を宿した刀
-MODEL_FILENAME = data/MODEL/ITEM/wepon_iron.x						# [11]鉄パイプ
-MODEL_FILENAME = data/MODEL/ITEM/wepon_ironbat.x					# [12]金属バット
-MODEL_FILENAME = data/MODEL/ITEM/wepon_surfboard.x					# [13]サーフボード
-MODEL_FILENAME = data/MODEL/ITEM/wepon_torch.x						# [14]松明
-MODEL_FILENAME = data/MODEL/ITEM/wepon_torchsword.x					# [15]炎をつかさどる刀
-MODEL_FILENAME = data/MODEL/ITEM/wepon_bar.x						# [16]バール
-MODEL_FILENAME = data/MODEL/ITEM/wepon_headstatue.x					# [17]頭だけの像
-MODEL_FILENAME = data/MODEL/ITEM/wepon_headstatutorso.x				# [18]マネキン
-MODEL_FILENAME = data/MODEL/ITEM/wepon_megaphone.x					# [19]メガホン
-MODEL_FILENAME = data/MODEL/ITEM/wepon_rubbercup.x					# [20]すっぽん
-MODEL_FILENAME = data/MODEL/ITEM/wepon_telephonepole.x				# [21]電柱
-MODEL_FILENAME = data/MODEL/ITEM/wepon_torso.x						# [22]トルソー
+MODEL_FILENAME = data/MODEL/ITEM/wepon_bat.x							# [0]バット
+MODEL_FILENAME = data/MODEL/ITEM/wepon_golf.x							# [1]ゴルフ
+MODEL_FILENAME = data/MODEL/ITEM/wepon_hunmer.x							# [2]ハンマー
+MODEL_FILENAME = data/MODEL/ITEM/wepon_stone.x							# [3]石
+MODEL_FILENAME = data/MODEL/ITEM/wepon_wood.x							# [4]木
+MODEL_FILENAME = data/MODEL/ITEM/wepon_stonebat.x						# [5]石バット
+MODEL_FILENAME = data/MODEL/ITEM/wepon_fluorescentlight.x				# [6]蛍光灯
+MODEL_FILENAME = data/MODEL/ITEM/wepon_fluorescentlightsword.x			# [7]電気をまとった刀
+MODEL_FILENAME = data/MODEL/ITEM/wepon_harisen.x						# [8]ハリセン
+MODEL_FILENAME = data/MODEL/ITEM/wepon_iceblock.x						# [9]氷のブロック
+MODEL_FILENAME = data/MODEL/ITEM/wepon_iceblocksword.x					# [10]氷の力を宿した刀
+MODEL_FILENAME = data/MODEL/ITEM/wepon_iron.x							# [11]鉄パイプ
+MODEL_FILENAME = data/MODEL/ITEM/wepon_ironbat.x						# [12]金属バット
+MODEL_FILENAME = data/MODEL/ITEM/wepon_surfboard.x						# [13]サーフボード
+MODEL_FILENAME = data/MODEL/ITEM/wepon_torch.x							# [14]松明
+MODEL_FILENAME = data/MODEL/ITEM/wepon_torchsword.x						# [15]炎をつかさどる刀
+MODEL_FILENAME = data/MODEL/ITEM/wepon_bar.x							# [16]バール
+MODEL_FILENAME = data/MODEL/ITEM/wepon_headstatue.x						# [17]頭だけの像
+MODEL_FILENAME = data/MODEL/ITEM/wepon_headstatutorso.x					# [18]マネキン
+MODEL_FILENAME = data/MODEL/ITEM/wepon_megaphone.x						# [19]メガホン
+MODEL_FILENAME = data/MODEL/ITEM/wepon_rubbercup.x						# [20]すっぽん
+MODEL_FILENAME = data/MODEL/ITEM/wepon_telephonepole.x					# [21]電柱
+MODEL_FILENAME = data/MODEL/ITEM/wepon_torso.x							# [22]トルソー
+MODEL_FILENAME = data/MODEL/ITEM/wepon_fluorescentlightmegaphone.x		# [23]拡声器
+MODEL_FILENAME = data/MODEL/ITEM/wepon_bonespear.x						# [24]骨の槍
+MODEL_FILENAME = data/MODEL/ITEM/wepon_fish.x							# [25]魚
+MODEL_FILENAME = data/MODEL/ITEM/wepon_hex.x							# [26]呪いの珠
+MODEL_FILENAME = data/MODEL/ITEM/wepon_hexmandolin.x					# [27]ハープ
+MODEL_FILENAME = data/MODEL/ITEM/wepon_surfboardfish.x					# [28]サメの浮き輪
+MODEL_FILENAME = data/MODEL/ITEM/wepon_tutorial.x						# [29]4枚目のチュートリアルの看板
 
 # もしやり方わかるならITEM.hの列挙型追加頼む
 

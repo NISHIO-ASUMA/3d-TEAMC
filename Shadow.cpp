@@ -184,6 +184,7 @@ void SetPositionShadow(int nIdxShadow, D3DXVECTOR3 pos, float fSize, float fAlv)
 	g_aShadow[nIdxShadow].fSize = fSize;
 	g_aShadow[nIdxShadow].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_aShadow[nIdxShadow].fALv);
 	g_aShadow[nIdxShadow].fALv = fAlv;
+
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	VERTEX_3D* pVtx;
 	g_pVtxBuffShadow->Lock(0, 0, (void**)&pVtx, 0);

@@ -39,6 +39,33 @@ void UpdateMotion(MOTION *pMotion)
 		DiffRotY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotY - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY;
 		DiffRotZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotZ - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ;
 
+		if (DiffRotX > D3DX_PI)
+		{
+			DiffRotX += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotX < -D3DX_PI)
+		{
+			DiffRotX += D3DX_PI * 2.0f;
+		}
+
+		if (DiffRotY > D3DX_PI)
+		{
+			DiffRotY += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotY < -D3DX_PI)
+		{
+			DiffRotY += D3DX_PI * 2.0f;
+		}
+
+		if (DiffRotZ > D3DX_PI)
+		{
+			DiffRotZ += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotZ < -D3DX_PI)
+		{
+			DiffRotZ += D3DX_PI * 2.0f;
+		}
+
 //**********************************
 // パーツの位置を設定
 //**********************************
@@ -102,31 +129,15 @@ void UpdateMotion(MOTION *pMotion)
 		pMotion->nKey = 0;
 	}
 
-	// ループしないモーションの処理
-	NoLoopMotion(pMotion,pMotion->motionType);
+	if (!pMotion->aMotionInfo[pMotion->motionType].bLoop && pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
+	{
+		pMotion->motionType = MOTIONTYPE_NEUTRAL;
+	}
 
 	if (pMotion->bLoopMotion)
 	{
 		//モーションカウントを加算
 		pMotion->nCountMotion++;
 	}
+}
 
-}
-//==================================
-// ループしないモーションの処理
-//==================================
-void NoLoopMotion(MOTION *Motion,int Motiontype)
-{
-	if (Motion->nKey >= Motion->aMotionInfo[Motion->motionType].nNumkey - 1 &&
-		!Motion->aMotionInfo[Motion->motionType].bLoop && Motion->bLoopMotion)
-	{
-		if (Motiontype == MOTIONTYPE_JUMP)
-		{
-			Motion->bLoopMotion = false; // モーションのカウントを止める
-		}
-		else if (Motiontype == MOTIONTYPE_LANDING)
-		{
-			Motion->motionType = MOTIONTYPE_NEUTRAL;
-		}
-	}
-}

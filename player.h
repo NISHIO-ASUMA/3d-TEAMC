@@ -14,6 +14,8 @@
 #include"main.h"
 #include"model.h"
 #include"motion.h"
+#include "enemy.h"
+#include"item.h"
 
 //**************************
 //マクロ定義
@@ -73,10 +75,24 @@ typedef enum
 //**************************
 typedef enum
 {
-	PLAYERTYPE_ONE = 0,
-	PLAYERTYPE_TWO,
+	PLAYERTYPE_WEPON = 0,
+	PLAYERTYPE_NOHAND,
 	PLAYERTYPE_MAX
 }PLAYERTYPE;
+
+//**************************
+//プレイヤーのコンボ状態
+//**************************
+typedef enum
+{
+	COMBO_NO = 0,
+	COMBO_ATTACK1,
+	COMBO_ATTACK2,
+	COMBO_ATTACK3,
+	COMBO_ATTACK4,
+	COMBO_ATTACK5,
+	COMBO_MAX
+}COMBOSTATE;
 
 //**************************
 //プレイヤーの状態
@@ -93,6 +109,17 @@ typedef enum
 	PLAYERSTATE_INVISIBLE,
 	PLAYERSTATE_MAX
 }PLAYERSTATE;
+
+//*******************************
+//プレイヤーの武器モーションの数
+//*******************************
+typedef enum
+{
+	MOTION_KATANA = 0,
+	MOTION_BIGWEPON,
+	MOTION_DBHAND,
+	MOTION_MAX
+}WEPONMOTION; // 使いまわせるものは使いまわす
 
 //**************************
 //プレイヤー構造体
@@ -129,6 +156,7 @@ typedef struct
 	bool bImpactCollision;
 	bool bJumpAttack;
 	float fShadowSize;//影の大きさ
+	int Combostate; // コンボの状態をもつ変数 
 }Player;
 
 //**************************
@@ -142,5 +170,6 @@ Player* GetPlayer(void);//プレイヤーの取得処理
 void SetMtxPos(void);//ワールドマトリックスのオフセット設定処理
 void HitPlayer(int nDamage);//プレイヤーのヒット処理
 void StickPad(void);//パッドの移動処理
-void LoadPlayer(int nType);
+bool CollisionItem(int nIdx, float Itemrange, float plrange);
+void HitSowrd(ENEMY *pEnemy);
 #endif

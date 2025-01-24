@@ -19,11 +19,13 @@
 #include "item.h"
 #include "enemy.h"
 #include "wall.h"
+#include "mouse.h"
+#include "Shadow.h"
 
 //****************************
 //マクロ定義
 //****************************
-#define MAX_WORD (128) // 最大文字数
+#define MAX_WORD (256) // 最大文字数
 #define PLAYERLIFE (50) // プレイヤーの体力
 #define MAX_TEXPLAYER (128) // テクスチャの最大数
 #define MAX_JUMP (15.0f) // ジャンプ量
@@ -33,13 +35,19 @@
 //プロトタイプ宣言
 //****************************
 void LoadModel(int nType); // プレイヤーのロード処理
+void PlayerComb(MOTIONTYPE motiontype, int AttackState,int nCounterState, COMBOSTATE Combstate);
+void LoadMotion(int Weponmotion);
+void MotionChange(int itemtype,int LoadPlayer);
 
 //****************************
 //グローバル変数宣言
 //****************************
 LPDIRECT3DTEXTURE9 g_apTexturePlayer[MAX_TEXPLAYER] = {};//プレイヤーのテクスチャへのポインタ
 Player g_player;//プレイヤー構造体
-Player g_LoadPlayer[PLAYERTYPE_MAX];
+Player g_LoadPlayer[PLAYERTYPE_MAX]; // プレイヤーのモデルを保存しておく変数
+MODEL g_LoadWepon[ITEMTYPE_MAX];     // プレイヤーの武器を保存しておく変数
+MOTION g_LoadMotion[MOTION_MAX];   // モーションの情報を保存しておく変数
+int g_nCounterState,g_AttackState;
 
 //============================
 //プレイヤーの初期化処理
@@ -49,6 +57,8 @@ void InitPlayer(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	MODE mode = GetMode();//現在のモードを取得
+
+	g_player.nIdxShadow = SetShadow(g_player.pos, g_player.rot, 40.0f);
 
 	//プレイヤーの初期化
 	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);		   //座標
@@ -68,13 +78,26 @@ void InitPlayer(void)
 	g_player.SwordOffpos.y = 85.0f;						   //剣のオフセットの座標y
 	g_player.SwordOffpos.z = 0.0f;						   //剣のオフセットの座標z
 	g_player.nCounterAction = 0;						   //アクションカウント
+	g_nCounterState = 0;                                   //状態カウンター
+	g_AttackState = 0;									   //攻撃状態のカウンター
 
-	LoadModel(0);
+	//LoadWepon(); // アイテムのロード
+
+
+	LoadMotion(0);
+	LoadMotion(1);
+	LoadMotion(2);
+
+	// 切り替わるモーションの数だけ
+	for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
+	{
+	}
 
 	D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
 	for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
 	{
+		LoadModel(nCntPlayer);
 		//必要な情報を設定
 
 		g_LoadPlayer[nCntPlayer].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
@@ -85,6 +108,7 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].Motion.bLoopMotion = true;
 		g_LoadPlayer[nCntPlayer].bJumpAttack = false;
 		g_LoadPlayer[nCntPlayer].HandState = PLAYERHOLD_NO;
+		g_LoadPlayer[nCntPlayer].state = PLAYERSTATE_NORMAL;
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
@@ -97,10 +121,9 @@ void InitPlayer(void)
 				{
 					//このファイル名を使用してテクスチャを読み込む
 					//テクスチャの読み込み
-					D3DXCreateTextureFromFile(pDevice,
-						
-						pMat[nCntMat].pTextureFilename,
-						&g_apTexturePlayer[nCntMat]);
+					D3DXCreateTextureFromFile(pDevice,						
+					pMat[nCntMat].pTextureFilename,
+					&g_apTexturePlayer[nCntMat]);
 				}
 			}
 		}
@@ -243,6 +266,38 @@ void UninitPlayer(void)
 			}
 		}
 	}
+
+	// アイテム分回す
+	for (int nCnt = 0; nCnt < ITEMTYPE_MAX; nCnt++)
+	{
+		// メッシュの破棄
+		if (g_LoadWepon[nCnt].pMesh != NULL)
+		{
+			g_LoadWepon[nCnt].pMesh->Release();
+			g_LoadWepon[nCnt].pMesh = NULL;
+		}
+		// マテリアルの破棄
+		if (g_LoadWepon[nCnt].pBuffMat != NULL)
+		{
+			g_LoadWepon[nCnt].pBuffMat->Release();
+			g_LoadWepon[nCnt].pBuffMat = NULL;
+		}
+	}
+
+	for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel; nCntModel++)
+	{
+		//メッシュの破棄
+		if (g_player.Motion.aModel[nCntModel].pMesh != NULL)
+		{
+			g_player.Motion.aModel[nCntModel].pMesh = NULL;
+		}
+
+		//マテリアルの破棄
+		if (g_player.Motion.aModel[nCntModel].pBuffMat != NULL)
+		{
+			g_player.Motion.aModel[nCntModel].pBuffMat = NULL;
+		}
+	}
 }
 //============================
 //プレイヤーの更新処理
@@ -343,8 +398,7 @@ void UpdatePlayer(void)
 	}
 	else
 	{
-		if (g_player.Motion.motionType == MOTIONTYPE_MOVE ||
-			g_player.Motion.motionType == MOTIONTYPE_NEUTRAL)
+		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL; // キーを押していない時にニュートラルになる
 		}
@@ -357,7 +411,7 @@ void UpdatePlayer(void)
 	case MOTIONTYPE_MOVE:
 		if (!g_player.bJump)
 		{
-			g_player.Motion.motionType = MOTIONTYPE_JUMP;
+			g_player.Motion.motionType = MOTIONTYPE_JUMP; // モーションをジャンプにする
 		}
 		break;
 	case MOTIONTYPE_ACTION:
@@ -375,12 +429,80 @@ void UpdatePlayer(void)
 	case PLAYERSTATE_NORMAL:
 		break;
 	case PLAYERSTATE_MOVE:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
 		break;
 	case PLAYERSTATE_ATTACK:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
 		break;
 	case PLAYERSTATE_JUMP:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
 		break;
 	case PLAYERSTATE_LANDING:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	case PLAYERSTATE_DAMAGE:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	default:
+		break;
+	}
+
+	switch (g_player.Combostate)
+	{
+	case COMBO_NO:
+		break;
+	case COMBO_ATTACK1:
+		g_AttackState--;
+		if (g_AttackState < 0)
+		{
+			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		}
+		break;
+	case COMBO_ATTACK2:
+		g_AttackState--;
+		if (g_AttackState < 0)
+		{
+			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		}
+		break;
+	case COMBO_ATTACK3:
+		g_AttackState--;
+		if (g_AttackState < 0)
+		{
+			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		}
+		break;
+	case COMBO_ATTACK4:
+		g_AttackState--;
+		if (g_AttackState < 0)
+		{
+			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		}
 		break;
 	default:
 		break;
@@ -396,28 +518,13 @@ void UpdatePlayer(void)
 	//プレイヤーの位置の更新
 	g_player.pos += g_player.move;
 
-	if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size)||
-		CollisionItem(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
+	if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
 	{
-		g_player.bJump = true;
-
-		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
-		{
-			g_player.Motion.nKey = 0;// 0キーから始める
-			g_player.Motion.bLoopMotion = true;
-			g_player.Motion.motionType = MOTIONTYPE_LANDING;
-		}
+		g_player.bJump = true; // ジャンプを可能にする
 	}
 	else if (CollisionField())
 	{
-		g_player.bJump = true;
-
-		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
-		{
-			g_player.Motion.nKey = 0;// 0キーから始める
-			g_player.Motion.bLoopMotion = true;
-			g_player.Motion.motionType = MOTIONTYPE_LANDING;
-		}
+		g_player.bJump = true; // ジャンプを可能にする
 	}
 	else
 	{
@@ -426,12 +533,11 @@ void UpdatePlayer(void)
 
 	CollisionWall();
 
-	//if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
-	//{
-	//	g_player.bJump = true;
-	//}
 	//プレイヤーの重力
 	g_player.move.y -= 1.0f;
+
+	// 影の計算
+	SetPositionShadow(g_player.nIdxShadow,g_player.pos,60.0f + 60.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
 
 	////壁の衝突判定
 	//CollisionWall();
@@ -444,6 +550,27 @@ void UpdatePlayer(void)
 			g_player.Motion.nKey = 0;
 			g_player.Motion.motionType = MOTIONTYPE_JUMP;
 			g_player.move.y = 15.0f;
+		}
+	}
+
+	// プレイヤーの状態が攻撃じゃないかつ地面にいる
+	if (g_player.bDisp)
+	{
+		if (OnMouseTriggerDown(LEFT_MOUSE)&&g_player.Combostate == COMBO_NO)
+		{
+			PlayerComb(MOTIONTYPE_ACTION, 60, 120, COMBO_ATTACK1); // コンボ1
+		}
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK1 && g_player.HandState != PLAYERHOLD_HOLD)
+		{
+			PlayerComb(MOTIONTYPE_ACTION2, 60, 120, COMBO_ATTACK2); // コンボ2
+		}
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK2)
+		{
+			PlayerComb(MOTIONTYPE_ACTION3, 60, 120, COMBO_ATTACK3); // コンボ3
+		}
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK3)
+		{
+			PlayerComb(MOTIONTYPE_ACTION4, 60, 120, COMBO_ATTACK4); // コンボ4
 		}
 	}
 
@@ -476,6 +603,8 @@ void DrawPlayer(void)
 	D3DMATERIAL9 matDef;//現在のマテリアル保存用
 
 	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
+
+	int nCnt = 0;
 
 	if (g_player.bDisp == true)
 	{
@@ -566,6 +695,11 @@ void DrawPlayer(void)
 					//モデル(パーツ)の描画
 					g_player.Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 				}
+				nCnt++;
+			}
+			if (nCnt == 15)
+			{
+				SetMtxPos(); // 剣のワールドマトリックスを設定
 			}
 		}
 	}
@@ -582,37 +716,36 @@ Player* GetPlayer(void)
 //=============================================
 void SetMtxPos(void)
 {
-	//LPDIRECT3DDEVICE9 pDevice;
+	LPDIRECT3DDEVICE9 pDevice;
 
-	//pDevice = GetDevice();
-	//CAMERA* pCamera = GetCamera();
+	pDevice = GetDevice();
 
-	////計算用のマトリックス
-	//D3DXMATRIX mtxRot, mtxTrans,mtxParent;
+	//計算用のマトリックス
+	D3DXMATRIX mtxRot, mtxTrans,mtxParent;
 
-	////ワールドマトリックスの初期化
-	//D3DXMatrixIdentity(&g_player.SwordMtx);
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&g_player.SwordMtx);
 
-	////向きを反映
-	//D3DXMatrixRotationYawPitchRoll(&mtxRot, g_player.Motion.aModel[PLAYERMODEL_015_SWORD].rot.y,
-	//	g_player.Motion.aModel[PLAYERMODEL_015_SWORD].rot.x,
-	//	g_player.Motion.aModel[PLAYERMODEL_015_SWORD].rot.z);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_player.Motion.aModel[15].rot.y,
+		g_player.Motion.aModel[15].rot.x,
+		g_player.Motion.aModel[15].rot.z);
 
-	//D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx,&mtxRot);
+	D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx,&mtxRot);
 
-	////位置を反映
-	//D3DXMatrixTranslation(&mtxTrans, g_player.SwordOffpos.x,g_player.SwordOffpos.y,g_player.SwordOffpos.z);
-	//D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx, &mtxTrans);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans, g_player.SwordOffpos.x,g_player.SwordOffpos.y,g_player.SwordOffpos.z);
+	D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx, &mtxTrans);
 
-	//mtxParent = g_player.Motion.aModel[PLAYERMODEL_015_SWORD].mtxWorld;
+	mtxParent = g_player.Motion.aModel[15].mtxWorld;
 
-	////算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
-	//D3DXMatrixMultiply(&g_player.SwordMtx,
-	//	&g_player.SwordMtx,
-	//	&mtxParent);
+	//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
+	D3DXMatrixMultiply(&g_player.SwordMtx,
+		&g_player.SwordMtx,
+		&mtxParent);
 
-	////ワールドマトリックスの設定
-	//pDevice->SetTransform(D3DTS_WORLD, &g_player.SwordMtx);
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &g_player.SwordMtx);
 }
 //======================
 // プレイヤーと敵の判定
@@ -623,14 +756,12 @@ void HitPlayer(int nDamage)
 
 	if (g_player.nLife <= 0)
 	{
-		g_player.Motion.motionType = MOTIONTYPE_FALL;
 		g_player.state = PLAYERSTATE_FALL;
 	}
 	else
 	{
 		g_player.nCounterState = 60;
 		g_player.state = PLAYERSTATE_DAMAGE;
-		g_player.Motion.motionType = MOTIONTYPE_DAMAGE;
 	}
 }
 //============================
@@ -670,12 +801,339 @@ void StickPad(void)
 	//			if (g_player.Motion.motionType != MOTIONTYPE_INVISIBLE)
 	//			{
 	//				g_player.state = PLAYERSTATE_MOVE;
-	//			}
-	//		}
-	//	}
-	//}
+//			}
+//		}
+//	}
+//}
+}
+//================================
+// プレイヤーの剣と敵の当たり判定
+//================================
+void HitSowrd(ENEMY* pEnemy)
+{
+
 }
 
+//================================
+// プレイヤーとアイテムの判定
+//================================
+bool CollisionItem(int nIdx, float Itemrange, float plrange)
+{
+	Item* pItem = GetItem();
+
+	bool bCollision = false; // 当たっているかどうか
+
+	float fDistanceX = g_player.pos.x - pItem[nIdx].pos.x; // 距離Xを計算
+	float fDistanceY = g_player.pos.y - pItem[nIdx].pos.y; // 距離Yを計算
+	float fDistanceZ = g_player.pos.z - pItem[nIdx].pos.z; // 距離Zを計算
+
+	//距離を算出
+	float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
+
+	// 半径を計算
+	float Radius = Itemrange + plrange;
+
+	// 半径を算出
+	Radius = Radius * Radius;
+
+	// 範囲内に入った
+	if (fDistance <= Radius)
+	{
+		bCollision = true;
+
+		if (KeyboardTrigger(DIK_F))
+		{
+			Itemchange(pItem[nIdx].nType); // アイテムを拾う
+
+			switch (pItem[nIdx].nType)
+			{
+			case ITEMTYPE_BAT:
+				MotionChange(MOTION_DBHAND,0);
+				break;
+			case ITEMTYPE_GOLF:
+				MotionChange(MOTION_DBHAND,0);
+				break;
+			case ITEMTYPE_HUNMER:
+				MotionChange(MOTION_BIGWEPON,0);
+				break;
+			case ITEMTYPE_WOOD:
+				MotionChange(MOTION_DBHAND,0);
+				break;
+			case ITEMTYPE_STONEBAT:
+				break;
+			case ITEMTYPE_LIGHT:
+				break;
+			case ITEMTYPE_LIGHTWOOD:
+				break;
+			case ITEMTYPE_HARISEN:
+				break;
+			case ITEMTYPE_ICEBLOCK:
+				MotionChange(MOTION_DBHAND, 1);
+				break;
+			case ITEMTYPE_ICEBLOCKSOWRD:
+				break;
+			case ITEMTYPE_IRON:
+				break;
+			case ITEMTYPE_IRONBAT:
+				break;
+			case ITEMTYPE_SURFBOARD:
+				break;
+			case ITEMTYPE_TORCH:
+				break;
+			case ITEMTYPE_TORCHSWORD:
+				break;
+			case ITEMTYPE_HEADSTATUE:
+				break;
+			case ITEMTYPE_HEADSTATUTORSO:
+				break;
+			case ITEMTYPE_MEGAPHONE:
+				break;
+			case ITEMTYPE_RUBBERCUP:
+				break;
+			case ITEMTYPE_TELEPHONEPOLE:
+				break;
+			case ITEMTYPE_TORSO:
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	return bCollision;
+}
+
+//============================
+// プレイヤーのコンボ
+//============================
+void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBOSTATE Combstate)
+{
+	g_player.Motion.nKey = 0;                 // キーを0から始める
+	g_player.Motion.nCountMotion = 0;	      // モーションカウントを0から始める
+	g_player.Motion.motionType = motiontype;  // モーションの種類を変更
+	g_nCounterState = nCounterState;		  // 状態カウンターを設定
+	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
+	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
+	g_player.Combostate = Combstate;		  // コンボの状態を設定
+}
+//===============================
+// プレイヤーのモーションの変更
+//===============================
+void MotionChange(int itemtype,int LoadPlayer)
+{
+	for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
+	{
+		g_player.Motion.aModel[nCntModel] = g_LoadPlayer[LoadPlayer].Motion.aModel[nCntModel]; // モデルの情報を代入
+	}
+	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
+	{
+		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[LoadPlayer].Motion.aMotionInfo[nCntMotion];
+	}
+
+	if (LoadPlayer != PLAYERTYPE_NOHAND) // プレイヤーがノーハンドだったら情報を代入しない
+	{
+		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION] = g_LoadMotion[itemtype].aMotionInfo[0];		// 攻撃1の情報を代入
+		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION2] = g_LoadMotion[itemtype].aMotionInfo[1];    // 攻撃2の情報を代入
+		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION3] = g_LoadMotion[itemtype].aMotionInfo[2];	// 攻撃3の情報を代入
+		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION4] = g_LoadMotion[itemtype].aMotionInfo[3];	// 攻撃4の情報を代入
+		g_player.Motion.aModel[15].offpos = g_LoadMotion[itemtype].aModel[15].offpos;				// オフセットの情報を代入
+		g_player.Motion.aModel[15].offrot = g_LoadMotion[itemtype].aModel[15].offrot;				// オフセットのの情報を代入
+		g_player.HandState = PLAYERHOLD_NO;															// プレイヤーをノーハンドにする
+	}
+	else
+	{
+		g_player.HandState = PLAYERHOLD_HOLD;	// プレイヤーをノーハンドにする
+	}
+}
+
+//================================
+// プレイヤーのモーションのロード
+//================================
+void LoadMotion(int Weponmotion)
+{
+	FILE* pFile; // ファイルのポインタ
+
+	switch (Weponmotion)
+	{
+	case MOTION_KATANA:
+		pFile = fopen("data\\MOTION_CHANGE\\motionSamurai2.txt", "r");
+		break;
+	case MOTION_BIGWEPON:
+		pFile = fopen("data\\MOTION_CHANGE\\hammer.txt", "r");
+		break;
+	case MOTION_DBHAND:
+		pFile = fopen("data\\MOTION_CHANGE\\bat.txt", "r");
+		break;
+	default:
+		pFile = NULL;
+		break;
+	}
+
+	int nCntMotion = 0;
+	char Skip[3];
+	int nCntKey = 0;
+	int nCntPosKey = 0;
+	int nCntRotkey = 0;
+
+	if (pFile != NULL)
+	{
+		char aString[MAX_WORD];
+
+		while (1)
+		{
+			fscanf(pFile, "%s", &aString[0]);
+
+			if (strcmp(&aString[0], "PARTSSET") == 0)
+			{
+				while (1)
+				{
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(&aString[0], "POS") == 0)
+					{
+						fscanf(pFile, "%s", &Skip[0]);
+						fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aModel[15].offpos.x);
+						fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aModel[15].offpos.y);
+						fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aModel[15].offpos.z);
+					}
+					else if (strcmp(&aString[0], "ROT") == 0)
+					{
+						fscanf(pFile, "%s", &Skip[0]);
+						fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aModel[15].offrot.x);
+						fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aModel[15].offrot.y);
+						fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aModel[15].offrot.z);
+					}
+					else if (strcmp(&aString[0], "END_PARTSSET") == 0)
+					{
+						break;
+					}
+				}
+			}
+			
+			if (strcmp(&aString[0], "MOTIONSET") == 0)
+			{// MOTIONSETを読み取ったら
+				while (1)
+				{
+					// 文字を読み飛ばす
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(aString, "LOOP") == 0)
+					{// LOOP を読み取ったら
+						// 文字を読み飛ばす
+						fscanf(pFile, "%s", &Skip[0]);
+						// 値を代入
+						fscanf(pFile, "%d", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].bLoop);
+					}
+					else if (strcmp(aString, "NUM_KEY") == 0)
+					{// NUM_KEYを読み取ったら
+						// 文字を読み飛ばす
+						fscanf(pFile, "%s", &Skip[0]);
+						// 値を代入
+						fscanf(pFile, "%d", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].nNumkey);
+
+						while (nCntKey < g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].nNumkey)
+						{
+							// 文字を読み飛ばす
+							fscanf(pFile, "%s", &aString[0]);
+
+							if (strcmp(aString, "KEYSET") == 0)
+							{// KEYSETを読み取ったら
+
+								while (1)
+								{
+									// 文字を読み飛ばす
+									fscanf(pFile, "%s", &aString[0]);
+
+									if (strcmp(&aString[0], "FRAME") == 0)
+									{// FRAMEを読み取ったら
+										// 文字を読み飛ばす
+										fscanf(pFile, "%s", &Skip[0]);
+
+										fscanf(pFile, "%d", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].nFrame);
+										break;
+									}
+								}
+
+								while (1)
+								{
+									// 文字を読み飛ばす
+									fscanf(pFile, "%s", &aString[0]);
+
+									if (strcmp(&aString[0], "KEY") == 0)
+									{// KEYを読みとったら
+										while (1)
+										{
+											// 文字を読み飛ばす
+											fscanf(pFile, "%s", &aString[0]);
+
+											if (strcmp(&aString[0], "POS") == 0)
+											{// POSを読み取ったら
+												// 文字を読み飛ばす
+												fscanf(pFile, "%s", &Skip[0]);
+												fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosX);
+												fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosY);
+												fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosZ);
+												nCntPosKey++;		// インクリメント										
+											}
+
+											else if (strcmp(&aString[0], "ROT") == 0)
+											{// ROTを読み取ったら
+												// 文字を読み飛ばす
+												fscanf(pFile, "%s", &Skip[0]);
+												fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotX);
+												fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotY);
+												fscanf(pFile, "%f", &g_LoadMotion[Weponmotion].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotZ);
+												nCntRotkey++;		// インクリメント									
+											}
+
+											else if (strcmp(&aString[0], "END_KEY") == 0)
+											{// END_KEYを読み取ったら
+												break;
+											}
+										}
+									}
+									else if (strcmp(&aString[0], "END_KEYSET") == 0)
+									{// END_KEYSETを読み取ったら
+										nCntRotkey = 0;
+										nCntPosKey = 0;
+										nCntKey++;			// インクリメント
+										break;
+									}
+
+
+								}
+
+							}
+
+						}
+					}
+					if (strcmp(&aString[0], "END_MOTIONSET") == 0)
+					{// END_MOTIONSETを読み取ったら
+						nCntMotion++;		// モーションの更新
+						nCntKey = 0;		// 0から始める
+						break;
+					}
+				}
+			}
+
+			if (strcmp(&aString[0], "END_SCRIPT") == 0)
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Player.cpp)", MB_OK);
+		return;
+    }
+	fclose(pFile);
+}
+
+//============================
+// プレイヤーのロード処理
+//============================
 void LoadModel(int nType)
 {
 	// デバイスポインタを宣言
@@ -702,7 +1160,7 @@ void LoadModel(int nType)
 		pFile = fopen("data/MOTION/motionSamurai.txt", "r");
 		break;
 	case 1:
-		pFile = fopen("data//motionSamurai.txt", "r");
+		pFile = fopen("data/MOTION_CHANGE/motionSamurai_Shot.txt", "r");
 		break;
 	default:
 		pFile = NULL; //NULLにする
@@ -985,9 +1443,6 @@ void LoadModel(int nType)
 
 					else if (strcmp(&aString[0], "END_SCRIPT") == 0)
 					{
-						// ファイルを閉じる
-						fclose(pFile);
-
 						break;
 					}
 					else
@@ -1000,4 +1455,12 @@ void LoadModel(int nType)
 			}
 		}// while文末
 	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Player.cpp)", MB_OK);
+		return;
+    }
+	// ファイルを閉じる
+	fclose(pFile);
 }

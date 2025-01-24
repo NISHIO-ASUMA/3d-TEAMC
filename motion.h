@@ -41,13 +41,13 @@ typedef enum
 	MOTIONTYPE_ACTION,
 	MOTIONTYPE_JUMP,
 	MOTIONTYPE_LANDING,
-	MOTIONTYPE_DAMAGE,
-	MOTIONTYPE_FALL,
 	MOTIONTYPE_ACTION2,
 	MOTIONTYPE_ACTION3,
 	MOTIONTYPE_ACTION4,
 	MOTIONTYPE_JUMPACTION,
 	MOTIONTYPE_INVISIBLE,
+	MOTIONTYPE_DAMAGE,
+	MOTIONTYPE_FALL,
 	MOTIONTYPE_MAX
 }MOTIONTYPE;
 
@@ -83,26 +83,25 @@ typedef struct
 {
 	bool bLoop;//ループするかどうか
 	int nNumkey;//キーの総数
-	KEY_INFO aKeyInfo[10];//キー情報
+	KEY_INFO aKeyInfo[32];//キー情報
 	int nStartKey, nEndKey, nStartFrame,nEndFrame;//判定を始めるキーの変数
 }MOTION_INFO;
 
 typedef struct
 {
-	MODEL aModel[MAX_PARTS];//モデル(パーツ)
-	int nNumModel;//モデル(パーツ)の総数(実際に使うモデルの数)
-	MOTION_INFO aMotionInfo[MOTIONTYPE_MAX];//モーション情報
-	int nNumMotion;//モーションの総数
-	MOTIONTYPE motionType;//モーションの種類
-	bool bLoopMotion;//ループするかどうか
-	int nNumKey;//キーの総数
-	int nKey;//現在のキーNo.
-	int nCountMotion;//モーションのカウンター
+	MODEL aModel[MAX_PARTS];					// モデル(パーツ)
+	int nNumModel;								// モデル(パーツ)の総数(実際に使うモデルの数)
+	MOTION_INFO aMotionInfo[MOTIONTYPE_MAX];	// モーション情報
+	int nNumMotion;								// モーションの総数
+	MOTIONTYPE motionType;						// モーションの種類
+	bool bLoopMotion;							// ループするかどうか
+	int nNumKey;								// キーの総数
+	int nKey;									// 現在のキーNo.
+	int nCountMotion;							// モーションのカウンター
 }MOTION;
 
 //****************************
 //プロトタイプ宣言
 //****************************
 void UpdateMotion(MOTION* pMotion);
-void NoLoopMotion(MOTION* Motion,int Motiontype);
 #endif

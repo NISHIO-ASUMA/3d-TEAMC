@@ -2,33 +2,5 @@
 +			   マップエディター             +
 +==========================================+
 
-BLOCKSET
-EDITCATEGORY = 0
-   BLOCKTYPE = 0
-   POS = 226.6 0.0 45.0
-   SIZE = 1.0 1.0 1.0
-END_BLOCKSET
-
-BLOCKSET
-EDITCATEGORY = 0
-   BLOCKTYPE = 0
-   POS = 67.5 0.0 28.8
-   SIZE = 1.0 1.0 1.0
-END_BLOCKSET
-
-BLOCKSET
-EDITCATEGORY = 0
-   BLOCKTYPE = 0
-   POS = -81.8 0.0 13.6
-   SIZE = 1.0 1.0 1.0
-END_BLOCKSET
-
-BLOCKSET
-EDITCATEGORY = 0
-   BLOCKTYPE = 0
-   POS = -231.0 0.0 -1.7
-   SIZE = 1.0 1.0 1.0
-END_BLOCKSET
-
-BLOCK_COUNT = 4 
+BLOCK_COUNT = 0 
 END_SCRIPT

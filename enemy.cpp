@@ -16,6 +16,8 @@
 #include "damagepop.h"
 #include "block.h"
 #include "item.h"
+#include "Shadow.h"
+#include "Particle.h"
 
 //****************************
 //マクロ定義
@@ -27,6 +29,8 @@
 #define TYPETHREE_MOVE (1.0f) //敵2の移動量
 #define MAX_TEXENEMY (128) //テクスチャの最大数
 #define MAX_ENEMYMOVE (1.0f) // 敵の移動量
+#define SHADOWSIZESET (40.0f) // 影のサイズのオフセット
+#define SHADOW_A (1.0f) // 影のアルファ
 
 //****************************
 //プロトタイプ宣言
@@ -237,12 +241,9 @@ void UpdateEnemy(void)
 
 		}
 
-		if(CollisionEnemy(&g_Enemy[nCntEnemy].pos, // 敵の位置
-			30.0f, // ブロックの半径
-			30.0f)) // 敵の半径 
-		{
-			HitEnemy(nCntEnemy, 1);
-		}
+		// 影の計算
+		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZESET + SHADOWSIZESET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
+
 
 		if (AgentRange(50.0f, 200.0f, nCntEnemy))
 		{
@@ -384,10 +385,13 @@ ENEMY* GetEnemy(void)
 //=======================
 void HitEnemy(int nCnt,int nDamage)
 {
+	SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), nDamage, 20, false);
 	g_Enemy[nCnt].nLife -= nDamage;
 
 	if (g_Enemy[nCnt].nLife <=0)
 	{//体力が0以下なら
+		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 12.0f, 20, 30, 60, 5.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//敵の状態を死亡状態にする
 
 		g_Enemy[nCnt].bUse = false;			   //未使用判定
@@ -396,6 +400,8 @@ void HitEnemy(int nCnt,int nDamage)
 	}
 	else
 	{
+		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 12.0f, 1, 20, 40, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 		g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE;//敵の状態をダメージにする
 
 		g_Enemy[nCnt].g_bDamage = false;//ダメージを通らなくする
@@ -421,6 +427,8 @@ void SetEnemy(D3DXVECTOR3 pos, ENEMYTYPE nType,int nLife,D3DXVECTOR3 move)
 			g_Enemy[nCntEnemy].nType = nType;//種類
 			g_Enemy[nCntEnemy].nLife = nLife;//体力
 			g_Enemy[nCntEnemy].bUse = true;  //使用状態
+
+			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), g_Enemy[nCntEnemy].rot, 40.0f);
 
 			g_nNumEnemy++;//インクリメント
 			break;
@@ -755,9 +763,6 @@ void LoadEnemy(int nType)
 
 					else if (strcmp(&aString[0], "END_SCRIPT") == 0)
 					{
-						// ファイルを閉じる
-						fclose(pFile);
-
 						break;
 					}
 					else
@@ -770,6 +775,14 @@ void LoadEnemy(int nType)
 			}
 		}// while文末
 	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(enemy.cpp)", MB_OK);
+		return;
+    }
+	// ファイルを閉じる
+	fclose(pFile);
 
 }
 //================================

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿  camera.cpp
 C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(63,30): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
 C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(64,30): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
@@ -17,3 +18,7 @@ C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(493,35): warning C4244: '='
 C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(494,36): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
 C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(447,16): warning C4101: 'mouseState': ローカル変数は 1 度も使われていません。
   team_c.vcxproj -> C:\Users\student\Desktop\new git\3d-TEAMC\Debug\team_c.exe
+=======
+﻿  edit.cpp
+  team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe
+>>>>>>> 91c9155da6ba54f4d0e2c65c8a2e17548eef7c43
