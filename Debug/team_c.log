@@ -1,6 +1,32 @@
 ﻿  block.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\block.cpp(236,18): warning C4101: 'color': ローカル変数は 1 度も使われていません。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\block.cpp(233,18): warning C4101: 'color': ローカル変数は 1 度も使われていません。
+  camera.cpp
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(63,30): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(64,30): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(65,34): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(66,35): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(70,29): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(71,29): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(72,33): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(73,34): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(390,48): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(390,48): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(390,69): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(390,69): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(432,52): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(432,30): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(434,35): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(435,36): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\camera.cpp(388,16): warning C4101: 'mouseState': ローカル変数は 1 度も使われていません。
+  edit.cpp
+  game.cpp
+  item.cpp
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\item.cpp(299,18): warning C4101: 'color': ローカル変数は 1 度も使われていません。
+  main.cpp
   player.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\player.cpp(981,24): warning C4477: 'fscanf' : 書式文字列 '%d' には、型 'int *' の引数が必要ですが、可変個引数 1 は型 'bool *' です
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\player.cpp(872,24): warning C4477: 'fscanf' : 書式文字列 '%d' には、型 'int *' の引数が必要ですが、可変個引数 1 は型 'bool *' です
+  result.cpp
+  title3d.cpp
+  tutorial3d.cpp
   コードを生成中...
-  team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe
+  team_c.vcxproj -> C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\team_c.exe
