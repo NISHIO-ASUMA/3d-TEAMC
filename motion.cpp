@@ -102,31 +102,15 @@ void UpdateMotion(MOTION *pMotion)
 		pMotion->nKey = 0;
 	}
 
-	// ループしないモーションの処理
-	NoLoopMotion(pMotion,pMotion->motionType);
+	if (!pMotion->aMotionInfo[pMotion->motionType].bLoop && pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
+	{
+		pMotion->motionType = MOTIONTYPE_NEUTRAL;
+	}
 
 	if (pMotion->bLoopMotion)
 	{
 		//モーションカウントを加算
 		pMotion->nCountMotion++;
 	}
+}
 
-}
-//==================================
-// ループしないモーションの処理
-//==================================
-void NoLoopMotion(MOTION *Motion,int Motiontype)
-{
-	if (Motion->nKey >= Motion->aMotionInfo[Motion->motionType].nNumkey - 1 &&
-		!Motion->aMotionInfo[Motion->motionType].bLoop && Motion->bLoopMotion)
-	{
-		if (Motiontype == MOTIONTYPE_JUMP)
-		{
-			Motion->bLoopMotion = false; // モーションのカウントを止める
-		}
-		else if (Motiontype == MOTIONTYPE_LANDING)
-		{
-			Motion->motionType = MOTIONTYPE_NEUTRAL;
-		}
-	}
-}

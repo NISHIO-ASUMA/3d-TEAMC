@@ -257,9 +257,6 @@ void UpdateGame(void)
 //=======================
 void DrawGame(void)
 {
-	//プレイヤーの影の描画処理
-	DrawShadow();
-
 	//メッシュフィールドの描画処理
 	DrawMeshField();
 
@@ -277,6 +274,9 @@ void DrawGame(void)
 
 	//壁の描画処理
 	DrawWall();
+
+	//プレイヤーの影の描画処理
+	DrawShadow();
 
 	if (g_bEditMode)
 	{

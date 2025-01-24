@@ -16,6 +16,7 @@
 #include "damagepop.h"
 #include "block.h"
 #include "item.h"
+#include "Shadow.h"
 
 //****************************
 //マクロ定義
@@ -237,6 +238,8 @@ void UpdateEnemy(void)
 
 		}
 
+		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), 20.0f, 0.5f);
+
 		if(CollisionEnemy(&g_Enemy[nCntEnemy].pos, // 敵の位置
 			30.0f, // ブロックの半径
 			30.0f)) // 敵の半径 
@@ -421,6 +424,8 @@ void SetEnemy(D3DXVECTOR3 pos, ENEMYTYPE nType,int nLife,D3DXVECTOR3 move)
 			g_Enemy[nCntEnemy].nType = nType;//種類
 			g_Enemy[nCntEnemy].nLife = nLife;//体力
 			g_Enemy[nCntEnemy].bUse = true;  //使用状態
+
+			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), g_Enemy[nCntEnemy].rot, 40.0f);
 
 			g_nNumEnemy++;//インクリメント
 			break;

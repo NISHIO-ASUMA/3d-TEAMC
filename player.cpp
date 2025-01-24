@@ -19,6 +19,8 @@
 #include "item.h"
 #include "enemy.h"
 #include "wall.h"
+#include "mouse.h"
+#include "Shadow.h"
 
 //****************************
 //マクロ定義
@@ -33,6 +35,7 @@
 //プロトタイプ宣言
 //****************************
 void LoadModel(int nType); // プレイヤーのロード処理
+void PlayerComb(MOTIONTYPE motiontype, int AttackState,int nCounterState, COMBOSTATE Combstate);
 
 //****************************
 //グローバル変数宣言
@@ -40,6 +43,7 @@ void LoadModel(int nType); // プレイヤーのロード処理
 LPDIRECT3DTEXTURE9 g_apTexturePlayer[MAX_TEXPLAYER] = {};//プレイヤーのテクスチャへのポインタ
 Player g_player;//プレイヤー構造体
 Player g_LoadPlayer[PLAYERTYPE_MAX];
+int g_nCounterState,g_AttackState;
 
 //============================
 //プレイヤーの初期化処理
@@ -49,6 +53,8 @@ void InitPlayer(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	MODE mode = GetMode();//現在のモードを取得
+
+	g_player.nIdxShadow = SetShadow(g_player.pos, g_player.rot, 40.0f);
 
 	//プレイヤーの初期化
 	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);		   //座標
@@ -68,7 +74,8 @@ void InitPlayer(void)
 	g_player.SwordOffpos.y = 85.0f;						   //剣のオフセットの座標y
 	g_player.SwordOffpos.z = 0.0f;						   //剣のオフセットの座標z
 	g_player.nCounterAction = 0;						   //アクションカウント
-
+	g_nCounterState = 0;                                   //状態カウンター
+	g_AttackState = 0;									   //攻撃状態のカウンター
 	LoadModel(0);
 
 	D3DXMATERIAL* pMat;//マテリアルへのポインタ
@@ -85,6 +92,7 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].Motion.bLoopMotion = true;
 		g_LoadPlayer[nCntPlayer].bJumpAttack = false;
 		g_LoadPlayer[nCntPlayer].HandState = PLAYERHOLD_NO;
+		g_LoadPlayer[nCntPlayer].state = PLAYERSTATE_NORMAL;
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
@@ -343,8 +351,7 @@ void UpdatePlayer(void)
 	}
 	else
 	{
-		if (g_player.Motion.motionType == MOTIONTYPE_MOVE ||
-			g_player.Motion.motionType == MOTIONTYPE_NEUTRAL)
+		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL; // キーを押していない時にニュートラルになる
 		}
@@ -357,7 +364,7 @@ void UpdatePlayer(void)
 	case MOTIONTYPE_MOVE:
 		if (!g_player.bJump)
 		{
-			g_player.Motion.motionType = MOTIONTYPE_JUMP;
+			g_player.Motion.motionType = MOTIONTYPE_JUMP; // モーションをジャンプにする
 		}
 		break;
 	case MOTIONTYPE_ACTION:
@@ -375,12 +382,80 @@ void UpdatePlayer(void)
 	case PLAYERSTATE_NORMAL:
 		break;
 	case PLAYERSTATE_MOVE:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
 		break;
 	case PLAYERSTATE_ATTACK:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
 		break;
 	case PLAYERSTATE_JUMP:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
 		break;
 	case PLAYERSTATE_LANDING:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	case PLAYERSTATE_DAMAGE:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	default:
+		break;
+	}
+
+	switch (g_player.Combostate)
+	{
+	case COMBO_NO:
+		break;
+	case COMBO_ATTACK1:
+		g_AttackState--;
+		if (g_AttackState < 0)
+		{
+			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		}
+		break;
+	case COMBO_ATTACK2:
+		g_AttackState--;
+		if (g_AttackState < 0)
+		{
+			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		}
+		break;
+	case COMBO_ATTACK3:
+		g_AttackState--;
+		if (g_AttackState < 0)
+		{
+			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		}
+		break;
+	case COMBO_ATTACK4:
+		g_AttackState--;
+		if (g_AttackState < 0)
+		{
+			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		}
 		break;
 	default:
 		break;
@@ -399,25 +474,11 @@ void UpdatePlayer(void)
 	if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size)||
 		CollisionItem(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
 	{
-		g_player.bJump = true;
-
-		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
-		{
-			g_player.Motion.nKey = 0;// 0キーから始める
-			g_player.Motion.bLoopMotion = true;
-			g_player.Motion.motionType = MOTIONTYPE_LANDING;
-		}
+		g_player.bJump = true; // ジャンプを可能にする
 	}
 	else if (CollisionField())
 	{
-		g_player.bJump = true;
-
-		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
-		{
-			g_player.Motion.nKey = 0;// 0キーから始める
-			g_player.Motion.bLoopMotion = true;
-			g_player.Motion.motionType = MOTIONTYPE_LANDING;
-		}
+		g_player.bJump = true; // ジャンプを可能にする
 	}
 	else
 	{
@@ -426,12 +487,10 @@ void UpdatePlayer(void)
 
 	CollisionWall();
 
-	//if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
-	//{
-	//	g_player.bJump = true;
-	//}
 	//プレイヤーの重力
 	g_player.move.y -= 1.0f;
+
+	SetPositionShadow(g_player.nIdxShadow,D3DXVECTOR3(g_player.pos.x, 1.0f,g_player.pos.z),50.0f, 0.5f);
 
 	////壁の衝突判定
 	//CollisionWall();
@@ -444,6 +503,27 @@ void UpdatePlayer(void)
 			g_player.Motion.nKey = 0;
 			g_player.Motion.motionType = MOTIONTYPE_JUMP;
 			g_player.move.y = 15.0f;
+		}
+	}
+
+	// プレイヤーの状態が攻撃じゃないかつ地面にいる
+	if (g_player.bDisp)
+	{
+		if (OnMouseTriggerDown(LEFT_MOUSE)&&g_player.Combostate == COMBO_NO)
+		{
+			PlayerComb(MOTIONTYPE_ACTION, 60, 120, COMBO_ATTACK1); // コンボ1
+		}
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK1)
+		{
+			PlayerComb(MOTIONTYPE_ACTION2, 60, 120, COMBO_ATTACK2); // コンボ2
+		}
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK2)
+		{
+			PlayerComb(MOTIONTYPE_ACTION3, 60, 120, COMBO_ATTACK3); // コンボ3
+		}
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK3)
+		{
+			PlayerComb(MOTIONTYPE_ACTION4, 60, 120, COMBO_ATTACK4); // コンボ4
 		}
 	}
 
@@ -476,6 +556,8 @@ void DrawPlayer(void)
 	D3DMATERIAL9 matDef;//現在のマテリアル保存用
 
 	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
+
+	int nCnt = 0;
 
 	if (g_player.bDisp == true)
 	{
@@ -566,6 +648,11 @@ void DrawPlayer(void)
 					//モデル(パーツ)の描画
 					g_player.Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 				}
+				nCnt++;
+			}
+			if (nCnt == 15)
+			{
+				SetMtxPos(); // 剣のワールドマトリックスを設定
 			}
 		}
 	}
@@ -582,37 +669,36 @@ Player* GetPlayer(void)
 //=============================================
 void SetMtxPos(void)
 {
-	//LPDIRECT3DDEVICE9 pDevice;
+	LPDIRECT3DDEVICE9 pDevice;
 
-	//pDevice = GetDevice();
-	//CAMERA* pCamera = GetCamera();
+	pDevice = GetDevice();
 
-	////計算用のマトリックス
-	//D3DXMATRIX mtxRot, mtxTrans,mtxParent;
+	//計算用のマトリックス
+	D3DXMATRIX mtxRot, mtxTrans,mtxParent;
 
-	////ワールドマトリックスの初期化
-	//D3DXMatrixIdentity(&g_player.SwordMtx);
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&g_player.SwordMtx);
 
-	////向きを反映
-	//D3DXMatrixRotationYawPitchRoll(&mtxRot, g_player.Motion.aModel[PLAYERMODEL_015_SWORD].rot.y,
-	//	g_player.Motion.aModel[PLAYERMODEL_015_SWORD].rot.x,
-	//	g_player.Motion.aModel[PLAYERMODEL_015_SWORD].rot.z);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_player.Motion.aModel[15].rot.y,
+		g_player.Motion.aModel[15].rot.x,
+		g_player.Motion.aModel[15].rot.z);
 
-	//D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx,&mtxRot);
+	D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx,&mtxRot);
 
-	////位置を反映
-	//D3DXMatrixTranslation(&mtxTrans, g_player.SwordOffpos.x,g_player.SwordOffpos.y,g_player.SwordOffpos.z);
-	//D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx, &mtxTrans);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans, g_player.SwordOffpos.x,g_player.SwordOffpos.y,g_player.SwordOffpos.z);
+	D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx, &mtxTrans);
 
-	//mtxParent = g_player.Motion.aModel[PLAYERMODEL_015_SWORD].mtxWorld;
+	mtxParent = g_player.Motion.aModel[15].mtxWorld;
 
-	////算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
-	//D3DXMatrixMultiply(&g_player.SwordMtx,
-	//	&g_player.SwordMtx,
-	//	&mtxParent);
+	//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
+	D3DXMatrixMultiply(&g_player.SwordMtx,
+		&g_player.SwordMtx,
+		&mtxParent);
 
-	////ワールドマトリックスの設定
-	//pDevice->SetTransform(D3DTS_WORLD, &g_player.SwordMtx);
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &g_player.SwordMtx);
 }
 //======================
 // プレイヤーと敵の判定
@@ -675,7 +761,30 @@ void StickPad(void)
 	//	}
 	//}
 }
+//================================
+// プレイヤーの剣と敵の当たり判定
+//================================
+void HitSowrd(ENEMY* pEnemy)
+{
+		
+}
 
+//============================
+// プレイヤーのコンボ
+//============================
+void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBOSTATE Combstate)
+{
+	g_player.Motion.nKey = 0;
+	g_player.Motion.nCountMotion = 0;
+	g_player.Motion.motionType = motiontype;
+	g_nCounterState = nCounterState;
+	g_AttackState = AttackState;
+	g_player.state = PLAYERSTATE_ATTACK;
+	g_player.Combostate = Combstate;
+}
+//============================
+// プレイヤーのロード処理
+//============================
 void LoadModel(int nType)
 {
 	// デバイスポインタを宣言

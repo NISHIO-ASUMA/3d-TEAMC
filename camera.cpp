@@ -118,7 +118,7 @@ void UpdateCamera(void)
 		//StickCamera();
 
 		//マウスの視点移動
-		MouseView();
+		//MouseView();
 
 //****************************************
 //      プレイヤー追従(MAINカメラ)

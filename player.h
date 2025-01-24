@@ -14,7 +14,7 @@
 #include"main.h"
 #include"model.h"
 #include"motion.h"
-
+#include "enemy.h"
 //**************************
 //マクロ定義
 //**************************
@@ -79,6 +79,20 @@ typedef enum
 }PLAYERTYPE;
 
 //**************************
+//プレイヤーのコンボ状態
+//**************************
+typedef enum
+{
+	COMBO_NO = 0,
+	COMBO_ATTACK1,
+	COMBO_ATTACK2,
+	COMBO_ATTACK3,
+	COMBO_ATTACK4,
+	COMBO_ATTACK5,
+	COMBO_MAX
+}COMBOSTATE;
+
+//**************************
 //プレイヤーの状態
 //**************************
 typedef enum
@@ -129,6 +143,7 @@ typedef struct
 	bool bImpactCollision;
 	bool bJumpAttack;
 	float fShadowSize;//影の大きさ
+	int Combostate; // コンボの状態をもつ変数 
 }Player;
 
 //**************************
@@ -143,4 +158,5 @@ void SetMtxPos(void);//ワールドマトリックスのオフセット設定処理
 void HitPlayer(int nDamage);//プレイヤーのヒット処理
 void StickPad(void);//パッドの移動処理
 void LoadPlayer(int nType);
+void HitSowrd(ENEMY *pEnemy);
 #endif

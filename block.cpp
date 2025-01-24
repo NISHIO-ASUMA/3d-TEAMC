@@ -16,8 +16,8 @@
 //****************************
 //マクロ定義
 //****************************
-#define MOUSE_SIZE (50.0f)
-#define MAX_WORD (256)
+#define MAX_WORD (256) // 最大の文字数
+#define HALF_VALUE (0.6f) // 割る数
 
 //****************************
 //プロトタイプ宣言
@@ -291,47 +291,47 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 			&& pPosOld->y + pSize->y >= g_Block[nCntBlock].pos.y)
 		{
 			//左右のめり込み判定
-			if (pPos->z - pSize->z * 0.5f < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z
-				&& pPos->z + pSize->z * 0.5f > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z)
+			if (pPos->z - pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
+				&& pPos->z + pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 			{
 				//xが左から右にめり込んだ	
-				if (pPosOld->x + pSize->x * 0.5f < g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.y
-					&& pPos->x + pSize->x * 0.5f > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.y)
+				if (pPosOld->x + pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.y
+					&& pPos->x + pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.y)
 				{
-					pPos->x = g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x - pSize->x * 0.5f - 0.1f;
+					pPos->x = g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x - pSize->x * HALF_VALUE - 0.1f;
 				}
 				//xが右から左にめり込んだ	
-				else if (pPosOld->x - pSize->x * 0.5f > g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x
-					&& pPos->x - pSize->x * 0.5f < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x)
+				else if (pPosOld->x - pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x
+					&& pPos->x - pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x)
 				{
-					pPos->x = g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x + pSize->x * 0.5f + 0.1f;
+					pPos->x = g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x + pSize->x * HALF_VALUE + 0.1f;
 				}
 			}
 
 			//前と後ろの判定
-			if (pPos->x - pSize->x * 0.5f < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x
-				&& pPos->x + pSize->x * 0.5f > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x)
+			if (pPos->x - pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x
+				&& pPos->x + pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x)
 			{
 				//zが前方からめり込んだ
-				if (pPosOld->z + pSize->z * 0.5f < g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z
-					&& pPos->z + pSize->z * 0.5f > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z)
+				if (pPosOld->z + pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
+					&& pPos->z + pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 				{
-					pPos->z = g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z - pSize->z * 0.5f - 0.1f;
+					pPos->z = g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z - pSize->z * HALF_VALUE - 0.1f;
 				}
 				//zが後方からめり込んだ
-				else if (pPosOld->z - pSize->z * 0.5f > g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z
-					&& pPos->z - pSize->z * 0.5f < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z)
+				else if (pPosOld->z - pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
+					&& pPos->z - pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 				{
-					pPos->z = g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z + pSize->z * 0.5f + 0.5f;
+					pPos->z = g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z + pSize->z * HALF_VALUE + HALF_VALUE;
 				}
 			}
 		}
 
-		if (pPos->x - pSize->x * 0.5f <= g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x
-			&& pPos->x + pSize->x * 0.5f >= g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * 0.5f * g_Block[nCntBlock].Scal.x)
+		if (pPos->x - pSize->x * HALF_VALUE <= g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x
+			&& pPos->x + pSize->x * HALF_VALUE >= g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x)
 		{
-			if (pPos->z - pSize->z * 0.5f <= g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z
-				&& pPos->z + pSize->z * 0.5f >= g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * 0.5f * g_Block[nCntBlock].Scal.z)
+			if (pPos->z - pSize->z * HALF_VALUE <= g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
+				&& pPos->z + pSize->z * HALF_VALUE >= g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 			{
 				//上から下
 				if (pPosOld->y >= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y
@@ -342,8 +342,8 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 					pMove->y = 0.0f;
 				}
 				//下から上
-				else if (pPosOld->y + pSize->y * 0.5f <= g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * 0.5f * g_Block[nCntBlock].Scal.y
-					&& pPos->y + pSize->y * 0.5f > g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * 0.5f * g_Block[nCntBlock].Scal.y)
+				else if (pPosOld->y + pSize->y * HALF_VALUE <= g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * HALF_VALUE * g_Block[nCntBlock].Scal.y
+					&& pPos->y + pSize->y * HALF_VALUE > g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * HALF_VALUE * g_Block[nCntBlock].Scal.y)
 				{
 					pPos->y = pPosOld->y;
 					pMove->y = 0.0f;
@@ -420,9 +420,9 @@ void LoadBlockModel(void)
 			}
 			else if (strcmp(aString, "END_SCRIPT") == 0)
 			{
-				fclose(pFile);
 				break;
 			}
 		}
 	}
+	fclose(pFile);
 }
