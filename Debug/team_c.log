@@ -1,2 +1,19 @@
-﻿  wall.cpp
-  team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe
+﻿  camera.cpp
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(63,30): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(64,30): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(65,34): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(66,35): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(70,29): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(71,29): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(72,33): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(73,34): warning C4244: '=': 'float' から 'DWORD' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(449,48): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(449,48): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(449,69): warning C4838: 'float' から 'LONG' への変換には縮小変換が必要です
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(449,69): warning C4244: '初期化中': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(491,52): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(491,30): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(493,35): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(494,36): warning C4244: '=': 'float' から 'LONG' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\new git\3d-TEAMC\camera.cpp(447,16): warning C4101: 'mouseState': ローカル変数は 1 度も使われていません。
+  team_c.vcxproj -> C:\Users\student\Desktop\new git\3d-TEAMC\Debug\team_c.exe

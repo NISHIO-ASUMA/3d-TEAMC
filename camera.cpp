@@ -114,8 +114,8 @@ void UpdateCamera(void)
 	{
 		g_camera[MAIN].fDistance = g_camera[MAIN].oldDistance; // 距離をリセット
 		
-		//// カメラの右スティック:::
-		//StickCamera();
+		// カメラの右スティック
+		StickCamera();
 
 		//マウスの視点移動
 		MouseView();
@@ -328,7 +328,8 @@ void StickCamera(void)
 {
 	// スティック
 	XINPUT_STATE* pStick = GetJoyStickAngle();
-#if 0
+
+#if 1
 	if (GetJoyStick())
 	{
 		float RStickAngleY = pStick->Gamepad.sThumbRY;
@@ -340,36 +341,79 @@ void StickCamera(void)
 		if (fMag > DeadZone)
 		{
 			if (pStick->Gamepad.sThumbRX < -10920.0f)
-			{
+			{// 左右移動
 				// 角度
-				g_camera.rot.y -= 0.03f;
-
-				g_camera.posV.x = g_camera.posR.x - sinf(g_camera.rot.y) * sinf(g_camera.rot.y) * g_camera.fDistance;
-				g_camera.posV.z = g_camera.posR.z - sinf(g_camera.rot.y) * cosf(g_camera.rot.y) * g_camera.fDistance;
+				g_camera[MAIN].rot.y -= 0.03f;
 
 			}
 			else if (pStick->Gamepad.sThumbRX > 10920.0f)
-			{
+			{// 左右移動
 				// 角度
-				g_camera.rot.y += 0.03f;
-
-				g_camera.posV.x = g_camera.posR.x - sinf(g_camera.rot.y) * sinf(g_camera.rot.y) * g_camera.fDistance;
-				g_camera.posV.z = g_camera.posR.z - sinf(g_camera.rot.y) * cosf(g_camera.rot.y) * g_camera.fDistance;
-
+				g_camera[MAIN].rot.y += 0.03f;
 			}
 
+			if (pStick->Gamepad.sThumbRY < -10920.0f)
+			{// 左右移動
+				// 角度
+				g_camera[MAIN].rot.x -= 0.03f;
+			}
+			else if (pStick->Gamepad.sThumbRY > 10920.0f)
+			{// 左右移動
+				// 角度
+				g_camera[MAIN].rot.x += 0.03f;
+			}
+
+			// カメラの視点の情報
+			g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+			g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+			g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+
+
+			//if (pStick->Gamepad.sThumbRY < -10920.0f)
+			//{// 上下移動
+			//	// 角度
+			//	g_camera[MAIN].rot.x -= 0.03f;
+
+			//	// カメラの視点の情報
+			//	g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+			//	g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+
+			//}
+			//else if (pStick->Gamepad.sThumbRY > 10920.0f)
+			//{
+			//	// 角度
+			//	g_camera[MAIN].rot.x += 0.03f;
+
+			//	// カメラの視点の情報
+			//	g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+			//	g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+
+			//}
 
 			// 角度の正規化
-			if (g_camera.rot.y > D3DX_PI)
+			if (g_camera[MAIN].rot.y > D3DX_PI)
 			{// D3DX_PIより大きくなったら
-				g_camera.rot.y -= D3DX_PI * 2.0f;
+				g_camera[MAIN].rot.y -= D3DX_PI * 2.0f;
 			}
 
 			// 角度の正規化
-			if (g_camera.rot.y < -D3DX_PI)
+			if (g_camera[MAIN].rot.y < -D3DX_PI)
 			{// D3DX_PIより小さくなったら
-				g_camera.rot.y += D3DX_PI * 2.0f;
+				g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
 			}
+
+			if (g_camera[MAIN].rot.x <= D3DX_PI * 0.55f)
+			{// カメラの下限
+
+				g_camera[MAIN].rot.x = D3DX_PI * 0.55f;
+			}
+
+			if (g_camera[MAIN].rot.x >= D3DX_PI * 0.9f)
+			{// カメラの上限
+
+				g_camera[MAIN].rot.x = D3DX_PI * 0.9f;
+			}
+
 		}
 	}
 #endif
