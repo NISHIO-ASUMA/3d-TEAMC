@@ -1,9 +1,6 @@
-﻿RankingSet.obj : warning LNK4204: '' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
-RankingScore.obj : warning LNK4204: 'C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\vc142.pdb' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
-model.obj : warning LNK4204: '' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
-light.obj : warning LNK4204: 'C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\vc142.pdb' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
-gameui.obj : warning LNK4204: 'C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\vc142.pdb' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
-fade.obj : warning LNK4204: 'C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\vc142.pdb' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
-Effect.obj : warning LNK4204: 'C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\vc142.pdb' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
-Damegepop.obj : warning LNK4204: 'C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\vc142.pdb' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
+﻿  HPGauge.cpp
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(162,19): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(163,18): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(249,19): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(250,18): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
   team_c.vcxproj -> C:\Users\student\Desktop\3Dチーム\3d-TEAMC\Debug\team_c.exe

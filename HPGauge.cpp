@@ -39,8 +39,8 @@ void InitGauge(void)
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifebar_gage.png", &g_pTexture_Gauge);
 
 	// フィーバーのフレームとゲージのテクスチャ
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifebar_frame.png", &g_pTexture_Fevframe);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifebar_gage.png", &g_pTexture_Fevgauge);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_frame.png", &g_pTexture_Fevframe);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_gage.png", &g_pTexture_Fevgauge);
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 16, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 	VERTEX_2D* pVtx;
 
@@ -203,17 +203,17 @@ void UpdateGauge(void)
 	// フィーバーゲージの処理
 	if (g_fFeverCharge >= 100.0f && g_bFeverON == false)
 	{
-		g_fFeverCharge == 100.0f;
-		g_bFeverON == true;
+		g_fFeverCharge = 100.0f;
+		g_bFeverON = true;
 	}
 	else if (g_bFeverON == true)
 	{
-		g_fFeverCharge -= 0.1f;
 		if (g_fFeverCharge <= 0.0f)
 		{
-			g_bFeverON == false;
-			g_fFeverCharge == 0.0f;
+			g_fFeverCharge = 0.0f;
+			g_bFeverON = false;
 		}
+		g_fFeverCharge -= 0.1f;
 	}
 }
 
