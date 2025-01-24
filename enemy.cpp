@@ -17,6 +17,7 @@
 #include "block.h"
 #include "item.h"
 #include "Shadow.h"
+#include "Particle.h"
 
 //****************************
 //マクロ定義
@@ -387,10 +388,13 @@ ENEMY* GetEnemy(void)
 //=======================
 void HitEnemy(int nCnt,int nDamage)
 {
+	SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), nDamage, 20, false);
 	g_Enemy[nCnt].nLife -= nDamage;
 
 	if (g_Enemy[nCnt].nLife <=0)
 	{//体力が0以下なら
+		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 12.0f, 20, 30, 60, 5.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//敵の状態を死亡状態にする
 
 		g_Enemy[nCnt].bUse = false;			   //未使用判定
@@ -399,6 +403,8 @@ void HitEnemy(int nCnt,int nDamage)
 	}
 	else
 	{
+		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 12.0f, 1, 20, 40, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 		g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE;//敵の状態をダメージにする
 
 		g_Enemy[nCnt].g_bDamage = false;//ダメージを通らなくする
