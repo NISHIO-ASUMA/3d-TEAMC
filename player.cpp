@@ -874,14 +874,19 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_DBHAND, 1);
 				break;
 			case ITEMTYPE_ICEBLOCKSOWRD:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_IRON:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_IRONBAT:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_SURFBOARD:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_TORCH:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_TORCHSWORD:
 				break;
