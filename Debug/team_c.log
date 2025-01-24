@@ -1,4 +1,5 @@
-﻿  player.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\player.cpp(1029,21): warning C4477: 'fscanf' : 書式文字列 '%d' には、型 'int *' の引数が必要ですが、可変個引数 1 は型 'bool *' です
-C:\Users\student\Desktop\20250114\3d-TEAMC\player.cpp(1334,24): warning C4477: 'fscanf' : 書式文字列 '%d' には、型 'int *' の引数が必要ですが、可変個引数 1 は型 'bool *' です
-  team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe
+﻿  HPGauge.cpp
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(162,19): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(163,18): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(249,19): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(250,18): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。

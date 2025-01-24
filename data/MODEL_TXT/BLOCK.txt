@@ -2,7 +2,7 @@
 +   ブロックの読み込み処理(種類追加したら一応報告お願いします)   +
 +----------------------------------------------------------------+
 
-MAX_TYPE = 19 # 読み込むモデル数
+MAX_TYPE = 26 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -26,7 +26,14 @@ MODEL_FILENAME = data/MODEL/OBJ/vendingmachine000.x		# [15]赤い自動販売機
 MODEL_FILENAME = data/MODEL/OBJ/vendingmachine001.x		# [16]青い自動販売機
 MODEL_FILENAME = data/MODEL/OBJ/vendingmachine002.x		# [17]白い自動販売機
 MODEL_FILENAME = data/MODEL/OBJ/bill003.x				# [18]センチュリーロイヤルホテル
-
+MODEL_FILENAME = data/MODEL/OBJ/tutorial000.x			# [18]チュートリアルの看板1枚目
+MODEL_FILENAME = data/MODEL/OBJ/tutorial100.x			# [19]チュートリアルの看板2枚目
+MODEL_FILENAME = data/MODEL/OBJ/tutorial200.x			# [20]チュートリアルの看板3枚目
+MODEL_FILENAME = data/MODEL/OBJ/car000.x				# [21]乗用車
+MODEL_FILENAME = data/MODEL/OBJ/car001.x				# [22]ワゴン車
+MODEL_FILENAME = data/MODEL/OBJ/car002.x				# [23]小型トラック
+MODEL_FILENAME = data/MODEL/OBJ/car003.x				# [24]大型バス
+MODEL_FILENAME = data/MODEL/OBJ/car004.x				# [25]大型トラック
 
 # もしやり方わかるならBLOCK.hの列挙型追加頼む
 
