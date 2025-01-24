@@ -857,13 +857,16 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_BIGWEPON,0);
 				break;
 			case ITEMTYPE_WOOD:
-				MotionChange(MOTION_DBHAND,0);
+				MotionChange(MOTION_DBHAND,1);
 				break;
 			case ITEMTYPE_STONEBAT:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_LIGHT:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_LIGHTWOOD:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_HARISEN:
 				break;

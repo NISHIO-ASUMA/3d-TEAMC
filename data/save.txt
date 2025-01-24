@@ -2,5 +2,12 @@
 +			   マップエディター             +
 +==========================================+
 
-BLOCK_COUNT = 0 
+ITEMSET
+EDITCATEGORY = 1
+   ITEMTYPE = 6
+   POS = -30.0 0.0 -70.0
+   SIZE = 1.0 1.0 1.0
+END_ITEMSET
+
+BLOCK_COUNT = 1 
 END_SCRIPT
