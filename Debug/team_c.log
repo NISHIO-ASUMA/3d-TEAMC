@@ -1,8 +1,0 @@
-<<<<<<< HEAD
-﻿  player.cpp
-C:\Users\student\Desktop\20250114\3d-TEAMC\player.cpp(1028,21): warning C4477: 'fscanf' : 書式文字列 '%d' には、型 'int *' の引数が必要ですが、可変個引数 1 は型 'bool *' です
-C:\Users\student\Desktop\20250114\3d-TEAMC\player.cpp(1333,24): warning C4477: 'fscanf' : 書式文字列 '%d' には、型 'int *' の引数が必要ですが、可変個引数 1 は型 'bool *' です
-  team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe
-=======
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(5460,5): error MSB3541: Files は無効な値 "<<<<<<< HEAD" を含んでいます。パスに無効な文字が含まれています。
->>>>>>> 55288635ab82a1d92ac66cd7a13feb0230bde061
