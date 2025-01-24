@@ -31,11 +31,6 @@ typedef enum
 	EDITMODE_MAX
 }EDITMODE;
 
-const int EDIT_COUNT[EDITMODE_MAX] =
-{
-	BLOCKTYPE_MAX,
-	ITEMTYPE_MAX,
-};
 
 typedef struct
 {
@@ -45,6 +40,7 @@ typedef struct
 	LPDIRECT3DTEXTURE9 g_apTextureEdit[MAX_TEX];
 	D3DXVECTOR3 vtxMin, vtxMax;
 }EditModel;
+
 //*****************************
 //エディットのテクスチャ構造体
 //*****************************

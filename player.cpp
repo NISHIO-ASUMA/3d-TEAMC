@@ -860,7 +860,6 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_DBHAND,0);
 				break;
 			case ITEMTYPE_STONEBAT:
-				g_player.HandState = PLAYERHOLD_HOLD;
 				break;
 			case ITEMTYPE_LIGHT:
 				break;
@@ -870,7 +869,6 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				break;
 			case ITEMTYPE_ICEBLOCK:
 				MotionChange(MOTION_DBHAND, 1);
-				g_player.HandState = PLAYERHOLD_HOLD;
 				break;
 			case ITEMTYPE_ICEBLOCKSOWRD:
 				break;
@@ -942,6 +940,10 @@ void MotionChange(int itemtype,int LoadPlayer)
 		g_player.Motion.aModel[15].offrot = g_LoadMotion[itemtype].aModel[15].offrot;				// オフセットのの情報を代入
 		g_player.HandState = PLAYERHOLD_NO;															// プレイヤーをノーハンドにする
 	}
+	else
+	{
+		g_player.HandState = PLAYERHOLD_HOLD;	// プレイヤーをノーハンドにする
+	}
 }
 
 //================================
@@ -961,12 +963,6 @@ void LoadMotion(int Weponmotion)
 		break;
 	case MOTION_DBHAND:
 		pFile = fopen("data\\MOTION_CHANGE\\bat.txt", "r");
-		break;
-	case MOTION_NO_HOLD:
-		pFile = fopen("data\\MOTION_CHANGE\\hammer.txt", "r");
-		break;
-	case MOTION_THROW:
-		pFile = fopen("data\\MOTION_CHANGE\\hammer.txt", "r");
 		break;
 	default:
 		pFile = NULL;

@@ -1,5 +1,2 @@
-﻿  HPGauge.cpp
-C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(162,19): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(163,18): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(249,19): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-C:\Users\student\Desktop\3Dチーム\3d-TEAMC\HPGauge.cpp(250,18): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+﻿  edit.cpp
+  team_c.vcxproj -> C:\Users\student\Desktop\20250114\3d-TEAMC\Debug\team_c.exe
