@@ -625,82 +625,79 @@ void DrawPlayer(void)
 		//現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
-		for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
+		//全モデルパーツの描画
+		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel; nCntModel++)
 		{
-			//全モデルパーツの描画
-			for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel; nCntModel++)
+			D3DXMATRIX mtxRotModel, mtxTransform;//計算用
+			D3DXMATRIX mtxParent;//親のマトリックス
+
+			//パーツのマトリックスの初期化
+			D3DXMatrixIdentity(&g_player.Motion.aModel[nCntModel].mtxWorld);
+
+			//パーツの向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_player.Motion.aModel[nCntModel].rot.y, g_player.Motion.aModel[nCntModel].rot.x, g_player.Motion.aModel[nCntModel].rot.z);
+			D3DXMatrixMultiply(&g_player.Motion.aModel[nCntModel].mtxWorld, &g_player.Motion.aModel[nCntModel].mtxWorld, &mtxRotModel);
+
+			//パーツの位置(オフセット)を反映
+			D3DXMatrixTranslation(&mtxTransform, g_player.Motion.aModel[nCntModel].pos.x, g_player.Motion.aModel[nCntModel].pos.y, g_player.Motion.aModel[nCntModel].pos.z);
+			D3DXMatrixMultiply(&g_player.Motion.aModel[nCntModel].mtxWorld, &g_player.Motion.aModel[nCntModel].mtxWorld, &mtxTransform);
+
+			//パーツの[親のマトリックス]を設定
+			if (g_player.Motion.aModel[nCntModel].nIdxModelParent != -1)
 			{
-				D3DXMATRIX mtxRotModel, mtxTransform;//計算用
-				D3DXMATRIX mtxParent;//親のマトリックス
-
-				//パーツのマトリックスの初期化
-				D3DXMatrixIdentity(&g_player.Motion.aModel[nCntModel].mtxWorld);
-
-				//パーツの向きを反映
-				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_player.Motion.aModel[nCntModel].rot.y, g_player.Motion.aModel[nCntModel].rot.x, g_player.Motion.aModel[nCntModel].rot.z);
-				D3DXMatrixMultiply(&g_player.Motion.aModel[nCntModel].mtxWorld, &g_player.Motion.aModel[nCntModel].mtxWorld, &mtxRotModel);
-
-				//パーツの位置(オフセット)を反映
-				D3DXMatrixTranslation(&mtxTransform, g_player.Motion.aModel[nCntModel].pos.x, g_player.Motion.aModel[nCntModel].pos.y, g_player.Motion.aModel[nCntModel].pos.z);
-				D3DXMatrixMultiply(&g_player.Motion.aModel[nCntModel].mtxWorld, &g_player.Motion.aModel[nCntModel].mtxWorld, &mtxTransform);
-
-				//パーツの[親のマトリックス]を設定
-				if (g_player.Motion.aModel[nCntModel].nIdxModelParent != -1)
-				{
-					//親モデルがある場合
-					mtxParent = g_player.Motion.aModel[g_player.Motion.aModel[nCntModel].nIdxModelParent].mtxWorld;
-				}
-				else
-				{//親モデルがない場合
-					mtxParent = g_player.mtxWorldPlayer;
-				}
-
-				//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
-				D3DXMatrixMultiply(&g_player.Motion.aModel[nCntModel].mtxWorld,
-					&g_player.Motion.aModel[nCntModel].mtxWorld,
-					&mtxParent);//自分自分親
-
-				//パーツのワールドマトリックスの設定
-				pDevice->SetTransform(D3DTS_WORLD,
-					&g_player.Motion.aModel[nCntModel].mtxWorld);
-
-				for (int nCntMat = 0; nCntMat < (int)g_player.Motion.aModel[nCntModel].dwNumMat; nCntMat++)
-				{
-					//マテリアルのデータへのポインタを取得
-					pMat = (D3DXMATERIAL*)g_player.Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
-
-					D3DXMATERIAL color;
-
-					if (g_player.state != PLAYERSTATE_DAMAGE)
-					{
-						//マテリアルの設定
-						pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-					}
-					else if (g_player.state == PLAYERSTATE_DAMAGE)
-					{
-						color = pMat[nCntMat];
-
-						color.MatD3D.Diffuse.r = 1.0f;
-						color.MatD3D.Diffuse.g = 0.0f;
-						color.MatD3D.Diffuse.b = 0.0f;
-						color.MatD3D.Diffuse.a = 1.0f;
-
-						//マテリアルの設定
-						pDevice->SetMaterial(&color.MatD3D);
-					}
-
-					//テクスチャの設定
-					pDevice->SetTexture(0, g_apTexturePlayer[nCntMat]);
-
-					//モデル(パーツ)の描画
-					g_player.Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
-				}
-				nCnt++;
+				//親モデルがある場合
+				mtxParent = g_player.Motion.aModel[g_player.Motion.aModel[nCntModel].nIdxModelParent].mtxWorld;
 			}
-			if (nCnt == 15)
+			else
+			{//親モデルがない場合
+				mtxParent = g_player.mtxWorldPlayer;
+			}
+
+			//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
+			D3DXMatrixMultiply(&g_player.Motion.aModel[nCntModel].mtxWorld,
+				&g_player.Motion.aModel[nCntModel].mtxWorld,
+				&mtxParent);//自分自分親
+
+			//パーツのワールドマトリックスの設定
+			pDevice->SetTransform(D3DTS_WORLD,
+				&g_player.Motion.aModel[nCntModel].mtxWorld);
+
+			for (int nCntMat = 0; nCntMat < (int)g_player.Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 			{
-				SetMtxPos(); // 剣のワールドマトリックスを設定
+				//マテリアルのデータへのポインタを取得
+				pMat = (D3DXMATERIAL*)g_player.Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
+
+				D3DXMATERIAL color;
+
+				if (g_player.state != PLAYERSTATE_DAMAGE)
+				{
+					//マテリアルの設定
+					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+				}
+				else if (g_player.state == PLAYERSTATE_DAMAGE)
+				{
+					color = pMat[nCntMat];
+
+					color.MatD3D.Diffuse.r = 1.0f;
+					color.MatD3D.Diffuse.g = 0.0f;
+					color.MatD3D.Diffuse.b = 0.0f;
+					color.MatD3D.Diffuse.a = 1.0f;
+
+					//マテリアルの設定
+					pDevice->SetMaterial(&color.MatD3D);
+				}
+
+				//テクスチャの設定
+				pDevice->SetTexture(0, g_apTexturePlayer[nCntMat]);
+
+				//モデル(パーツ)の描画
+				g_player.Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 			}
+			nCnt++;
+		}
+		if (nCnt == 15)
+		{
+			SetMtxPos(); // 剣のワールドマトリックスを設定
 		}
 	}
 }

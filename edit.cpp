@@ -300,7 +300,7 @@ void DrawEdit(void)
 	MODE mode = GetMode();
 	EDIT_INFO* pEdit = GetEdit();
 
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();;
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal;

@@ -259,7 +259,6 @@ void FlashGameUI(int nSelect)
 	//頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
 }
-
 //============================
 // UIの点滅処理
 //============================
