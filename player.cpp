@@ -21,6 +21,7 @@
 #include "wall.h"
 #include "mouse.h"
 #include "Shadow.h"
+#include "Effect.h"
 
 //****************************
 //マクロ定義
@@ -30,6 +31,7 @@
 #define MAX_TEXPLAYER (128) // テクスチャの最大数
 #define MAX_JUMP (15.0f) // ジャンプ量
 #define MAX_MOVE (1.0f) // っプレイヤーの移動量
+#define NUM_MTX (4) // 剣の当たり判定のマトリクスの数
 
 //****************************
 //プロトタイプ宣言
@@ -42,12 +44,13 @@ void MotionChange(int itemtype,int LoadPlayer);
 //****************************
 //グローバル変数宣言
 //****************************
-LPDIRECT3DTEXTURE9 g_apTexturePlayer[MAX_TEXPLAYER] = {};//プレイヤーのテクスチャへのポインタ
+//LPDIRECT3DTEXTURE9 g_apTexturePlayer[MAX_TEXPLAYER] = {};//プレイヤーのテクスチャへのポインタ
 Player g_player;//プレイヤー構造体
 Player g_LoadPlayer[PLAYERTYPE_MAX]; // プレイヤーのモデルを保存しておく変数
 MODEL g_LoadWepon[ITEMTYPE_MAX];     // プレイヤーの武器を保存しておく変数
 MOTION g_LoadMotion[MOTION_MAX];   // モーションの情報を保存しておく変数
 int g_nCounterState,g_AttackState;
+bool bNohand;
 
 //============================
 //プレイヤーの初期化処理
@@ -80,6 +83,7 @@ void InitPlayer(void)
 	g_player.nCounterAction = 0;						   //アクションカウント
 	g_nCounterState = 0;                                   //状態カウンター
 	g_AttackState = 0;									   //攻撃状態のカウンター
+	bNohand = false;									   //物を投げたか投げてないか
 
 	//LoadWepon(); // アイテムのロード
 
@@ -91,14 +95,18 @@ void InitPlayer(void)
 	// 切り替わるモーションの数だけ
 	for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
 	{
+		if (nCnt != MOTION_NO_HAND)
+		{
+
+		}
 	}
 
 	D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
 	for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
 	{
-		LoadModel(nCntPlayer);
 		//必要な情報を設定
+		LoadModel(nCntPlayer);
 
 		g_LoadPlayer[nCntPlayer].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
 		g_LoadPlayer[nCntPlayer].nLife = PLAYERLIFE;
@@ -123,7 +131,7 @@ void InitPlayer(void)
 					//テクスチャの読み込み
 					D3DXCreateTextureFromFile(pDevice,						
 					pMat[nCntMat].pTextureFilename,
-					&g_apTexturePlayer[nCntMat]);
+					&g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pTexture[nCntMat]);
 				}
 			}
 		}
@@ -237,20 +245,20 @@ void InitPlayer(void)
 //============================
 void UninitPlayer(void)
 {
-	//テクスチャの破棄
-	for (int nCntMat = 0; nCntMat < MAX_TEXPLAYER; nCntMat++)
-	{
-		if (g_apTexturePlayer[nCntMat] != NULL)
-		{
-			g_apTexturePlayer[nCntMat]->Release();
-			g_apTexturePlayer[nCntMat] = NULL;
-		}
-	}
-
 	for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
 	{
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
+			//テクスチャの破棄
+			for (int nCntMat = 0; nCntMat < MAX_TEXTURE; nCntMat++)
+			{
+				if (g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pTexture[nCntMat] != NULL)
+				{
+					g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pTexture[nCntMat]->Release();
+					g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pTexture[nCntMat] = NULL;
+				}
+			}
+
 			//メッシュの破棄
 			if (g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh != NULL)
 			{
@@ -284,8 +292,17 @@ void UninitPlayer(void)
 		}
 	}
 
+	// テクスチャの破棄
 	for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel; nCntModel++)
 	{
+		for (int nCntMat = 0; nCntMat < MAX_TEXTURE; nCntMat++)
+		{
+			if (g_player.Motion.aModel[nCntModel].pTexture[nCntMat] != NULL)
+			{
+				g_player.Motion.aModel[nCntModel].pTexture[nCntMat] = NULL;
+			}
+		}
+
 		//メッシュの破棄
 		if (g_player.Motion.aModel[nCntModel].pMesh != NULL)
 		{
@@ -554,25 +571,32 @@ void UpdatePlayer(void)
 	}
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (g_player.bDisp)
+	if (g_player.bDisp && !bNohand)
 	{
 		if (OnMouseTriggerDown(LEFT_MOUSE)&&g_player.Combostate == COMBO_NO)
 		{
-			PlayerComb(MOTIONTYPE_ACTION, 60, 120, COMBO_ATTACK1); // コンボ1
+			PlayerComb(MOTIONTYPE_ACTION, 60, 30, COMBO_ATTACK1); // コンボ1
 		}
-		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK1 && g_player.HandState != PLAYERHOLD_HOLD)
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK1)
 		{
-			PlayerComb(MOTIONTYPE_ACTION2, 60, 120, COMBO_ATTACK2); // コンボ2
+			PlayerComb(MOTIONTYPE_ACTION2, 60, 30, COMBO_ATTACK2); // コンボ2
 		}
 		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK2)
 		{
-			PlayerComb(MOTIONTYPE_ACTION3, 60, 120, COMBO_ATTACK3); // コンボ3
+			PlayerComb(MOTIONTYPE_ACTION3, 60, 30, COMBO_ATTACK3); // コンボ3
 		}
 		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK3)
 		{
-			PlayerComb(MOTIONTYPE_ACTION4, 60, 120, COMBO_ATTACK4); // コンボ4
+			PlayerComb(MOTIONTYPE_ACTION4, 60, 30, COMBO_ATTACK4); // コンボ4
 		}
 	}
+
+	// 投げ物を持っているときの攻撃
+	if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_NO && bNohand)
+	{
+		PlayerComb(MOTIONTYPE_ACTION, 60, 20, COMBO_ATTACK1); // コンボ1
+	}
+
 
 	//プレイヤーの角度の正規化
 	if (g_player.rotDestPlayer.y - g_player.rot.y >= D3DX_PI)
@@ -583,6 +607,8 @@ void UpdatePlayer(void)
 	{
 		g_player.rot.y -= D3DX_PI * 2.0f;
 	}
+
+	//SetEffect(SwordPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 10.0f, 10.0f);
 
 	//モーションの更新
 	UpdateMotion(&g_player.Motion);
@@ -688,18 +714,20 @@ void DrawPlayer(void)
 				}
 
 				//テクスチャの設定
-				pDevice->SetTexture(0, g_apTexturePlayer[nCntMat]);
+				pDevice->SetTexture(0, g_player.Motion.aModel[nCntModel].pTexture[nCntMat]);
 
 				//モデル(パーツ)の描画
 				g_player.Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 			}
 			nCnt++;
-		}
-		if (nCnt == 15)
-		{
-			SetMtxPos(); // 剣のワールドマトリックスを設定
+			if (nCnt == 15)
+			{
+				SetMtxPos(); // 剣のワールドマトリックスを設定
+			}
 		}
 	}
+	//マテリアルの設定
+	pDevice->SetMaterial(&matDef);
 }
 //============================
 //プレイヤーの取得処理
@@ -806,9 +834,83 @@ void StickPad(void)
 //================================
 // プレイヤーの剣と敵の当たり判定
 //================================
-void HitSowrd(ENEMY* pEnemy)
+void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 {
+	D3DXVECTOR3 mtxDis,SwordPos;
 
+	//剣の長さを求める
+	mtxDis.x = (g_player.SwordMtx._41 - g_player.Motion.aModel[15].mtxWorld._41);
+	mtxDis.y = (g_player.SwordMtx._42 - g_player.Motion.aModel[15].mtxWorld._42);
+	mtxDis.z = (g_player.SwordMtx._43 - g_player.Motion.aModel[15].mtxWorld._43);
+
+	// マトリクスの数分だけ回す
+	for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
+	{
+		// 剣の位置を全て求める
+		SwordPos.x = g_player.Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.25f * nCnt;
+		SwordPos.y = g_player.Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.25f * nCnt;
+		SwordPos.z = g_player.Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.25f * nCnt;
+
+		D3DXVECTOR3 DisPos; // 距離算出用
+
+		DisPos.x = pEnemy->pos.x - SwordPos.x; // 距離Xを求める
+		DisPos.y = pEnemy->pos.y - SwordPos.y; // 距離Yを求める
+		DisPos.z = pEnemy->pos.z - SwordPos.z; // 距離Zを求める
+
+		float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z); // 距離を求める
+
+		float Radius1, Radius2; // 半径
+
+		Radius1 = 15.0f;
+		Radius2 = 50.0f;
+
+		float fRadius = Radius1 + Radius2; // 半径を求める
+
+		fRadius = (fRadius * fRadius); // 半径を求める
+
+		if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.state==PLAYERSTATE_ATTACK)
+		{
+			HitEnemy(nCntEnemy, 1);
+			break;
+		}
+	}
+}
+//================================
+// 物を投げる
+//================================
+void ThrowItem(void)
+{
+	Item* pItem = GetItem();
+	int nIdx = g_player.ItemIdx; // 手に持っているアイテムのインデックス情報を代入
+
+	// 発射地点を設定
+	pItem[nIdx].pos.x = g_player.pos.x;
+	pItem[nIdx].pos.y = g_player.Motion.aModel[2].pos.y;
+	pItem[nIdx].pos.z = g_player.pos.z;
+
+	// 飛ばす方向を設定
+	pItem[nIdx].move.x = sinf(g_player.rot.y + D3DX_PI) * 10.0f;
+	pItem[nIdx].move.z = cosf(g_player.rot.y + D3DX_PI) * 10.0f;
+	pItem[nIdx].bUse = true; // 使用状態をtrueにする
+
+	// 素手の時のモーション情報を代入
+	for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
+	{
+		g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].Motion.aModel[nCntModel]; // モデルの情報を代入
+	}
+	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
+	{
+		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].Motion.aMotionInfo[nCntMotion];
+	}
+
+	// 投げた後に武器を消す
+	g_player.Motion.nNumModel -= 1;
+
+	// プレイヤーの状態を何も持っていない状態にする
+	g_player.HandState = PLAYERHOLD_NO;
+
+	// 状態を投げられてる状態にする
+	pItem[nIdx].state = ITEMSTATE_THROW;
 }
 
 //================================
@@ -841,11 +943,13 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 		if (KeyboardTrigger(DIK_F))
 		{
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
+			pItem[nIdx].bUse = false;      // 消す
+			g_player.ItemIdx = nIdx;
 
 			switch (pItem[nIdx].nType)
 			{
 			case ITEMTYPE_BAT:
-				MotionChange(MOTION_DBHAND,0);
+				MotionChange(MOTION_DBHAND,0); // アイテムにあったモーションタイプを入れる(素手の場合は引数2に1を入れる)
 				break;
 			case ITEMTYPE_GOLF:
 				MotionChange(MOTION_DBHAND,0);
@@ -853,8 +957,11 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			case ITEMTYPE_HUNMER:
 				MotionChange(MOTION_BIGWEPON,0);
 				break;
+			case ITEMTYPE_STONE:
+				MotionChange(MOTION_BIGWEPON, 1);
+				break;
 			case ITEMTYPE_WOOD:
-				MotionChange(MOTION_DBHAND,1);
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_STONEBAT:
 				MotionChange(MOTION_DBHAND, 0);
@@ -886,18 +993,25 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_TORCHSWORD:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_HEADSTATUE:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_HEADSTATUTORSO:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_MEGAPHONE:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_RUBBERCUP:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_TELEPHONEPOLE:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_TORSO:
+				MotionChange(MOTION_DBHAND, 0);
 				break;
 			default:
 				break;
@@ -926,13 +1040,15 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 //===============================
 void MotionChange(int itemtype,int LoadPlayer)
 {
+	g_player.Motion.nNumModel = 16; // 最大数をもとに戻す
+
 	for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
 	{
 		g_player.Motion.aModel[nCntModel] = g_LoadPlayer[LoadPlayer].Motion.aModel[nCntModel]; // モデルの情報を代入
 	}
 	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
 	{
-		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[LoadPlayer].Motion.aMotionInfo[nCntMotion];
+		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[LoadPlayer].Motion.aMotionInfo[nCntMotion]; // モーションの情報を代入
 	}
 
 	if (LoadPlayer != PLAYERTYPE_NOHAND) // プレイヤーがノーハンドだったら情報を代入しない
@@ -943,11 +1059,13 @@ void MotionChange(int itemtype,int LoadPlayer)
 		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION4] = g_LoadMotion[itemtype].aMotionInfo[3];	// 攻撃4の情報を代入
 		g_player.Motion.aModel[15].offpos = g_LoadMotion[itemtype].aModel[15].offpos;				// オフセットの情報を代入
 		g_player.Motion.aModel[15].offrot = g_LoadMotion[itemtype].aModel[15].offrot;				// オフセットのの情報を代入
-		g_player.HandState = PLAYERHOLD_NO;															// プレイヤーをノーハンドにする
+		g_player.HandState = PLAYERHOLD_NO;
+		bNohand = false;// プレイヤーをノーハンドにする
 	}
 	else
 	{
 		g_player.HandState = PLAYERHOLD_HOLD;	// プレイヤーをノーハンドにする
+		bNohand = true;
 	}
 }
 

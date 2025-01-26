@@ -403,9 +403,9 @@ void SaveEdit(void)
 			{
 				fprintf(pFile, "BLOCKSET\n");
 
-				fprintf(pFile, "EDITCATEGORY = %d\n", g_Edit[nCnt].EditCategory);
+				fprintf(pFile, "EDITCATEGORY = %d # [%d]カテゴリー%d \n", g_Edit[nCnt].EditCategory,nCnt, g_Edit[nCnt].EditCategory);
 
-				fprintf(pFile, "   BLOCKTYPE = %d\n", g_Edit[nCnt].nType);
+				fprintf(pFile, "   BLOCKTYPE = %d # [ ブロックの種類 ]\n", g_Edit[nCnt].nType);
 
 				fprintf(pFile, "   POS = %.1f %.1f %.1f\n", g_Edit[nCnt].pos.x, g_Edit[nCnt].pos.y, g_Edit[nCnt].pos.z);
 
@@ -435,7 +435,7 @@ void SaveEdit(void)
 	else
 	{
 		//メッセージボックス
-		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
+		MessageBox(NULL, "ファイルが開けません。", "エラー(SaveEdit)", MB_OK);
 		return;
 	}
 	fclose(pFile);
@@ -544,7 +544,7 @@ void LoadEdit(void)
 	else
 	{//開けなかったとき	
 				//メッセージボックス
-		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
+		MessageBox(NULL, "ファイルが開けません。", "エラー(LoadEdit)", MB_OK);
 		return;
 	}
 	fclose(pFile);

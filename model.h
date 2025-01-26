@@ -13,8 +13,17 @@
 //***************************
 #include"main.h"
 
+//***************************
+//マクロ定義
+//***************************
+#define MAX_TEXTURE (128) // テクスチャの最大数
+
+//***************************
+//モデルの構造体
+//***************************
 typedef struct
 {
+	LPDIRECT3DTEXTURE9 pTexture[MAX_TEXTURE];//プレイヤーのテクスチャへのポインタ
 	LPD3DXMESH pMesh;//メッシュ(頂点情報)へのポインタ
 	LPD3DXBUFFER pBuffMat;//マテリアルへのポインタ
 	DWORD dwNumMat;//マテリアルの数

@@ -159,8 +159,8 @@ void UpdateGauge(void)
 	float fLeftHP;
 	float fMaxHP;
 	Player* pPlayer = GetPlayer();
-	fLeftHP = pPlayer->nLife;
-	fMaxHP = pPlayer->nMaxLife;
+	fLeftHP = (float)pPlayer->nLife;
+	fMaxHP = (float)pPlayer->nMaxLife;
 
 	// ‚»‚±‚©‚ç‚»‚ÌŠ„‡‚ðŒvŽZ‚µ’·‚³‚É‚·‚é
 	g_fPer = fLeftHP / fMaxHP;
@@ -246,8 +246,8 @@ void SetGauge(void)
 	float fLeftHP;
 	float fMaxHP;
 	Player* pPlayer = GetPlayer();
-	fLeftHP = pPlayer->nLife;
-	fMaxHP = pPlayer->nMaxLife;
+	fLeftHP = (float)pPlayer->nLife;
+	fMaxHP = (float)pPlayer->nMaxLife;
 
 	g_fPer = fLeftHP / fMaxHP;
 	g_fLength = g_fPer * 940;

@@ -41,7 +41,7 @@ D3DXVECTOR3 Zoom;
 void InitCamera(void)
 {
 	// 変数の初期化
-	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 80.0f, -250.0f);			// カメラの位置
+	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 200.0f, -250.0f);			// カメラの位置
 	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 700.0f, 0.0f);			// カメラの位置
 
 	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
@@ -60,17 +60,17 @@ void InitCamera(void)
 		g_camera[nCnt].oldDistance = g_camera[nCnt].fDistance;	// 距離を保存しておく
 	}
 
-	g_camera[MAIN].viewport.X = 0.0f; // 2DX座標
-	g_camera[MAIN].viewport.Y = 0.0f; // 2DY座標
-	g_camera[MAIN].viewport.Width = 1280.0f; // 幅
-	g_camera[MAIN].viewport.Height = 720.0f; // 高さ
+	g_camera[MAIN].viewport.X = 0; // 2DX座標
+	g_camera[MAIN].viewport.Y = 0; // 2DY座標
+	g_camera[MAIN].viewport.Width = 1280; // 幅
+	g_camera[MAIN].viewport.Height = 720; // 高さ
 	g_camera[MAIN].viewport.MinZ = 0.0f;
 	g_camera[MAIN].viewport.MaxZ = 1.0f;
 
-	g_camera[MAP].viewport.X = 1000.0f; // 2DX座標
-	g_camera[MAP].viewport.Y = 100.0f; // 2DY座標
-	g_camera[MAP].viewport.Width = 200.0f; // 幅
-	g_camera[MAP].viewport.Height = 200.0f; // 高さ
+	g_camera[MAP].viewport.X = 1000; // 2DX座標
+	g_camera[MAP].viewport.Y = 100; // 2DY座標
+	g_camera[MAP].viewport.Width = 200; // 幅
+	g_camera[MAP].viewport.Height = 200; // 高さ
 	g_camera[MAP].viewport.MinZ = 0.0f;
 	g_camera[MAP].viewport.MaxZ = 1.0f;
 	
@@ -429,57 +429,56 @@ void MouseView(void)
 
 	if (mode != MODE_TITLE && GetMouseState(&mouseState))
 	{
+		static POINT prevCursorPos = { (long)SCREEN_WIDTH / (long)1.5f,(long)SCREEN_HEIGHT / (long)1.5f };
 
-			static POINT prevCursorPos = { SCREEN_WIDTH / 1.5f,SCREEN_HEIGHT / 1.5f };
+		POINT cursorPos;
+		GetCursorPos(&cursorPos);
 
-			POINT cursorPos;
-			GetCursorPos(&cursorPos);
+		float X = (float)cursorPos.x - prevCursorPos.x;
+		float Y = (float)cursorPos.y - prevCursorPos.y;
 
-			float X = (float)cursorPos.x - prevCursorPos.x;
-			float Y = (float)cursorPos.y - prevCursorPos.y;
+		const float mouseSensitivity = 0.009f;
 
-			const float mouseSensitivity = 0.009f;
+		X *= mouseSensitivity;
+		Y *= mouseSensitivity;
 
-			X *= mouseSensitivity;
-			Y *= mouseSensitivity;
+		g_camera[MAIN].rot.y += X;
+		g_camera[MAIN].rot.x += Y;
 
-			g_camera[MAIN].rot.y += X;
-			g_camera[MAIN].rot.x += Y;
+		if (g_camera[MAIN].rot.y < -D3DX_PI)
+		{
+			g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
+		}
+		else if (g_camera[MAIN].rot.y > D3DX_PI)
+		{
+			g_camera[MAIN].rot.y += -D3DX_PI * 2.0f;
+		}
 
-			if (g_camera[MAIN].rot.y < -D3DX_PI)
-			{
-				g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
-			}
-			else if (g_camera[MAIN].rot.y > D3DX_PI)
-			{
-				g_camera[MAIN].rot.y += -D3DX_PI * 2.0f;
-			}
+		if (g_camera[MAIN].rot.x < -D3DX_PI)
+		{
+			g_camera[MAIN].rot.x += D3DX_PI * 2.0f;
+		}
+		else if (g_camera[MAIN].rot.x > D3DX_PI)
+		{
+			g_camera[MAIN].rot.x += -D3DX_PI * 2.0f;
+		}
 
-			if (g_camera[MAIN].rot.x < -D3DX_PI)
-			{
-				g_camera[MAIN].rot.x += D3DX_PI * 2.0f;
-			}
-			else if (g_camera[MAIN].rot.x > D3DX_PI)
-			{
-				g_camera[MAIN].rot.x += -D3DX_PI * 2.0f;
-			}
+		if (g_camera[MAIN].rot.x > MAX_VIEWUP)
+		{
+			g_camera[MAIN].rot.x -= Y;
+		}
+		else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
+		{
+			g_camera[MAIN].rot.x -= Y;
+		}
+		SetCursorPos((long)SCREEN_WIDTH / (long)1.5f, (long)SCREEN_HEIGHT / (long)1.5f);
 
-			if (g_camera[MAIN].rot.x > MAX_VIEWUP)
-			{
-				g_camera[MAIN].rot.x -= Y;
-			}
-			else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
-			{
-				g_camera[MAIN].rot.x -= Y;
-			}
-			SetCursorPos((float)SCREEN_WIDTH / 1.5f, (float)SCREEN_HEIGHT / 1.5f);
+		prevCursorPos.x = (long)SCREEN_WIDTH / (long)1.5f;
+		prevCursorPos.y = (long)SCREEN_HEIGHT / (long)1.5f;
 
-			prevCursorPos.x = SCREEN_WIDTH / 1.5f;
-			prevCursorPos.y = SCREEN_HEIGHT / 1.5f;
-
-			g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-			g_camera[MAIN].posR.y = g_camera[MAIN].posV.y + cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
-			g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.y = g_camera[MAIN].posV.y + cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 		
 	}
 }

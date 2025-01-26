@@ -18,6 +18,7 @@
 #include "item.h"
 #include "Shadow.h"
 #include "Particle.h"
+#include"item.h"
 
 //****************************
 //マクロ定義
@@ -29,7 +30,7 @@
 #define TYPETHREE_MOVE (1.0f) //敵2の移動量
 #define MAX_TEXENEMY (128) //テクスチャの最大数
 #define MAX_ENEMYMOVE (1.0f) // 敵の移動量
-#define SHADOWSIZESET (40.0f) // 影のサイズのオフセット
+#define SHADOWSIZEOFFSET (40.0f) // 影のサイズのオフセット
 #define SHADOW_A (1.0f) // 影のアルファ
 
 //****************************
@@ -63,7 +64,7 @@ void InitEnemy(void)
 		//g_Enemy[nCntEnemy].nType = ENEMYTYPE_ONE;
 		g_Enemy[nCntEnemy].bUse = false;								//未使用状態
 		g_Enemy[nCntEnemy].Motion.bLoopMotion = true;					//ループするか否か
-		g_Enemy[nCntEnemy].nLife = 10;									//体力
+		g_Enemy[nCntEnemy].nLife = 20;									//体力
 		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;					//状態
 	}
 
@@ -79,13 +80,15 @@ void InitEnemy(void)
 		//読み込み
 
 		//g_LoadEnemy[nCntEnemyType].
-		//g_LoadEnemy[nCntEnemyType].nLife = 20;
+		g_LoadEnemy[nCntEnemyType].nLife = 20;
 		//g_LoadEnemy[nCntEnemyType].nType = ENEMYTYPE_ONE;
 		g_LoadEnemy[nCntEnemyType].Motion.motionType = MOTIONTYPE_NEUTRAL;//モーションの種類
 		g_LoadEnemy[nCntEnemyType].g_bDamage = true;					  //ダメージか否か
 		g_LoadEnemy[nCntEnemyType].Motion.bLoopMotion = true;			  //ループか否か
 		g_LoadEnemy[nCntEnemyType].Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  //サイズ
 		g_LoadEnemy[nCntEnemyType].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	  //座標
+		g_LoadEnemy[nCntEnemyType].state = ENEMYSTATE_NORMAL;					//状態
+
 
 		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
 		{
@@ -225,6 +228,32 @@ void UpdateEnemy(void)
 			continue;
 		}
 
+		switch (g_Enemy[nCntEnemy].state)
+		{
+		case ENEMYSTATE_NORMAL:
+			break;
+		case ENEMYSTATE_AGENT:
+			break;
+		case ENEMYSTATE_ATTACK:
+			g_Enemy[nCntEnemy].nCounterState--;
+
+			if (g_Enemy[nCntEnemy].nCounterState <= 0)
+			{
+				g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;
+			}
+			break;
+		case ENEMYSTATE_DAMAGE:
+			g_Enemy[nCntEnemy].nCounterState--;
+
+			if (g_Enemy[nCntEnemy].nCounterState <= 0)
+			{
+				g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;
+			}
+			break;
+		default:
+			break;
+		}
+
 		//移動量の減衰
 		g_Enemy[nCntEnemy].move.x += (0.0f - g_Enemy[nCntEnemy].move.x) * 0.5f;
 		g_Enemy[nCntEnemy].move.z += (0.0f - g_Enemy[nCntEnemy].move.z) * 0.5f;
@@ -241,8 +270,15 @@ void UpdateEnemy(void)
 
 		}
 
+		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f))
+		{
+			HitEnemy(nCntEnemy, 1);
+		}
+		// 剣と敵の当たり判定
+		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);
+
 		// 影の計算
-		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZESET + SHADOWSIZESET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
+		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 
 
 		if (AgentRange(50.0f, 200.0f, nCntEnemy))
@@ -385,22 +421,32 @@ ENEMY* GetEnemy(void)
 //=======================
 void HitEnemy(int nCnt,int nDamage)
 {
-	SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), nDamage, 20, false);
+	SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), // 位置
+		nDamage,	// ダメージ																								
+		20,			// 寿命
+		false);		
+
 	g_Enemy[nCnt].nLife -= nDamage;
 
-	if (g_Enemy[nCnt].nLife <=0)
+	if (g_Enemy[nCnt].nLife <= 0)
 	{//体力が0以下なら
-		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 12.0f, 20, 30, 60, 5.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z),
+			g_Enemy[nCnt].rot,
+			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+			12.0f, 20, 30, 60, 5.0f, 0.0f,
+			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//敵の状態を死亡状態にする
-
+		KillShadow(g_Enemy[nCnt].nIdxShadow);  // 敵の影を消す
 		g_Enemy[nCnt].bUse = false;			   //未使用判定
 
 		g_nNumEnemy--;						   //デクリメント
 	}
 	else
 	{
-		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 12.0f, 1, 20, 40, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 12.0f, 1, 20, 40, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE;//敵の状態をダメージにする
 

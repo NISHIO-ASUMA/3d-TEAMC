@@ -199,7 +199,6 @@ void DrawMeshField(void)
 //================================
 bool CollisionField(void)
 {
-	VERTEX_3D* pVtx;//頂点情報のポインタ
 
 	Player* pPlayer = GetPlayer();//プレイヤーの取得
 
@@ -207,7 +206,6 @@ bool CollisionField(void)
 
 	int nCntPos = 0;
 	int nNextWall = 1;
-
 
 	//if (pPlayer->bDisp == true)
 	//{

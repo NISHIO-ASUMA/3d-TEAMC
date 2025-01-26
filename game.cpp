@@ -27,6 +27,8 @@
 #include "edit.h"
 #include "wall.h"
 #include "HPGauge.h"
+#include "Effect.h"
+#include "Particle.h"
 
 //****************************
 //マクロ定義
@@ -63,6 +65,15 @@ void InitGame(void)
 	//プレイヤーの初期化処理
 	InitPlayer();
 
+	// エフェクトの初期化処理
+	InitEffect();
+
+	// パーティクルの初期化処理
+	InitParticle();
+
+	// ダメージの初期化処理
+	InitDamege();
+
 	//敵の初期化処理
 	InitEnemy();
 
@@ -84,11 +95,11 @@ void InitGame(void)
 	//エディットのロード処理
 	LoadEdit();
 
-	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 20.0f), ENEMYTYPE_ONE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_TWO, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 280.0f), ENEMYTYPE_THREE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 1, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 20.0f), ENEMYTYPE_ONE, 100, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_TWO, 100, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 280.0f), ENEMYTYPE_THREE, 100, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 100, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 100, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	SetWall(D3DXVECTOR3(500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(-500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
@@ -123,6 +134,15 @@ void UninitGame(void)
 
 	//プレイヤーの終了処理
 	UninitPlayer();
+
+	// エフェクトの終了処理
+	UninitEffect();
+
+	// パーティクルの終了処理
+	UninitParticle();
+
+	// ダメージの終了処理
+	UninitDamege();
 
 	//敵の終了処理
 	UninitEnemy();
@@ -201,9 +221,9 @@ void UpdateGame(void)
 	if (KeyboardTrigger(DIK_F2) && g_bEditMode)
 	{
 		g_bEditMode = false;
-		InitBlock();
-		InitItem();
-		LoadEdit();
+		InitBlock(); // 出ているオブジェクトの初期化
+		InitItem();  // 出ているオブジェクトの初期化
+		LoadEdit();  // ロード
 	}
 	//エディットモードじゃなかったら
 	else if (KeyboardTrigger(DIK_F2) && !g_bEditMode)
@@ -227,6 +247,15 @@ void UpdateGame(void)
 
 			//プレイヤーの更新処理
 			UpdatePlayer();
+
+			// ダメージの更新処理
+			UpdateDamege();
+
+			// エフェクトの更新処理
+			UpdateEffect();
+
+			// パーティクルの更新処理
+			UpdateParticle();
 
 			//敵の更新処理
 			UpdateEnemy();
@@ -285,8 +314,17 @@ void DrawGame(void)
 	//壁の描画処理
 	DrawWall();
 
+	// エフェクトの描画処理
+	DrawEffect();
+
+	// パーティクルの描画処理
+	DrawParticle();
+
 	//HPゲージの描写処理
     DrawGauge();
+
+	// ダメージの描画処理
+	DrawDamege();
 
     //プレイヤーの影の描画処理
     DrawShadow();

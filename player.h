@@ -107,6 +107,7 @@ typedef enum
 	PLAYERSTATE_DAMAGE,
 	PLAYERSTATE_FALL,
 	PLAYERSTATE_INVISIBLE,
+	PLAYERSTATE_NO_WEPON,
 	PLAYERSTATE_MAX
 }PLAYERSTATE;
 
@@ -118,6 +119,7 @@ typedef enum
 	MOTION_KATANA = 0,
 	MOTION_BIGWEPON,
 	MOTION_DBHAND,
+	MOTION_NO_HAND,
 	MOTION_MAX
 }WEPONMOTION; // 使いまわせるものは使いまわす
 
@@ -157,6 +159,7 @@ typedef struct
 	bool bJumpAttack;
 	float fShadowSize;//影の大きさ
 	int Combostate; // コンボの状態をもつ変数 
+	int ItemIdx;    // アイテムのインデックス保管用変数
 }Player;
 
 //**************************
@@ -171,5 +174,6 @@ void SetMtxPos(void);//ワールドマトリックスのオフセット設定処理
 void HitPlayer(int nDamage);//プレイヤーのヒット処理
 void StickPad(void);//パッドの移動処理
 bool CollisionItem(int nIdx, float Itemrange, float plrange);
-void HitSowrd(ENEMY *pEnemy);
+void HitSowrd(ENEMY* pEnemy,int nCntEnemy);
+void ThrowItem(void); // アイテムを投げる
 #endif

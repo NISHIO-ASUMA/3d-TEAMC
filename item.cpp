@@ -24,7 +24,6 @@
 //****************************
 //プロトタイプ宣言
 //****************************
-void SetMtxItem(int nCnt);
 void LoadItemModel(void); // アイテムのロード処理
 
 //****************************
@@ -139,7 +138,6 @@ void InitItem(void)
 			g_TexItem[nCntNum].Size.z = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.z - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.z;
 		}
 
-
 		//頂点バッファのアンロック
 		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->UnlockVertexBuffer();
 	}
@@ -185,53 +183,18 @@ void UpdateItem(void)
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		if (!g_Item[nCntItem].bUse)
+		// プレイヤーがものを持っているかつ攻撃モーションのキーが3になったら
+		if (pPlayer->HandState == PLAYERHOLD_HOLD && pPlayer->Motion.nKey == 3 && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
 		{
-			//使用中じゃなかったら
+			ThrowItem();
+		}
+
+		if (!g_Item[nCntItem].bUse)
+		{//使用中じゃなかったら
+			// 処理を読み飛ばす
 			continue;
 		}
 
-		if (g_Item[nCntItem].state == ITEMSTATE_HOLD && KeyboardTrigger(DIK_RETURN))
-		{
-			//プレイヤーの向いている方向に飛ばす
-			g_Item[nCntItem].move.x = sinf(pPlayer->rot.y + D3DX_PI) * 10.0f;
-			g_Item[nCntItem].move.y = 0.0f;
-			g_Item[nCntItem].move.z = cosf(pPlayer->rot.y + D3DX_PI) * 10.0f;
-
-			//発射地点を親の位置にする
-			g_Item[nCntItem].pos.x = pPlayer->Motion.aModel[PARENT].mtxWorld._41;
-			g_Item[nCntItem].pos.y = pPlayer->Motion.aModel[PARENT].mtxWorld._42;
-			g_Item[nCntItem].pos.z = pPlayer->Motion.aModel[PARENT].mtxWorld._43;
-
-			//ブロックの投げられている状態にする
-			g_Item[nCntItem].state = ITEMSTATE_THROW;
-
-			//プレイヤーを何も持っていない状態にする
-			pPlayer->HandState = PLAYERHOLD_NO;
-		}
-		if (g_Item[nCntItem].state == ITEMSTATE_HOLD && KeyboardTrigger(DIK_O))
-		{
-			g_Item[nCntItem].state = ITEMSTATE_NORMAL;
-			pPlayer->HandState = PLAYERHOLD_NO;
-
-			//発射地点を親の位置にする
-			g_Item[nCntItem].pos.x = pPlayer->pos.x;
-			g_Item[nCntItem].pos.y = 0.0f;
-			g_Item[nCntItem].pos.z = pPlayer->pos.z;
-
-		}
-
-		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
-		{
-			//体力を減らす
-			g_Item[nCntItem].nLife--;
-
-			if (g_Item[nCntItem].nLife <= 0)
-			{//体力が0以下なら
-				//未使用判定
-				g_Item[nCntItem].bUse = false;
-			}
-		}
 
 		//位置の更新
 		g_Item[nCntItem].pos += g_Item[nCntItem].move;
@@ -239,6 +202,17 @@ void UpdateItem(void)
 		CollisionItem(nCntItem,// アイテムのインデックスを渡す
 			20.0f, // アイテムの半径
 			20.0f); // プレイヤーの半径
+
+		// 状態を投げるにする
+		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
+		{
+			g_Item[nCntItem].nLife--; // デクリメント
+
+			if (g_Item[nCntItem].nLife <= 0)
+			{
+				g_Item[nCntItem].bUse = false; // 消す
+			}
+		}
 	}
 
 }
@@ -270,32 +244,24 @@ void DrawItem(void)
 				continue;
 			}
 
-			if (g_Item[nCntItem].state == ITEMSTATE_HOLD)
-			{
-				//取得処理
-				SetMtxItem(nCntItem);
-			}
-			else
-			{
-				//ワールドマトリックスの初期化
-				D3DXMatrixIdentity(&g_Item[nCntItem].mtxWorldItem);
+			//ワールドマトリックスの初期化
+			D3DXMatrixIdentity(&g_Item[nCntItem].mtxWorldItem);
 
-				//大きさを反映
-				D3DXMatrixScaling(&mtxScal, g_Item[nCntItem].Scal.y, g_Item[nCntItem].Scal.x, g_Item[nCntItem].Scal.z);
-				D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxScal);
+			//大きさを反映
+			D3DXMatrixScaling(&mtxScal, g_Item[nCntItem].Scal.y, g_Item[nCntItem].Scal.x, g_Item[nCntItem].Scal.z);
+			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxScal);
 
-				//向きを反映
-				D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
-				D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxRot);
+			//向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
+			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxRot);
 
-				//位置を反映
-				D3DXMatrixTranslation(&mtxTrans, g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y, g_Item[nCntItem].pos.z);
-				D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxTrans);
+			//位置を反映
+			D3DXMatrixTranslation(&mtxTrans, g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y, g_Item[nCntItem].pos.z);
+			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxTrans);
 
-				//ワールドマトリックスの設定
-				pDevice->SetTransform(D3DTS_WORLD, &g_Item[nCntItem].mtxWorldItem);
-			}
-
+			//ワールドマトリックスの設定
+			pDevice->SetTransform(D3DTS_WORLD, &g_Item[nCntItem].mtxWorldItem);
+			
 			//現在のマテリアルを取得
 			pDevice->GetMaterial(&matDef);
 
@@ -325,27 +291,63 @@ void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal)
 	{
 		if (!g_Item[nCntItem].bUse)
 		{//未使用状態なら
+
 			g_Item[nCntItem] = g_TexItem[nType]; // 必要な情報を代入
 
-			g_Item[nCntItem].pos = pos;	   //座標
-			g_Item[nCntItem].nType = nType;//種類
-			g_Item[nCntItem].Scal = Scal;  //拡大率
-			g_Item[nCntItem].bUse = true;  //使用判定
+			g_Item[nCntItem].pos = pos;			 //座標
+			g_Item[nCntItem].nType = nType;		 //種類
+			g_Item[nCntItem].Scal = Scal;		 //拡大率
+			g_Item[nCntItem].bUse = true;		 //使用判定
 
 			break;
 		}
 	}
 }
 //=======================
-//ブロックの取得処理
+//アイテムの当たり判定
 //=======================
+bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
+{
+	Player* pPlayer = GetPlayer();
+
+	bool bHit = false; // 当たったかどうか
+
+	D3DXVECTOR3 DisPos; // 距離計算用変数
+
+	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
+	{
+		if (g_Item[nCnt].state == ITEMSTATE_THROW && g_Item[nCnt].bUse)
+		{
+			DisPos.x = pPos->x - g_Item[nCnt].pos.x;
+			DisPos.y = pPos->y - g_Item[nCnt].pos.y;
+			DisPos.z = pPos->z - g_Item[nCnt].pos.z;
+
+			float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z);
+
+			float fRadius = ItemRadius + EnemyRadius;
+
+			fRadius = fRadius * fRadius;
+
+			if (fDistance <= fRadius)
+			{
+				bHit = true;
+				g_Item[nCnt].bUse = false;
+				break;
+			}
+		}
+	}
+	return bHit;
+}
+//=========================
+//アイテムのテクスチャ取得
+//=========================
 void Itemchange(int nType)
 {
 	Player* pPlayer = GetPlayer();
 
-	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].ItemTex[nType].g_dwNumMatItem;
-	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].ItemTex[nType].g_pBuffMatItem;
-	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].ItemTex[nType].g_pMeshItem;
+	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].ItemTex[nType].g_dwNumMatItem; // アイテムのマテリアルの情報を代入
+	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].ItemTex[nType].g_pBuffMatItem; // アイテムのバッファの情報を代入
+	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].ItemTex[nType].g_pMeshItem;       // アイテムのメッシュの情報を代入
 }
 //=======================
 //アイテムの取得
@@ -353,54 +355,6 @@ void Itemchange(int nType)
 Item* GetItem(void)
 {
 	return &g_Item[0];
-}
-////=======================
-////ブロックの取得処理
-////=======================
-//ITEM* GetItem()
-//{
-//	return &g_Item[0];
-//}
-//int NumItem(void)
-//{
-//	return g_NumItem;
-//}
-//=======================
-//ブロックの親処理
-//=======================
-void SetMtxItem(int nCnt)
-{
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
-
-	//計算用のマトリックス
-	D3DXMATRIX mtxRot, mtxTrans, mtxScal, mtxParent;
-
-	Player* pPlayer = GetPlayer();//プレイヤーの取得
-
-	//ワールドマトリックスの初期化
-	D3DXMatrixIdentity(&g_Item[nCnt].mtxWorldItem);
-
-	//大きさを反映
-	D3DXMatrixScaling(&mtxScal, g_Item[nCnt].Scal.y, g_Item[nCnt].Scal.x, g_Item[nCnt].Scal.z);
-	D3DXMatrixMultiply(&g_Item[nCnt].mtxWorldItem, &g_Item[nCnt].mtxWorldItem, &mtxScal);
-
-	//向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Item[nCnt].rot.y, g_Item[nCnt].rot.x, g_Item[nCnt].rot.z);
-	D3DXMatrixMultiply(&g_Item[nCnt].mtxWorldItem, &g_Item[nCnt].mtxWorldItem, &mtxRot);
-
-	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, g_Item[nCnt].pos.x, g_Item[nCnt].pos.y, g_Item[nCnt].pos.z);
-	D3DXMatrixMultiply(&g_Item[nCnt].mtxWorldItem, &g_Item[nCnt].mtxWorldItem, &mtxTrans);
-
-	g_Item[nCnt].mtxParent = pPlayer->Motion.aModel[PARENT].mtxWorld;
-
-	//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
-	D3DXMatrixMultiply(&g_Item[nCnt].mtxWorldItem,
-		&g_Item[nCnt].mtxWorldItem,
-		&g_Item[nCnt].mtxParent);//自分自分親
-
-	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &g_Item[nCnt].mtxWorldItem);
 }
 //============================
 // アイテムのロード処理
