@@ -282,8 +282,8 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 			continue;
 		}
 
-		if (pPosOld->y <= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y
-			&& pPosOld->y + pSize->y >= g_Block[nCntBlock].pos.y)
+		if (pPosOld->y <= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * HALF_VALUE * g_Block[nCntBlock].Scal.y
+			&& pPosOld->y + pSize->y >= g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * HALF_VALUE * g_Block[nCntBlock].Scal.y)
 		{
 			//¶‰E‚Ì‚ß‚èž‚Ý”»’è
 			if (pPos->z - pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
@@ -329,8 +329,8 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 				&& pPos->z + pSize->z * HALF_VALUE >= g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 			{
 				//ã‚©‚ç‰º
-				if (pPosOld->y >= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y
-					&& pPos->y < g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y)
+				if (pPosOld->y >= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * 0.5f * g_Block[nCntBlock].Scal.y
+					&& pPos->y < g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * 0.5f * g_Block[nCntBlock].Scal.y)
 				{
  					bLanding = true;
 					pPos->y = pPosOld->y;

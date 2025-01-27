@@ -37,9 +37,9 @@
 //プロトタイプ宣言
 //****************************
 void LoadModel(int nType); // プレイヤーのロード処理
-void PlayerComb(MOTIONTYPE motiontype, int AttackState,int nCounterState, COMBOSTATE Combstate);
-void LoadMotion(int Weponmotion);
-void MotionChange(int itemtype,int LoadPlayer);
+void PlayerComb(MOTIONTYPE motiontype, int AttackState,int nCounterState, COMBOSTATE Combstate); // プレイヤーのコンボ処理
+void LoadMotion(int Weponmotion); // モーションのロード処理
+void MotionChange(int itemtype,int LoadPlayer); // モーション変更
 
 //****************************
 //グローバル変数宣言
@@ -49,8 +49,8 @@ Player g_player;//プレイヤー構造体
 Player g_LoadPlayer[PLAYERTYPE_MAX]; // プレイヤーのモデルを保存しておく変数
 MODEL g_LoadWepon[ITEMTYPE_MAX];     // プレイヤーの武器を保存しておく変数
 MOTION g_LoadMotion[MOTION_MAX];   // モーションの情報を保存しておく変数
-int g_nCounterState,g_AttackState;
-bool bNohand;
+int g_nCounterState,g_AttackState; // 状態カウンター
+bool bNohand; // 投げたか投げてないか
 
 //============================
 //プレイヤーの初期化処理
@@ -60,8 +60,6 @@ void InitPlayer(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	MODE mode = GetMode();//現在のモードを取得
-
-	g_player.nIdxShadow = SetShadow(g_player.pos, g_player.rot, 40.0f);
 
 	//プレイヤーの初期化
 	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);		   //座標
@@ -100,6 +98,8 @@ void InitPlayer(void)
 
 		}
 	}
+
+	g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 40.0f);
 
 	D3DXMATERIAL* pMat;//マテリアルへのポインタ
 

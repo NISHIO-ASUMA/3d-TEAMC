@@ -21,8 +21,8 @@
 //****************************
 #define MAX_POLYGON (40)//最大ポリゴン数
 #define MAX_DIGIT (8)//桁数	
-#define MAX_HEIGHT (69.0f)
-#define MAX_HABA (50.0f)
+#define MAX_HEIGHT (105.0f)
+#define MAX_HABA (80.0f)
 
 //****************************
 //グローバル変数
@@ -70,7 +70,7 @@ void InitRankingScore(void)
 	//順位数分回す(5)
 	for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
 	{
-		g_RankScore[nCntRank].pos = D3DXVECTOR3(500.0f, 150.0f + (MAX_HEIGHT * nCntRank) + (20.0f * nCntRank), 0.0f);
+		g_RankScore[nCntRank].pos = D3DXVECTOR3(400.0f, 150.0f + (MAX_HEIGHT * nCntRank) + (20.0f * nCntRank), 0.0f);
 		g_RankScore[nCntRank].nScore = 0;
 
 		//桁数分回す(8)

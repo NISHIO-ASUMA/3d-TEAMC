@@ -2,26 +2,12 @@
 +			   マップエディター             +
 +==========================================+
 
-ITEMSET
-EDITCATEGORY = 1
-   ITEMTYPE = 9
-   POS = 88.8 0.0 -197.3
+BLOCKSET
+EDITCATEGORY = 0 # [0]カテゴリー0 
+   BLOCKTYPE = 2 # [ ブロックの種類 ]
+   POS = 189.8 0.0 -184.5
    SIZE = 1.0 1.0 1.0
-END_ITEMSET
+END_BLOCKSET
 
-ITEMSET
-EDITCATEGORY = 1
-   ITEMTYPE = 3
-   POS = -89.2 0.0 -85.7
-   SIZE = 1.0 1.0 1.0
-END_ITEMSET
-
-ITEMSET
-EDITCATEGORY = 1
-   ITEMTYPE = 4
-   POS = 183.2 0.0 -103.1
-   SIZE = 1.0 1.0 1.0
-END_ITEMSET
-
-BLOCK_COUNT = 3 
+BLOCK_COUNT = 1 
 END_SCRIPT
