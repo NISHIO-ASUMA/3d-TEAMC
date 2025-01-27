@@ -29,6 +29,7 @@
 #include "HPGauge.h"
 #include "Effect.h"
 #include "Particle.h"
+#include "sound.h"
 
 //****************************
 //マクロ定義
@@ -111,12 +112,18 @@ void InitGame(void)
 
 	g_bPause = false;//ポーズ解除
 	g_bEditMode = false;//エディットモード解除
+
+	// 音楽を再生
+	PlaySound(SOUND_LABEL_GAME_BGM);
 }
 //=======================
 //ゲーム画面の終了処理
 //=======================
 void UninitGame(void)
 {
+	// 音楽を停止
+	StopSound();
+
 	//カメラの終了処理
 	UninitCamera();
 

@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include"RankingScore.h"
 #include"RankingSet.h"
+#include "sound.h"
 
 //=============================
 //ランキングの初期化処理
@@ -28,12 +29,18 @@ void InitRanking(void)
 	ResetRanking();
 
 	RankingTexture();
+
+	// 音楽を再生
+	PlaySound(SOUND_LABEL_RANKING_BGM);
 }
 //=============================
 //ランキングの終了処理
 //=============================
 void UninitRanking(void)
 {
+	// 音楽を停止
+	StopSound();
+
 	UninitRankingSet();
 
 	UninitRankingScore();
