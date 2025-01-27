@@ -101,7 +101,7 @@ void InitPlayer(void)
 
 	}
 
-	g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 40.0f);
+	g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f);
 
 	D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
@@ -253,7 +253,7 @@ void UninitPlayer(void)
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
 			//テクスチャの破棄
-			for (int nCntMat = 0; nCntMat < MAX_TEXTURE; nCntMat++)
+			for (int nCntMat = 0; nCntMat < (int)g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 			{
 				if (g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pTexture[nCntMat] != NULL)
 				{
@@ -298,7 +298,7 @@ void UninitPlayer(void)
 	// テクスチャの破棄
 	for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel; nCntModel++)
 	{
-		for (int nCntMat = 0; nCntMat < MAX_TEXTURE; nCntMat++)
+		for (int nCntMat = 0; nCntMat < (int)g_player.Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 		{
 			if (g_player.Motion.aModel[nCntModel].pTexture[nCntMat] != NULL)
 			{
@@ -581,19 +581,20 @@ void UpdatePlayer(void)
 	g_player.move.y -= 1.0f;
 
 	// 影の計算
-	SetPositionShadow(g_player.nIdxShadow,g_player.pos,60.0f + 60.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
+	SetPositionShadow(g_player.nIdxShadow,g_player.pos,30.0f + 30.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
 
 	////壁の衝突判定
 	//CollisionWall();
 
-	if (JoypadTrigger(JOYKEY_A) == true || KeyboardTrigger(DIK_SPACE)==true)
+	if (JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE))
 	{//aボタン or Enterキーが押された
 		if (g_player.bJump == true)
 		{
-			g_player.bJump = false;
-			g_player.Motion.nKey = 0;
-			g_player.Motion.motionType = MOTIONTYPE_JUMP;
-			g_player.move.y = 15.0f;
+			g_player.bJump = false;						 // ジャンプをできなくする
+			g_player.Motion.nKey = 0;					 // キーを0から始める
+			g_player.Motion.nCountMotion = 0;            // モーションカウントを0から始める
+			g_player.Motion.motionType = MOTIONTYPE_JUMP;// モーションタイプをジャンプにする
+			g_player.move.y = 15.0f;					 // 頒布量		
 		}
 	}
 
@@ -1115,7 +1116,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_HEADSTATUE:
-				MotionChange(MOTION_BIGWEPON, 0);
+				MotionChange(MOTION_BIGWEPON, 1);
 				break;
 			case ITEMTYPE_HEADSTATUTORSO:
 				MotionChange(MOTION_BIGWEPON, 0);

@@ -147,7 +147,7 @@ void UninitBlock(void)
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
 		//テクスチャの破棄
-		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
+		for (int nCntTex = 0; nCntTex < (int)g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatBlock; nCntTex++)
 		{
 			if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntTex] != NULL)
 			{
@@ -176,7 +176,7 @@ void UninitBlock(void)
 		for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 		{
 			//テクスチャの破棄
-			for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
+			for (int nCntTex = 0; nCntTex < (int)g_Block[nCnt].BlockTex[nCntNum].g_dwNumMatBlock; nCntTex++)
 			{
 				if (g_Block[nCnt].BlockTex[nCntNum].g_apTextureBlock[nCntTex] != NULL)
 				{
@@ -301,6 +301,7 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 {
 	bool bLanding = false;
 	Player* pPlayer = GetPlayer();
+	Item* pItem = GetItem();
 
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{

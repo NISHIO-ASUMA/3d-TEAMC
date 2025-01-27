@@ -195,9 +195,15 @@ void UpdateItem(void)
 			continue;
 		}
 
+		g_Item[nCntItem].posOld = g_Item[nCntItem].pos;
 
 		//位置の更新
 		g_Item[nCntItem].pos += g_Item[nCntItem].move;
+
+		if (CollisionBlock(&g_Item[nCntItem].pos, &g_Item[nCntItem].posOld, &g_Item[nCntItem].move, &g_Item[nCntItem].Size) && g_Item[nCntItem].state == ITEMSTATE_THROW)
+		{
+			g_Item[nCntItem].bUse = false;
+		}
 
 		CollisionItem(nCntItem,// アイテムのインデックスを渡す
 			20.0f, // アイテムの半径

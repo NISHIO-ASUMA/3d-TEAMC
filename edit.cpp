@@ -26,6 +26,7 @@
 //****************************
 #define OBJ_MOVE (10.0f) // オブジェクトの移動量
 #define MAX_WORD (128) // 文字数
+#define MAX_OBJ (150)
 
 //****************************
 //プロトタイプ宣言
@@ -35,7 +36,7 @@ void LoadEditObj(int category); // 編集モードで使うオブジェクトのロード処理
 //****************************
 //グローバル変数
 //****************************
-EDIT_INFO g_Edit[MAX_BLOCK];			// エディットの情報
+EDIT_INFO g_Edit[MAX_OBJ];			// エディットの情報
 EditTex g_BlockTexInfo[EDITMODE_MAX];	// エディットの情報保存用変数
 int g_EditCount, nCntobj;               // オブジェクトのカウント、保存用
 int g_nNumBlock;						// オブジェクトの数
@@ -107,16 +108,15 @@ void UninitEdit(void)
 		for (int nCntModel = 0; nCntModel < g_BlockTexInfo[nCntNum].nNumModel; nCntModel++)
 		{
 			//テクスチャ分回す
-			for (int TexCnt = 0; TexCnt < MAX_TEX; TexCnt++)
+			for (int nCnt = 0; nCnt < (int)g_BlockTexInfo[nCntNum].pModel[nCntModel].g_dwNumMatEdit; nCnt++)
 			{
 				//テクスチャの破棄
-				if (g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[TexCnt] != NULL)
+				if (g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt] != NULL)
 				{
-					g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[TexCnt]->Release();
-					g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[TexCnt] = NULL;
+					g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt]->Release();
+					g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt] = NULL;
 				}
 			}
-
 			//バッファの破棄
 			if (g_BlockTexInfo[nCntNum].pModel[nCntModel].g_pBuffMatEdit != NULL)
 			{
@@ -133,6 +133,38 @@ void UninitEdit(void)
 		}
 	}
 
+	// 全オブジェクト分回す
+	for (int nCntEdit = 0; nCntEdit < MAX_OBJ; nCntEdit++)
+	{
+		//カテゴリー分回す
+		for (int nCntNum = 0; nCntNum < EDITMODE_MAX; nCntNum++)
+		{
+			//各カテゴリーの種類数分回す
+			for (int nCntModel = 0; nCntModel < g_Edit[nCntEdit].Category[nCntNum].nNumModel; nCntModel++)
+			{
+				//テクスチャ分回す
+				for (int nCnt = 0; nCnt < (int)g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_dwNumMatEdit; nCnt++)
+				{
+					//テクスチャの破棄
+					if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt] != NULL)
+					{
+						g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt] = NULL;
+					}
+				}
+				//バッファの破棄
+				if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pBuffMatEdit != NULL)
+				{
+					g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pBuffMatEdit = NULL;
+				}
+
+				//メッシュの破棄
+				if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pMeshEdit != NULL)
+				{
+					g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pMeshEdit = NULL;
+				}
+			}
+		}
+	}
 }
 
 //===========================
@@ -187,11 +219,10 @@ void UpdateEdit(void)
 			g_Edit[g_EditCount + 1].pos = g_Edit[g_EditCount].pos;							// 次のオブジェクトに現在のオブジェクトの位置を代入
 			g_Edit[g_EditCount + 1].bUse = true;											// 次のオブジェクトを使用状態にする
 
-			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount + 1].EditCategory].pModel[g_Edit[g_EditCount + 1].nType] =
-				g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];	                       // 次のオブジェクトにカテゴリー0、種類0番の情報を代入
-
-			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount + 1].EditCategory].nNumModel =
-				g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
+			g_Edit[g_EditCount + 1].EditCategory = g_Edit[g_EditCount].EditCategory;        // 今のカテゴリーを代入
+			g_Edit[g_EditCount + 1].nType = g_Edit[g_EditCount].nType;						// 今のタイプを代入
+			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
+			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
 
 			g_nNumBlock++;																	// オブジェクト数 + 1
 			g_EditCount++;																	// オブジェクトのカウント + 1

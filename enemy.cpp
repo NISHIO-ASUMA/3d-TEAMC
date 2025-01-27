@@ -31,7 +31,7 @@
 #define TYPETHREE_MOVE (1.0f) //敵2の移動量
 #define MAX_TEXENEMY (128) //テクスチャの最大数
 #define MAX_ENEMYMOVE (1.0f) // 敵の移動量
-#define SHADOWSIZEOFFSET (40.0f) // 影のサイズのオフセット
+#define SHADOWSIZEOFFSET (20.0f) // 影のサイズのオフセット
 #define SHADOW_A (1.0f) // 影のアルファ
 
 //****************************
@@ -193,7 +193,7 @@ void UninitEnemy(void)
 		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
 		{
 			//テクスチャの破棄
-			for (int TexCnt = 0; TexCnt < MAX_TEXENEMY; TexCnt++)
+			for (int TexCnt = 0; TexCnt < (int)g_LoadEnemy[nCntEnemyType].Motion.aModel[nCntModel].dwNumMat; TexCnt++)
 			{
 				if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
 				{
@@ -225,7 +225,7 @@ void UninitEnemy(void)
 		for (int nCntModel = 0; nCntModel < g_Enemy[nCntEnemy].Motion.nNumModel; nCntModel++)
 		{
 			// テクスチャの最大数分回す
-			for (int TexCnt = 0; TexCnt < MAX_TEXENEMY; TexCnt++)
+			for (int TexCnt = 0; TexCnt < (int)g_Enemy[nCntEnemy].Motion.aModel[nCntModel].dwNumMat; TexCnt++)
 			{
 				if (g_Enemy[nCntEnemy].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
 				{
@@ -316,7 +316,7 @@ void UpdateEnemy(void)
 
 		if (AgentRange(50.0f, 200.0f, nCntEnemy))
 		{
-			//AgentEnemy(nCntEnemy);
+			AgentEnemy(nCntEnemy);
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
 		}
 		else
