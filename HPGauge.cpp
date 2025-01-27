@@ -272,3 +272,8 @@ void AddFever(float Add)
 		g_fFeverCharge += Add;
 	}
 }
+
+bool GetFeverMode()
+{
+	return g_bFeverON;
+}
