@@ -67,6 +67,7 @@ void InitEnemy(void)
 		g_Enemy[nCntEnemy].Motion.bLoopMotion = true;					//ループするか否か
 		g_Enemy[nCntEnemy].nLife = 20;									//体力
 		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;					//状態
+		g_Enemy[nCntEnemy].Speed = 0.0f;							    //足の速さ
 	}
 
 	//グローバル変数の初期化
@@ -88,7 +89,8 @@ void InitEnemy(void)
 		g_LoadEnemy[nCntEnemyType].Motion.bLoopMotion = true;			  //ループか否か
 		g_LoadEnemy[nCntEnemyType].Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  //サイズ
 		g_LoadEnemy[nCntEnemyType].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	  //座標
-		g_LoadEnemy[nCntEnemyType].state = ENEMYSTATE_NORMAL;					//状態
+		g_LoadEnemy[nCntEnemyType].state = ENEMYSTATE_NORMAL;			  //状態
+		g_LoadEnemy[nCntEnemyType].Speed = 0.0f;						  //足の速さ
 
 
 		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
@@ -461,7 +463,7 @@ void HitEnemy(int nCnt,int nDamage)
 //=======================
 //敵の設定処理
 //=======================
-void SetEnemy(D3DXVECTOR3 pos, ENEMYTYPE nType,int nLife,D3DXVECTOR3 move)
+void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 {
 	MODE mode = GetMode();//現在のモードの取得
 
@@ -472,9 +474,9 @@ void SetEnemy(D3DXVECTOR3 pos, ENEMYTYPE nType,int nLife,D3DXVECTOR3 move)
 			g_Enemy[nCntEnemy] = g_LoadEnemy[nType]; // 情報を代入
 
 			g_Enemy[nCntEnemy].pos = pos;	 //座標
-			g_Enemy[nCntEnemy].move = move;  //移動量
 			g_Enemy[nCntEnemy].nType = nType;//種類
 			g_Enemy[nCntEnemy].nLife = nLife;//体力
+			g_Enemy[nCntEnemy].Speed = Speed;//足の速さ
 			g_Enemy[nCntEnemy].bUse = true;  //使用状態
 
 			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), g_Enemy[nCntEnemy].rot, 40.0f);
@@ -483,6 +485,13 @@ void SetEnemy(D3DXVECTOR3 pos, ENEMYTYPE nType,int nLife,D3DXVECTOR3 move)
 			break;
 		}
 	}
+}
+//=======================
+//敵の出現
+//=======================
+void WaveEnemy(void)
+{
+	SetEnemy(D3DXVECTOR3((float)(rand() % 500 - 100), 0.0f, (float)(rand() % 500 - 100)), ENEMYTYPE_ONE, 1, 1.0f);
 }
 //=======================
 //敵の総数取得処理
@@ -879,8 +888,8 @@ void AgentEnemy(int nCntEnemy)
 	g_Enemy[nCntEnemy].rot.y = fAngle + D3DX_PI; // 角度を代入
 
 	// 移動量の更新
-	g_Enemy[nCntEnemy].move.x += fDest.x * MAX_ENEMYMOVE; 
-	g_Enemy[nCntEnemy].move.z += fDest.z * MAX_ENEMYMOVE; 
+	g_Enemy[nCntEnemy].move.x += fDest.x * MAX_ENEMYMOVE * g_Enemy[nCntEnemy].Speed; 
+	g_Enemy[nCntEnemy].move.z += fDest.z * MAX_ENEMYMOVE * g_Enemy[nCntEnemy].Speed;
 }
 //=============================
 // 敵と敵の当たり判定
@@ -898,7 +907,7 @@ void CollisionToEnemy(int nCntEnemy)
 			// 距離を求める
 			float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
 
-			float Eradius = 50.0f; // 半径を設定
+			float Eradius = 10.0f; // 半径を設定
 
 			// ホーミングしてくる半径
 			float Radius = Eradius + Eradius;
@@ -909,8 +918,9 @@ void CollisionToEnemy(int nCntEnemy)
 			//範囲内に入った
 			if (fDistance <= Radius)
 			{
-				g_Enemy[nCnt].move.x -= sinf(g_Enemy[nCnt].rot.y) * (float)(rand() % 3 - 1) * 0.6f;
-				g_Enemy[nCnt].move.z += cosf(g_Enemy[nCnt].rot.z) * (float)(rand() % 3 - 1) * 0.6f;
+				D3DXVECTOR3 vector = g_Enemy[nCntEnemy].pos - g_Enemy[nCnt].pos; // はじく方向ベクトル
+				g_Enemy[nCnt].move.x -= vector.x * 0.01f;
+				g_Enemy[nCnt].move.z -= vector.z * 0.01f;
 			}
 		}
 	}

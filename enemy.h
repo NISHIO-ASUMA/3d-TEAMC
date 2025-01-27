@@ -101,7 +101,7 @@ typedef struct
 	//D3DXVECTOR3 Size;
 	D3DXMATRIX mtxWorldEnemy;
 	float fDistance;
-	ENEMYTYPE nType;
+	int nType;
 	bool bUse;//g—p‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	MOTION Motion;
 	D3DXVECTOR3 AttackEnemy;
@@ -125,6 +125,7 @@ typedef struct
 	bool g_bDamage;
 	float fMove;//ƒ‰ƒ“ƒ_ƒ€
 	ENEMYATTACK AttackState;
+	float Speed; // ‘«‚Ì‘¬‚³
 }ENEMY;
 
 //****************************
@@ -136,6 +137,7 @@ void UpdateEnemy(void);//“G‚ÌXVˆ—
 void DrawEnemy(void);//“G‚Ì•`‰æˆ—
 ENEMY* GetEnemy(void);//“G‚Ìæ“¾ˆ—
 void HitEnemy(int nCnt,int nDamage);//“G‚Ìƒqƒbƒgˆ—
-void SetEnemy(D3DXVECTOR3 pos,ENEMYTYPE nType,int nLife,D3DXVECTOR3 move);//“G‚Ìİ’èˆ—
+void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed);//“G‚Ìİ’èˆ—
+void WaveEnemy(void);
 int GetNumEnemy(void);//“G‚Ì‘”æ“¾ˆ—
 #endif
