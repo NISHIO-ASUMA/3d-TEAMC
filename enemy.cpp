@@ -188,35 +188,65 @@ void InitEnemy(void)
 //=============================
 void UninitEnemy(void)
 {
-		for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
+	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
+	{
+		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
 		{
-			for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
+			//テクスチャの破棄
+			for (int TexCnt = 0; TexCnt < MAX_TEXENEMY; TexCnt++)
 			{
-				//テクスチャの破棄
-				for (int TexCnt = 0; TexCnt < MAX_TEXENEMY; TexCnt++)
+				if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
 				{
-					if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
-					{
-						g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt]->Release();
-						g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] = NULL;
-					}
-				}
-
-				//メッシュの破棄
-				if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy != NULL)
-				{
-					g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy->Release();
-					g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy = NULL;
-				}
-
-				//マテリアルの破棄
-				if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy != NULL)
-				{
-					g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy->Release();
-					g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy = NULL;
+					g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt]->Release();
+					g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] = NULL;
 				}
 			}
+
+			//メッシュの破棄
+			if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy != NULL)
+			{
+				g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy->Release();
+				g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy = NULL;
+			}
+
+			//マテリアルの破棄
+			if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy != NULL)
+			{
+				g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy->Release();
+				g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy = NULL;
+			}
 		}
+	}
+
+	// 全敵分回す
+	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
+	{
+		// 全モデル分合わす
+		for (int nCntModel = 0; nCntModel < g_Enemy[nCntEnemy].Motion.nNumModel; nCntModel++)
+		{
+			// テクスチャの最大数分回す
+			for (int TexCnt = 0; TexCnt < MAX_TEXENEMY; TexCnt++)
+			{
+				if (g_Enemy[nCntEnemy].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
+				{
+					g_Enemy[nCntEnemy].EnemyModel[nCntModel].pTextureEnemy[TexCnt] = NULL;
+				}
+			}
+
+			//メッシュの破棄
+			if (g_Enemy[nCntEnemy].EnemyModel[nCntModel].pMeshEnemy != NULL)
+			{
+				g_Enemy[nCntEnemy].EnemyModel[nCntModel].pMeshEnemy = NULL;
+			}
+
+			//マテリアルの破棄
+			if (g_Enemy[nCntEnemy].EnemyModel[nCntModel].pBuffMatEnemy != NULL)
+			{
+				g_Enemy[nCntEnemy].EnemyModel[nCntModel].pBuffMatEnemy = NULL;
+			}
+
+		}
+	}
 }
 //=============================
 //敵の更新処理
@@ -286,7 +316,7 @@ void UpdateEnemy(void)
 
 		if (AgentRange(50.0f, 200.0f, nCntEnemy))
 		{
-			AgentEnemy(nCntEnemy);
+			//AgentEnemy(nCntEnemy);
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
 		}
 		else

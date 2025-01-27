@@ -890,29 +890,56 @@ void ThrowItem(void)
 	ENEMY* pEnemy = GetEnemy();
 
 	int nIdx = g_player.ItemIdx; // 手に持っているアイテムのインデックス情報を代入
-	float fDistanceNow,fDistanceOld,fDistance;
-	fDistance = 0.0f;
+	int nIdxEnemy = 0;
+
+	float fDistanceNow = 0.0f;
+	float fDistanceStock = 0.0f;
+	float fDistance = 0.0f;
+
+	bool bFirst = true;
 
 	// 発射地点を設定
 	pItem[nIdx].pos.x = g_player.pos.x;
 	pItem[nIdx].pos.y = g_player.Motion.aModel[2].pos.y;
 	pItem[nIdx].pos.z = g_player.pos.z;
 
-	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++,pEnemy++)
+	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
 	{
-		if (pEnemy->bUse)
+		if (pEnemy[nCnt].bUse)
 		{
-			float DisposX = pEnemy->pos.x - g_player.pos.x;
-			float DisposY = pEnemy->pos.y - g_player.pos.y;
-			float DisposZ = pEnemy->pos.z - g_player.pos.z;
+			// 距離を求める
+			float DisposX = pEnemy[nCnt].pos.x - g_player.pos.x;
+			float DisposY = pEnemy[nCnt].pos.y - g_player.pos.y;
+			float DisposZ = pEnemy[nCnt].pos.z - g_player.pos.z;
 
+			// 距離を求める
 			fDistanceNow = sqrtf((DisposX * DisposX) + (DisposY * DisposY) + (DisposZ * DisposZ));
+
+			// 最初だけ通す
+			if (bFirst)
+			{
+				fDistanceStock = fDistanceNow;
+				bFirst = false;
+				nIdxEnemy = nCnt;
+			}
+			else
+			{
+				// 今の距離がストックされた距離より小さかったら
+				if (fDistanceNow < fDistanceStock)
+				{
+					fDistanceStock = fDistanceNow; // 距離を保存
+					nIdxEnemy = nCnt; // 近い敵のインデックスを保存
+				}
+			}
 		}
 	}
 
+	D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - pItem[nIdx].pos; // 近い敵の方向を求める
+	D3DXVec3Normalize(&dest, &dest); // 正規化する
+
 	// 飛ばす方向を設定
-	pItem[nIdx].move.x = fDistance;
-	pItem[nIdx].move.z = fDistance;
+	pItem[nIdx].move.x = dest.x * 10.0f;
+	pItem[nIdx].move.z = dest.z * 10.0f;
 	pItem[nIdx].bUse = true; // 使用状態をtrueにする
 
 	// 素手の時のモーション情報を代入
@@ -924,6 +951,9 @@ void ThrowItem(void)
 	{
 		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].Motion.aMotionInfo[nCntMotion];
 	}
+
+	float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
+	g_player.rotDestPlayer.y = fAngle + D3DX_PI;
 
 	// 投げた後に武器を消す
 	g_player.Motion.nNumModel -= 1;

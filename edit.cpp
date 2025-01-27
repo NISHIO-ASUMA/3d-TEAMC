@@ -186,8 +186,13 @@ void UpdateEdit(void)
 		{
 			g_Edit[g_EditCount + 1].pos = g_Edit[g_EditCount].pos;							// 次のオブジェクトに現在のオブジェクトの位置を代入
 			g_Edit[g_EditCount + 1].bUse = true;											// 次のオブジェクトを使用状態にする
-			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount +1].EditCategory].pModel[g_Edit[g_EditCount + 1].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];	// 次のオブジェクトにカテゴリー0、種類0番の情報を代入
-			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount + 1].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
+
+			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount + 1].EditCategory].pModel[g_Edit[g_EditCount + 1].nType] =
+				g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];	                       // 次のオブジェクトにカテゴリー0、種類0番の情報を代入
+
+			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount + 1].EditCategory].nNumModel =
+				g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
+
 			g_nNumBlock++;																	// オブジェクト数 + 1
 			g_EditCount++;																	// オブジェクトのカウント + 1
 		}
@@ -352,9 +357,9 @@ void DrawEdit(void)
 				color = pMat[nCntMat];
 
 				color.MatD3D.Diffuse.r = 1.0f;
-				color.MatD3D.Diffuse.g = 1.0f;
-				color.MatD3D.Diffuse.b = 1.0f;
-				color.MatD3D.Diffuse.a = 0.5f;
+				color.MatD3D.Diffuse.g = 0.5f;
+				color.MatD3D.Diffuse.b = 0.5f;
+				color.MatD3D.Diffuse.a = 1.0f;
 
 				//マテリアルの設定
 				pDevice->SetMaterial(&color.MatD3D);
@@ -665,8 +670,12 @@ void ReLoadEdit(void)
 		g_Edit[g_EditCount + 1].bUse = true; // 置かれていたブロックを使用状態にする
 		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].pModel[g_Edit[nCnt].nType] = g_BlockTexInfo[g_Edit[nCnt].EditCategory].pModel[g_Edit[nCnt].nType]; // 情報を代入
 		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[nCnt].EditCategory].nNumModel; // 情報を代入
-		g_EditCount++;
-		g_nNumBlock++;
+
+		if (nCnt != nCntobj - 1)
+		{
+			g_EditCount++;
+			g_nNumBlock++;
+		}
 	}
 
 }
