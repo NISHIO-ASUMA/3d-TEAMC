@@ -9,9 +9,12 @@
 //#include "player.h"
 #include "Damagepop.h"
 
-// 表示する最大数とその桁数
+// 表示する最大数とその桁数、文字の高さ、幅(半径)、隙間
 #define MAXDAMEGE (500)
 #define MAXDIGI (6)
+#define SIZEY (25)
+#define SIZEX (13)
+#define INTERX (30)
 LPDIRECT3DTEXTURE9 g_pTexture_Damege = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Heal = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffDamege = NULL;
@@ -43,10 +46,10 @@ void InitDamege(void)
 	pDevice = GetDevice();
 
 	// ダメージを受けた時のフォント
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\FuryNum.png", &g_pTexture_Damege);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\damagepop.png", &g_pTexture_Damege);
 
 	// 回復した時のフォント
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\CarmNum.png", &g_pTexture_Heal);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\damagepop.png", &g_pTexture_Heal);
 
 	// 初期化
 	for (nCntDamege = 0; nCntDamege < MAXDAMEGE; nCntDamege++)
@@ -65,10 +68,10 @@ void InitDamege(void)
 	for (nCntDamege = 0; nCntDamege < MAXDAMEGE * MAXDIGI; nCntDamege++)
 	{
 		// 多分大きさと基準値
-		pVtx[0].pos = D3DXVECTOR3(-25, 50, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(25, 50, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(-25, -50, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(25, -50, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(-SIZEX, SIZEY, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(SIZEX, SIZEY, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(-SIZEX, -SIZEY, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(SIZEX, -SIZEY, 0.0f);
 
 		pVtx[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 		pVtx[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
@@ -86,10 +89,10 @@ void InitDamege(void)
 		pVtx[3].tex = D3DXVECTOR2(0.1f, 1.0f);*/
 
 		// テクスチャ、今は１１パターンのやつなので１０パターンなら11を10にする事
-		pVtx[0].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 11.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 11.0f + (1.0f / 11.0f), 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 11.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 11.0f + (1.0f / 11.0f), 1.0f);
+		pVtx[0].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f + (1.0f / 10.0f), 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f + (1.0f / 10.0f), 1.0f);
 
 		pVtx += 4;
 
@@ -167,10 +170,10 @@ void UpdateDamege(void)
 				// １の位以外かつ最大の桁数を超えているなら表示しない
 				if (g_aDamege[nCntDamege].nDamege >= nMath || nCnt == 5)
 				{
-					pVtx[0].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 11.0f, 0.0f);
-					pVtx[1].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 11.0f + (1.0f / 11.0f), 0.0f);
-					pVtx[2].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 11.0f, 1.0f);
-					pVtx[3].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 11.0f + (1.0f / 11.0f), 1.0f);
+					pVtx[0].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f, 0.0f);
+					pVtx[1].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f + (1.0f / 10.0f), 0.0f);
+					pVtx[2].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f, 1.0f);
+					pVtx[3].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f + (1.0f / 10.0f), 1.0f);
 				}
 				else
 				{
@@ -185,10 +188,10 @@ void UpdateDamege(void)
 				pVtx[3].col = g_aDamege[nCntDamege].col;
 
 				// 場所を調整する
-				pVtx[0].pos = D3DXVECTOR3(-85 + (nCnt * 30), 50, 0.0f);
-				pVtx[1].pos = D3DXVECTOR3(-35 + (nCnt * 30), 50, 0.0f);
-				pVtx[2].pos = D3DXVECTOR3(-85 + (nCnt * 30), -50, 0.0f);
-				pVtx[3].pos = D3DXVECTOR3(-35 + (nCnt * 30), -50, 0.0f);
+				pVtx[0].pos = D3DXVECTOR3(-SIZEX + ((nCnt - 4) * INTERX), SIZEY, 0.0f);
+				pVtx[1].pos = D3DXVECTOR3(SIZEX + ((nCnt - 4) * INTERX), SIZEY, 0.0f);
+				pVtx[2].pos = D3DXVECTOR3(-SIZEX + ((nCnt - 4) * INTERX), -SIZEY, 0.0f);
+				pVtx[3].pos = D3DXVECTOR3(SIZEX + ((nCnt - 4) * INTERX), -SIZEY, 0.0f);
 				pVtx += 4;
 			}
 
