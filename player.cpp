@@ -325,7 +325,7 @@ void UpdatePlayer(void)
 
 		/*StickPad();*/
 
-	if (GetKeyboardPress(DIK_A) == true)
+	if (GetKeyboardPress(DIK_A) && g_player.state != PLAYERSTATE_ATTACK)
 	{
 		//プレイヤーの移動(上)
 		if (GetKeyboardPress(DIK_W) == true)
@@ -338,7 +338,7 @@ void UpdatePlayer(void)
 			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
 		}
 		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S) == true)
+		else if (GetKeyboardPress(DIK_S) && g_player.state != PLAYERSTATE_ATTACK)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -359,10 +359,10 @@ void UpdatePlayer(void)
 		}
 	}
 	//プレイヤーの移動(右)
-	else if (GetKeyboardPress(DIK_D) == true)
+	else if (GetKeyboardPress(DIK_D) && g_player.state != PLAYERSTATE_ATTACK)
 	{
 		//プレイヤーの移動(上)
-		if (GetKeyboardPress(DIK_W) == true)
+		if (GetKeyboardPress(DIK_W) && g_player.state != PLAYERSTATE_ATTACK)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -372,7 +372,7 @@ void UpdatePlayer(void)
 			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
 		}
 		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S) == true)
+		else if (GetKeyboardPress(DIK_S) && g_player.state != PLAYERSTATE_ATTACK)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
