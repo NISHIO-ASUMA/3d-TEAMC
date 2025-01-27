@@ -17,6 +17,7 @@
 #include "meshfield.h"
 #include "block.h"
 #include "wall.h"
+#include "sound.h"
 
 //****************************
 //グローバル変数
@@ -56,12 +57,18 @@ void InitTutorial3d(void)
 
 	// アイテムをセット
 	SetItem(D3DXVECTOR3(140.0f, -10.0f, 0.0f), 29, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
+
+	// 音楽を再生
+	PlaySound(SOUND_LABEL_TUTORIAL_BGM);
 }
 //============================
 //チュートリアル3dの終了処理
 //============================
 void UninitTutorial3d(void)
 {
+	// 音楽を停止
+	StopSound();
+
 	//カメラの終了処理
 	UninitCamera();
 

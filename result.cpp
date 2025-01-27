@@ -14,6 +14,7 @@
 #include "time.h"
 #include "camera.h"
 #include "resultscore.h"
+#include "sound.h"
 
 //****************************
 //グローバル変数
@@ -77,12 +78,18 @@ void InitResult(void)
 
 	// リザルトスコアの初期化処理
 	InitResultScore();
+
+	// 音楽を再生
+	PlaySound(SOUND_LABEL_RESULT_BGM);
 }
 //=====================
 //リザルトの終了処理
 //=====================
 void UninitResult(void)
 {
+	// 音楽を停止
+	StopSound();
+
 	//テクスチャの破棄
 	if (g_pTextureResult != NULL)
 	{
