@@ -34,7 +34,7 @@ void InitResult(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\kari.png",
+		"data\\TEXTURE\\result.png",
 		&g_pTextureResult);
 
 	//頂点バッファの生成・頂点情報の設定
@@ -96,6 +96,8 @@ void UninitResult(void)
 //=====================
 void UpdateResult(void)
 {
+	// 現在のモードを取得
+	MODE Mode = GetMode();
 
 	if (KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_A)==true)
 	{// Enterキー or パッドのAボタンが押された
@@ -103,7 +105,6 @@ void UpdateResult(void)
 		SetFade(MODE_RANKING);
 	}
 
-	MODE Mode = GetMode();
 }
 //=====================
 //リザルトの描画処理
