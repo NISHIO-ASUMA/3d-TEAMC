@@ -89,14 +89,12 @@ void InitPlayer(void)
 	LoadMotion(0);
 	LoadMotion(1);
 	LoadMotion(2);
+	LoadMotion(3);
 
 	// 切り替わるモーションの数だけ
 	for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
 	{
-		if (nCnt != MOTION_NO_HAND)
-		{
 
-		}
 	}
 
 	g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 40.0f);
@@ -944,7 +942,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 		{
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 			pItem[nIdx].bUse = false;      // 消す
-			g_player.ItemIdx = nIdx;
+			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 
 			switch (pItem[nIdx].nType)
 			{
@@ -967,12 +965,13 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_LIGHT:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_ONE_HAND, 0);
 				break;
 			case ITEMTYPE_LIGHTWOOD:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_ONE_HAND, 0);
 				break;
 			case ITEMTYPE_HARISEN:
+				MotionChange(MOTION_ONE_HAND, 0);
 				break;
 			case ITEMTYPE_ICEBLOCK:
 				MotionChange(MOTION_DBHAND, 1);
@@ -981,7 +980,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_IRON:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_ONE_HAND, 0);
 				break;
 			case ITEMTYPE_IRONBAT:
 				MotionChange(MOTION_DBHAND, 0);
@@ -990,19 +989,19 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_TORCH:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_ONE_HAND, 0);
 				break;
 			case ITEMTYPE_TORCHSWORD:
 				MotionChange(MOTION_DBHAND, 0);
 				break;
 			case ITEMTYPE_HEADSTATUE:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_BIGWEPON, 0);
 				break;
 			case ITEMTYPE_HEADSTATUTORSO:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_BIGWEPON, 0);
 				break;
 			case ITEMTYPE_MEGAPHONE:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_ONE_HAND, 0);
 				break;
 			case ITEMTYPE_RUBBERCUP:
 				MotionChange(MOTION_DBHAND, 0);
@@ -1012,6 +1011,27 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				break;
 			case ITEMTYPE_TORSO:
 				MotionChange(MOTION_DBHAND, 0);
+				break;
+			case ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE:
+				MotionChange(MOTION_DBHAND, 0);
+				break;
+			case ITEMTYPE_BONESPEAR:
+				MotionChange(MOTION_ONE_HAND, 0);
+				break;
+			case ITEMTYPE_FISH:
+				MotionChange(MOTION_ONE_HAND, 0);
+				break;
+			case ITEMTYPE_HEX:
+				MotionChange(MOTION_DBHAND, 1);
+				break;
+			case ITEMTYPE_HEXMANDOLIN:
+				MotionChange(MOTION_ONE_HAND, 0);
+				break;
+			case ITEMTYPE_SURFBOARDFISH:
+				MotionChange(MOTION_BIGWEPON, 0);
+				break;
+			case ITEMTYPE_TUTORIAL:
+				MotionChange(MOTION_DBHAND, 1);
 				break;
 			default:
 				break;
@@ -1086,6 +1106,9 @@ void LoadMotion(int Weponmotion)
 		break;
 	case MOTION_DBHAND:
 		pFile = fopen("data\\MOTION_CHANGE\\bat.txt", "r");
+		break;
+	case MOTION_ONE_HAND:
+		pFile = fopen("data\\MOTION_CHANGE\\onehand.txt", "r");
 		break;
 	default:
 		pFile = NULL;

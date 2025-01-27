@@ -119,7 +119,7 @@ typedef enum
 	MOTION_KATANA = 0,
 	MOTION_BIGWEPON,
 	MOTION_DBHAND,
-	MOTION_NO_HAND,
+	MOTION_ONE_HAND,
 	MOTION_MAX
 }WEPONMOTION; // Žg‚¢‚Ü‚í‚¹‚é‚à‚Ì‚ÍŽg‚¢‚Ü‚í‚·
 
