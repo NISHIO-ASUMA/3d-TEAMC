@@ -2,26 +2,75 @@
 +			   マップエディター             +
 +==========================================+
 
-ITEMSET
-EDITCATEGORY = 1
-   ITEMTYPE = 2
-   POS = 0.0 0.0 0.0
-   SIZE = 1.0 1.0 1.0
-END_ITEMSET
+BLOCKSET
+EDITCATEGORY = 0 # [0]カテゴリー0 
+   BLOCKTYPE = 1 # [ ブロックの種類 ]
+   POS = -864.8 0.0 879.6
+   SIZE = 2.4 2.4 2.4
+END_BLOCKSET
 
-ITEMSET
-EDITCATEGORY = 1
-   ITEMTYPE = 4
-   POS = 70.0 0.0 0.0
-   SIZE = 1.0 1.0 1.0
-END_ITEMSET
+BLOCKSET
+EDITCATEGORY = 0 # [1]カテゴリー0 
+   BLOCKTYPE = 1 # [ ブロックの種類 ]
+   POS = -494.8 0.0 879.6
+   SIZE = 2.9 2.9 2.9
+END_BLOCKSET
 
-ITEMSET
-EDITCATEGORY = 1
-   ITEMTYPE = 9
-   POS = 140.0 0.0 0.0
-   SIZE = 1.0 1.0 1.0
-END_ITEMSET
+BLOCKSET
+EDITCATEGORY = 0 # [2]カテゴリー0 
+   BLOCKTYPE = 18 # [ ブロックの種類 ]
+   POS = -854.4 0.0 23.9
+   SIZE = 2.4 2.4 2.4
+END_BLOCKSET
 
-BLOCK_COUNT = 3 
+BLOCKSET
+EDITCATEGORY = 0 # [3]カテゴリー0 
+   BLOCKTYPE = 1 # [ ブロックの種類 ]
+   POS = -864.1 0.0 -876.1
+   SIZE = 1.6 1.6 1.6
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0 # [4]カテゴリー0 
+   BLOCKTYPE = 0 # [ ブロックの種類 ]
+   POS = -861.3 0.0 -616.1
+   SIZE = 1.4 1.4 1.4
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0 # [5]カテゴリー0 
+   BLOCKTYPE = 1 # [ ブロックの種類 ]
+   POS = -859.1 0.0 -416.1
+   SIZE = 1.1 1.1 1.1
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0 # [6]カテゴリー0 
+   BLOCKTYPE = 1 # [ ブロックの種類 ]
+   POS = -867.1 0.0 582.1
+   SIZE = 2.1 2.1 2.1
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0 # [7]カテゴリー0 
+   BLOCKTYPE = 2 # [ ブロックの種類 ]
+   POS = 6.3 0.0 -655.8
+   SIZE = 3.5 3.5 3.5
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0 # [8]カテゴリー0 
+   BLOCKTYPE = 1 # [ ブロックの種類 ]
+   POS = -176.6 0.0 -55.8
+   SIZE = 1.8 1.8 1.8
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0 # [9]カテゴリー0 
+   BLOCKTYPE = 1 # [ ブロックの種類 ]
+   POS = 114.0 0.0 -58.6
+   SIZE = 2.6 2.6 2.6
+END_BLOCKSET
+
+BLOCK_COUNT = 10 
 END_SCRIPT
