@@ -140,7 +140,7 @@ void UpdateGameUI(void)
 		{
 		case UITYPE_TITLE:
 
-			if (g_GameUI[nCnt].pos.y <= 300.0f)
+			if (g_GameUI[nCnt].pos.y <= 160.0f)
 			{
 				g_GameUI[nCnt].pos.y += 5.0f; // ‰º‚ÉˆÚ“®
 			}

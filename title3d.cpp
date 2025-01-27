@@ -46,7 +46,7 @@ void InitTitle3d(void)
 	InitGameUI();
 
 	//UI‚ðƒZƒbƒg
-	SetGameUI(D3DXVECTOR3(640.0f, -200.0f, 0.0f), UITYPE_TITLE, 300.0f, 100.0f, 0);
+	SetGameUI(D3DXVECTOR3(640.0f, -200.0f, 0.0f), UITYPE_TITLE, 450.0f, 150.0f, 0);
 	SetGameUI(D3DXVECTOR3(380.0f, 450.0f, 0.0f), UITYPE_TITLE2, 50.0f, 30.0f, 0);
 }
 //============================

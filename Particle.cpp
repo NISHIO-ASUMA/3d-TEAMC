@@ -81,8 +81,8 @@ void UpdateParticle(void)
 	D3DXVECTOR3 rot;
 	int nCntParticle;
 	int nCntAppear;
-	float fmove;
-	float fRadius;
+	//float fmove;
+	//float fRadius;
 
 	// ‘S‚ÄŒ©‰ñ‚µ‚Ä
 	for (nCntParticle = 0; nCntParticle < MAX_PARTICLE; nCntParticle++)
