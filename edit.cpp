@@ -200,20 +200,17 @@ void UpdateEdit(void)
 			g_nNumBlock--;                    // オブジェクト数を減らす
 		}
 
-		if (KeyboardTrigger(DIK_F)|| KeyboardTrigger(DIK_G))
-		{
-			g_Edit[g_EditCount].Category[category].nNumModel = g_BlockTexInfo[category].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
-		}
-
 		//種類変更
 		if (KeyboardTrigger(DIK_F) && g_Edit[g_EditCount].nType < g_Edit[g_EditCount].Category[category].nNumModel - 1)
 		{
 			g_Edit[g_EditCount].nType++; // 種類 + 1
+			g_Edit[g_EditCount].Category[category].nNumModel = g_BlockTexInfo[category].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
 			g_Edit[g_EditCount].Category[category].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[category].pModel[g_Edit[g_EditCount].nType]; // 現在のオブジェクトの情報を代入
 		}
 		else if (KeyboardTrigger(DIK_G) && g_Edit[g_EditCount].nType > 0)
 		{
 			g_Edit[g_EditCount].nType--; // 種類 - 1
+			g_Edit[g_EditCount].Category[category].nNumModel = g_BlockTexInfo[category].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
 			g_Edit[g_EditCount].Category[category].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[category].pModel[g_Edit[g_EditCount].nType]; // 現在のオブジェクトの情報を代入
 		}
 
