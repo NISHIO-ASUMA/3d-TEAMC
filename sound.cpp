@@ -46,8 +46,6 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/actionhammerSe.wav", 0},// 大型武器系統SE
 	{"data/SE/itemSe.wav", 0},		  // アイテム取得SE
 	{"data/SE/damageSe.wav", 0},	  // ダメージ音
-
-
 };
 
 //=============================================================================

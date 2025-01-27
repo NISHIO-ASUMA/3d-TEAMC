@@ -24,6 +24,7 @@
 #include "ranking.h"
 #include "mouse.h"
 #include "edit.h"
+#include "sound.h"
 
 //*****************************
 // プロトタイプ宣言
@@ -384,6 +385,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		DEFAULT_PITCH,
 		"Terminal", &g_pFont);
 
+	// サウンドの初期化
+	InitSound(hWnd);
+
 	// フェードの初期化
 	InitFade(g_mode);
 
@@ -409,6 +413,9 @@ void Uninit(void)
 
 	//マウスの終了
 	UninitMouse();
+
+	// サウンドの終了
+	UninitSound();
 
 	// フェードの終了
 	UninitFade();

@@ -106,6 +106,7 @@ void InitTitle(void)
 
 	//頂点バッファをアンロック
 	g_pVtxBuffTitle->Unlock();
+
 }
 //============================
 //タイトルの終了処理

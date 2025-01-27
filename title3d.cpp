@@ -17,6 +17,7 @@
 #include "fade.h"
 #include "meshfield.h"
 #include "gameui.h"
+#include "sound.h"
 
 //****************************
 //グローバル宣言
@@ -48,12 +49,18 @@ void InitTitle3d(void)
 	//UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, -200.0f, 0.0f), UITYPE_TITLE, 450.0f, 150.0f, 0);
 	SetGameUI(D3DXVECTOR3(380.0f, 450.0f, 0.0f), UITYPE_TITLE2, 50.0f, 30.0f, 0);
+
+	// サウンドを再生
+	PlaySound(SOUND_LABEL_TITLE_BGM);
 }
 //============================
 //タイトル3dの終了処理
 //============================
 void UninitTitle3d(void)
 {
+	// 音楽を停止
+	StopSound();
+
 	//カメラの終了処理
 	UninitCamera();
 
