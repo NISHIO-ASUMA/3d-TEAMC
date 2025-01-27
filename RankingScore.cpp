@@ -22,7 +22,7 @@
 #define MAX_POLYGON (40)//最大ポリゴン数
 #define MAX_DIGIT (8)//桁数	
 #define MAX_HEIGHT (105.0f)
-#define MAX_HABA (80.0f)
+#define MAX_WIDTH (80.0f)
 
 //****************************
 //グローバル変数
@@ -76,20 +76,20 @@ void InitRankingScore(void)
 		//桁数分回す(8)
 		for (int nCntScore = 0; nCntScore < MAX_DIGIT; nCntScore++)
 		{
-			pVtx[0].pos.x = g_RankScore[nCntRank].pos.x - MAX_HABA * 0.5f + (MAX_HABA * nCntScore);
-			pVtx[0].pos.y = g_RankScore[nCntRank].pos.y - MAX_HABA * 0.5f;
+			pVtx[0].pos.x = g_RankScore[nCntRank].pos.x - MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+			pVtx[0].pos.y = g_RankScore[nCntRank].pos.y - MAX_WIDTH * 0.5f;
 			pVtx[0].pos.z = 0.0f;
 
-			pVtx[1].pos.x = g_RankScore[nCntRank].pos.x + MAX_HABA * 0.5f + (MAX_HABA * nCntScore);
-			pVtx[1].pos.y = g_RankScore[nCntRank].pos.y - MAX_HABA * 0.5f;
+			pVtx[1].pos.x = g_RankScore[nCntRank].pos.x + MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+			pVtx[1].pos.y = g_RankScore[nCntRank].pos.y - MAX_WIDTH * 0.5f;
 			pVtx[1].pos.z = 0.0f;
 
-			pVtx[2].pos.x = g_RankScore[nCntRank].pos.x - MAX_HABA * 0.5f + (MAX_HABA * nCntScore);
-			pVtx[2].pos.y = g_RankScore[nCntRank].pos.y + MAX_HABA * 0.5f;
+			pVtx[2].pos.x = g_RankScore[nCntRank].pos.x - MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+			pVtx[2].pos.y = g_RankScore[nCntRank].pos.y + MAX_WIDTH * 0.5f;
 			pVtx[2].pos.z = 0.0f;
 
-			pVtx[3].pos.x = g_RankScore[nCntRank].pos.x + MAX_HABA * 0.5f + (MAX_HABA * nCntScore);
-			pVtx[3].pos.y = g_RankScore[nCntRank].pos.y + MAX_HABA * 0.5f;
+			pVtx[3].pos.x = g_RankScore[nCntRank].pos.x + MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+			pVtx[3].pos.y = g_RankScore[nCntRank].pos.y + MAX_WIDTH * 0.5f;
 			pVtx[3].pos.z = 0.0f;
 
 			//rhwの設定
