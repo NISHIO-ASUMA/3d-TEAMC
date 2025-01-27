@@ -124,7 +124,7 @@ void UpdateParticle(void)
 					random_value = (rand() / (double)RAND_MAX) * 2.0 - 1.0;
 					rot.z += g_aParticle[nCntParticle].randrot.z * random_value;
 
-					// 初期位置からfRandRの大きさによりサイズにランダム性を与え、やっと生成する
+					// 初期位置からfRandRの大きさによりサ場所にランダム性を与え、やっと生成する
 					col = g_aParticle[nCntParticle].col;
 					SetEffect(pos, rot, g_aParticle[nCntParticle].nELife, col, g_aParticle[nCntParticle].fSpeed * ((float)(rand() % 100) / 100.0f), g_aParticle[nCntParticle].fRadius);
 				}
@@ -152,7 +152,7 @@ void UpdateParticle(void)
 					random_value = (rand() / (double)RAND_MAX) * 2.0 - 1.0;
 					pos.z += g_aParticle[nCntParticle].fRandR * random_value;
 
-					// 初期位置からfRandRの大きさによりサイズにランダム性を与え、やっと生成する
+					// 初期位置からfRandRの大きさにより場所にランダム性を与え、やっと生成する
 					col = g_aParticle[nCntParticle].col;
 					SetEffect2(pos, g_aParticle[nCntParticle].Emove, g_aParticle[nCntParticle].nELife, col, g_aParticle[nCntParticle].fSpeed * ((float)(rand() % 100) / 100.0f), g_aParticle[nCntParticle].fRadius);
 				}
