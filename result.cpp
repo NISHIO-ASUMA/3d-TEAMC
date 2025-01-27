@@ -13,6 +13,7 @@
 #include"input.h"
 #include "time.h"
 #include "camera.h"
+#include "resultscore.h"
 
 //****************************
 //グローバル変数
@@ -73,6 +74,9 @@ void InitResult(void)
 
 	//頂点ロック解除
 	g_pVtxBuffResult->Unlock();
+
+	// リザルトスコアの初期化処理
+	InitResultScore();
 }
 //=====================
 //リザルトの終了処理
@@ -90,6 +94,9 @@ void UninitResult(void)
 		g_pVtxBuffResult->Release();
 		g_pVtxBuffResult = NULL;
 	}
+
+	// リザルトスコアの終了処理
+	UninitResultScore();
 }
 //=====================
 //リザルトの更新処理
@@ -105,6 +112,8 @@ void UpdateResult(void)
 		SetFade(MODE_RANKING);
 	}
 
+	// リザルトスコアの更新
+	UpdateResultScore();
 }
 //=====================
 //リザルトの描画処理
@@ -125,6 +134,9 @@ void DrawResult(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureResult);
 
-	//プレイヤーの描画
+	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);//プリミティブの種類
+
+	// リザルトスコアの描画処理
+	DrawResultScore();
 }

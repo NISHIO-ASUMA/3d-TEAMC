@@ -70,10 +70,10 @@ void InitResultScore(void)
 		g_aResult[nCnt].bUse = true;		
 
 		// í∏ì_ç¿ïWÇÃê›íË
-		pVtx[0].pos = D3DXVECTOR3(525.0f + nCnt * 50.0f, 250.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(525.0f + nCnt * 50.0f + 50.0f, 250.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(525.0f + nCnt * 50.0f, 350.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(525.0f + nCnt * 50.0f + 50.0f, 350.0f, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(290.0f + nCnt * 110.0f, 400.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(290.0f + nCnt * 110.0f + 110.0f, 400.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(290.0f + nCnt * 110.0f, 550.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(290.0f + nCnt * 110.0f + 110.0f, 550.0f, 0.0f);
 
 		// rhwÇÃê›íË(1.0fÇ≈å≈íË)
 		pVtx[0].rhw = 1.0f;
