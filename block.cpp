@@ -170,6 +170,34 @@ void UninitBlock(void)
 			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock = NULL;
 		}
 	}
+
+	for (int nCnt = 0; nCnt < MAX_BLOCK; nCnt++)
+	{
+		for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
+		{
+			//テクスチャの破棄
+			for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
+			{
+				if (g_Block[nCnt].BlockTex[nCntNum].g_apTextureBlock[nCntTex] != NULL)
+				{
+					g_Block[nCnt].BlockTex[nCntNum].g_apTextureBlock[nCntTex] = NULL;
+				}
+			}
+
+			//メッシュの破棄
+			if (g_Block[nCnt].BlockTex[nCntNum].g_pMeshBlock != NULL)
+			{
+				g_Block[nCnt].BlockTex[nCntNum].g_pMeshBlock = NULL;
+			}
+
+			//マテリアルの破棄
+			if (g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatBlock != NULL)
+			{
+				g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatBlock = NULL;
+			}
+		}
+	}
+
 }
 //=============================
 //ブロックの更新処理

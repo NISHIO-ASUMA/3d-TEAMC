@@ -29,6 +29,7 @@
 #include "HPGauge.h"
 #include "Effect.h"
 #include "Particle.h"
+#include "explosion.h"
 
 //****************************
 //マクロ定義
@@ -61,6 +62,9 @@ void InitGame(void)
 
 	//メッシュフィールドの初期化処理
 	InitMeshField();
+
+	// 煙の初期化処理
+	InitExplosion();
 
 	//プレイヤーの初期化処理
 	InitPlayer();
@@ -131,6 +135,9 @@ void UninitGame(void)
 
 	//メッシュフィールドの終了処理
 	UninitMeshField();
+
+	// 煙の終了処理
+	UninitExplosion();
 
 	//プレイヤーの終了処理
 	UninitPlayer();
@@ -250,6 +257,9 @@ void UpdateGame(void)
 			//影の更新処理
 			UpdateShadow();
 
+			// 煙の更新処理
+			UpdateExplosion();
+
 			//プレイヤーの更新処理
 			UpdatePlayer();
 
@@ -328,11 +338,15 @@ void DrawGame(void)
 	//HPゲージの描写処理
     DrawGauge();
 
+	// 煙の描画処理
+	DrawExplosion();
+
 	// ダメージの描画処理
 	DrawDamege();
 
     //プレイヤーの影の描画処理
     DrawShadow();
+
 
 	if (g_bEditMode)
 	{

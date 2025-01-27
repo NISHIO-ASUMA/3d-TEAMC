@@ -24,6 +24,7 @@
 #include "Effect.h"
 #include "Particle.h"
 #include "HPGauge.h"
+#include "explosion.h"
 
 //****************************
 //マクロ定義
@@ -34,6 +35,7 @@
 #define MAX_JUMP (15.0f) // ジャンプ量
 #define MAX_MOVE (1.0f) // っプレイヤーの移動量
 #define NUM_MTX (4) // 剣の当たり判定のマトリクスの数
+#define LANDINGEXPLOSION (8) // 着地したときに出る煙
 
 //****************************
 //プロトタイプ宣言
@@ -117,6 +119,7 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].bJumpAttack = false;
 		g_LoadPlayer[nCntPlayer].HandState = PLAYERHOLD_NO;
 		g_LoadPlayer[nCntPlayer].state = PLAYERSTATE_NORMAL;
+		g_LoadPlayer[nCntPlayer].Combostate = COMBO_ATTACK1;
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
@@ -443,6 +446,13 @@ void UpdatePlayer(void)
 		break;
 	case MOTIONTYPE_LANDING:
 		break;
+	case MOTIONTYPE_ACTION2:
+		break;
+	case MOTIONTYPE_ACTION3:
+		break;
+	case MOTIONTYPE_ACTION4:
+		break;
+
 	default:
 		break;
 	}
@@ -547,6 +557,17 @@ void UpdatePlayer(void)
 	}
 	else if (CollisionField())
 	{
+		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
+		{
+			for (int nCnt = 0; nCnt < 6; nCnt++)
+			{
+				float fAngle = (D3DX_PI * 2.0f) / LANDINGEXPLOSION * nCnt;
+
+				SetExplosion(D3DXVECTOR3(g_player.pos.x,0.0f,g_player.pos.z),D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),
+					60,15.0f,15.0f,1);
+			}
+		}
+
 		g_player.bJump = true; // ジャンプを可能にする
 	}
 	else
@@ -603,7 +624,22 @@ void UpdatePlayer(void)
 		PlayerComb(MOTIONTYPE_ACTION, 60, 20, COMBO_ATTACK1); // コンボ1
 	}
 
-
+	// モーションの種類が歩き
+	if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
+	{
+		// キ一1番目かつカウントが5
+		if (g_player.Motion.nKey == 1 && g_player.Motion.nCountMotion == 5)
+		{
+			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[14].mtxWorld._41, g_player.Motion.aModel[14].mtxWorld._42, g_player.Motion.aModel[14].mtxWorld._43),
+				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
+		}
+		// キ一3番目かつカウントが5
+		else if (g_player.Motion.nKey == 3 && g_player.Motion.nCountMotion == 5)
+		{
+			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[11].mtxWorld._41, g_player.Motion.aModel[11].mtxWorld._42, g_player.Motion.aModel[11].mtxWorld._43),
+				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
+		}
+	}
 	//プレイヤーの角度の正規化
 	if (g_player.rotDestPlayer.y - g_player.rot.y >= D3DX_PI)
 	{
@@ -952,6 +988,7 @@ void ThrowItem(void)
 		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].Motion.aMotionInfo[nCntMotion];
 	}
 
+	// プレイヤーの向きを一番近い敵の場所にする
 	float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
 	g_player.rotDestPlayer.y = fAngle + D3DX_PI;
 

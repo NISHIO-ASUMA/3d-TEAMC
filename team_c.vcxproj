@@ -147,6 +147,7 @@
     <ClCompile Include="edit.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameui.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="edit.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameui.h" />
