@@ -173,7 +173,7 @@ void UpdateGame(void)
 
 	if (KeyboardTrigger(DIK_O))
 	{
-		SetEnemy(D3DXVECTOR3((float)(rand() % 500 - 100), 0.0f, (float)(rand() % 500 - 100)),ENEMYTYPE_ONE,1,(float)(rand()%1 + 1.5f));
+		SetEnemy(D3DXVECTOR3((float)(rand() % 500 - 100), 0.0f, (float)(rand() % 500 - 100)),ENEMYTYPE_ONE,1,(float)(rand()%2 + 0.5f));
 	}
 
 	if (nNumEnemy <= 0)

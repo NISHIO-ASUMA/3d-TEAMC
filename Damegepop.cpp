@@ -13,7 +13,7 @@
 #define MAXDAMEGE (500)
 #define MAXDIGI (6)
 #define SIZEY (25)
-#define SIZEX (13)
+#define SIZEX (13.0f)
 #define INTERX (30)
 LPDIRECT3DTEXTURE9 g_pTexture_Damege = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Heal = NULL;
@@ -166,7 +166,7 @@ void UpdateDamege(void)
 			// 桁数によって数値のTEXTURE座標を変える
 			for (int nCnt = 0; nCnt < MAXDIGI; nCnt++)
 			{
-				nMath = pow(10, 5 - nCnt);
+				nMath = pow(10.0f, 5.0f - nCnt);
 				// １の位以外かつ最大の桁数を超えているなら表示しない
 				if (g_aDamege[nCntDamege].nDamege >= nMath || nCnt == 5)
 				{
