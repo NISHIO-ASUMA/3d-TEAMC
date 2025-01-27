@@ -20,7 +20,7 @@ void InitEffect(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	// エフェクトのテクスチャ
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\effect001.png", &g_pTextureEffect);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\effect000.png", &g_pTextureEffect);
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_EFFECT * 6, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffEffect, NULL);
 	VERTEX_3D* pVtx;
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);

@@ -198,8 +198,6 @@ void UpdateGauge(void)
 	pVtx[7].tex = D3DXVECTOR2(g_fPer, 1.0f);
 	g_pVtxBuffGauge->Unlock();
 
-	AddFever(0.1f);
-
 	// フィーバーゲージの処理
 	if (g_fFeverCharge >= 100.0f && g_bFeverON == false)
 	{
