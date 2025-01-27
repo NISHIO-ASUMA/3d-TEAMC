@@ -18,6 +18,7 @@
 #include "block.h"
 #include "wall.h"
 #include "sound.h"
+#include "explosion.h"
 
 //****************************
 //グローバル変数
@@ -49,6 +50,9 @@ void InitTutorial3d(void)
 
 	// アイテムの初期化処理
 	InitItem();
+
+	// 爆発の初期化処理
+	InitExplosion();
 
 	// ブロックをセット
 	SetBlock(D3DXVECTOR3(-160.0f, 20.0f, 0.0f), 19, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
@@ -89,6 +93,9 @@ void UninitTutorial3d(void)
 
 	// アイテムの終了処理
 	UninitItem();
+
+	// 爆発の終了処理
+	UninitExplosion();
 }
 //============================
 //チュートリアル3dの更新処理
@@ -112,6 +119,9 @@ void UpdateTutorial3d(void)
 
 	// アイテムの更新処理
 	UpdateItem();
+
+	// 爆発の更新処理
+	UpdateExplosion();
 
 	if (KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true)
 	{//Enterキー or Startボタンが押された
@@ -141,4 +151,8 @@ void DrawTutorial3d(void)
 
 	// アイテムの描画処理
 	DrawItem();
+
+	// 爆発の描画処理
+	DrawExplosion();
+
 }
