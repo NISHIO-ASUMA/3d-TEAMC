@@ -22,6 +22,8 @@
 #include "mouse.h"
 #include "Shadow.h"
 #include "Effect.h"
+#include "Particle.h"
+#include "HPGauge.h"
 
 //****************************
 //É}ÉNÉçíËã`
@@ -322,6 +324,12 @@ void UpdatePlayer(void)
 	Camera* pCamera = GetCamera();
 
 		/*StickPad();*/
+
+	if (GetFeverMode() == true)
+	{
+		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+	}
+
 
 	if (GetKeyboardPress(DIK_A) && g_player.state != PLAYERSTATE_ATTACK)
 	{
