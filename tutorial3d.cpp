@@ -13,8 +13,10 @@
 #include "input.h"
 #include "fade.h"
 #include "camera.h"
-#include"damagepop.h"
+#include "damagepop.h"
 #include "meshfield.h"
+#include "block.h"
+#include "wall.h"
 
 //****************************
 //グローバル変数
@@ -34,6 +36,26 @@ void InitTutorial3d(void)
 
 	//メッシュフィールドの初期化処理
 	InitMeshField();
+
+	// 壁の初期化処理
+	InitWall();
+
+	// プレイヤーの初期化処理
+	InitPlayer();
+
+	// ブロックの初期化処理
+	InitBlock();
+
+	// アイテムの初期化処理
+	InitItem();
+
+	// ブロックをセット
+	SetBlock(D3DXVECTOR3(-160.0f, 20.0f, 0.0f), 19, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
+	SetBlock(D3DXVECTOR3( -60.0f, 20.0f, 0.0f), 20, D3DXVECTOR3(1.5f, 1.5f, 1.5f)); 
+	SetBlock(D3DXVECTOR3( 40.0f, 20.0f, 0.0f), 21, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
+
+	// アイテムをセット
+	SetItem(D3DXVECTOR3(140.0f, -10.0f, 0.0f), 29, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
 }
 //============================
 //チュートリアル3dの終了処理
@@ -48,6 +70,18 @@ void UninitTutorial3d(void)
 
 	//メッシュフィールドの終了処理
 	UninitMeshField();
+
+	// 壁の終了処理
+	UninitWall();
+
+	// プレイヤーの終了処理
+	UninitPlayer();
+
+	// ブロックの終了処理
+	UninitBlock();
+
+	// アイテムの終了処理
+	UninitItem();
 }
 //============================
 //チュートリアル3dの更新処理
@@ -60,6 +94,18 @@ void UpdateTutorial3d(void)
 	//影の更新処理
 	UpdateShadow();
 
+	// 壁の更新処理
+	UpdateWall();
+
+	// プレイヤーの更新処理
+	UpdatePlayer();
+
+	// ブロックの更新処理
+	UpdateBlock();
+
+	// アイテムの更新処理
+	UpdateItem();
+
 	if (KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true)
 	{//Enterキー or Startボタンが押された
 		//ゲーム画面へ
@@ -71,9 +117,21 @@ void UpdateTutorial3d(void)
 //============================
 void DrawTutorial3d(void)
 {
+	//メッシュフィールドの描画処理
+	DrawMeshField();
+
+	// 壁の描画
+	DrawWall();
+
+	// プレイヤーの描画処理
+	DrawPlayer();
+
 	//影の描画処理
 	DrawShadow();
 
-	//メッシュフィールドの描画処理
-	DrawMeshField();
+	// ブロックの描画処理
+	DrawBlock();
+
+	// アイテムの描画処理
+	DrawItem();
 }

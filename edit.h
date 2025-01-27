@@ -13,8 +13,6 @@
 //***********************
 
 #include"main.h"
-#include"block.h"
-#include "item.h"
 
 //*******************
 //マクロ定義
@@ -37,7 +35,7 @@ typedef struct
 	LPD3DXMESH g_pMeshEdit;//メッシュ(頂点座標)へのポインタ
 	LPD3DXBUFFER g_pBuffMatEdit;//マテリアルへのポインタ
 	DWORD g_dwNumMatEdit;//マテリアルの数
-	LPDIRECT3DTEXTURE9 g_apTextureEdit[MAX_TEX];
+	LPDIRECT3DTEXTURE9 g_apTextureEdit[MAX_TYPE];
 	D3DXVECTOR3 vtxMin, vtxMax;
 }EditModel;
 

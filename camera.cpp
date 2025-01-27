@@ -567,7 +567,7 @@ void MouseWheel(int zDelta)
 	// 現在のモードを取得
 	MODE nMode = GetMode();
 
-	if (nMode == MODE_TUTORIAL || GetEditState())
+	if (GetEditState())
 	{// ゲーム チュートリアル 編集モード
 		// TODO : ここのズームの処理変更の可能性あり
 

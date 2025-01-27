@@ -22,7 +22,7 @@
 #include "game.h"
 #include "result.h"
 #include "ranking.h"
-#include"mouse.h"
+#include "mouse.h"
 #include "edit.h"
 
 //*****************************
@@ -270,6 +270,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 	case WM_MOUSEWHEEL:
 		int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+
 		MouseWheel(zDelta);
 		break;
 	//case WM_SETCURSOR:	// ÉJÅ[É\ÉãÇÃê›íË

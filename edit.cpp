@@ -11,6 +11,7 @@
 #include "edit.h"
 #include "input.h"
 #include "block.h"
+#include "item.h"
 #include "meshfield.h"
 #include "camera.h"
 #include "light.h"
