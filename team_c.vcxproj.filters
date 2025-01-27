@@ -135,6 +135,9 @@
     <ClCompile Include="sound.cpp">
       <Filter>ソース ファイル\Os</Filter>
     </ClCompile>
+    <ClCompile Include="resultscore.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="sound.h">
       <Filter>ヘッダー ファイル\Os</Filter>
+    </ClInclude>
+    <ClInclude Include="resultscore.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

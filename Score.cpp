@@ -71,7 +71,7 @@ void InitScore(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\adddamage.png",
+		"data\\TEXTURE\\score000.png",
 		&g_pTextureScore);
 
 	//頂点バッファの生成・頂点情報の設定

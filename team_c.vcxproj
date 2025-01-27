@@ -166,6 +166,7 @@
     <ClCompile Include="RankingScore.cpp" />
     <ClCompile Include="RankingSet.cpp" />
     <ClCompile Include="result.cpp" />
+    <ClCompile Include="resultscore.cpp" />
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="sound.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="RankingScore.h" />
     <ClInclude Include="RankingSet.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="resultscore.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="sound.h" />
