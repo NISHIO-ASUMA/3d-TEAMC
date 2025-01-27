@@ -294,6 +294,8 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL;
 		}
 
+		CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 10.0f, 10.0f);
+		
 		CollisionToEnemy(nCntEnemy); // 敵と敵の当たり判定
 
 		//モーションの更新

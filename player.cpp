@@ -571,19 +571,19 @@ void UpdatePlayer(void)
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
 	if (g_player.bDisp && !bNohand)
 	{
-		if (OnMouseTriggerDown(LEFT_MOUSE)&&g_player.Combostate == COMBO_NO)
+		if (OnMouseTriggerDown(LEFT_MOUSE)&&g_player.Combostate == COMBO_NO && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 60, 30, COMBO_ATTACK1); // コンボ1
 		}
-		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK1)
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 60, 30, COMBO_ATTACK2); // コンボ2
 		}
-		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK2)
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 60, 30, COMBO_ATTACK3); // コンボ3
 		}
-		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK3)
+		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 60, 30, COMBO_ATTACK4); // コンボ4
 		}
@@ -879,16 +879,32 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 void ThrowItem(void)
 {
 	Item* pItem = GetItem();
+	ENEMY* pEnemy = GetEnemy();
+
 	int nIdx = g_player.ItemIdx; // 手に持っているアイテムのインデックス情報を代入
+	float fDistanceNow,fDistanceOld,fDistance;
+	fDistance = 0.0f;
 
 	// 発射地点を設定
 	pItem[nIdx].pos.x = g_player.pos.x;
 	pItem[nIdx].pos.y = g_player.Motion.aModel[2].pos.y;
 	pItem[nIdx].pos.z = g_player.pos.z;
 
+	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++,pEnemy++)
+	{
+		if (pEnemy->bUse)
+		{
+			float DisposX = pEnemy->pos.x - g_player.pos.x;
+			float DisposY = pEnemy->pos.y - g_player.pos.y;
+			float DisposZ = pEnemy->pos.z - g_player.pos.z;
+
+			fDistanceNow = sqrtf((DisposX * DisposX) + (DisposY * DisposY) + (DisposZ * DisposZ));
+		}
+	}
+
 	// 飛ばす方向を設定
-	pItem[nIdx].move.x = sinf(g_player.rot.y + D3DX_PI) * 10.0f;
-	pItem[nIdx].move.z = cosf(g_player.rot.y + D3DX_PI) * 10.0f;
+	pItem[nIdx].move.x = fDistance;
+	pItem[nIdx].move.z = fDistance;
 	pItem[nIdx].bUse = true; // 使用状態をtrueにする
 
 	// 素手の時のモーション情報を代入
@@ -909,6 +925,35 @@ void ThrowItem(void)
 
 	// 状態を投げられてる状態にする
 	pItem[nIdx].state = ITEMSTATE_THROW;
+}
+//================================
+// プレイヤーと敵の当たり判定
+//================================
+void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, float ENradius)
+{
+	D3DXVECTOR3 DisPos; // 計算用
+
+	// 距離を計算
+	DisPos.x = g_player.pos.x - pPos->x;
+	DisPos.y = g_player.pos.y - pPos->y;
+	DisPos.z = g_player.pos.z - pPos->z;
+
+	// 距離を求める
+	float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z);
+
+	// 半径を計算
+	float fRadius = PLradius + ENradius;
+
+	// 半径を求める
+	fRadius = fRadius * fRadius;
+
+	// 範囲内に入った
+	if (fDistance <= fRadius)
+	{
+		// 敵を戻す
+		pMove->x -= DisPos.x * 0.1f;
+		pMove->z -= DisPos.z * 0.1f;
+	}
 }
 
 //================================

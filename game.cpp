@@ -96,10 +96,10 @@ void InitGame(void)
 	LoadEdit();
 
 	SetEnemy(D3DXVECTOR3(0.0f, 0.0f, 20.0f), ENEMYTYPE_ONE, 1,1.0f);
-	SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_TWO, 1, 1.0f);
-	SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 280.0f), ENEMYTYPE_THREE, 1, 1.0f);
-	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 1,1.0f);
-	SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 1,1.0f);
+	//SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_TWO, 1, 1.0f);
+	//SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 280.0f), ENEMYTYPE_THREE, 1, 1.0f);
+	//SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 1,1.0f);
+	//SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 1,1.0f);
 
 	SetWall(D3DXVECTOR3(500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(-500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
@@ -173,7 +173,7 @@ void UpdateGame(void)
 
 	if (KeyboardTrigger(DIK_O))
 	{
-		SetEnemy(D3DXVECTOR3((float)(rand() % 500 - 100), 0.0f, (float)(rand() % 500 - 100)),ENEMYTYPE_ONE,1,(float)(rand()%2 + 0.5f));
+		SetEnemy(D3DXVECTOR3((float)(rand() % 500 - 100), 0.0f, (float)(rand() % 500 - 100)),rand()%ENEMYTYPE_MAX,rand()%3 + 1,(float)(rand()%2 + 0.7f));
 	}
 
 	if (nNumEnemy <= 0)
