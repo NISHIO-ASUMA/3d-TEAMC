@@ -481,6 +481,77 @@ int NumBlock(void)
 	return g_NumBlock;
 }
 //=============================
+//ステージのロード処理
+//=============================
+void LoadTitleState(void)
+{
+	FILE* pFile; // ファイルのポインタ
+
+	char Skip[3];
+	D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 Scal(0.0f, 0.0f, 0.0f);
+	int nType = 0;
+	int nIdx = 0;
+
+	pFile = fopen("data\\save.txt", "r");
+
+	if (pFile != NULL)
+	{
+		while (1)
+		{
+			char aString[MAX_WORD];
+
+			fscanf(pFile, "%s", &aString[0]);
+
+			if (strcmp(aString, "BLOCKSET") == 0)
+			{
+				while (1)
+				{
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(aString, "BLOCKTYPE") == 0)
+					{
+						fscanf(pFile, "%s", &Skip[0]);
+						fscanf(pFile, "%d", &nType);
+					}
+					else if (strcmp(aString, "POS") == 0)
+					{
+						fscanf(pFile, "%s", &Skip[0]);
+						fscanf(pFile, "%f", &pos.x);
+						fscanf(pFile, "%f", &pos.y);
+						fscanf(pFile, "%f", &pos.z);
+					}
+					else if (strcmp(aString, "SIZE") == 0)
+					{
+						fscanf(pFile, "%s", &Skip[0]);
+						fscanf(pFile, "%f", &Scal.x);
+						fscanf(pFile, "%f", &Scal.y);
+						fscanf(pFile, "%f", &Scal.z);
+					}
+					else if (strcmp(aString, "END_BLOCKSET") == 0)
+					{
+						SetBlock(pos, nType, Scal);
+						nIdx++;
+						break;
+					}
+				}
+			}
+
+		    if (strcmp(aString, "END_SCRIPT") == 0)
+			{
+				break;
+			}
+		}
+	}
+	else
+	{//開けなかったとき	
+				//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
+		return;
+	}
+	fclose(pFile);
+}
+//=============================
 //ブロックのモデルのロード処理
 //=============================
 void LoadBlockModel(void)

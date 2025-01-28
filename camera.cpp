@@ -109,7 +109,11 @@ void UpdateCamera(void)
 		MouseEditMode();	//編集モード中のカメラ移動
 	}
 
-	// ゲームの時のカメラの更新
+	if (mode == MODE_TITLE)
+	{
+
+	}
+		// ゲームの時のカメラの更新
 	if (mode != MODE_TITLE && !GetEditState())
 	{
 		g_camera[MAIN].fDistance = g_camera[MAIN].oldDistance; // 距離をリセット

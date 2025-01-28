@@ -19,6 +19,7 @@
 #include "gameui.h"
 #include "sound.h"
 #include "mouse.h"
+#include "block.h"
 
 //****************************
 //グローバル宣言
@@ -48,6 +49,11 @@ void InitTitle3d(void)
 
 	//ゲームUIの初期化処理
 	InitGameUI();
+
+	//ブロックの初期化処理
+	InitBlock();
+	
+	LoadTitleState();
 
 	//UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, -200.0f, 0.0f), UITYPE_TITLE, 450.0f, 150.0f, 0);
@@ -81,6 +87,10 @@ void UninitTitle3d(void)
 
 	//ゲームUIの終了処理
 	UninitGameUI();
+
+	//ブロックの終了処理
+	UninitBlock();
+
 }
 //============================
 //タイトル3dの更新処理
@@ -105,6 +115,9 @@ void UpdateTitle3d(void)
 //============================
 void DrawTitle3d(void)
 {
+	//ブロックの描画処理
+	DrawBlock();
+
 	//影の描画処理
 	DrawShadow();
 
@@ -116,4 +129,5 @@ void DrawTitle3d(void)
 
 	//ゲームUIの描画処理
 	DrawGameUI();
+
 }
