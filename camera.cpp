@@ -145,13 +145,16 @@ void UpdateCamera(void)
 		g_camera[MAP].posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
 		g_camera[MAP].posRDest.z = pPlayer->pos.z + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
 
-		g_camera[MAP].posVDest.x = pPlayer->pos.x - sinf(g_camera[MAP].rot.y) * g_camera[MAP].fDistance;
+		g_camera[MAP].posVDest.x = pPlayer->pos.x - sinf(g_camera[MAP].rot.y);
 		g_camera[MAP].posVDest.y = pPlayer->pos.y - cosf(g_camera[MAP].rot.y) * g_camera[MAP].fDistance;
-		g_camera[MAP].posVDest.z = pPlayer->pos.z - cosf(g_camera[MAP].rot.y) * g_camera[MAP].fDistance;
+		g_camera[MAP].posVDest.z = pPlayer->pos.z - cosf(g_camera[MAP].rot.y);
 
 		g_camera[MAP].posR.x += ((g_camera[MAP].posRDest.x - g_camera[MAP].posR.x) * 0.3f);
 		g_camera[MAP].posR.y += ((g_camera[MAP].posRDest.y - g_camera[MAP].posR.y) * 0.3f);
 		g_camera[MAP].posR.z += ((g_camera[MAP].posRDest.z - g_camera[MAP].posR.z) * 0.3f);
+
+		g_camera[MAP].posV.x += ((g_camera[MAP].posVDest.x - g_camera[MAP].posV.x) * 0.3f);
+		g_camera[MAP].posV.z += ((g_camera[MAP].posVDest.z - g_camera[MAP].posV.z) * 0.3f);
 	}
 	
 

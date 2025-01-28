@@ -778,8 +778,8 @@ void DrawPlayer(void)
 					color = pMat[nCntMat];
 
 					color.MatD3D.Diffuse.r = 1.0f;
-					color.MatD3D.Diffuse.g = 0.0f;
-					color.MatD3D.Diffuse.b = 0.0f;
+					color.MatD3D.Diffuse.g = 0.3f;
+					color.MatD3D.Diffuse.b = 0.3f;
 					color.MatD3D.Diffuse.a = 1.0f;
 
 					//マテリアルの設定
@@ -792,6 +792,7 @@ void DrawPlayer(void)
 				//モデル(パーツ)の描画
 				g_player.Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 			}
+
 			nCnt++;
 			if (nCnt == 15)
 			{

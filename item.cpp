@@ -196,6 +196,7 @@ void UpdateItem(void)
 			continue;
 		}
 
+		// 前回の位置を代入
 		g_Item[nCntItem].posOld = g_Item[nCntItem].pos;
 
 		//位置の更新
@@ -206,6 +207,7 @@ void UpdateItem(void)
 			g_Item[nCntItem].bUse = false;
 			SetExplosion(g_Item[nCntItem].pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), 60, 30.0f, 30.0f, EXPLOSION_HIT);
 		}
+
 		CollisionItem(nCntItem,// アイテムのインデックスを渡す
 			20.0f, // アイテムの半径
 			20.0f); // プレイヤーの半径

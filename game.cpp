@@ -219,7 +219,7 @@ void UpdateGame(void)
 	// TODO : “G‚ª‘S–Å‚µ‚½‚çƒQ[ƒ€I—¹
 
 	// “G‚ªo‚Ä‚­‚é‚Ü‚Å‚ÌŠÔ
-	if (g_EnemyWaveTime >= 1800)
+	if (g_EnemyWaveTime >= 1800 || nNumEnemy <= 0)
 	{
 		// “G‚ğo‚·ˆ—
 		WaveEnemy();
@@ -228,7 +228,7 @@ void UpdateGame(void)
 		g_EnemyWaveTime = 0;
 	}
 
-	if (nNumEnemy <= 0 || nTime <= 0)
+	if (nTime <= 0)
 	{// “G‚ª‘S–Å or ƒ^ƒCƒ}[‚ª0•bˆÈ‰º
 		g_gameState = GAMESTATE_END;
 	}
