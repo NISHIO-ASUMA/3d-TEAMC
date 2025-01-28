@@ -673,7 +673,7 @@ void UpdatePlayer(void)
 
 	if (GetFeverMode()&& FiverCnt == 0)
 	{
-		SetGameUI(D3DXVECTOR3(640.0f, 560.0f, 0.0f), UITYPE_FIVER, 100.0f, 50.0f, 0);
+		SetGameUI(D3DXVECTOR3(640.0f, 560.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
 		FiverCnt = 1;
 	}
 	else if (!GetFeverMode())

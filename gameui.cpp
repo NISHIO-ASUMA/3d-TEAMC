@@ -147,29 +147,34 @@ void UpdateGameUI(void)
 			}
 			break;
 		case UITYPE_FIVER:
+		{
+			static bool bUp = false;
 
-			if (g_GameUI[nCnt].fWidth >= 200.0f)
+			// è„è∏ÇµÇƒÇ¢ÇÈÇ∆Ç´
+			if (bUp)
 			{
-
+				g_GameUI[nCnt].pos.y -= 2.0f; // â∫Ç…â∫Ç∞ÇÈ
+				
+				if (g_GameUI[nCnt].pos.y < 540.0f)
+				{
+					bUp = false; // â∫Ç…â∫Ç∞ÇÈ
+				}
 			}
-			else
+			else if (!bUp)
 			{
-				g_GameUI[nCnt].fWidth += 2.0f;
-			}
+				g_GameUI[nCnt].pos.y += 2.0f;
 
-			if (g_GameUI[nCnt].fHeight >= 80.0f)
-			{
-
-			}
-			else
-			{
-				g_GameUI[nCnt].fHeight += 0.6f;
+				if (g_GameUI[nCnt].pos.y > 560.0f)
+				{
+					bUp = true; // è„Ç…è„Ç∞ÇÈ
+				}
 			}
 
 			if (!GetFeverMode())
 			{
 				g_GameUI[nCnt].bUse = false;
 			}
+		}
 			break;
 		default:
 			break;
