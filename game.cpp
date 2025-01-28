@@ -295,7 +295,7 @@ void UpdateGame(void)
 	if (g_bPause == false)
 	{//ポーズ中でなければ
 	//ポーズ中の更新処理
-			SetCursorVisibility(false);
+		SetCursorVisibility(false);
 
 		if (!g_bEditMode)
 		{

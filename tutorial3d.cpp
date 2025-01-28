@@ -19,6 +19,8 @@
 #include "wall.h"
 #include "sound.h"
 #include "explosion.h"
+#include "mouse.h"
+#include "HPGauge.h"
 
 //****************************
 //グローバル変数
@@ -30,6 +32,8 @@ static int nPressTuto;
 //============================
 void InitTutorial3d(void)
 {
+	SetCursorVisibility(false);
+
 	//カメラの初期化処理
 	InitCamera();
 	
@@ -41,6 +45,9 @@ void InitTutorial3d(void)
 
 	// 壁の初期化処理
 	InitWall();
+
+	// ゲージの初期化
+	InitGauge();
 
 	// プレイヤーの初期化処理
 	InitPlayer();
@@ -81,6 +88,9 @@ void UninitTutorial3d(void)
 
 	//メッシュフィールドの終了処理
 	UninitMeshField();
+
+	// ゲージの終了
+	UninitGauge();
 
 	// 壁の終了処理
 	UninitWall();

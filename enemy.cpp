@@ -313,7 +313,7 @@ void UpdateEnemy(void)
 		//ƒAƒCƒeƒ€‚ª“–‚½‚Á‚½‚©
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f)&& g_Enemy[nCntEnemy].state!=ENEMYSTATE_DAMAGE)
 		{
-			HitEnemy(nCntEnemy, 50);
+			HitEnemy(nCntEnemy, (float)pPlayer->nDamage * 1.5f);
 		}
 		// Œ•‚Æ“G‚Ì“–‚½‚è”»’è
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);

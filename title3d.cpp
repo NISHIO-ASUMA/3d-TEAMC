@@ -18,6 +18,7 @@
 #include "meshfield.h"
 #include "gameui.h"
 #include "sound.h"
+#include "mouse.h"
 
 //****************************
 //グローバル宣言
@@ -28,6 +29,8 @@
 //============================
 void InitTitle3d(void)
 {
+	SetCursorVisibility(false);
+
 	//カメラの初期化処理
 	InitCamera();
 
