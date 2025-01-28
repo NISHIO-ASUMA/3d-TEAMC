@@ -320,7 +320,7 @@ void UpdateEnemy(void)
 
 		if (AgentRange(50.0f, 20000.0f, nCntEnemy))
 		{
-			//AgentEnemy(nCntEnemy);
+			AgentEnemy(nCntEnemy);
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
 		}
 		else
