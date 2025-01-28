@@ -46,6 +46,7 @@ void LoadModel(int nType); // プレイヤーのロード処理
 void PlayerComb(MOTIONTYPE motiontype, int AttackState,int nCounterState, COMBOSTATE Combstate); // プレイヤーのコンボ処理
 void LoadMotion(int Weponmotion); // モーションのロード処理
 void MotionChange(int itemtype,int LoadPlayer); // モーション変更
+void StickPad(void);//パッドの移動処理
 
 //****************************
 //グローバル変数宣言
@@ -57,6 +58,7 @@ MODEL g_LoadWepon[ITEMTYPE_MAX];     // プレイヤーの武器を保存しておく変数
 MOTION g_LoadMotion[MOTION_MAX];   // モーションの情報を保存しておく変数
 int g_nCounterState,g_AttackState; // 状態カウンター
 bool bNohand; // 投げたか投げてないか
+bool bUsePad;
 
 //============================
 //プレイヤーの初期化処理
@@ -90,7 +92,7 @@ void InitPlayer(void)
 	bNohand = false;									   // 物を投げたか投げてないか
 	g_player.speed = 1.0f;								   // 足の速さ
 	g_player.nDamage = 100;								   // 攻撃力
-
+	bUsePad = false;
 	//LoadWepon(); // アイテムのロード
 
 
@@ -342,103 +344,111 @@ void UpdatePlayer(void)
 		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	}
 
+	StickPad(); // パッドの移動処理
 
-	if (GetKeyboardPress(DIK_A) && g_player.state != PLAYERSTATE_ATTACK)
+	if (!bUsePad)
 	{
-		//プレイヤーの移動(上)
-		if (GetKeyboardPress(DIK_W) == true)
+		if (GetKeyboardPress(DIK_A) && g_player.state != PLAYERSTATE_ATTACK)
 		{
-			g_player.Motion.motionType = MOTIONTYPE_MOVE;
-	
-			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
-			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
+			//プレイヤーの移動(上)
+			if (GetKeyboardPress(DIK_W) == true)
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
-		}
-		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S) && g_player.state != PLAYERSTATE_ATTACK)
-		{
-			g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
+				g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
 
-			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
-			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
+				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
+			}
+			//プレイヤーの移動(下)
+			else if (GetKeyboardPress(DIK_S) && g_player.state != PLAYERSTATE_ATTACK)
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.25f;
-		}
-		//プレイヤーの移動(左)
-		else
-		{
-			g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
+				g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
 
-			g_player.move.z += sinf(pCamera->rot.y) * g_player.speed;
-			g_player.move.x -= cosf(pCamera->rot.y) * g_player.speed;
+				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.25f;
+			}
+			//プレイヤーの移動(左)
+			else
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.5f;
-		}
-	}
-	//プレイヤーの移動(右)
-	else if (GetKeyboardPress(DIK_D) && g_player.state != PLAYERSTATE_ATTACK)
-	{
-		//プレイヤーの移動(上)
-		if (GetKeyboardPress(DIK_W) && g_player.state != PLAYERSTATE_ATTACK)
-		{
-			g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				g_player.move.z += sinf(pCamera->rot.y) * g_player.speed;
+				g_player.move.x -= cosf(pCamera->rot.y) * g_player.speed;
 
-			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
-			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
-
-			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
-		}
-		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S) && g_player.state != PLAYERSTATE_ATTACK)
-		{
-			g_player.Motion.motionType = MOTIONTYPE_MOVE;
-
-			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
-			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
-
-			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.25f;
+				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.5f;
+			}
 		}
 		//プレイヤーの移動(右)
-		else
+		else if (GetKeyboardPress(DIK_D) && g_player.state != PLAYERSTATE_ATTACK)
+		{
+			//プレイヤーの移動(上)
+			if (GetKeyboardPress(DIK_W) && g_player.state != PLAYERSTATE_ATTACK)
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+
+				g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
+				g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
+
+				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
+			}
+			//プレイヤーの移動(下)
+			else if (GetKeyboardPress(DIK_S) && g_player.state != PLAYERSTATE_ATTACK)
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+
+				g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
+				g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
+
+				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.25f;
+			}
+			//プレイヤーの移動(右)
+			else
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+
+				g_player.move.z -= sinf(pCamera->rot.y) * g_player.speed;
+				g_player.move.x += cosf(pCamera->rot.y) * g_player.speed;
+
+				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.5f;
+			}
+
+		}
+		//プレイヤーの移動(上)
+		else if (GetKeyboardPress(DIK_W) == true)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.move.z -= sinf(pCamera->rot.y) * g_player.speed;
-			g_player.move.x += cosf(pCamera->rot.y) * g_player.speed;
+			g_player.move.x += sinf(pCamera->rot.y) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y) * g_player.speed;
 
-			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.5f;
+			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
 		}
+		//プレイヤーの移動(下)
+		else if (GetKeyboardPress(DIK_S) == true)
+		{
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-	}
-	//プレイヤーの移動(上)
-	else if (GetKeyboardPress(DIK_W) == true)
-	{
-		g_player.Motion.motionType = MOTIONTYPE_MOVE;
+			g_player.move.x -= sinf(pCamera->rot.y) * g_player.speed;
+			g_player.move.z -= cosf(pCamera->rot.y) * g_player.speed;
 
-		g_player.move.x += sinf(pCamera->rot.y) * g_player.speed;
-		g_player.move.z += cosf(pCamera->rot.y) * g_player.speed;
-
-		g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
-	}
-	//プレイヤーの移動(下)
-	else if (GetKeyboardPress(DIK_S) == true)
-	{
-		g_player.Motion.motionType = MOTIONTYPE_MOVE;
-
-		g_player.move.x -= sinf(pCamera->rot.y) * g_player.speed;
-		g_player.move.z -= cosf(pCamera->rot.y) * g_player.speed;
-
-		g_player.rotDestPlayer.y = pCamera->rot.y;
+			g_player.rotDestPlayer.y = pCamera->rot.y;
+		}
+		else
+		{
+			if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
+			{
+				g_player.Motion.motionType = MOTIONTYPE_NEUTRAL; // キーを押していない時にニュートラルになる
+			}
+		}
 	}
 	else
 	{
-		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
-		{
-			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL; // キーを押していない時にニュートラルになる
-		}
+
 	}
-	
+
 	switch (g_player.Motion.motionType)
 	{
 	case MOTIONTYPE_NEUTRAL:
@@ -614,19 +624,19 @@ void UpdatePlayer(void)
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
 	if (g_player.bDisp && !bNohand)
 	{
-		if (OnMouseTriggerDown(LEFT_MOUSE)&&g_player.Combostate == COMBO_NO && g_AttackState <= 50)
+		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_RIGHT_B))&&g_player.Combostate == COMBO_NO && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 60, 30, COMBO_ATTACK1); // コンボ1
 		}
-		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_RIGHT_B)) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 60, 30, COMBO_ATTACK2); // コンボ2
 		}
-		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_RIGHT_B)) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 60, 30, COMBO_ATTACK3); // コンボ3
 		}
-		else if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_RIGHT_B)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 60, 30, COMBO_ATTACK4); // コンボ4
 		}
@@ -878,42 +888,37 @@ void HitPlayer(int nDamage)
 //============================
 void StickPad(void)
 {
-	//XINPUT_STATE* pStick;
+	XINPUT_STATE* pStick;
 
-	//pStick = GetJoySticAngle();
+	pStick = GetJoyStickAngle();
 
-	//CAMERA* pCamera = GetCamera();
-	//if (g_player.state != PLAYERSTATE_FALL && g_player.state != PLAYERSTATE_DAMAGE&& g_player.bJumpAttack ==false && g_player.state != PLAYERSTATE_ATTACK)
-	//{
-	//	if (GetJoyStick() == true)
-	//	{
-	//		float LStickAngleY = pStick->Gamepad.sThumbLY;
-	//		float LStickAngleX = pStick->Gamepad.sThumbLX;
+	Camera* pCamera = GetCamera();
 
-	//		float deadzone = 10920;
-	//		float magnitude = sqrtf(LStickAngleX * LStickAngleX + LStickAngleY * LStickAngleY);
+	if (GetJoyStick() == true)
+	{
+		float LStickAngleY = pStick->Gamepad.sThumbLY;
+		float LStickAngleX = pStick->Gamepad.sThumbLX;
 
-	//		if (magnitude > deadzone)
-	//		{
-	//			bPad = true;
-	//			float normalizeX = (LStickAngleX / magnitude);
-	//			float normalizeY = (LStickAngleY / magnitude);
+		float deadzone = 10920;
+		float magnitude = sqrtf(LStickAngleX * LStickAngleX + LStickAngleY * LStickAngleY);
 
-	//			float moveX = normalizeX * cosf(-pCamera->rot.y) - normalizeY * sinf(-pCamera->rot.y);
-	//			float moveZ = normalizeX * sinf(-pCamera->rot.y) + normalizeY * cosf(-pCamera->rot.y);
+		if (magnitude > deadzone)
+		{
+			bUsePad = true;
+			float normalizeX = (LStickAngleX / magnitude);
+			float normalizeY = (LStickAngleY / magnitude);
 
-	//			g_player.move.x += moveX * PLAYER_MOVE;
-	//			g_player.move.z += moveZ * PLAYER_MOVE;
+			float moveX = normalizeX * cosf(-pCamera->rot.y) - normalizeY * sinf(-pCamera->rot.y);
+			float moveZ = normalizeX * sinf(-pCamera->rot.y) + normalizeY * cosf(-pCamera->rot.y);
 
-	//			g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
+			g_player.move.x += moveX * g_player.speed;
+			g_player.move.z += moveZ * g_player.speed;
 
-	//			if (g_player.Motion.motionType != MOTIONTYPE_INVISIBLE)
-	//			{
-	//				g_player.state = PLAYERSTATE_MOVE;
-//			}
-//		}
-//	}
-//}
+			g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
+
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
+		}
+	}
 }
 //================================
 // プレイヤーの剣と敵の当たり判定
