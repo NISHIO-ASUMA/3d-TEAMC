@@ -34,7 +34,7 @@
 #define MAX_ENEMYMOVE (1.0f) // 敵の移動量
 #define SHADOWSIZEOFFSET (20.0f) // 影のサイズのオフセット
 #define SHADOW_A (1.0f) // 影のアルファ
-#define WAVE_ENEMY (10) // 敵の出現数
+#define WAVE_ENEMY (15) // 敵の出現数
 
 //****************************
 //プロトタイプ宣言
@@ -311,9 +311,9 @@ void UpdateEnemy(void)
 		}
 
 		//アイテムが当たったか
-		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f))
+		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f)&& g_Enemy[nCntEnemy].state!=ENEMYSTATE_DAMAGE)
 		{
-			HitEnemy(nCntEnemy, (pPlayer->nDamage * 3));
+			HitEnemy(nCntEnemy, 50);
 		}
 		// 剣と敵の当たり判定
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);

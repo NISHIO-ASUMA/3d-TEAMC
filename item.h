@@ -101,6 +101,7 @@ typedef struct
 	float fRadius;
 	ItemTex ItemTex[ITEMTYPE_MAX];
 	D3DXMATRIX mtxParent;
+	int durability; // ‘Ï‹v—Í
 }Item;
 
 //***************************

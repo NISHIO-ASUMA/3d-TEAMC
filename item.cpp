@@ -21,6 +21,7 @@
 //****************************
 #define MOUSE_SIZE (50.0f)
 #define MAX_WORD (256)
+#define MAX_DURABILITY (20) // 耐久力
 
 //****************************
 //プロトタイプ宣言
@@ -53,6 +54,7 @@ void InitItem(void)
 		g_Item[nCntItem].state = ITEMSTATE_NORMAL;			  //状態
 		g_Item[nCntItem].fRadius = 100.0f;					  //半径
 		g_Item[nCntItem].nLife = 180;						  //体力
+		g_Item[nCntItem].durability = MAX_DURABILITY;					  //体力
 	}
 
 	LoadItemModel(); // アイテムのロード処理
@@ -64,6 +66,7 @@ void InitItem(void)
 		//g_TexItem[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
 		g_TexItem[nCntNum].nLife = 120;							//体力
+		g_TexItem[nCntNum].durability = MAX_DURABILITY;							//体力
 
 		D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
@@ -222,6 +225,11 @@ void UpdateItem(void)
 				g_Item[nCntItem].bUse = false; // 消す
 			}
 		}
+
+		if (g_Item[nCntItem].durability <= 0)
+		{
+			g_Item[nCntItem].bUse = false; // 消す
+		}
 	}
 
 }
@@ -340,7 +348,7 @@ bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 			if (fDistance <= fRadius)
 			{
 				bHit = true;
-				g_Item[nCnt].bUse = false;
+				g_Item[nCnt].durability--;
 				break;
 			}
 		}

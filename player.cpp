@@ -36,7 +36,7 @@
 #define MAX_TEXPLAYER (128) // テクスチャの最大数
 #define MAX_JUMP (15.0f) // ジャンプ量
 #define MAX_MOVE (1.0f) // っプレイヤーの移動量
-#define NUM_MTX (4) // 剣の当たり判定のマトリクスの数
+#define NUM_MTX (8) // 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (8) // 着地したときに出る煙
 
 //****************************
@@ -84,7 +84,7 @@ void InitPlayer(void)
 	g_player.Motion.nKey = 0;							   // キー数
 	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;	   // モーションの種類
 	g_player.SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
-	g_player.SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
+	g_player.SwordOffpos.y = 65.0f;						   // 剣のオフセットの座標y
 	g_player.SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
 	g_player.nCounterAction = 0;						   // アクションカウント
 	g_nCounterState = 0;                                   // 状態カウンター
@@ -444,10 +444,6 @@ void UpdatePlayer(void)
 			}
 		}
 	}
-	else
-	{
-
-	}
 
 	switch (g_player.Motion.motionType)
 	{
@@ -621,29 +617,31 @@ void UpdatePlayer(void)
 		}
 	}
 
+	//SetEffect(D3DXVECTOR3(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1, 20.0f);
+
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
 	if (g_player.bDisp && !bNohand)
 	{
-		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_RIGHT_B))&&g_player.Combostate == COMBO_NO && g_AttackState <= 50)
+		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))&&g_player.Combostate == COMBO_NO && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 60, 30, COMBO_ATTACK1); // コンボ1
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_RIGHT_B)) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 60, 30, COMBO_ATTACK2); // コンボ2
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_RIGHT_B)) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 60, 30, COMBO_ATTACK3); // コンボ3
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_RIGHT_B)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 50)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 60, 30, COMBO_ATTACK4); // コンボ4
 		}
 	}
 
 	// 投げ物を持っているときの攻撃
-	if (OnMouseTriggerDown(LEFT_MOUSE) && g_player.Combostate == COMBO_NO && bNohand)
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand)
 	{
 		PlayerComb(MOTIONTYPE_ACTION, 60, 20, COMBO_ATTACK1); // コンボ1
 	}
@@ -894,7 +892,7 @@ void StickPad(void)
 
 	Camera* pCamera = GetCamera();
 
-	if (GetJoyStick() == true)
+	if (GetJoyStick() == true && g_player.state != PLAYERSTATE_ATTACK)
 	{
 		float LStickAngleY = pStick->Gamepad.sThumbLY;
 		float LStickAngleX = pStick->Gamepad.sThumbLX;
@@ -915,8 +913,16 @@ void StickPad(void)
 			g_player.move.z += moveZ * g_player.speed;
 
 			g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
-
-			g_player.Motion.motionType = MOTIONTYPE_MOVE;
+			
+			if (bUsePad)
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+			}
+			
+		}
+		else
+		{
+			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
 		}
 	}
 }
@@ -940,9 +946,9 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 		for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
 		{
 			// 剣の位置を全て求める
-			SwordPos.x = g_player.Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.25f * nCnt;
-			SwordPos.y = g_player.Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.25f * nCnt;
-			SwordPos.z = g_player.Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.25f * nCnt;
+			SwordPos.x = g_player.Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.125f * nCnt;
+			SwordPos.y = g_player.Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.125f * nCnt;
+			SwordPos.z = g_player.Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.125f * nCnt;
 
 			D3DXVECTOR3 DisPos; // 距離算出用
 
@@ -974,9 +980,9 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43);
 
 		// 円の範囲
-		if (shpererange(&ModelPos, &pEnemy->pos, 50.0f, 50.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
+		if (shpererange(&ModelPos, &pEnemy->pos, 30.0f, 50.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
 		{
-			if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.Motion.nKey >= 3)
+			if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.Motion.nKey >= 2)
 			{
 				HitEnemy(nCntEnemy, g_player.nDamage * 3); // 敵に当たった
 			}
@@ -1156,7 +1162,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	{
 		bCollision = true;
 
-		if (KeyboardTrigger(DIK_F))
+		if (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B))
 		{
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
