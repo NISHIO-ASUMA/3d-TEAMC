@@ -12,6 +12,7 @@
 #include "input.h"
 #include "fade.h"
 #include "gameui.h"
+#include "sound.h"
 
 //****************************
 //マクロ定義
@@ -113,6 +114,9 @@ void InitTitle(void)
 //============================
 void UninitTitle(void)
 {
+	// 音楽をストップ
+	StopSound();
+
 	//テクスチャの破棄
 	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
 	{
@@ -143,7 +147,11 @@ void UpdateTitle(void)
 
 			if (KeyboardTrigger(DIK_DOWN))
 			{
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SELECT_SE);
+
 				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO; // メニューチュートリアル
+
 			}
 			//SelectTitle(TITLESELECT_GAME);
 			if (g_Title[nCnt].state != TITLESTATE_FLASH)
@@ -155,6 +163,10 @@ void UpdateTitle(void)
 			{//Enterキーを押したら
 				//ゲーム画面へ
 				SetFade(MODE_GAME);
+
+				// 音楽再生
+				PlaySound(SOUND_LABEL_ENTER_SE);
+
 				g_Title[nCnt].state = TITLESTATE_FLASH;
 			}
 			FlashGameUI(TITLESELECT_GAME);
@@ -163,6 +175,9 @@ void UpdateTitle(void)
 		case TITLESELECT_TUTO:
 			if (KeyboardTrigger(DIK_UP))
 			{
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SELECT_SE);
+
 				g_Title[nCnt].TitleMenu = TITLESELECT_GAME;// メニューゲーム
 			}
 
