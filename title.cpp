@@ -32,6 +32,7 @@ void TitleMenuFlash(int nSelect); // タイトルメニューの点滅
 LPDIRECT3DTEXTURE9 g_pTextureTitle[TITLETYPE_MAX] = {}; // テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL; // 頂点バッファへのポインタ
 TITLE g_Title[NUM_TITLE];
+int g_nTitleCount;
 
 //============================
 //タイトルの初期化処理
@@ -100,6 +101,8 @@ void InitTitle(void)
 
 		pVtx += 4;
 	}
+	// グローバル変数の初期化
+	g_nTitleCount = 0;
 
 	//タイトルをセット
 	SetTitle(D3DXVECTOR3(640.0f, 450.0f, 0.0f), TITLETYPE_TITLE, 200.0f, 50.0f);
@@ -145,7 +148,7 @@ void UpdateTitle(void)
 		{
 		case TITLESELECT_GAME:
 
-			if (KeyboardTrigger(DIK_DOWN))
+			if (KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_W))
 			{
 				// 音楽再生
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -159,7 +162,7 @@ void UpdateTitle(void)
 				TitleMenuFlash(TITLESELECT_GAME); // チュートリアル点滅
 			}
 
-			if (KeyboardTrigger(DIK_RETURN))
+			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START))
 			{//Enterキーを押したら
 				//ゲーム画面へ
 				SetFade(MODE_GAME);
@@ -173,7 +176,7 @@ void UpdateTitle(void)
 
 			break;
 		case TITLESELECT_TUTO:
-			if (KeyboardTrigger(DIK_UP))
+			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_S))
 			{
 				// 音楽再生
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -187,12 +190,17 @@ void UpdateTitle(void)
 				TitleMenuFlash(TITLESELECT_TUTO); // メニューチュートリアル
 			}
 
-			if (KeyboardTrigger(DIK_RETURN))
+			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START))
 			{//Enterキーを押したら
 				//チュートリアル画面へ
 				SetFade(MODE_TUTORIAL);
+
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SELECT_SE);
+
 				g_Title[nCnt].state = TITLESTATE_FLASH; // ゲーム点滅
 			}
+
 			FlashGameUI(TITLESELECT_TUTO);
 			break;
 		default:
@@ -200,6 +208,15 @@ void UpdateTitle(void)
 		}
 
 		TitleFlash(g_Title[nCnt].state,g_Title[nCnt].TitleMenu,nCnt);
+	}
+
+	// カウンターを加算
+	g_nTitleCount++;
+
+	if (g_nTitleCount >= 600)
+	{// 10秒経過
+		// ランキング画面へ
+		SetFade(MODE_RANKING);
 	}
 }
 //============================

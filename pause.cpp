@@ -34,8 +34,6 @@ void InitPause(void)
 
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
 
-	int nCntPause;
-
 	//デバイスの習得
 	pDevice = GetDevice();
 
@@ -65,7 +63,7 @@ void InitPause(void)
 	//頂点バッファのロック
 	g_pVtxBuffPause->Lock(0, 0, (void**)&pVtx, 0);
 	
-	for (nCntPause = 0; nCntPause < NUM_PAUSE; nCntPause++)
+	for (int nCntPause = 0; nCntPause < NUM_PAUSE; nCntPause++)
 	{
 		//頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(400.0f, (100.0f + nCntPause * 200), 0.0f);
@@ -129,22 +127,22 @@ void UpdatePause(void)
 	{
 	case PAUSE_MENU_CONTINUE:
 		
-		if (KeyboardTrigger(DIK_DOWN) == true||JoypadTrigger(JOYKEY_DOWN)==true)
+		if (KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN)==true || KeyboardTrigger(DIK_S) == true)
 		{
 			g_PauseMenu = PAUSE_MENU_RETRY; // リトライ選択
 		}
-		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true)
+		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true)
 		{
 			g_PauseMenu = PAUSE_MENU_QUIT; // やめる選択
 		}
 		SelectPause(0);
 		break;
 	case PAUSE_MENU_RETRY:
-		if (KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true)
+		if (KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true || KeyboardTrigger(DIK_S) == true)
 		{
 			g_PauseMenu = PAUSE_MENU_QUIT; // やめる選択
 		}
-		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true)
+		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true)
 		{
 			g_PauseMenu = PAUSE_MENU_CONTINUE; // 続ける選択	
 		}
@@ -153,11 +151,11 @@ void UpdatePause(void)
 
 	case PAUSE_MENU_QUIT:
 		
-		if (KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true)
+		if (KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true || KeyboardTrigger(DIK_S) == true)
 		{
 			g_PauseMenu = PAUSE_MENU_CONTINUE; // 続ける選択
 		}
-		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true)
+		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true)
 		{
 			g_PauseMenu = PAUSE_MENU_RETRY; // リトライ選択
 		}

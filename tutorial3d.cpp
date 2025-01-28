@@ -127,6 +127,10 @@ void UpdateTutorial3d(void)
 	{//Enterキー or Startボタンが押された
 		//ゲーム画面へ
 		SetFade(MODE_GAME);
+
+		// 音楽再生
+		PlaySound(SOUND_LABEL_ENTER_SE);
+
 	}
 }
 //============================

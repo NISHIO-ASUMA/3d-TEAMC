@@ -20,6 +20,7 @@
 #include "Particle.h"
 #include"item.h"
 #include "HPGauge.h"
+#include "sound.h"
 
 //****************************
 //マクロ定義
@@ -189,6 +190,9 @@ void InitEnemy(void)
 //=============================
 void UninitEnemy(void)
 {
+	// 音楽を止める
+	StopSound();
+
 	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
 	{
 		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
@@ -460,6 +464,9 @@ ENEMY* GetEnemy(void)
 //=======================
 void HitEnemy(int nCnt,int nDamage)
 {
+	// アイテム取得
+	Item* pItem = GetItem();
+	Player* pPlayer = GetPlayer();
 	SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), // 位置
 		nDamage,	// ダメージ																								
 		20,			// 寿命
@@ -484,10 +491,57 @@ void HitEnemy(int nCnt,int nDamage)
 		KillShadow(g_Enemy[nCnt].nIdxShadow);  // 敵の影を消す
 		g_Enemy[nCnt].bUse = false;			   //未使用判定
 
-		g_nNumEnemy--;						   //デクリメント
+		g_nNumEnemy--;//デクリメント
+
+		switch (pItem[pPlayer->ItemIdx].nType)
+		{
+		case ITEMTYPE_BAT:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_BAT_SE);
+
+			break;
+
+		case ITEMTYPE_HUNMER:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_HAMMER_SE);
+
+			break;
+		default:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_ACTION_SE);
+
+			break;
+		}
+
 	}
 	else
 	{
+		switch (pItem[pPlayer->ItemIdx].nType)
+		{
+		case ITEMTYPE_BAT:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_BAT_SE);
+
+			break;
+
+		case ITEMTYPE_HUNMER:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_HAMMER_SE);
+
+			break;
+		default:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_ACTION_SE);
+
+			break;
+		}
+
 		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 30, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE;//敵の状態をダメージにする

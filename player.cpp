@@ -26,6 +26,7 @@
 #include "HPGauge.h"
 #include "explosion.h"
 #include "gameui.h"
+#include "sound.h"
 
 //****************************
 //マクロ定義
@@ -253,6 +254,9 @@ void InitPlayer(void)
 //============================
 void UninitPlayer(void)
 {
+	// 音楽を停止
+	StopSound();
+
 	for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
 	{
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
@@ -593,6 +597,10 @@ void UpdatePlayer(void)
 
 	if (JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE))
 	{//aボタン or Enterキーが押された
+
+		// 音楽再生
+		PlaySound(SOUND_LABEL_JUMP_SE);
+
 		if (g_player.bJump == true)
 		{
 			g_player.bJump = false;						 // ジャンプをできなくする
@@ -1077,6 +1085,9 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 	// 範囲内に入った
 	if (fDistance <= fRadius && g_player.state != PLAYERSTATE_DAMAGE)
 	{
+		// 音楽再生
+		PlaySound(SOUND_LABEL_DAMAGE_SE);
+
 		// 敵を戻す
 		pMove->x -= DisPos.x * 0.1f;
 		pMove->z -= DisPos.z * 0.1f;
@@ -1142,9 +1153,13 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 		if (KeyboardTrigger(DIK_F))
 		{
+			// 音楽再生
+			PlaySound(SOUND_LABEL_ITEM_SE);
+
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 			pItem[nIdx].bUse = false;      // 消す
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
+
 
 			switch (pItem[nIdx].nType)
 			{
