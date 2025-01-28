@@ -174,7 +174,6 @@ void DrawPlayer(void);//プレイヤーの描画処理
 Player* GetPlayer(void);//プレイヤーの取得処理
 void SetMtxPos(void);//ワールドマトリックスのオフセット設定処理
 void HitPlayer(int nDamage);//プレイヤーのヒット処理
-void StickPad(void);//パッドの移動処理
 bool CollisionItem(int nIdx, float Itemrange, float plrange);
 void HitSowrd(ENEMY* pEnemy,int nCntEnemy);
 void ThrowItem(void); // アイテムを投げる
