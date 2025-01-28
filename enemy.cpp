@@ -253,6 +253,8 @@ void UninitEnemy(void)
 //=============================
 void UpdateEnemy(void)
 {
+	Player* pPlayer = GetPlayer();
+
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		if (!g_Enemy[nCntEnemy].bUse)
@@ -305,7 +307,7 @@ void UpdateEnemy(void)
 
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f))
 		{
-			HitEnemy(nCntEnemy, 350);
+			HitEnemy(nCntEnemy, (pPlayer->nDamage * 3));
 		}
 		// 剣と敵の当たり判定
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);
@@ -474,6 +476,7 @@ void HitEnemy(int nCnt,int nDamage)
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		AddFever(20.0f);
+		AddScore(24336);
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//敵の状態を死亡状態にする
 		KillShadow(g_Enemy[nCnt].nIdxShadow);  // 敵の影を消す
@@ -490,6 +493,8 @@ void HitEnemy(int nCnt,int nDamage)
 		g_Enemy[nCnt].g_bDamage = false;//ダメージを通らなくする
 
 		g_Enemy[nCnt].nCounterState = 30;//ダメージ状態からノーマルに戻るまでの時間
+
+		AddScore(2336);
 	}
 }
 //=======================

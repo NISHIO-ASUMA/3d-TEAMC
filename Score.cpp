@@ -10,7 +10,7 @@
 //****************************
 #include"Score.h"
 #include "ranking.h"
-
+#include <stdio.h>
 //****************************
 //マクロ定義
 //****************************
@@ -93,31 +93,31 @@ void InitScore(void)
 
 	for (nCntScore = 0; nCntScore < MAX_NUM_SCORE; nCntScore++)
 	{
-			//頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(0.0f+(nCntScore*50),0.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(50.0f+(nCntScore*50),0.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f+(nCntScore*50) ,50.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(50.0f+(nCntScore*50),50.0f, 0.0f);
+		//頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(0.0f+(nCntScore*50),630.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(50.0f+(nCntScore*50),630.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f+(nCntScore*50) ,680.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(50.0f+(nCntScore*50),680.0f, 0.0f);
 	
-			//rhwの設定
-			pVtx[0].rhw = 1.0f;
-			pVtx[1].rhw = 1.0f;
-			pVtx[2].rhw = 1.0f;
-			pVtx[3].rhw = 1.0f;
+		//rhwの設定
+		pVtx[0].rhw = 1.0f;
+		pVtx[1].rhw = 1.0f;
+		pVtx[2].rhw = 1.0f;
+		pVtx[3].rhw = 1.0f;
 	
-			//頂点カラーの設定
-			pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-			pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		//頂点カラーの設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 	
-			//テクスチャの設定
-			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(0.1f, 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-			pVtx[3].tex = D3DXVECTOR2(0.1f, 1.0f);
+		//テクスチャの設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(0.1f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(0.1f, 1.0f);
 
-			pVtx += 4;
+		pVtx += 4;
 	}	
 	g_pVtxBuffScore->Unlock();
 }
@@ -285,4 +285,30 @@ void AddScore(int nValue)
 int GetScore(void)
 {
 	return g_nScore;
+}
+//=================
+//スコアの保存処理
+//=================
+void SaveScore(void)
+{
+	// ファイルポインタを宣言
+	FILE* pFile;
+
+	// ファイルを開く
+	pFile = fopen("data/LastScore.txt", "w");
+
+	if (pFile != NULL)
+	{// ファイルが開けたら
+		// 書き出す
+		fprintf(pFile,"%d",g_nScore);
+	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(Score.cpp)", MB_OK);
+		return;
+	}
+
+	// ファイルを閉じる
+	fclose(pFile);
 }

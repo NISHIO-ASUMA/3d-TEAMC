@@ -30,7 +30,7 @@
 //マクロ定義
 //****************************
 #define MAX_WORD (256) // 最大文字数
-#define PLAYERLIFE (50) // プレイヤーの体力
+#define PLAYERLIFE (1000) // プレイヤーの体力
 #define MAX_TEXPLAYER (128) // テクスチャの最大数
 #define MAX_JUMP (15.0f) // ジャンプ量
 #define MAX_MOVE (1.0f) // っプレイヤーの移動量
@@ -87,6 +87,7 @@ void InitPlayer(void)
 	g_AttackState = 0;									   // 攻撃状態のカウンター
 	bNohand = false;									   // 物を投げたか投げてないか
 	g_player.speed = 1.0f;								   // 足の速さ
+	g_player.nDamage = 100;								   // 攻撃力
 
 	//LoadWepon(); // アイテムのロード
 
@@ -122,6 +123,7 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].state = PLAYERSTATE_NORMAL;
 		g_LoadPlayer[nCntPlayer].Combostate = COMBO_ATTACK1;
 		g_LoadPlayer[nCntPlayer].speed = 1.0f;
+		g_LoadPlayer[nCntPlayer].nDamage = 100;
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
@@ -653,14 +655,17 @@ void UpdatePlayer(void)
 		g_player.rot.y -= D3DX_PI * 2.0f;
 	}
 
+	// フォーバーモード
 	if (GetFeverMode())
 	{
 		g_player.speed = 2.0f;
 		g_player.Motion.nCountMotion++;
+		g_player.nDamage = 200; // ダメージアップ
 	}
 	else
 	{
 		g_player.speed = 1.0f;
+		g_player.nDamage = 100;
 	}
 	//SetEffect(SwordPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 10.0f, 10.0f);
 
@@ -836,10 +841,11 @@ void HitPlayer(int nDamage)
 	if (g_player.nLife <= 0)
 	{
 		g_player.state = PLAYERSTATE_FALL;
+		g_player.bDisp = false;
 	}
 	else
 	{
-		g_player.nCounterState = 60;
+		g_nCounterState = 30;
 		g_player.state = PLAYERSTATE_DAMAGE;
 	}
 }
@@ -890,42 +896,59 @@ void StickPad(void)
 //================================
 void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 {
+	Player* pPlayer = GetPlayer();
+
 	D3DXVECTOR3 mtxDis,SwordPos;
 
-	//剣の長さを求める
-	mtxDis.x = (g_player.SwordMtx._41 - g_player.Motion.aModel[15].mtxWorld._41);
-	mtxDis.y = (g_player.SwordMtx._42 - g_player.Motion.aModel[15].mtxWorld._42);
-	mtxDis.z = (g_player.SwordMtx._43 - g_player.Motion.aModel[15].mtxWorld._43);
-
-	// マトリクスの数分だけ回す
-	for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
+	if (g_player.Motion.nNumModel == 16)
 	{
-		// 剣の位置を全て求める
-		SwordPos.x = g_player.Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.25f * nCnt;
-		SwordPos.y = g_player.Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.25f * nCnt;
-		SwordPos.z = g_player.Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.25f * nCnt;
+		//剣の長さを求める
+		mtxDis.x = (g_player.SwordMtx._41 - g_player.Motion.aModel[15].mtxWorld._41);
+		mtxDis.y = (g_player.SwordMtx._42 - g_player.Motion.aModel[15].mtxWorld._42);
+		mtxDis.z = (g_player.SwordMtx._43 - g_player.Motion.aModel[15].mtxWorld._43);
 
-		D3DXVECTOR3 DisPos; // 距離算出用
-
-		DisPos.x = pEnemy->pos.x - SwordPos.x; // 距離Xを求める
-		DisPos.y = pEnemy->pos.y - SwordPos.y; // 距離Yを求める
-		DisPos.z = pEnemy->pos.z - SwordPos.z; // 距離Zを求める
-
-		float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z); // 距離を求める
-
-		float Radius1, Radius2; // 半径
-
-		Radius1 = 15.0f;
-		Radius2 = 50.0f;
-
-		float fRadius = Radius1 + Radius2; // 半径を求める
-
-		fRadius = (fRadius * fRadius); // 半径を求める
-
-		if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.state==PLAYERSTATE_ATTACK)
+		// マトリクスの数分だけ回す
+		for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
 		{
-			HitEnemy(nCntEnemy, 500);
-			break;
+			// 剣の位置を全て求める
+			SwordPos.x = g_player.Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.25f * nCnt;
+			SwordPos.y = g_player.Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.25f * nCnt;
+			SwordPos.z = g_player.Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.25f * nCnt;
+
+			D3DXVECTOR3 DisPos; // 距離算出用
+
+			DisPos.x = pEnemy->pos.x - SwordPos.x; // 距離Xを求める
+			DisPos.y = pEnemy->pos.y - SwordPos.y; // 距離Yを求める
+			DisPos.z = pEnemy->pos.z - SwordPos.z; // 距離Zを求める
+
+			float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z); // 距離を求める
+
+			float Radius1, Radius2; // 半径
+
+			Radius1 = 15.0f;
+			Radius2 = 50.0f;
+
+			float fRadius = Radius1 + Radius2; // 半径を求める
+
+			fRadius = (fRadius * fRadius); // 半径を求める
+
+			if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.state == PLAYERSTATE_ATTACK)
+			{
+				HitEnemy(nCntEnemy, (pPlayer->nDamage * 5));
+				break;
+			}
+		}
+	}
+	else if(g_player.Motion.nNumModel < 16)
+	{
+		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43);
+
+		if (shpererange(&ModelPos, &pEnemy->pos, 15.0f, 50.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
+		{
+			if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.Motion.nKey >= 3)
+			{
+				HitEnemy(nCntEnemy, g_player.nDamage * 3);
+			}
 		}
 	}
 }
@@ -981,7 +1004,6 @@ void ThrowItem(void)
 			}
 		}
 	}
-
 	D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - pItem[nIdx].pos; // 近い敵の方向を求める
 	D3DXVec3Normalize(&dest, &dest); // 正規化する
 
@@ -1035,11 +1057,12 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 	fRadius = fRadius * fRadius;
 
 	// 範囲内に入った
-	if (fDistance <= fRadius)
+	if (fDistance <= fRadius && g_player.state != PLAYERSTATE_DAMAGE)
 	{
 		// 敵を戻す
 		pMove->x -= DisPos.x * 0.1f;
 		pMove->z -= DisPos.z * 0.1f;
+		HitPlayer(50);
 	}
 }
 //================================
@@ -1047,9 +1070,29 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 //================================
 bool shpererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float radius2) // 円の当たり判定
 {
+	bool bRange = false;
+
 	D3DXVECTOR3 DisPos; // 計算用
 
-	return false;
+	// 距離XYZを求める
+	DisPos.x = pPos1->x - pPos2->x;
+	DisPos.y = pPos1->y - pPos2->y;
+	DisPos.z = pPos1->z - pPos2->z;
+
+	// 距離を求める
+	float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z);
+
+	// 半径を求める
+	float fRadius = radius1 + radius2;
+
+	// 半径を求める
+	fRadius = fRadius * fRadius;
+
+	if (fDistance <= fRadius)
+	{
+		bRange = true;
+	}
+	return bRange;
 }
 
 //================================

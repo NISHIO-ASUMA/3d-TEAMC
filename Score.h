@@ -23,4 +23,6 @@ void DrawScore(void);//スコアの描画処理
 void SetScore(int nScore);//スコアの設定処理
 void AddScore(int nValue);//スコアの加算処理
 int GetScore(void);//スコアの取得処理
+void SaveScore(void); // スコア保存処理
+
 #endif

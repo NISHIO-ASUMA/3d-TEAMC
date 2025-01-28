@@ -15,6 +15,7 @@
 #include "camera.h"
 #include "resultscore.h"
 #include "sound.h"
+#include "player.h"
 
 //****************************
 //ƒOƒ[ƒoƒ‹•Ï”

@@ -32,6 +32,7 @@
 #include "sound.h"
 #include "explosion.h"
 #include "Timer.h"
+#include "Score.h"
 
 //****************************
 //グローバル変数
@@ -75,6 +76,9 @@ void InitGame(void)
 
 	// ダメージの初期化処理
 	InitDamege();
+
+	// スコアの初期化処理
+	InitScore();
 
 	//敵の初期化処理
 	InitEnemy();
@@ -128,6 +132,9 @@ void UninitGame(void)
 	// 音楽を停止
 	StopSound();
 
+	// ゲームのスコアを保存
+	SaveScore();
+
 	//カメラの終了処理
 	UninitCamera();
 
@@ -161,6 +168,9 @@ void UninitGame(void)
 	// タイマーの終了
 	UninitTimer();
 
+	// スコアの終了処理
+	UninitScore();
+
 	//敵の終了処理
 	UninitEnemy();
 
@@ -184,6 +194,9 @@ void UninitGame(void)
 //=======================
 void UpdateGame(void)
 {
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
+
 	// 敵の取得
 	int nNumEnemy = GetNumEnemy();
 
@@ -199,6 +212,11 @@ void UpdateGame(void)
 
 	if (nNumEnemy <= 0 || nTime <= 0)
 	{// 敵が全滅 or タイマーが0秒以下
+		g_gameState = GAMESTATE_END;
+	}
+
+	if (!pPlayer->bDisp)
+	{
 		g_gameState = GAMESTATE_END;
 	}
 
@@ -222,7 +240,7 @@ void UpdateGame(void)
 			ResetRanking();
 
 			//ランキングのセット
-			SetRanking(0);
+			SetRanking(GetScore());
 		}
 		break;
 	}
@@ -285,6 +303,9 @@ void UpdateGame(void)
 
 			// パーティクルの更新処理
 			UpdateParticle();
+
+			// スコアの更新処理
+			UpdateScore();
 
 			//敵の更新処理
 			UpdateEnemy();
@@ -363,6 +384,9 @@ void DrawGame(void)
 
 	// ダメージの描画処理
 	DrawDamege();
+
+	// スコアの描画処理
+	DrawScore();
 
     //プレイヤーの影の描画処理
     DrawShadow();
