@@ -16,6 +16,7 @@
 #include "resultscore.h"
 #include "sound.h"
 #include "player.h"
+#include "Timer.h"
 
 //****************************
 //グローバル変数
@@ -35,9 +36,21 @@ void InitResult(void)
 
 	VERTEX_2D* pVtx;
 
+	// テクスチャのパスを保存
+	const char* Texturename = {};
+
+	if (GetPlayer()->bDisp || GetTimer() <= 0)
+	{
+		Texturename = "data/TEXTURE/result.png";
+	}
+	else if (GetPlayer()->bDisp == false)
+	{
+		Texturename = "data/TEXTURE/result1.jpg";
+	}
+
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\result.png",
+		Texturename,
 		&g_pTextureResult);
 
 	//頂点バッファの生成・頂点情報の設定
