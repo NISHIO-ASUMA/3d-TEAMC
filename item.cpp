@@ -14,6 +14,7 @@
 #include "item.h"
 #include "block.h"
 #include "player.h"
+#include "explosion.h"
 
 //****************************
 //マクロ定義
@@ -200,11 +201,11 @@ void UpdateItem(void)
 		//位置の更新
 		g_Item[nCntItem].pos += g_Item[nCntItem].move;
 
-		if (CollisionBlock(&g_Item[nCntItem].pos, &g_Item[nCntItem].posOld, &g_Item[nCntItem].move, &g_Item[nCntItem].Size) && g_Item[nCntItem].state == ITEMSTATE_THROW)
+		if (CollisionBlockItem(&g_Item[nCntItem].pos, &g_Item[nCntItem].posOld, &g_Item[nCntItem].move, &g_Item[nCntItem].Size))
 		{
 			g_Item[nCntItem].bUse = false;
+			SetExplosion(g_Item[nCntItem].pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), 60, 30.0f, 30.0f, EXPLOSION_HIT);
 		}
-
 		CollisionItem(nCntItem,// アイテムのインデックスを渡す
 			20.0f, // アイテムの半径
 			20.0f); // プレイヤーの半径

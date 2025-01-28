@@ -673,7 +673,8 @@ void UpdatePlayer(void)
 
 	if (GetFeverMode()&& FiverCnt == 0)
 	{
-		SetGameUI(D3DXVECTOR3(640.0f, 560.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
+		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, 0);
+		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
 		FiverCnt = 1;
 	}
 	else if (!GetFeverMode())
@@ -955,13 +956,15 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 	}
 	else if(g_player.Motion.nNumModel < 16)
 	{
+		// モデルの位置を変数に代入
 		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43);
 
-		if (shpererange(&ModelPos, &pEnemy->pos, 15.0f, 50.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
+		// 円の範囲
+		if (shpererange(&ModelPos, &pEnemy->pos, 50.0f, 50.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
 		{
 			if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.Motion.nKey >= 3)
 			{
-				HitEnemy(nCntEnemy, g_player.nDamage * 3);
+				HitEnemy(nCntEnemy, g_player.nDamage * 3); // 敵に当たった
 			}
 		}
 	}
@@ -1146,90 +1149,119 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			{
 			case ITEMTYPE_BAT:
 				MotionChange(MOTION_DBHAND,0); // アイテムにあったモーションタイプを入れる(素手の場合は引数2に1を入れる)
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_GOLF:
 				MotionChange(MOTION_DBHAND,0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_HUNMER:
 				MotionChange(MOTION_BIGWEPON,0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_STONE:
 				MotionChange(MOTION_BIGWEPON, 1);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_WOOD:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_STONEBAT:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_LIGHT:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_LIGHTWOOD:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_HARISEN:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_ICEBLOCK:
 				MotionChange(MOTION_DBHAND, 1);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_ICEBLOCKSOWRD:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_IRON:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_IRONBAT:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_SURFBOARD:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_TORCH:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_TORCHSWORD:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_HEADSTATUE:
 				MotionChange(MOTION_BIGWEPON, 1);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_HEADSTATUTORSO:
 				MotionChange(MOTION_BIGWEPON, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_MEGAPHONE:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_RUBBERCUP:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_TELEPHONEPOLE:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 150.0f;
 				break;
 			case ITEMTYPE_TORSO:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE:
 				MotionChange(MOTION_DBHAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_BONESPEAR:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_FISH:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_HEX:
 				MotionChange(MOTION_DBHAND, 1);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_HEXMANDOLIN:
 				MotionChange(MOTION_ONE_HAND, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_SURFBOARDFISH:
 				MotionChange(MOTION_BIGWEPON, 0);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_TUTORIAL:
 				MotionChange(MOTION_DBHAND, 1);
+				g_player.SwordOffpos.y = 85.0f;
 				break;
 			default:
 				break;

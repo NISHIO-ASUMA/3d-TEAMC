@@ -26,6 +26,7 @@ void UIFlash(int nType);
 LPDIRECT3DTEXTURE9 g_pTextureGameUI[UITYPE_MAX] = {};//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGameUI = NULL;//頂点バッファへのポインタ
 Gameui g_GameUI[UITYPE_MAX];
+int g_nPatternAnim, g_nCounterAnim;
 
 //============================
 // UIの初期化処理
@@ -58,6 +59,9 @@ void InitGameUI(void)
 
 	//頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	g_nPatternAnim = 0;
+	g_nCounterAnim = 0;
 
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
 	{
@@ -93,6 +97,13 @@ void InitGameUI(void)
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
+		if (g_GameUI[nCnt].nType == UITYPE_SYUTYUSEN)
+		{
+			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.5f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.0f, 0.5f);
+			pVtx[3].tex = D3DXVECTOR2(0.5f, 0.5f);
+		}
 		pVtx += 4;
 	}
 	//頂点ロック解除
@@ -155,7 +166,7 @@ void UpdateGameUI(void)
 			{
 				g_GameUI[nCnt].pos.y -= 2.0f; // 下に下げる
 				
-				if (g_GameUI[nCnt].pos.y < 540.0f)
+				if (g_GameUI[nCnt].pos.y < 630.0f)
 				{
 					bUp = false; // 下に下げる
 				}
@@ -164,7 +175,7 @@ void UpdateGameUI(void)
 			{
 				g_GameUI[nCnt].pos.y += 2.0f;
 
-				if (g_GameUI[nCnt].pos.y > 560.0f)
+				if (g_GameUI[nCnt].pos.y > 650.0f)
 				{
 					bUp = true; // 上に上げる
 				}
@@ -175,6 +186,40 @@ void UpdateGameUI(void)
 				g_GameUI[nCnt].bUse = false;
 			}
 		}
+			break;
+		case UITYPE_SYUTYUSEN:
+			g_nCounterAnim++;
+
+			if (g_nCounterAnim > 2)
+			{
+				g_nCounterAnim = 0;
+
+				g_nPatternAnim++;//パターンナンバーを更新
+
+			}
+
+			//頂点カラーの設定
+			pVtx[0].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+			pVtx[1].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+			pVtx[2].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+			pVtx[3].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+
+			//頂点座標の更新
+			pVtx[0].tex = D3DXVECTOR2(0.0f + g_nPatternAnim * 0.5f, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.5f + g_nPatternAnim * 0.5f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.0f + g_nPatternAnim * 0.5f, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.5f + g_nPatternAnim * 0.5f, 1.0f);
+
+			if (g_nPatternAnim > 2)
+			{
+				g_nPatternAnim = 0;
+			}
+		
+			if (!GetFeverMode())
+			{
+				g_GameUI[nCnt].bUse = false;
+			}
+
 			break;
 		default:
 			break;
