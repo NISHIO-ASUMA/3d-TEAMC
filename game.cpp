@@ -33,6 +33,7 @@
 #include "explosion.h"
 #include "Timer.h"
 #include "Score.h"
+#include "gameui.h"
 
 //****************************
 //グローバル変数
@@ -53,6 +54,9 @@ void InitGame(void)
 
 	//ライトの初期化処理
 	InitLight();
+
+	// ゲームのUIの初期化
+	InitGameUI();
 
 	//影の初期化処理
 	InitShadow();
@@ -144,6 +148,9 @@ void UninitGame(void)
 
 	//ライトの終了処理
 	UninitLight();
+
+	// ゲームのUIの終了処理
+	UninitGameUI();
 
 	//影の終了処理
 	UninitShadow();
@@ -318,6 +325,9 @@ void UpdateGame(void)
 			// パーティクルの更新処理
 			UpdateParticle();
 
+			// ゲームのUIの更新処理
+			UpdateGameUI();
+
 			// スコアの更新処理
 			UpdateScore();
 
@@ -405,6 +415,8 @@ void DrawGame(void)
     //プレイヤーの影の描画処理
     DrawShadow();
 
+	// ゲームのUIの描画処理
+	DrawGameUI();
 
 	if (g_bEditMode)
 	{

@@ -9,6 +9,7 @@
 //インクルードファイル
 //****************************
 #include "gameui.h"
+#include "HPGauge.h"
 
 //****************************
 //マクロ定義
@@ -144,16 +145,41 @@ void UpdateGameUI(void)
 			{
 				g_GameUI[nCnt].pos.y += 5.0f; // 下に移動
 			}
+			break;
+		case UITYPE_FIVER:
 
-			//頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
+			if (g_GameUI[nCnt].fWidth >= 200.0f)
+			{
+
+			}
+			else
+			{
+				g_GameUI[nCnt].fWidth += 2.0f;
+			}
+
+			if (g_GameUI[nCnt].fHeight >= 80.0f)
+			{
+
+			}
+			else
+			{
+				g_GameUI[nCnt].fHeight += 0.6f;
+			}
+
+			if (!GetFeverMode())
+			{
+				g_GameUI[nCnt].bUse = false;
+			}
 			break;
 		default:
 			break;
 		}
+
+		//頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
 
 		pVtx += 4;
 	}

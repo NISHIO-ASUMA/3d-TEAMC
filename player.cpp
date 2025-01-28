@@ -25,6 +25,7 @@
 #include "Particle.h"
 #include "HPGauge.h"
 #include "explosion.h"
+#include "gameui.h"
 
 //****************************
 //É}ÉNÉçíËã`
@@ -666,6 +667,18 @@ void UpdatePlayer(void)
 	{
 		g_player.speed = 1.0f;
 		g_player.nDamage = 100;
+	}
+
+	static int FiverCnt = 0;
+
+	if (GetFeverMode()&& FiverCnt == 0)
+	{
+		SetGameUI(D3DXVECTOR3(640.0f, 560.0f, 0.0f), UITYPE_FIVER, 100.0f, 50.0f, 0);
+		FiverCnt = 1;
+	}
+	else if (!GetFeverMode())
+	{
+		FiverCnt = 0;
 	}
 	//SetEffect(SwordPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 10.0f, 10.0f);
 
