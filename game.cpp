@@ -18,7 +18,7 @@
 #include "RankingScore.h"
 #include "damagepop.h"
 #include "time.h"
-#include"pause.h"
+#include "pause.h"
 #include "meshfield.h"
 #include "player.h"
 #include "enemy.h"
@@ -31,10 +31,7 @@
 #include "Particle.h"
 #include "sound.h"
 #include "explosion.h"
-
-//****************************
-//マクロ定義
-//****************************
+#include "Timer.h"
 
 //****************************
 //グローバル変数
@@ -93,6 +90,9 @@ void InitGame(void)
 
 	//HPゲージの初期化処理
 	InitGauge();
+
+	// タイマーの初期化
+	InitTimer();
 
 	//エディットの初期化処理
 	InitEdit();
@@ -157,6 +157,9 @@ void UninitGame(void)
 
 	// ダメージの終了処理
 	UninitDamege();
+	
+	// タイマーの終了
+	UninitTimer();
 
 	//敵の終了処理
 	UninitEnemy();
@@ -181,7 +184,11 @@ void UninitGame(void)
 //=======================
 void UpdateGame(void)
 {
+	// 敵の取得
 	int nNumEnemy = GetNumEnemy();
+
+	// タイマーの取得
+	int nTime = GetTimer();
 
 	// TODO : 敵が全滅したらゲーム終了
 
@@ -190,8 +197,8 @@ void UpdateGame(void)
 		SetEnemy(D3DXVECTOR3((float)(rand() % 500 - 100), 0.0f, (float)(rand() % 500 - 100)),rand()%ENEMYTYPE_MAX,rand()%3 + 1,(float)(rand()%2 + 0.7f));
 	}
 
-	if (nNumEnemy <= 0)
-	{
+	if (nNumEnemy <= 0 || nTime <= 0)
+	{// 敵が全滅 or タイマーが0秒以下
 		g_gameState = GAMESTATE_END;
 	}
 
@@ -291,6 +298,9 @@ void UpdateGame(void)
 			//HPゲージの更新処理
 			UpdateGauge();
 
+			// タイマーの更新処理
+			UpdateTimer();
+
 			//壁の更新処理
 			UpdateWall();
 		}
@@ -344,6 +354,9 @@ void DrawGame(void)
 
 	//HPゲージの描写処理
     DrawGauge();
+
+	// タイマーの描画処理
+	DrawTimer();
 
 	// 煙の描画処理
 	DrawExplosion();

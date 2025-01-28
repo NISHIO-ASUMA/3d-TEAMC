@@ -171,6 +171,7 @@
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="sound.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="title3d.cpp" />
     <ClCompile Include="tutorial3d.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="Score.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="sound.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="title3d.h" />
     <ClInclude Include="tutorial3d.h" />
