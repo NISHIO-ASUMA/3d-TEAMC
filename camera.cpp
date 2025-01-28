@@ -111,6 +111,14 @@ void UpdateCamera(void)
 
 	if (mode == MODE_TITLE)
 	{
+		g_camera[MAIN].posV.z = -1500.0f;
+		g_camera[MAIN].posV.y = 1500.0f;
+		
+		g_camera[MAIN].rot.y += 0.005f;		// カメラの視点の情報
+
+		g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * 1800.0f;
+		g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * 1800.0f;
+		g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * 1800.0f;
 
 	}
 		// ゲームの時のカメラの更新

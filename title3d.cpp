@@ -20,6 +20,7 @@
 #include "sound.h"
 #include "mouse.h"
 #include "block.h"
+#include "HPGauge.h"
 
 //****************************
 //グローバル宣言
@@ -47,6 +48,9 @@ void InitTitle3d(void)
 	//タイトルの初期化処理
 	InitTitle();
 
+	// ゲージの初期化処理
+	InitGauge();
+
 	//ゲームUIの初期化処理
 	InitGameUI();
 
@@ -72,6 +76,9 @@ void UninitTitle3d(void)
 
 	//カメラの終了処理
 	UninitCamera();
+
+	// ゲージの終了処理
+	UninitGauge();
 
 	//ライトの終了処理
 	UninitLight();
