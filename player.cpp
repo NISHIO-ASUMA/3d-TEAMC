@@ -924,7 +924,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 
 		if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.state==PLAYERSTATE_ATTACK)
 		{
-			HitEnemy(nCntEnemy, 1);
+			HitEnemy(nCntEnemy, 500);
 			break;
 		}
 	}
@@ -1041,6 +1041,15 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 		pMove->x -= DisPos.x * 0.1f;
 		pMove->z -= DisPos.z * 0.1f;
 	}
+}
+//================================
+// ‰~‚Ì”»’è
+//================================
+bool shpererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float radius2) // ‰~‚Ì“–‚½‚è”»’è
+{
+	D3DXVECTOR3 DisPos; // ŒvŽZ—p
+
+	return false;
 }
 
 //================================

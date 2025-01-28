@@ -305,7 +305,7 @@ void UpdateEnemy(void)
 
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f))
 		{
-			HitEnemy(nCntEnemy, 1);
+			HitEnemy(nCntEnemy, 350);
 		}
 		// Œ•‚Æ“G‚Ì“–‚½‚è”»’è
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);
