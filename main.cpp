@@ -25,13 +25,15 @@
 #include "mouse.h"
 #include "edit.h"
 #include "sound.h"
+#include "player.h"
 
 //*****************************
 // プロトタイプ宣言
 //*****************************
 void DrawMode(void); // 現在の画面の表示
 void DrawOperation(void); // 操作方法
-void DrawEditMode(void);
+void DrawEditMode(void);  // 編集モーど
+void DrawPlayerInfo(void); // プレイヤーの情報
 
 //*****************************
 // グローバル変数宣言
@@ -558,6 +560,9 @@ void Draw(void)
 
 				//操作方法
 				DrawOperation();
+
+				// プレイヤーの情報
+				DrawPlayerInfo();
 			}
 			else if (GetEditState())
 			{
@@ -918,4 +923,18 @@ void DrawEditMode(void)
 	g_pFont->DrawText(NULL, &aStrCategory[0], -1, &rectCategory, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrCamera[0], -1, &rectCamera, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrpMove[0], -1, &rectpMove, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+}
+//===========================
+// プレイヤーの情報
+//===========================
+void DrawPlayerInfo(void)
+{
+	Player* pPlayer = GetPlayer();
+
+	RECT rectPos = { 0, 160, SCREEN_WIDTH, SCREEN_HEIGHT };
+	char aStrPos[256];
+	sprintf(&aStrPos[0], "プレイヤーの位置X:[ %3.2f ] Y:[ %3.2f ] Z:[ %3.2f ]\n", pPlayer->pos.x,pPlayer->pos.y,pPlayer->pos.z);
+
+	g_pFont->DrawText(NULL, &aStrPos[0], -1, &rectPos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+
 }

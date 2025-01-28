@@ -842,6 +842,7 @@ void HitPlayer(int nDamage)
 	{
 		g_player.state = PLAYERSTATE_FALL;
 		g_player.bDisp = false;
+		KillShadow(g_player.nIdxShadow); // ‰e‚ğÁ‚·
 	}
 	else
 	{

@@ -41,6 +41,7 @@ GAMESTATE g_gameState = GAMESTATE_NONE;//ゲームの状態
 int g_nCounterGameState = 0;//状態管理カウンター
 bool g_bPause = false;//ポーズ中かどうか
 bool g_bEditMode = false; // エディットモードかどうか
+int g_EnemyWaveTime;
 
 //=======================
 //ゲーム画面の初期化処理
@@ -104,22 +105,25 @@ void InitGame(void)
 	//エディットのロード処理
 	LoadEdit();
 
-	SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 0.0f), ENEMYTYPE_ONE, 1000,1.0f);
-	SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_TWO, 1000, 1.0f);
-	SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 280.0f), ENEMYTYPE_THREE, 1000, 1.0f);
-	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 1000,1.0f);
-	SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 1000,1.0f);
+	WaveEnemy(); // 敵を出す処理
 
-	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
-	SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
-	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1000.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
-	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1000.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(5.0f, 1.0f, 1.0f));
+	//SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 0.0f), ENEMYTYPE_ONE, 1000,1.0f);
+	//SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_TWO, 1000, 1.0f);
+	//SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 280.0f), ENEMYTYPE_THREE, 1000, 1.0f);
+	//SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 1000,1.0f);
+	//SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 1000,1.0f);
+
+	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1000.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1000.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 
 	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
 	g_nCounterGameState = 0;
 
 	g_bPause = false;//ポーズ解除
 	g_bEditMode = false;//エディットモード解除
+	g_EnemyWaveTime = 1790; // 敵が出てくる時間
 
 	// 音楽を再生
 	PlaySound(SOUND_LABEL_GAME_BGM);
@@ -194,6 +198,8 @@ void UninitGame(void)
 //=======================
 void UpdateGame(void)
 {
+	g_EnemyWaveTime++;
+
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
@@ -205,9 +211,14 @@ void UpdateGame(void)
 
 	// TODO : 敵が全滅したらゲーム終了
 
-	if (KeyboardTrigger(DIK_O))
+	// 敵が出てくるまでの時間
+	if (g_EnemyWaveTime >= 1800)
 	{
-		SetEnemy(D3DXVECTOR3((float)(rand() % 500 - 100), 0.0f, (float)(rand() % 500 - 100)),rand()%ENEMYTYPE_MAX,rand()%3 + 1,(float)(rand()%2 + 0.7f));
+		// 敵を出す処理
+		WaveEnemy();
+
+		// タイムを初期化する
+		g_EnemyWaveTime = 0;
 	}
 
 	if (nNumEnemy <= 0 || nTime <= 0)
@@ -292,8 +303,11 @@ void UpdateGame(void)
 			// 煙の更新処理
 			UpdateExplosion();
 
-			//プレイヤーの更新処理
-			UpdatePlayer();
+			if (pPlayer->bDisp)
+			{
+				//プレイヤーの更新処理
+				UpdatePlayer();
+			}
 
 			// ダメージの更新処理
 			UpdateDamege();

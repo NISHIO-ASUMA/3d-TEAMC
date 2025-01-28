@@ -33,6 +33,7 @@
 #define MAX_ENEMYMOVE (1.0f) // 敵の移動量
 #define SHADOWSIZEOFFSET (20.0f) // 影のサイズのオフセット
 #define SHADOW_A (1.0f) // 影のアルファ
+#define WAVE_ENEMY (10) // 敵の出現数
 
 //****************************
 //プロトタイプ宣言
@@ -305,6 +306,7 @@ void UpdateEnemy(void)
 
 		}
 
+		//アイテムが当たったか
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f))
 		{
 			HitEnemy(nCntEnemy, (pPlayer->nDamage * 3));
@@ -316,9 +318,9 @@ void UpdateEnemy(void)
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 
 
-		if (AgentRange(50.0f, 200.0f, nCntEnemy))
+		if (AgentRange(50.0f, 20000.0f, nCntEnemy))
 		{
-			AgentEnemy(nCntEnemy);
+			//AgentEnemy(nCntEnemy);
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
 		}
 		else
@@ -476,7 +478,7 @@ void HitEnemy(int nCnt,int nDamage)
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		AddFever(20.0f);
-		AddScore(24336);
+		AddScore(810);
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//敵の状態を死亡状態にする
 		KillShadow(g_Enemy[nCnt].nIdxShadow);  // 敵の影を消す
@@ -494,7 +496,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 		g_Enemy[nCnt].nCounterState = 30;//ダメージ状態からノーマルに戻るまでの時間
 
-		AddScore(2336);
+		AddScore(430);
 	}
 }
 //=======================
@@ -528,7 +530,13 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 //=======================
 void WaveEnemy(void)
 {
-	SetEnemy(D3DXVECTOR3((float)(rand() % 500 - 100), 0.0f, (float)(rand() % 500 - 100)), ENEMYTYPE_ONE, 1, 1.0f);
+	for (int nCnt = 0; nCnt < WAVE_ENEMY; nCnt++)
+	{
+		SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.0f));
+		SetEnemy(D3DXVECTOR3(-500.0f, 0.0f, -700.0f), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.0f));
+		SetEnemy(D3DXVECTOR3(780.0f, 0.0f, 780.0f), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.0f));
+		SetEnemy(D3DXVECTOR3(-530.0f, 0.0f, 780.0f), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.0f));
+	}
 }
 //=======================
 //敵の総数取得処理
