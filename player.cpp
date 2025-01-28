@@ -66,26 +66,27 @@ void InitPlayer(void)
 	MODE mode = GetMode();//現在のモードを取得
 
 	//プレイヤーの初期化
-	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);		   //座標
-	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		   //角度
-	g_player.rotDestPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//目的の角度
-	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		   //移動量
-	g_player.bJump = false;								   //ジャンプ中か否か
-	g_player.bDisp = true;								   //使用状態
-	g_player.bMove = false;								   //
-	g_player.nLife = PLAYERLIFE;						   //体力
-	g_player.state = PLAYERSTATE_NORMAL;				   //状態
-	g_player.Motion.bLoopMotion = true;					   //
-	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	   //剣の角度
-	g_player.Motion.nKey = 0;							   //キー数
-	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;	   //モーションの種類
-	g_player.SwordOffpos.x = 0.0f;						   //剣のオフセットの座標x
-	g_player.SwordOffpos.y = 85.0f;						   //剣のオフセットの座標y
-	g_player.SwordOffpos.z = 0.0f;						   //剣のオフセットの座標z
-	g_player.nCounterAction = 0;						   //アクションカウント
-	g_nCounterState = 0;                                   //状態カウンター
-	g_AttackState = 0;									   //攻撃状態のカウンター
-	bNohand = false;									   //物を投げたか投げてないか
+	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);		   // 座標
+	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		   // 角度
+	g_player.rotDestPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 目的の角度
+	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		   // 移動量
+	g_player.bJump = false;								   // ジャンプ中か否か
+	g_player.bDisp = true;								   // 使用状態
+	g_player.bMove = false;								   // 
+	g_player.nLife = PLAYERLIFE;						   // 体力
+	g_player.state = PLAYERSTATE_NORMAL;				   // 状態
+	g_player.Motion.bLoopMotion = true;					   // 
+	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	   // 剣の角度
+	g_player.Motion.nKey = 0;							   // キー数
+	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;	   // モーションの種類
+	g_player.SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
+	g_player.SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
+	g_player.SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
+	g_player.nCounterAction = 0;						   // アクションカウント
+	g_nCounterState = 0;                                   // 状態カウンター
+	g_AttackState = 0;									   // 攻撃状態のカウンター
+	bNohand = false;									   // 物を投げたか投げてないか
+	g_player.speed = 1.0f;								   // 足の速さ
 
 	//LoadWepon(); // アイテムのロード
 
@@ -120,6 +121,7 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].HandState = PLAYERHOLD_NO;
 		g_LoadPlayer[nCntPlayer].state = PLAYERSTATE_NORMAL;
 		g_LoadPlayer[nCntPlayer].Combostate = COMBO_ATTACK1;
+		g_LoadPlayer[nCntPlayer].speed = 1.0f;
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
@@ -341,8 +343,8 @@ void UpdatePlayer(void)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 	
-			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * MAX_MOVE;
-			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * MAX_MOVE;
+			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
 
 			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
 		}
@@ -351,8 +353,8 @@ void UpdatePlayer(void)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * MAX_MOVE;
-			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * MAX_MOVE;
+			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
 
 			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.25f;
 		}
@@ -361,8 +363,8 @@ void UpdatePlayer(void)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.move.z += sinf(pCamera->rot.y) * MAX_MOVE;
-			g_player.move.x -= cosf(pCamera->rot.y) * MAX_MOVE;
+			g_player.move.z += sinf(pCamera->rot.y) * g_player.speed;
+			g_player.move.x -= cosf(pCamera->rot.y) * g_player.speed;
 
 			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.5f;
 		}
@@ -375,8 +377,8 @@ void UpdatePlayer(void)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * MAX_MOVE;
-			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * MAX_MOVE;
+			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
 
 			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
 		}
@@ -385,8 +387,8 @@ void UpdatePlayer(void)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * MAX_MOVE;
-			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * MAX_MOVE;
+			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
 
 			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.25f;
 		}
@@ -395,8 +397,8 @@ void UpdatePlayer(void)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-			g_player.move.z -= sinf(pCamera->rot.y) * MAX_MOVE;
-			g_player.move.x += cosf(pCamera->rot.y) * MAX_MOVE;
+			g_player.move.z -= sinf(pCamera->rot.y) * g_player.speed;
+			g_player.move.x += cosf(pCamera->rot.y) * g_player.speed;
 
 			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.5f;
 		}
@@ -407,8 +409,8 @@ void UpdatePlayer(void)
 	{
 		g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-		g_player.move.x += sinf(pCamera->rot.y) * MAX_MOVE;
-		g_player.move.z += cosf(pCamera->rot.y) * MAX_MOVE;
+		g_player.move.x += sinf(pCamera->rot.y) * g_player.speed;
+		g_player.move.z += cosf(pCamera->rot.y) * g_player.speed;
 
 		g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
 	}
@@ -417,8 +419,8 @@ void UpdatePlayer(void)
 	{
 		g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
-		g_player.move.x -= sinf(pCamera->rot.y) * MAX_MOVE;
-		g_player.move.z -= cosf(pCamera->rot.y) * MAX_MOVE;
+		g_player.move.x -= sinf(pCamera->rot.y) * g_player.speed;
+		g_player.move.z -= cosf(pCamera->rot.y) * g_player.speed;
 
 		g_player.rotDestPlayer.y = pCamera->rot.y;
 	}
@@ -651,6 +653,15 @@ void UpdatePlayer(void)
 		g_player.rot.y -= D3DX_PI * 2.0f;
 	}
 
+	if (GetFeverMode())
+	{
+		g_player.speed = 2.0f;
+		g_player.Motion.nCountMotion++;
+	}
+	else
+	{
+		g_player.speed = 1.0f;
+	}
 	//SetEffect(SwordPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 10.0f, 10.0f);
 
 	//モーションの更新

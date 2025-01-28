@@ -160,6 +160,7 @@ typedef struct
 	float fShadowSize;//影の大きさ
 	int Combostate; // コンボの状態をもつ変数 
 	int ItemIdx;    // アイテムのインデックス保管用変数
+	float speed;    // 足の速さ 
 }Player;
 
 //**************************
