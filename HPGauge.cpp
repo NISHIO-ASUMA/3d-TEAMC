@@ -206,12 +206,12 @@ void UpdateGauge(void)
 	}
 	else if (g_bFeverON == true)
 	{
+		g_fFeverCharge -= 0.1f;
 		if (g_fFeverCharge <= 0.0f)
 		{
 			g_fFeverCharge = 0.0f;
 			g_bFeverON = false;
 		}
-		g_fFeverCharge -= 0.1f;
 	}
 }
 

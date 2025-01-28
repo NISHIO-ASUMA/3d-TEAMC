@@ -310,7 +310,7 @@ void SetDamege(D3DXVECTOR3 pos, int nDamege, int nLife, bool Heal)
 			g_aDamege[nCnt].nDamege = nDamege;
 			g_aDamege[nCnt].nLife = nLife;
 			g_aDamege[nCnt].bHeal = Heal;
-			g_aDamege[nCnt].move = D3DXVECTOR3(0.0f, 10.0f, 0.0f);
+			g_aDamege[nCnt].move = D3DXVECTOR3(0.0f, 6.0f, 0.0f);
 			g_aDamege[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			g_aDamege[nCnt].bUse = true;
 			break;
