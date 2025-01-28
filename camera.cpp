@@ -118,7 +118,7 @@ void UpdateCamera(void)
 		StickCamera();
 
 		//マウスの視点移動
-		//MouseView();
+		MouseView();
 
 //****************************************
 //      プレイヤー追従(MAINカメラ)
@@ -437,7 +437,7 @@ void MouseView(void)
 		float X = (float)cursorPos.x - prevCursorPos.x;
 		float Y = (float)cursorPos.y - prevCursorPos.y;
 
-		const float mouseSensitivity = 0.009f;
+		const float mouseSensitivity = 0.0029f;
 
 		X *= mouseSensitivity;
 		Y *= mouseSensitivity;
