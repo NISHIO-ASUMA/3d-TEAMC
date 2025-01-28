@@ -47,7 +47,7 @@ void InitTimer(void)
 	{
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\timer000.png",
+		"data\\TEXTURE\\time001.png",
 		&g_pTextureTimer[nCnttime]);
 	}
 
