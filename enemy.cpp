@@ -474,7 +474,7 @@ void HitEnemy(int nCnt,int nDamage)
 			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
 			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-			4.0f, 20, 30, 60, 5.0f, 0.0f,
+			4.0f, 8, 15, 20, 5.0f, 0.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		AddFever(20.0f);
@@ -488,7 +488,7 @@ void HitEnemy(int nCnt,int nDamage)
 	}
 	else
 	{
-		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 40, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 30, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE;//ìGÇÃèÛë‘ÇÉ_ÉÅÅ[ÉWÇ…Ç∑ÇÈ
 
