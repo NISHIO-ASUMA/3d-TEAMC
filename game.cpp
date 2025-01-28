@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include "Score.h"
 #include "gameui.h"
+#include "mouse.h"
 
 //****************************
 //グローバル変数
@@ -49,6 +50,7 @@ int g_EnemyWaveTime;
 //=======================
 void InitGame(void)
 {
+	SetCursorVisibility(false);
 	//カメラの初期化処理
 	InitCamera();
 
@@ -271,10 +273,7 @@ void UpdateGame(void)
 	{//ポーズ中
 		//ポーズ中の更新処理
 		UpdatePause();
-	}
-	if (g_bPause == true)
-	{//ポーズ中
-		//ポーズ中の更新処理
+		SetCursorVisibility(true);
 	}
 
 	int nNumObj = GetNumobj(); // オブジェクトの数を取得
@@ -295,6 +294,8 @@ void UpdateGame(void)
 
 	if (g_bPause == false)
 	{//ポーズ中でなければ
+	//ポーズ中の更新処理
+			SetCursorVisibility(false);
 
 		if (!g_bEditMode)
 		{
