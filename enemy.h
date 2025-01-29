@@ -138,6 +138,6 @@ void DrawEnemy(void);//“G‚Ì•`‰æˆ—
 ENEMY* GetEnemy(void);//“G‚Ìæ“¾ˆ—
 void HitEnemy(int nCnt,int nDamage);//“G‚Ìƒqƒbƒgˆ—
 void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed);//“G‚Ìİ’èˆ—
-void WaveEnemy(void);
+void WaveEnemy(int nSpawner);
 int GetNumEnemy(void);//“G‚Ì‘”æ“¾ˆ—
 #endif

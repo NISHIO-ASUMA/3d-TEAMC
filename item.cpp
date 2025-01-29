@@ -15,6 +15,7 @@
 #include "block.h"
 #include "player.h"
 #include "explosion.h"
+#include "HPGauge.h"
 
 //****************************
 //É}ÉNÉçíËã`
@@ -348,7 +349,10 @@ bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 			if (fDistance <= fRadius)
 			{
 				bHit = true;
-				g_Item[nCnt].durability--;
+				if (!GetFeverMode())
+				{
+					g_Item[nCnt].durability--; // ëœãvóÕÇÇ÷ÇÁÇ∑
+				}
 				break;
 			}
 		}

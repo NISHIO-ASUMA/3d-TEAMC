@@ -115,13 +115,8 @@ void InitGame(void)
 	//エディットのロード処理
 	LoadEdit();
 
-	WaveEnemy(); // 敵を出す処理
-
-	//SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 0.0f), ENEMYTYPE_ONE, 1000,1.0f);
-	//SetEnemy(D3DXVECTOR3(20.0f, 0.0f, 60.0f), ENEMYTYPE_TWO, 1000, 1.0f);
-	//SetEnemy(D3DXVECTOR3(100.0f, 0.0f, 280.0f), ENEMYTYPE_THREE, 1000, 1.0f);
-	//SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 180.0f), ENEMYTYPE_FOUR, 1000,1.0f);
-	//SetEnemy(D3DXVECTOR3(300.0f, 0.0f, 280.0f), ENEMYTYPE_FIVE, 1000,1.0f);
+	WaveEnemy(0); // 敵を出す処理
+	WaveEnemy(1); // 敵を出す処理
 
 	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
@@ -226,12 +221,14 @@ void UpdateGame(void)
 	int nTime = GetTimer();
 
 	// TODO : 敵が全滅したらゲーム終了
-
+	
 	// 敵が出てくるまでの時間
-	if (g_EnemyWaveTime >= 1800 || nNumEnemy <= 0)
+	if (g_EnemyWaveTime >= 900 || nNumEnemy <= 0)
 	{
+		int nSpawner = rand() % 2;
+
 		// 敵を出す処理
-		WaveEnemy();
+		WaveEnemy(nSpawner);
 
 		// タイムを初期化する
 		g_EnemyWaveTime = 0;

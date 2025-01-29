@@ -992,10 +992,10 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			}
 		}
 	}
-	else if(g_player.Motion.nNumModel < 16)
+	else if(g_player.Motion.nNumModel == 15)
 	{
 		// ƒ‚ƒfƒ‹‚ÌˆÊ’u‚ð•Ï”‚É‘ã“ü
-		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43);
+		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[4].mtxWorld._41, g_player.Motion.aModel[4].mtxWorld._42, g_player.Motion.aModel[4].mtxWorld._43);
 
 		// ‰~‚Ì”ÍˆÍ
 		if (shpererange(&ModelPos, &pEnemy->pos, 30.0f, 50.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
