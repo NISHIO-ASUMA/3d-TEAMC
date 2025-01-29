@@ -343,7 +343,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 			}
 		}
 	}
-
+	
 	// レンダーステートの設定
 	g_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	g_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
@@ -856,7 +856,7 @@ void DrawOperation(void)
 	char aStrthrow[128];
 
 	wsprintf(&aStr[0], "移動 [ WASD ]\n");
-	wsprintf(&aStrthrow[0],"ブロック :拾う[ L ]:飛ばす[ ENTER ]:置く[ O ]\n");
+	wsprintf(&aStrthrow[0],"ブロック :拾う[ F ]:飛ばす[ 左クリック ]\n");
 
 	g_pFont->DrawText(NULL, &aStrthrow[0], -1, &rectThrow, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 

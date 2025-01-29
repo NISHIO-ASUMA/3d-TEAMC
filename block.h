@@ -114,5 +114,6 @@ void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal);
 bool CollisionBlock(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld,D3DXVECTOR3 *pMove,D3DXVECTOR3 *pSize);
 bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize);
 int NumBlock(void);
+void LoadTitleState(void);
 BLOCK* GetBlock();
 #endif

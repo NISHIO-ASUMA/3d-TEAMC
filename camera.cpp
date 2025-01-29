@@ -109,7 +109,19 @@ void UpdateCamera(void)
 		MouseEditMode();	//編集モード中のカメラ移動
 	}
 
-	// ゲームの時のカメラの更新
+	if (mode == MODE_TITLE)
+	{
+		g_camera[MAIN].posV.z = -1500.0f;
+		g_camera[MAIN].posV.y = 1500.0f;
+		
+		g_camera[MAIN].rot.y += 0.005f;		// カメラの視点の情報
+
+		g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * 1800.0f;
+		g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * 1800.0f;
+		g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * 1800.0f;
+
+	}
+		// ゲームの時のカメラの更新
 	if (mode != MODE_TITLE && !GetEditState())
 	{
 		g_camera[MAIN].fDistance = g_camera[MAIN].oldDistance; // 距離をリセット
