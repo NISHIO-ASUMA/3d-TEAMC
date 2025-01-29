@@ -35,7 +35,7 @@ void InitEffect(void)
 		g_Effect[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_Effect[nCnt].bUse = false;
 		g_Effect[nCnt].nLife = 0;
-		g_Effect[nCnt].fSize = 40.0f;
+		g_Effect[nCnt].fSize = 0.0f;
 
 		/*pVtx[0].pos = D3DXVECTOR3(g_Effect[nCnt].pos.x - g_Effect[nCnt].fSize, g_Effect[nCnt].pos.y + g_Effect[nCnt].fSize, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(g_Effect[nCnt].pos.x + g_Effect[nCnt].fSize, g_Effect[nCnt].pos.y + g_Effect[nCnt].fSize, 0.0f);
