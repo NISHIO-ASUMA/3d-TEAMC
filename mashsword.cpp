@@ -11,6 +11,7 @@
 #include"meshsword.h"
 #include "input.h"
 #include "player.h"
+#include "mouse.h"
 
 //****************************
 //プロトタイプ宣言
@@ -23,7 +24,8 @@ LPDIRECT3DTEXTURE9 g_pTextureMeshSword = NULL;//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshSword = NULL; //頂点バッファへのポインタ
 LPDIRECT3DINDEXBUFFER9 g_pIdxBuffMeshSword = NULL;//インデックスバッファへのポインタ
 MESHSOAD g_MeshSword;
-D3DXVECTOR3 g_posOlds[X * 2];
+D3DXVECTOR3 g_posOlds[(X + 1) * 2];
+int g_nMeshSwordCount;
 
 //===============================
 //メッシュフィールドの初期化処理
@@ -31,6 +33,7 @@ D3DXVECTOR3 g_posOlds[X * 2];
 void InitMeshSword(void)
 {
 	int nCnt = 0;
+	g_nMeshSwordCount = 0;
 
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
 
@@ -71,14 +74,14 @@ void InitMeshSword(void)
 	g_pVtxBuffMeshSword->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(pPlayer->SwordMtx._41, pPlayer->SwordMtx._42, pPlayer->SwordMtx._43);
+	/*pVtx[0].pos = D3DXVECTOR3(pPlayer->SwordMtx._41, pPlayer->SwordMtx._42, pPlayer->SwordMtx._43);
 
-	pVtx[1].pos = D3DXVECTOR3(pPlayer->Motion.aModel[15].mtxWorld._41, pPlayer->Motion.aModel[15].mtxWorld._42, pPlayer->Motion.aModel[15].mtxWorld._43);
+	pVtx[1].pos = D3DXVECTOR3(pPlayer->Motion.aModel[15].mtxWorld._41, pPlayer->Motion.aModel[15].mtxWorld._42, pPlayer->Motion.aModel[15].mtxWorld._43);*/
 
-	for (int nCount = 0; nCount < X; nCount++)
+	for (int nCount = 0; nCount < X + 1; nCount++)
 	{
-		pVtx[nCount * 2 + 2].pos = g_posOlds[nCount * 2];
-		pVtx[nCount * 2 + 3].pos = g_posOlds[nCount * 2 + 1];
+		pVtx[nCount * 2].pos = g_posOlds[nCount * 2];
+		pVtx[nCount * 2 + 1].pos = g_posOlds[nCount * 2 + 1];
 	}
 
 	////頂点座標の設定
@@ -169,7 +172,11 @@ void UninitMeshSword(void)
 //===============================
 void UpdateMeshSword(void)
 {
-
+	if (OnMouseTriggerDown(LEFT_MOUSE))
+	{
+		ResetMeshSword();
+	}
+	g_nMeshSwordCount++;
 	Player* pPlayer = GetPlayer();  // プレイヤー情報を取得
 	VERTEX_3D* pVtx;
 
@@ -181,26 +188,36 @@ void UpdateMeshSword(void)
 	if (pPlayer->state == PLAYERSTATE_ATTACK)
 	{
 		// 0の位置を代入
-		pVtx[0].pos.x = pPlayer->SwordMtx._41;
-		pVtx[0].pos.y = pPlayer->SwordMtx._42;
-		pVtx[0].pos.z = pPlayer->SwordMtx._43;
+		//pVtx[0].pos.x = pPlayer->SwordMtx._41;
+		//pVtx[0].pos.y = pPlayer->SwordMtx._42;
+		//pVtx[0].pos.z = pPlayer->SwordMtx._43;
 
-		// 1の位置を代入
-		pVtx[1].pos.x = pPlayer->Motion.aModel[15].mtxWorld._41;
-		pVtx[1].pos.y = pPlayer->Motion.aModel[15].mtxWorld._42;
-		pVtx[1].pos.z = pPlayer->Motion.aModel[15].mtxWorld._43;
+		//// 1の位置を代入
+		//pVtx[1].pos.x = pPlayer->Motion.aModel[15].mtxWorld._41;
+		//pVtx[1].pos.y = pPlayer->Motion.aModel[15].mtxWorld._42;
+		//pVtx[1].pos.z = pPlayer->Motion.aModel[15].mtxWorld._43;
 
 		g_MeshSword.oldvtx[0] = pVtx[0].pos;
 		g_MeshSword.oldvtx[1] = pVtx[1].pos;
 
-		g_posOlds[4] = g_posOlds[2];
-		g_posOlds[5] = g_posOlds[3];
+		for (int nCount = 0; nCount < X; nCount++)
+		{
+			g_posOlds[(X - nCount) * 2] = g_posOlds[(X - nCount) * 2 - 2];
+			g_posOlds[(X - nCount) * 2 + 1] = g_posOlds[(X - nCount) * 2 - 1];
+		}
 
-		g_posOlds[2] = g_posOlds[0];
-		g_posOlds[3] = g_posOlds[1];
+		g_posOlds[0].x = pPlayer->SwordMtx._41;
+		g_posOlds[0].y = pPlayer->SwordMtx._42;
+		g_posOlds[0].z = pPlayer->SwordMtx._43;
 
-		g_posOlds[0] = pVtx[0].pos;
-		g_posOlds[1] = pVtx[1].pos;
+		g_posOlds[1].x = pPlayer->Motion.aModel[15].mtxWorld._41;
+		g_posOlds[1].y = pPlayer->Motion.aModel[15].mtxWorld._42;
+		g_posOlds[1].z = pPlayer->Motion.aModel[15].mtxWorld._43;
+
+		for (int nCount = 0; nCount < (X + 1) * 2; nCount++)
+		{
+			pVtx[nCount].pos = g_posOlds[nCount];
+		}
 	}
 	// 頂点バッファをアンロック
 	g_pVtxBuffMeshSword->Unlock();
@@ -215,6 +232,7 @@ void DrawMeshSword(void)
 	Player* pPlayer = GetPlayer();  // プレイヤー情報を取得
 
 	pDevice = GetDevice();
+	int Min;
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
@@ -248,37 +266,22 @@ void DrawMeshSword(void)
 		//テクスチャの設定
 		pDevice->SetTexture(0, NULL);
 
+		if (g_nMeshSwordCount - 2 < ORBIT_POLYGON)
+		{
+			Min = g_nMeshSwordCount - 2;
+		}
+		else
+		{
+			Min = ORBIT_POLYGON;
+		}
 		//ポリゴンの描画
-		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, ORBIT_VERTEX, 0, ORBIT_POLYGON);
+		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, Min * 2 + 4, 0, Min);
+		//pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, ORBIT_VERTEX, 0, ORBIT_POLYGON);
 	}
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
-//===============================
-//メッシュswordの
-//===============================
-
-void vtx(D3DXMATRIX vtx0, D3DXMATRIX vtx1)
+void ResetMeshSword(void)
 {
-	Player* pPlayer = GetPlayer();  // プレイヤー情報を取得
-
-	VERTEX_3D* pVtx;
-
-	// 頂点バッファをロック
-	g_pVtxBuffMeshSword->Lock(0, 0, (void**)&pVtx, 0);
-
-	if (pPlayer->state == PLAYERSTATE_ATTACK)
-	{
-		// 2の位置を代入
-		pVtx[2].pos.x = vtx0._41;
-		pVtx[2].pos.y = vtx0._42;
-		pVtx[2].pos.z = vtx0._43;
-
-		// 3の位置を代入
-		pVtx[3].pos.x = vtx1._41;
-		pVtx[3].pos.y = vtx1._42;
-		pVtx[3].pos.z = vtx1._43;
-	}
-
-	// 頂点バッファをアンロック
-	g_pVtxBuffMeshSword->Unlock();
+	g_nMeshSwordCount = 0;
 }
+

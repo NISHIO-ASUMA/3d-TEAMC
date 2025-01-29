@@ -19,7 +19,7 @@
 #define SOAD_WIDTH (10.0f) //‰¡•
 #define SOAD_HEIGHT (10.0f) //‚‚³
 
-#define X (3) // X
+#define X (8) // X
 #define Z (1) // Z
 
 #define ORBIT_VERTEX ((X + 1) * (Z + 1)) //’¸“_”
@@ -46,5 +46,5 @@ void InitMeshSword(void);//Œ•‚Ì‹O“¹‚Ì‰Šú‰»ˆ—
 void UninitMeshSword(void);//Œ•‚Ì‹O“¹‚ÌI—¹ˆ—
 void UpdateMeshSword(void);//Œ•‚Ì‹O“¹‚ÌXVˆ—
 void DrawMeshSword(void);//Œ•‚Ì‹O“¹‚Ì•`‰æˆ—
-void vtx(D3DXMATRIX vtx0, D3DXMATRIX vtx1); // 
+void ResetMeshSword(void);
 #endif
