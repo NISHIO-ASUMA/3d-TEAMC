@@ -713,6 +713,7 @@ void UpdatePlayer(void)
 	{
 		FiverCnt = 0;
 	}
+
 	//SetEffect(SwordPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 10.0f, 10.0f);
 	//vtx(g_player.SwordMtx,g_player.Motion.aModel[15].mtxWorld); // ’¸“_•Û‘¶
 
