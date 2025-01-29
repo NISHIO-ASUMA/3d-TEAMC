@@ -472,6 +472,11 @@ void UpdatePlayer(void)
 		break;
 	}
 
+	//D3DXVECTOR3 SwordPos(
+	//	g_player.SwordMtx._41, // X•ûŒü
+	//	g_player.SwordMtx._42, // Y•ûŒü
+	//	g_player.SwordMtx._43  // Z•ûŒü
+	//);
 	switch (g_player.state)
 	{
 	case PLAYERSTATE_NORMAL:
@@ -486,6 +491,8 @@ void UpdatePlayer(void)
 		break;
 	case PLAYERSTATE_ATTACK:
 		g_nCounterState--;
+
+		//SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 1.0f, 2, 30, 10, 10.0f, 5.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		if (g_nCounterState < 0)
 		{
