@@ -11,6 +11,7 @@
 #include "motion.h"
 #include"meshfield.h"
 #include <stdio.h>
+#include "HPGauge.h"
 
 //****************************
 //É}ÉNÉçíËã`

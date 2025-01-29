@@ -35,6 +35,7 @@
 #include "Score.h"
 #include "gameui.h"
 #include "mouse.h"
+#include "meshsword.h"
 
 //****************************
 //グローバル変数
@@ -105,6 +106,9 @@ void InitGame(void)
 	// タイマーの初期化
 	InitTimer();
 
+	// 軌跡の初期化処理
+	InitMeshSword();
+
 	//エディットの初期化処理
 	InitEdit();
 
@@ -162,6 +166,9 @@ void UninitGame(void)
 
 	//メッシュフィールドの終了処理
 	UninitMeshField();
+
+	// 軌跡の終了処理
+	UninitMeshSword();
 
 	// 煙の終了処理
 	UninitExplosion();
@@ -349,6 +356,9 @@ void UpdateGame(void)
 
 			//壁の更新処理
 			UpdateWall();
+
+			// 軌跡の更新処理
+			UpdateMeshSword();
 		}
 		else if (g_bEditMode)
 		{
@@ -376,6 +386,9 @@ void DrawGame(void)
 {
 	//メッシュフィールドの描画処理
 	DrawMeshField();
+
+	// 軌跡の描画処理
+	DrawMeshSword();
 
 	//プレイヤーの描画処理
 	DrawPlayer();

@@ -27,6 +27,7 @@
 #include "explosion.h"
 #include "gameui.h"
 #include "sound.h"
+#include "meshsword.h"
 
 //****************************
 //マクロ定義
@@ -361,7 +362,7 @@ void UpdatePlayer(void)
 				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
 			}
 			//プレイヤーの移動(下)
-			else if (GetKeyboardPress(DIK_S) && g_player.state != PLAYERSTATE_ATTACK)
+			else if (GetKeyboardPress(DIK_S))
 			{
 				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -385,7 +386,7 @@ void UpdatePlayer(void)
 		else if (GetKeyboardPress(DIK_D) && g_player.state != PLAYERSTATE_ATTACK)
 		{
 			//プレイヤーの移動(上)
-			if (GetKeyboardPress(DIK_W) && g_player.state != PLAYERSTATE_ATTACK)
+			if (GetKeyboardPress(DIK_W))
 			{
 				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -395,7 +396,7 @@ void UpdatePlayer(void)
 				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
 			}
 			//プレイヤーの移動(下)
-			else if (GetKeyboardPress(DIK_S) && g_player.state != PLAYERSTATE_ATTACK)
+			else if (GetKeyboardPress(DIK_S))
 			{
 				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -417,7 +418,7 @@ void UpdatePlayer(void)
 
 		}
 		//プレイヤーの移動(上)
-		else if (GetKeyboardPress(DIK_W) == true)
+		else if (GetKeyboardPress(DIK_W) == true && g_player.state != PLAYERSTATE_ATTACK)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -427,7 +428,7 @@ void UpdatePlayer(void)
 			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
 		}
 		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S) == true)
+		else if (GetKeyboardPress(DIK_S) == true && g_player.state != PLAYERSTATE_ATTACK)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -472,11 +473,12 @@ void UpdatePlayer(void)
 		break;
 	}
 
-	//D3DXVECTOR3 SwordPos(
-	//	g_player.SwordMtx._41, // X方向
-	//	g_player.SwordMtx._42, // Y方向
-	//	g_player.SwordMtx._43  // Z方向
-	//);
+	D3DXVECTOR3 SwordPos(
+		g_player.SwordMtx._41, // X方向
+		g_player.SwordMtx._42, // Y方向
+		g_player.SwordMtx._43  // Z方向
+	);
+
 	switch (g_player.state)
 	{
 	case PLAYERSTATE_NORMAL:
@@ -492,7 +494,11 @@ void UpdatePlayer(void)
 	case PLAYERSTATE_ATTACK:
 		g_nCounterState--;
 
-		//SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 1.0f, 2, 30, 10, 10.0f, 5.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		// 武器がないとき
+		if (g_player.Motion.nNumModel != 15)
+		{
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 1.0f, 2, 30, 10, 10.0f, 5.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
 
 		if (g_nCounterState < 0)
 		{
@@ -631,19 +637,19 @@ void UpdatePlayer(void)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))&&g_player.Combostate == COMBO_NO && g_AttackState <= 50)
 		{
-			PlayerComb(MOTIONTYPE_ACTION, 60, 30, COMBO_ATTACK1); // コンボ1
+			PlayerComb(MOTIONTYPE_ACTION, 60, 40, COMBO_ATTACK1); // コンボ1
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 50)
 		{
-			PlayerComb(MOTIONTYPE_ACTION2, 60, 30, COMBO_ATTACK2); // コンボ2
+			PlayerComb(MOTIONTYPE_ACTION2, 60, 40, COMBO_ATTACK2); // コンボ2
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 50)
 		{
-			PlayerComb(MOTIONTYPE_ACTION3, 60, 30, COMBO_ATTACK3); // コンボ3
+			PlayerComb(MOTIONTYPE_ACTION3, 60, 40, COMBO_ATTACK3); // コンボ3
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 50)
 		{
-			PlayerComb(MOTIONTYPE_ACTION4, 60, 30, COMBO_ATTACK4); // コンボ4
+			PlayerComb(MOTIONTYPE_ACTION4, 60, 40, COMBO_ATTACK4); // コンボ4
 		}
 	}
 
@@ -683,7 +689,10 @@ void UpdatePlayer(void)
 	if (GetFeverMode())
 	{
 		g_player.speed = 2.0f;
-		g_player.Motion.nCountMotion++;
+		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
+		{
+			g_player.Motion.nCountMotion++;
+		}
 		g_player.nDamage = 200; // ダメージアップ
 	}
 	else
@@ -705,6 +714,7 @@ void UpdatePlayer(void)
 		FiverCnt = 0;
 	}
 	//SetEffect(SwordPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 10.0f, 10.0f);
+	//vtx(g_player.SwordMtx,g_player.Motion.aModel[15].mtxWorld); // 頂点保存
 
 	//モーションの更新
 	UpdateMotion(&g_player.Motion);
