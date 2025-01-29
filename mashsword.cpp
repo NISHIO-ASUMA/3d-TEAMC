@@ -41,7 +41,7 @@ void InitMeshSword(void)
 
 		//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\Swordorbit.png",
+		"data\\TEXTURE\\orbit.png",
 		&g_pTextureMeshSword);
 
 	//頂点バッファの生成
@@ -117,11 +117,18 @@ void InitMeshSword(void)
 		//pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	//}
-	//頂点座標の設定
+	 
+		//頂点座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+	pVtx[1].tex = D3DXVECTOR2(0.0f, 1.0f);
+
+	float Tex = 1.0f / X;
+
+	for (int nCount = 0; nCount < X; nCount++)
+	{
+		pVtx[nCount * 2 + 2].tex = D3DXVECTOR2(Tex * nCount,0.0f);
+		pVtx[nCount * 2 + 3].tex = D3DXVECTOR2(Tex * nCount, 1.0f);
+	}
 
 	//頂点バッファをアンロック
 	g_pVtxBuffMeshSword->Unlock();
@@ -185,18 +192,11 @@ void UpdateMeshSword(void)
 	// 頂点バッファをロック
 	g_pVtxBuffMeshSword->Lock(0, 0, (void**)&pVtx, 0);
 
-	if (pPlayer->state == PLAYERSTATE_ATTACK)
+	if (pPlayer->Motion.motionType == MOTIONTYPE_ACTION||
+		pPlayer->Motion.motionType == MOTIONTYPE_ACTION2||
+		pPlayer->Motion.motionType == MOTIONTYPE_ACTION3||
+		pPlayer->Motion.motionType == MOTIONTYPE_ACTION4)
 	{
-		// 0の位置を代入
-		//pVtx[0].pos.x = pPlayer->SwordMtx._41;
-		//pVtx[0].pos.y = pPlayer->SwordMtx._42;
-		//pVtx[0].pos.z = pPlayer->SwordMtx._43;
-
-		//// 1の位置を代入
-		//pVtx[1].pos.x = pPlayer->Motion.aModel[15].mtxWorld._41;
-		//pVtx[1].pos.y = pPlayer->Motion.aModel[15].mtxWorld._42;
-		//pVtx[1].pos.z = pPlayer->Motion.aModel[15].mtxWorld._43;
-
 		g_MeshSword.oldvtx[0] = pVtx[0].pos;
 		g_MeshSword.oldvtx[1] = pVtx[1].pos;
 
@@ -237,7 +237,10 @@ void DrawMeshSword(void)
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
 
-	if (pPlayer->state == PLAYERSTATE_ATTACK)
+	if (pPlayer->Motion.motionType == MOTIONTYPE_ACTION ||
+		pPlayer->Motion.motionType == MOTIONTYPE_ACTION2 ||
+		pPlayer->Motion.motionType == MOTIONTYPE_ACTION3 ||
+		pPlayer->Motion.motionType == MOTIONTYPE_ACTION4)
 	{
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_MeshSword.mtxWorldMeshSword);
@@ -264,7 +267,7 @@ void DrawMeshSword(void)
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
 		//テクスチャの設定
-		pDevice->SetTexture(0, NULL);
+		pDevice->SetTexture(0, g_pTextureMeshSword);
 
 		if (g_nMeshSwordCount - 2 < ORBIT_POLYGON)
 		{
