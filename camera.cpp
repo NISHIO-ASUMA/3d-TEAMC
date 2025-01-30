@@ -13,6 +13,7 @@
 #include "mouse.h"
 #include "player.h"
 #include "game.h"
+#include "tutorial3d.h"
 
 //*****************************
 // マクロ定義
@@ -104,7 +105,7 @@ void UpdateCamera(void)
 	Player* pPlayer = GetPlayer();
 	MODE mode = GetMode();
 
-	if (GetEditState())
+	if (GetEditState() || GetEditStatetuto())
 	{
 		MouseEditMode();	//編集モード中のカメラ移動
 	}
@@ -122,7 +123,7 @@ void UpdateCamera(void)
 
 	}
 		// ゲームの時のカメラの更新
-	if (mode != MODE_TITLE && !GetEditState())
+	if (mode != MODE_TITLE && !GetEditState() &&!GetEditStatetuto())
 	{
 		g_camera[MAIN].fDistance = g_camera[MAIN].oldDistance; // 距離をリセット
 		
@@ -582,7 +583,7 @@ void MouseWheel(int zDelta)
 	// 現在のモードを取得
 	MODE nMode = GetMode();
 
-	if (GetEditState())
+	if (GetEditState() || GetEditStatetuto())
 	{// ゲーム チュートリアル 編集モード
 		// TODO : ここのズームの処理変更の可能性あり
 

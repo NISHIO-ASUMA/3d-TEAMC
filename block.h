@@ -121,4 +121,6 @@ bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pM
 int NumBlock(void);
 void LoadTitleState(void);
 BLOCK* GetBlock();
+void tutoload(void);
+
 #endif

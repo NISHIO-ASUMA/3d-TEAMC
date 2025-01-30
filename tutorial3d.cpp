@@ -22,12 +22,13 @@
 #include "mouse.h"
 #include "HPGauge.h"
 #include "gameui.h"
+#include "edit.h"
 
 //****************************
 //グローバル変数
 //****************************
 static int nPressTuto;
-
+bool g_bEditMode2;
 //============================
 //チュートリアル3dの初期化処理
 //============================
@@ -65,8 +66,10 @@ void InitTutorial3d(void)
 	// 爆発の初期化処理
 	InitExplosion();
 
+	InitEdit();
+
 	// ステージ
-	LoadTitleState();
+	tutoload();
 
 	// ブロックをセット
 	// TODO : ここの配置情報を修正---------------------
@@ -81,6 +84,7 @@ void InitTutorial3d(void)
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f, 0);
 
+	g_bEditMode2 = false;
 	// 音楽を再生
 	PlaySound(SOUND_LABEL_TUTORIAL_BGM);
 }
@@ -121,6 +125,9 @@ void UninitTutorial3d(void)
 
 	// 爆発の終了処理
 	UninitExplosion();
+
+	UninitEdit();
+
 }
 //============================
 //チュートリアル3dの更新処理
@@ -139,8 +146,6 @@ void UpdateTutorial3d(void)
 	// UIの更新処理
 	UpdateGameUI();
 
-	// プレイヤーの更新処理
-	UpdatePlayer();
 
 	// ブロックの更新処理
 	UpdateBlock();
@@ -151,7 +156,31 @@ void UpdateTutorial3d(void)
 	// 爆発の更新処理
 	UpdateExplosion();
 
-	if (KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true)
+	if (g_bEditMode2)
+	{
+		UpdateEdit();
+	}
+	else
+	{
+		// プレイヤーの更新処理
+		UpdatePlayer();
+	}
+
+	//エディットモードだったら
+	if (KeyboardTrigger(DIK_F2) && g_bEditMode2)
+	{
+		g_bEditMode2 = false;
+		InitBlock(); // 出ているオブジェクトの初期化
+		InitItem();  // 出ているオブジェクトの初期化
+		LoadEdit();  // ロード
+	}
+	//エディットモードじゃなかったら
+	else if (KeyboardTrigger(DIK_F2) && !g_bEditMode2)
+	{
+		g_bEditMode2 = true;
+	}
+
+	if ((KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true) && !g_bEditMode2)
 	{//Enterキー or Startボタンが押された
 		//ゲーム画面へ
 		SetFade(MODE_GAME);
@@ -178,9 +207,6 @@ void DrawTutorial3d(void)
 	//影の描画処理
 	DrawShadow();
 
-	// UIの描画処理
-	DrawGameUI();
-
 	// ブロックの描画処理
 	DrawBlock();
 
@@ -190,4 +216,18 @@ void DrawTutorial3d(void)
 	// 爆発の描画処理
 	DrawExplosion();
 
+	// UIの描画処理
+	DrawGameUI();
+
+	if (g_bEditMode2)
+	{
+		DrawEdit();
+	}
+}
+//============================
+//編集モードの取得処理
+//============================
+bool GetEditStatetuto(void)
+{
+	return g_bEditMode2;
 }

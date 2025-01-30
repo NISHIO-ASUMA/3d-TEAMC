@@ -553,7 +553,7 @@ void Draw(void)
 
 #ifdef _DEBUG
 
-			if (!GetEditState())
+			if (!GetEditState() && !GetEditStatetuto())
 			{
 				//åªç›ÇÃâÊñ ÇÃï\é¶
 				DrawMode();
@@ -565,6 +565,11 @@ void Draw(void)
 				DrawPlayerInfo();
 			}
 			else if (GetEditState())
+			{
+				DrawEditMode();
+			}
+
+			if (GetEditStatetuto())
 			{
 				DrawEditMode();
 			}
