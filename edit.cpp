@@ -88,6 +88,12 @@ void InitEdit(void)
 		}
 	}
 
+	//pVtx[0].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
+	//pVtx[1].pos = D3DXVECTOR3(100,0.0f,0.0f);
+	//pVtx[2].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
+	//pVtx[3].pos = D3DXVECTOR3(100 * ,0.0f,0.0f);
+
+
 	g_nNumBlock = 0;												// オブジェクトの数の初期化
 	g_Edit[0].bUse = true;											// 一つ目を使用状態にする
 	g_Edit[0].Category[0].nNumModel = g_BlockTexInfo[0].nNumModel;  // 0番のオブジェクトに種類の数を代入(代入しないと描画されない)

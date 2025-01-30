@@ -154,7 +154,7 @@ typedef struct
 	D3DXMATRIX SwordMtx;//剣先につけるワールドマトリックスのオフセット
 	PLAYERHOLDTATE HandState;
 	int nCounterAction;
-	PLAYERTYPE nType;
+	int PlayerType;
 	bool bImpactCollision;
 	bool bJumpAttack;
 	float fShadowSize;//影の大きさ
@@ -163,6 +163,7 @@ typedef struct
 	float speed;    // 足の速さ 
 	int nDamage;    // プレイヤーの攻撃力 
 	int nOldItem;
+	int WeponMotion; // 武器ごとのモーション
 }Player;
 
 //**************************

@@ -110,6 +110,10 @@ void InitPlayer(void)
 
 	g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f);
 
+	// タイプを代入
+	g_LoadPlayer[0].PlayerType = PLAYERTYPE_NOHAND; 
+	g_LoadPlayer[1].PlayerType = PLAYERTYPE_WEPON;
+
 	D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
 	for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
@@ -132,6 +136,7 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
 		g_LoadPlayer[nCntPlayer].SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
 		g_LoadPlayer[nCntPlayer].SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
+		g_LoadPlayer[nCntPlayer].WeponMotion = MOTION_KATANA;				   // 剣のオフセットの座標z
 
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
@@ -455,7 +460,6 @@ void UpdatePlayer(void)
 		break;
 	case MOTIONTYPE_ACTION4:
 		break;
-
 	default:
 		break;
 	}
@@ -929,7 +933,7 @@ void StickPad(void)
 
 	Camera* pCamera = GetCamera();
 
-	if (GetJoyStick() == true && g_player.state != PLAYERSTATE_ATTACK)
+	if (GetJoyStick() == true && g_player.Combostate == COMBO_NO)
 	{
 		float LStickAngleY = pStick->Gamepad.sThumbLY;
 		float LStickAngleX = pStick->Gamepad.sThumbLX;
@@ -1004,7 +1008,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 
 			fRadius = (fRadius * fRadius); // 半径を求める
 
-			if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.state == PLAYERSTATE_ATTACK)
+			if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO)
 			{
 				HitEnemy(nCntEnemy, (pPlayer->nDamage * 5));
 				break;
@@ -1017,7 +1021,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[4].mtxWorld._41, g_player.Motion.aModel[4].mtxWorld._42, g_player.Motion.aModel[4].mtxWorld._43);
 
 		// 円の範囲
-		if (sphererange(&ModelPos, &pEnemy->pos, 30.0f, 65.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
+		if (sphererange(&ModelPos, &pEnemy->pos, 30.0f, 65.0f) && g_player.Combostate != COMBO_NO && pEnemy->state!=ENEMYSTATE_DAMAGE)
 		{
 			if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.Motion.nKey >= 2)
 			{
@@ -1352,6 +1356,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 //============================
 void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBOSTATE Combstate)
 {
+	Camera* pCamera = GetCamera();
+
 	ENEMY* pEnemy = GetEnemy();
 	float fDistanceNow = 0.0f;
 	float fDistanceStock = 0.0f;
@@ -1366,8 +1372,10 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
 	g_player.Combostate = Combstate;		  // コンボの状態を設定
 
+	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
 	{
+		// 使用状態のみ
 		if (pEnemy[nCnt].bUse)
 		{
 			// 距離を求める
@@ -1397,11 +1405,18 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 		}
 	}
 
-	
+	// 範囲にいる間だけロックオン
 	if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 100.0f, 100.0f))
 	{
+		// 角度を求める
 		float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
 			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+	}
+
+	if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
+	{
+		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 50.0f;
+		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 50.0f;
 	}
 }
 //===============================
@@ -1422,6 +1437,7 @@ void MotionChange(int itemtype,int LoadPlayer)
 
 	if (LoadPlayer != PLAYERTYPE_NOHAND) // プレイヤーがノーハンドだったら情報を代入しない
 	{
+		g_player.WeponMotion = itemtype; // アイテムごとのモーションタイプ
 		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION] = g_LoadMotion[itemtype].aMotionInfo[0];		// 攻撃1の情報を代入
 		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION2] = g_LoadMotion[itemtype].aMotionInfo[1];    // 攻撃2の情報を代入
 		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION3] = g_LoadMotion[itemtype].aMotionInfo[2];	// 攻撃3の情報を代入
@@ -1430,10 +1446,13 @@ void MotionChange(int itemtype,int LoadPlayer)
 		g_player.Motion.aModel[15].offrot = g_LoadMotion[itemtype].aModel[15].offrot;				// オフセットのの情報を代入
 		g_player.HandState = PLAYERHOLD_NO;
 		bNohand = false;// プレイヤーをノーハンドにする
+		g_player.PlayerType = PLAYERTYPE_WEPON;
 	}
 	else
 	{
+		g_player.WeponMotion = itemtype; // アイテムごとのモーションタイプ
 		g_player.HandState = PLAYERHOLD_HOLD;	// プレイヤーをノーハンドにする
+		g_player.PlayerType = PLAYERTYPE_NOHAND;
 		bNohand = true;
 	}
 }

@@ -237,10 +237,10 @@ void DrawMeshSword(void)
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
 
-	if (pPlayer->Motion.motionType == MOTIONTYPE_ACTION ||
+	if ((pPlayer->Motion.motionType == MOTIONTYPE_ACTION ||
 		pPlayer->Motion.motionType == MOTIONTYPE_ACTION2 ||
 		pPlayer->Motion.motionType == MOTIONTYPE_ACTION3 ||
-		pPlayer->Motion.motionType == MOTIONTYPE_ACTION4)
+		pPlayer->Motion.motionType == MOTIONTYPE_ACTION4) && pPlayer->Motion.nNumModel != 15)
 	{
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_MeshSword.mtxWorldMeshSword);
