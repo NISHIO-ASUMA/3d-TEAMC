@@ -640,7 +640,7 @@ void UpdatePlayer(void)
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 30)
 		{
-			PlayerComb(MOTIONTYPE_ACTION4, 40, 40, COMBO_ATTACK4); // コンボ4
+			PlayerComb(MOTIONTYPE_ACTION4, 50, 40, COMBO_ATTACK4); // コンボ4
 		}
 	}
 
@@ -723,6 +723,13 @@ void UpdatePlayer(void)
 		// アイテムを使用状態にする
 		pItem[g_player.ItemIdx].bUse = true;
 	}	
+
+	// 大型武器モーションの時
+	if (g_player.WeponMotion == MOTION_BIGWEPON && g_player.Motion.motionType == MOTIONTYPE_ACTION4 && g_player.Motion.nKey == 0)
+	{
+		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 15.0f;
+		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 15.0f;
+	}
 
 	static int FiverCnt = 0; // 回数制限
 
@@ -1067,9 +1074,9 @@ void ThrowItem(void)
 			// 最初だけ通す
 			if (bFirst)
 			{
-				fDistanceStock = fDistanceNow;
-				bFirst = false;
-				nIdxEnemy = nCnt;
+				fDistanceStock = fDistanceNow; // ストックに最初の値を入れておく
+				bFirst = false; // 最初しか通したくないのでfalse
+				nIdxEnemy = nCnt; // インデックスを保存
 			}
 			else
 			{
