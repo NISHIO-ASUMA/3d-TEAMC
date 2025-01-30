@@ -23,6 +23,7 @@ typedef enum
 	UITYPE_TITLE2,
 	UITYPE_FIVER,
 	UITYPE_SYUTYUSEN,
+	UITYPE_TUTORIAL,
 	UITYPE_MAX
 }UITYPE;
 
@@ -35,6 +36,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\select.png",
 	"data\\TEXTURE\\faver.png",
 	"data\\TEXTURE\\syutyu.png",
+    "data\\TEXTURE\\UI_enter.png",
 };
 
 //****************************
