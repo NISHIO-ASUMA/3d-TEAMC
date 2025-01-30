@@ -165,6 +165,7 @@ void UpdateGauge(void)
 	// ÇªÇ±Ç©ÇÁÇªÇÃäÑçáÇåvéZÇµí∑Ç≥Ç…Ç∑ÇÈ
 	g_fPer = fLeftHP / fMaxHP;
 	g_fLength = g_fPer * 960;
+
 	LPDIRECT3DDEVICE9 pDevice;
 	pDevice = GetDevice();
 	VERTEX_2D* pVtx;

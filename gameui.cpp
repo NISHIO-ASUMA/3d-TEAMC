@@ -227,21 +227,21 @@ void UpdateGameUI(void)
 			break;
 		case UITYPE_BLACK:
 		{
-			static float fcolorA = 0.0f;
+			static float fcolorA = 0.0f; // アルファ値
 
-			if (fcolorA >= 0.8f)
+			if (fcolorA >= 0.9f)
 			{
-				fcolorA = 0.8f;
+				fcolorA = 0.9f; // α値を固定
 			}
 			else
 			{
-				fcolorA += 0.01f;
+				fcolorA += 0.01f; // インクリメント
 			}
 
 			if (pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.nKey == 4)
 			{
-				g_GameUI[nCnt].bUse = false;
-				fcolorA = 0.0f;
+				g_GameUI[nCnt].bUse = false; // 消す
+				fcolorA = 0.0f; // 初期化
 			}
 
 			//頂点カラーの設定

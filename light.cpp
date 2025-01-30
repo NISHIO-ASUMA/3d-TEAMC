@@ -96,7 +96,7 @@ void UpdateLight(void)
 		//ライトを有効にする(ON,OFF)
 		pDevice->LightEnable(0, TRUE);
 	}
-	else if(!GetFeverMode())
+	else if(!GetFeverMode() && pPlayer->WeponMotion != MOTION_SP)
 	{
 		for (int nCnt1 = 0; nCnt1 < MAX_LIGHT; nCnt1++)
 		{
@@ -110,7 +110,6 @@ void UpdateLight(void)
 
 			//ライトを有効にする(ON,OFF)
 			pDevice->LightEnable(nCnt1, TRUE);
-
 		}
 	}
 }

@@ -36,6 +36,7 @@
 #include "gameui.h"
 #include "mouse.h"
 #include "meshsword.h"
+#include "spgauge.h"
 
 //****************************
 //グローバル変数
@@ -108,6 +109,9 @@ void InitGame(void)
 
 	// 軌跡の初期化処理
 	InitMeshSword();
+
+	// SPゲージの初期化処理
+	InitSPgauge();
 
 	//エディットの初期化処理
 	InitEdit();
@@ -200,6 +204,9 @@ void UninitGame(void)
 
 	//HPゲージの終了処理
 	UninitGauge();
+
+	// SPゲージの終了処理
+	UninitSPgauge();
 
 	//エディットの終了処理
 	UninitEdit();
@@ -356,6 +363,9 @@ void UpdateGame(void)
 
 			// 軌跡の更新処理
 			UpdateMeshSword();
+
+			// SPゲージの更新処理
+			UpdateSPgauge();
 		}
 		else if (g_bEditMode)
 		{
@@ -425,6 +435,9 @@ void DrawGame(void)
 
     //プレイヤーの影の描画処理
     DrawShadow();
+
+	// SPゲージの描画処理
+	DrawSPgauge();
 
 	// ゲームのUIの描画処理
 	DrawGameUI();

@@ -585,9 +585,9 @@ void UpdatePlayer(void)
 
 				SetExplosion(D3DXVECTOR3(g_player.pos.x,0.0f,g_player.pos.z),D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),
 					60,15.0f,15.0f,1);
+				g_player.pos.y = 0.0f;
 			}
 		}
-
 		g_player.bJump = true; // ジャンプを可能にする
 	}
 	else
@@ -734,7 +734,7 @@ void UpdatePlayer(void)
 
 	static int FiverCnt = 0; // 回数制限
 
-	if (GetFeverMode()&& FiverCnt == 0)
+	if (GetFeverMode()&& FiverCnt == 0 && g_player.WeponMotion != MOTION_SP)
 	{
 		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, 0);
 		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
@@ -758,7 +758,14 @@ void UpdatePlayer(void)
 		PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
 	}
-	
+
+	// スペシャルモーションを発動したら
+	if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.WeponMotion == MOTION_SP)
+	{
+		// パーティクル
+		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+	}
+
 	// スペシャルモーションからもとに戻す
 	if (g_player.WeponMotion == MOTION_SP && g_player.Motion.nKey >= g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION].nNumkey - 1)
 	{
@@ -1274,7 +1281,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	{
 		bCollision = true;
 
-		if (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B))
+		if (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B) || OnMouseTriggerDown(RIGHT_MOUSE))
 		{
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);

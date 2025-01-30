@@ -21,6 +21,7 @@
 #include"item.h"
 #include "HPGauge.h"
 #include "sound.h"
+#include "spgauge.h"
 
 //****************************
 //ƒ}ƒNƒ’è‹`
@@ -493,6 +494,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 		AddFever(5.0f);
 		AddScore(8100);
+		AddSpgauge(2.0f);
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//“G‚Ìó‘Ô‚ğ€–Só‘Ô‚É‚·‚é
 		KillShadow(g_Enemy[nCnt].nIdxShadow);  // “G‚Ì‰e‚ğÁ‚·
