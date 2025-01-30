@@ -189,9 +189,9 @@ void UpdateGauge(void)
 
 	// ‚»‚ê‚ð•`ŽÊ‚µ’¼‚·
 	pVtx[4].pos = D3DXVECTOR3(5.0f, 650.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(g_fLength + 20.0f, 650.0f, 0.0f);
+	pVtx[5].pos = D3DXVECTOR3(g_fLength + 5.0f, 650.0f, 0.0f);
 	pVtx[6].pos = D3DXVECTOR3(5.0f, 700.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(g_fLength + 20.0f, 700.0f, 0.0f);
+	pVtx[7].pos = D3DXVECTOR3(g_fLength + 5.0f, 700.0f, 0.0f);
 	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
 	pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
