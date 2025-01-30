@@ -25,6 +25,7 @@
 LPDIRECT3DTEXTURE9 g_pTextureSPgauge[SPGAUGE_MAX] = {};//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffSPgauge = NULL;//頂点バッファへのポインタ
 SPgauge g_SPgauge[SPGAUGE_MAX];
+bool bSpgauge;
 
 //=====================
 //リザルトの初期化処理
@@ -59,6 +60,7 @@ void InitSPgauge(void)
 	//頂点ロック
 	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
 
+	bSpgauge = false;
 	g_SPgauge[0].nType = SPGAUGE_FRAME;
 	g_SPgauge[1].nType = SPGAUGE_GAUGE;
 
@@ -120,6 +122,9 @@ void UninitSPgauge(void)
 //=====================
 void UpdateSPgauge(void)
 {
+	bSpgauge = false;
+	Player* pPlayer = GetPlayer();
+
 	VERTEX_2D* pVtx;
 
 	//頂点ロック
@@ -130,10 +135,10 @@ void UpdateSPgauge(void)
 		if (g_SPgauge[nCnt].nType == SPGAUGE_FRAME)
 		{
 			//頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(0.0f, 50.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(1000.0f, 50.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 100.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(1000.0f, 100.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(900.0f, 40.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(900.0f, 70.0f, 0.0f);
 		}
 		else if (g_SPgauge[nCnt].nType == SPGAUGE_GAUGE)
 		{
@@ -141,17 +146,41 @@ void UpdateSPgauge(void)
 			float fDest = g_SPgauge[nCnt].SpGauge / 100.0f;
 
 			// 横幅
-			float fWidth = fDest * 1000.0f;
+			float fWidth = fDest * 900.0f;
 
 			if (g_SPgauge[nCnt].SpGauge >= 100.0f)
 			{
+				bSpgauge = true;
 				g_SPgauge[nCnt].SpGauge = 100.0f;
+
+				static int nFrame = 0;
+
+				if (nFrame == 2)
+				{
+					nFrame = 0;
+					//頂点カラーの設定
+					pVtx[0].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
+					pVtx[1].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
+					pVtx[2].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
+					pVtx[3].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
+				}
+				else
+				{
+					nFrame++;
+				}
+
+				if (pPlayer->WeponMotion == MOTION_SP &&
+					pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
+				{
+					g_SPgauge[nCnt].SpGauge = 0.0f;
+				}
 			}
+
 			//頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(0.0f, 50.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(fWidth, 50.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 100.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(fWidth, 100.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(fWidth, 40.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(fWidth, 70.0f, 0.0f);
 		}
 
 		pVtx += 4;
@@ -196,8 +225,17 @@ void DrawSPgauge(void)
 //=====================
 void AddSpgauge(float fValue)
 {
-	if (g_SPgauge[1].SpGauge <= 100.0f)
+	Player* pPlayer = GetPlayer();
+
+	if (g_SPgauge[1].SpGauge < 100.0f && pPlayer->WeponMotion !=MOTION_SP)
 	{
 		g_SPgauge[1].SpGauge += fValue;
 	}
+}
+//=====================
+// ゲージの取得
+//=====================
+bool GetSpgauge(void)
+{
+	return bSpgauge;
 }

@@ -335,7 +335,7 @@ void UpdateEnemy(void)
 
 		if (pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
 		{
-			CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 100.0f, 10.0f);
+			CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 50.0f, 10.0f);
 		}
 		else
 		{
@@ -494,7 +494,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 		AddFever(5.0f);
 		AddScore(8100);
-		AddSpgauge(2.0f);
+		AddSpgauge(1.0f);
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//“G‚Ìó‘Ô‚ğ€–Só‘Ô‚É‚·‚é
 		KillShadow(g_Enemy[nCnt].nIdxShadow);  // “G‚Ì‰e‚ğÁ‚·

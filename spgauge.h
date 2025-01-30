@@ -40,4 +40,5 @@ void UninitSPgauge(void);		// ゲージの終了
 void UpdateSPgauge(void);		// ゲージの更新
 void DrawSPgauge(void);			// ゲージの描画
 void AddSpgauge(float fValue);  // ゲージの加算処理
+bool GetSpgauge(void);          // ゲージの取得
 #endif

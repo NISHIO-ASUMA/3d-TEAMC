@@ -28,6 +28,7 @@
 #include "gameui.h"
 #include "sound.h"
 #include "meshsword.h"
+#include "spgauge.h"
 
 //****************************
 //マクロ定義
@@ -59,6 +60,7 @@ MOTION g_LoadMotion[MOTION_MAX];   // モーションの情報を保存しておく変数
 int g_nCounterState,g_AttackState; // 状態カウンター
 bool bNohand; // 投げたか投げてないか
 bool bUsePad;
+bool bFirstChange;
 
 //============================
 //プレイヤーの初期化処理
@@ -93,6 +95,7 @@ void InitPlayer(void)
 	g_player.speed = 1.0f;								   // 足の速さ
 	g_player.nDamage = 100;								   // 攻撃力
 	bUsePad = false;
+	bFirstChange = false;
 
 	//LoadWepon(); // アイテムのロード
 
@@ -697,7 +700,7 @@ void UpdatePlayer(void)
 
 	Item* pItem = GetItem();
 
-	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)))
+	if (bFirstChange && g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)))
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -746,18 +749,18 @@ void UpdatePlayer(void)
 	}
 
 	// スペシャル
-	if (KeyboardTrigger(DIK_B) && g_player.WeponMotion !=MOTION_SP && g_player.Motion.nNumModel == 16)
+	if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.nNumModel == 16 && g_player.HandState != PLAYERHOLD_HOLD)
 	{
-		g_player.SwordOffpos.y = 200.0f;
-		MotionChange(MOTION_SP, 0);
+		if (g_player.Combostate == COMBO_NO && g_player.WeponMotion != MOTION_SP && GetSpgauge())
+		{
+			g_player.SwordOffpos.y = 200.0f;
+			MotionChange(MOTION_SP, 0);
+			PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
+			SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
+		}
 	}
 
 	// スペシャルモードになった時の攻撃
-	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && g_player.WeponMotion == MOTION_SP)
-	{
-		PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
-		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
-	}
 
 	// スペシャルモーションを発動したら
 	if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.WeponMotion == MOTION_SP)
@@ -1298,7 +1301,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 			pItem[nIdx].bUse = false;      // 消す
 			pItem[nIdx].state = ITEMSTATE_HOLD;
-			
+			bFirstChange = true;
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 
 			switch (pItem[nIdx].nType)
@@ -1313,7 +1316,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				break;
 			case ITEMTYPE_HUNMER:
 				MotionChange(MOTION_BIGWEPON,0);
-				g_player.SwordOffpos.y = 85.0f;
+				g_player.SwordOffpos.y = 65.0f;
 				break;
 			case ITEMTYPE_STONE:
 				MotionChange(MOTION_BIGWEPON, 1);
