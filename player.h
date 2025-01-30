@@ -162,6 +162,7 @@ typedef struct
 	int ItemIdx;    // アイテムのインデックス保管用変数
 	float speed;    // 足の速さ 
 	int nDamage;    // プレイヤーの攻撃力 
+	int nOldItem;
 }Player;
 
 //**************************

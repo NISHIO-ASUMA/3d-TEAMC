@@ -55,11 +55,11 @@ void StickPad(void);//パッドの移動処理
 //LPDIRECT3DTEXTURE9 g_apTexturePlayer[MAX_TEXPLAYER] = {};//プレイヤーのテクスチャへのポインタ
 Player g_player;//プレイヤー構造体
 Player g_LoadPlayer[PLAYERTYPE_MAX]; // プレイヤーのモデルを保存しておく変数
-MODEL g_LoadWepon[ITEMTYPE_MAX];     // プレイヤーの武器を保存しておく変数
 MOTION g_LoadMotion[MOTION_MAX];   // モーションの情報を保存しておく変数
 int g_nCounterState,g_AttackState; // 状態カウンター
 bool bNohand; // 投げたか投げてないか
 bool bUsePad;
+bool bChange;
 
 //============================
 //プレイヤーの初期化処理
@@ -85,7 +85,7 @@ void InitPlayer(void)
 	g_player.Motion.nKey = 0;							   // キー数
 	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;	   // モーションの種類
 	g_player.SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
-	g_player.SwordOffpos.y = 65.0f;						   // 剣のオフセットの座標y
+	g_player.SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
 	g_player.SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
 	g_player.nCounterAction = 0;						   // アクションカウント
 	g_nCounterState = 0;                                   // 状態カウンター
@@ -94,6 +94,8 @@ void InitPlayer(void)
 	g_player.speed = 1.0f;								   // 足の速さ
 	g_player.nDamage = 100;								   // 攻撃力
 	bUsePad = false;
+	bChange = false;
+
 	//LoadWepon(); // アイテムのロード
 
 
@@ -129,6 +131,10 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].Combostate = COMBO_ATTACK1;
 		g_LoadPlayer[nCntPlayer].speed = 1.0f;
 		g_LoadPlayer[nCntPlayer].nDamage = 100;
+		g_LoadPlayer[nCntPlayer].SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
+		g_LoadPlayer[nCntPlayer].SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
+		g_LoadPlayer[nCntPlayer].SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
+
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
@@ -287,23 +293,6 @@ void UninitPlayer(void)
 				 g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pBuffMat->Release();
 				 g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pBuffMat = NULL;
 			}
-		}
-	}
-
-	// アイテム分回す
-	for (int nCnt = 0; nCnt < ITEMTYPE_MAX; nCnt++)
-	{
-		// メッシュの破棄
-		if (g_LoadWepon[nCnt].pMesh != NULL)
-		{
-			g_LoadWepon[nCnt].pMesh->Release();
-			g_LoadWepon[nCnt].pMesh = NULL;
-		}
-		// マテリアルの破棄
-		if (g_LoadWepon[nCnt].pBuffMat != NULL)
-		{
-			g_LoadWepon[nCnt].pBuffMat->Release();
-			g_LoadWepon[nCnt].pBuffMat = NULL;
 		}
 	}
 
@@ -675,6 +664,7 @@ void UpdatePlayer(void)
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
 		}
 	}
+
 	//プレイヤーの角度の正規化
 	if (g_player.rotDestPlayer.y - g_player.rot.y >= D3DX_PI)
 	{
@@ -697,21 +687,52 @@ void UpdatePlayer(void)
 	}
 	else
 	{
+		// ステータスをもとに戻す
 		g_player.speed = 1.0f;
 		g_player.nDamage = 100;
 	}
 
-	static int FiverCnt = 0;
+	Item* pItem = GetItem();
+
+	if (g_player.Motion.nNumModel == 16 && KeyboardTrigger(DIK_G))
+	{
+		// モーションを歩きにする(第2引数に1を入れる)
+		MotionChange(MOTION_DBHAND, 1);
+
+		// 素手の時のモーション情報を代入
+		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
+		{
+			g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].Motion.aModel[nCntModel]; // モデルの情報を代入
+		}
+		for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
+		{
+			g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].Motion.aMotionInfo[nCntMotion];
+		}
+
+		// 投げた後に武器を消す
+		g_player.Motion.nNumModel -= 1;
+
+		// プレイヤーの状態を何も持っていない状態にする
+		g_player.HandState = PLAYERHOLD_NO;
+
+		// プレイヤーの位置を代入
+		pItem[g_player.ItemIdx].pos = g_player.pos;
+
+		// アイテムを使用状態にする
+		pItem[g_player.ItemIdx].bUse = true;
+	}	
+
+	static int FiverCnt = 0; // 回数制限
 
 	if (GetFeverMode()&& FiverCnt == 0)
 	{
 		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, 0);
 		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
-		FiverCnt = 1;
+		FiverCnt = 1; // 制限回数を超えた
 	}
 	else if (!GetFeverMode())
 	{
-		FiverCnt = 0;
+		FiverCnt = 0; // 制限回数をリセット
 	}
 
 	//SetEffect(SwordPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 10.0f, 10.0f);
@@ -1184,11 +1205,21 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 		{
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
+			
+			if (pItem[g_player.ItemIdx].state == ITEMSTATE_HOLD)
+			{
+				// プレイヤーの位置を代入
+				pItem[g_player.ItemIdx].pos = g_player.pos;
+
+				// アイテムを使用状態にする
+				pItem[g_player.ItemIdx].bUse = true;
+			}
 
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 			pItem[nIdx].bUse = false;      // 消す
+			pItem[nIdx].state = ITEMSTATE_HOLD;
+			
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
-
 
 			switch (pItem[nIdx].nType)
 			{

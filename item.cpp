@@ -193,7 +193,7 @@ void UpdateItem(void)
 		{
 			ThrowItem();
 		}
-
+		
 		if (!g_Item[nCntItem].bUse)
 		{//g—p’†‚¶‚á‚È‚©‚Á‚½‚ç
 			// ˆ—‚ğ“Ç‚İ”ò‚Î‚·
