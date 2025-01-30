@@ -21,6 +21,7 @@
 #include "explosion.h"
 #include "mouse.h"
 #include "HPGauge.h"
+#include "gameui.h"
 
 //****************************
 //グローバル変数
@@ -49,6 +50,9 @@ void InitTutorial3d(void)
 	// ゲージの初期化
 	InitGauge();
 
+	// UIの初期化処理
+	InitGameUI();
+
 	// プレイヤーの初期化処理
 	InitPlayer();
 
@@ -68,6 +72,9 @@ void InitTutorial3d(void)
 
 	// アイテムをセット
 	SetItem(D3DXVECTOR3(140.0f, -10.0f, 0.0f), 29, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
+
+	// UIをセット
+	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f, 0);
 
 	// 音楽を再生
 	PlaySound(SOUND_LABEL_TUTORIAL_BGM);
@@ -91,6 +98,9 @@ void UninitTutorial3d(void)
 
 	// ゲージの終了
 	UninitGauge();
+
+	// UIの終了
+	UninitGameUI();
 
 	// 壁の終了処理
 	UninitWall();
@@ -120,6 +130,9 @@ void UpdateTutorial3d(void)
 
 	// 壁の更新処理
 	UpdateWall();
+
+	// UIの更新処理
+	UpdateGameUI();
 
 	// プレイヤーの更新処理
 	UpdatePlayer();
@@ -159,6 +172,9 @@ void DrawTutorial3d(void)
 
 	//影の描画処理
 	DrawShadow();
+
+	// UIの描画処理
+	DrawGameUI();
 
 	// ブロックの描画処理
 	DrawBlock();
