@@ -99,13 +99,15 @@ void InitMeshSword(void)
 		pVtx[nCount * 2 + 3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	}
 
+	float Tex = 1.0f / X;
+
 	//頂点座標の設定
 	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	for (int nCount = 0; nCount < X; nCount++)
 	{
-		pVtx[nCount * 2 + 2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[nCount * 2 + 3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[nCount * 2 + 2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - Tex * nCount);
+		pVtx[nCount * 2 + 3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - Tex * nCount);
 	}
 
 	//for (int nCnt = 0; nCnt < ORBIT_VERTEX; nCnt++)
@@ -121,8 +123,6 @@ void InitMeshSword(void)
 		//頂点座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[1].tex = D3DXVECTOR2(0.0f, 1.0f);
-
-	float Tex = 1.0f / X;
 
 	for (int nCount = 0; nCount < X; nCount++)
 	{
