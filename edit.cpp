@@ -224,7 +224,7 @@ void UpdateEdit(void)
 		{
 			g_Edit[g_EditCount + 1].pos = g_Edit[g_EditCount].pos;							// 次のオブジェクトに現在のオブジェクトの位置を代入
 			g_Edit[g_EditCount + 1].bUse = true;											// 次のオブジェクトを使用状態にする
-
+			g_Edit[g_EditCount + 1].Scal = g_Edit[g_EditCount].Scal;						// 次のオブジェクトにスケールを代入する
 			g_Edit[g_EditCount + 1].EditCategory = g_Edit[g_EditCount].EditCategory;        // 今のカテゴリーを代入
 			g_Edit[g_EditCount + 1].nType = g_Edit[g_EditCount].nType;						// 今のタイプを代入
 			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];

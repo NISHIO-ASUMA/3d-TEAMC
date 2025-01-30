@@ -38,7 +38,7 @@
 #define MAX_JUMP (15.0f) // ジャンプ量
 #define MAX_MOVE (1.0f) // っプレイヤーの移動量
 #define NUM_MTX (8) // 剣の当たり判定のマトリクスの数
-#define LANDINGEXPLOSION (8) // 着地したときに出る煙
+#define LANDINGEXPLOSION (6) // 着地したときに出る煙
 
 //****************************
 //プロトタイプ宣言
@@ -102,6 +102,7 @@ void InitPlayer(void)
 	LoadMotion(2);
 	LoadMotion(3);
 	LoadMotion(4);
+	LoadMotion(5);
 
 	// 切り替わるモーションの数だけ
 	for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
@@ -138,7 +139,6 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
 		g_LoadPlayer[nCntPlayer].SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
 		g_LoadPlayer[nCntPlayer].WeponMotion = MOTION_KATANA;				   // 剣のオフセットの座標z
-
 
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
@@ -579,7 +579,7 @@ void UpdatePlayer(void)
 	{
 		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
 		{
-			for (int nCnt = 0; nCnt < 6; nCnt++)
+			for (int nCnt = 0; nCnt < LANDINGEXPLOSION; nCnt++)
 			{
 				float fAngle = (D3DX_PI * 2.0f) / LANDINGEXPLOSION * nCnt;
 
@@ -625,7 +625,7 @@ void UpdatePlayer(void)
 	//SetEffect(D3DXVECTOR3(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1, 20.0f);
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (g_player.bDisp && !bNohand)
+	if (g_player.bDisp && !bNohand && g_player.WeponMotion != MOTION_SP)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))&&g_player.Combostate == COMBO_NO && g_AttackState <= 30)
 		{
@@ -646,7 +646,7 @@ void UpdatePlayer(void)
 	}
 
 	// 投げ物を持っているときの攻撃
-	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand)
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand && g_player.WeponMotion != MOTION_SP)
 	{
 		PlayerComb(MOTIONTYPE_ACTION, 40, 20, COMBO_ATTACK1); // コンボ1
 	}
@@ -726,7 +726,7 @@ void UpdatePlayer(void)
 	}	
 
 	// 大型武器モーションの時
-	if (g_player.WeponMotion == MOTION_BIGWEPON && g_player.Motion.motionType == MOTIONTYPE_ACTION4 && g_player.Motion.nKey == 0)
+	if (g_player.WeponMotion == MOTION_BIGWEPON && g_player.Motion.motionType == MOTIONTYPE_ACTION4 && g_player.Motion.nKey == 0 && GetKeyboardPress(DIK_W))
 	{
 		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 15.0f;
 		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 15.0f;
@@ -740,13 +740,33 @@ void UpdatePlayer(void)
 		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
 		FiverCnt = 1; // 制限回数を超えた
 	}
-	else if (!GetFeverMode())
+	if (!GetFeverMode())
 	{
 		FiverCnt = 0; // 制限回数をリセット
 	}
 
-	//SetEffect(SwordPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 10.0f, 10.0f);
-	//vtx(g_player.SwordMtx,g_player.Motion.aModel[15].mtxWorld); // 頂点保存
+	// スペシャル
+	if (KeyboardTrigger(DIK_B) && g_player.WeponMotion !=MOTION_SP && g_player.Motion.nNumModel == 16)
+	{
+		g_player.SwordOffpos.y = 200.0f;
+		MotionChange(MOTION_SP, 0);
+	}
+
+	// スペシャルモードになった時の攻撃
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && g_player.WeponMotion == MOTION_SP)
+	{
+		PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
+		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
+	}
+	
+	// スペシャルモーションからもとに戻す
+	if (g_player.WeponMotion == MOTION_SP && g_player.Motion.nKey >= g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION].nNumkey - 1)
+	{
+		g_player.SwordOffpos.y = 65.0f;		// 判定の長さを戻す
+		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
+		g_player.Motion.nNumModel = 15;		// 武器を消す
+		g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
+	}
 
 	//モーションの更新
 	UpdateMotion(&g_player.Motion);
@@ -916,18 +936,21 @@ void SetMtxPos(void)
 //======================
 void HitPlayer(int nDamage)
 {
-	g_player.nLife -= nDamage;
+	if (g_player.WeponMotion != MOTION_SP)
+	{
+		g_player.nLife -= nDamage;
 
-	if (g_player.nLife <= 0)
-	{
-		g_player.state = PLAYERSTATE_FALL;
-		g_player.bDisp = false;
-		KillShadow(g_player.nIdxShadow); // 影を消す
-	}
-	else
-	{
-		g_nCounterState = 30;
-		g_player.state = PLAYERSTATE_DAMAGE;
+		if (g_player.nLife <= 0)
+		{
+			g_player.state = PLAYERSTATE_FALL;
+			g_player.bDisp = false;
+			KillShadow(g_player.nIdxShadow); // 影を消す
+		}
+		else
+		{
+			g_nCounterState = 30;
+			g_player.state = PLAYERSTATE_DAMAGE;
+		}
 	}
 }
 //============================
@@ -984,7 +1007,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 
 	D3DXVECTOR3 mtxDis,SwordPos;
 
-	if (g_player.Motion.nNumModel == 16)
+	if (g_player.Motion.nNumModel == 16 && g_player.WeponMotion != MOTION_SP)
 	{
 		//剣の長さを求める
 		mtxDis.x = (g_player.SwordMtx._41 - g_player.Motion.aModel[15].mtxWorld._41);
@@ -1023,7 +1046,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			}
 		}
 	}
-	else if(g_player.Motion.nNumModel == 15)
+	else if(g_player.Motion.nNumModel == 15 && g_player.WeponMotion != MOTION_SP)
 	{
 		// モデルの位置を変数に代入
 		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[4].mtxWorld._41, g_player.Motion.aModel[4].mtxWorld._42, g_player.Motion.aModel[4].mtxWorld._43);
@@ -1034,6 +1057,45 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.Motion.nKey >= 2)
 			{
 				HitEnemy(nCntEnemy, g_player.nDamage * 3); // 敵に当たった
+			}
+		}
+	}
+	else if (g_player.Motion.nNumModel == 16 && g_player.WeponMotion == MOTION_SP)
+	{
+		//剣の長さを求める
+		mtxDis.x = (g_player.SwordMtx._41 - g_player.Motion.aModel[15].mtxWorld._41);
+		mtxDis.y = (g_player.SwordMtx._42 - g_player.Motion.aModel[15].mtxWorld._42);
+		mtxDis.z = (g_player.SwordMtx._43 - g_player.Motion.aModel[15].mtxWorld._43);
+
+		// マトリクスの数分だけ回す
+		for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
+		{
+			// 剣の位置を全て求める
+			SwordPos.x = g_player.Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.125f * nCnt;
+			SwordPos.y = g_player.Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.125f * nCnt;
+			SwordPos.z = g_player.Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.125f * nCnt;
+
+			D3DXVECTOR3 DisPos; // 距離算出用
+
+			DisPos.x = pEnemy->pos.x - SwordPos.x; // 距離Xを求める
+			DisPos.y = pEnemy->pos.y - SwordPos.y; // 距離Yを求める
+			DisPos.z = pEnemy->pos.z - SwordPos.z; // 距離Zを求める
+
+			float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z); // 距離を求める
+
+			float Radius1, Radius2; // 半径
+
+			Radius1 = 200.0f;
+			Radius2 = 50.0f;
+
+			float fRadius = Radius1 + Radius2; // 半径を求める
+
+			fRadius = (fRadius * fRadius); // 半径を求める
+
+			if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 3)
+			{
+				HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
+				break;
 			}
 		}
 	}
@@ -1323,11 +1385,11 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_DBHAND, 1);
 				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_BONESPEAR:
-				MotionChange(MOTION_ONE_HAND, 0);
+				MotionChange(MOTION_PIERCING, 0);
 				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_FISH:
@@ -1443,7 +1505,7 @@ void MotionChange(int itemtype,int LoadPlayer)
 		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[LoadPlayer].Motion.aMotionInfo[nCntMotion]; // モーションの情報を代入
 	}
 
-	if (LoadPlayer != PLAYERTYPE_NOHAND) // プレイヤーがノーハンドだったら情報を代入しない
+	if (LoadPlayer == PLAYERTYPE_WEPON) // プレイヤーがノーハンドだったら情報を代入しない
 	{
 		g_player.WeponMotion = itemtype; // アイテムごとのモーションタイプ
 		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION] = g_LoadMotion[itemtype].aMotionInfo[0];		// 攻撃1の情報を代入
@@ -1456,13 +1518,14 @@ void MotionChange(int itemtype,int LoadPlayer)
 		bNohand = false;// プレイヤーをノーハンドにする
 		g_player.PlayerType = PLAYERTYPE_WEPON;
 	}
-	else
+	else if(LoadPlayer == PLAYERTYPE_NOHAND)
 	{
 		g_player.WeponMotion = itemtype; // アイテムごとのモーションタイプ
 		g_player.HandState = PLAYERHOLD_HOLD;	// プレイヤーをノーハンドにする
 		g_player.PlayerType = PLAYERTYPE_NOHAND;
 		bNohand = true;
 	}
+	
 }
 
 //================================
@@ -1487,6 +1550,9 @@ void LoadMotion(int Weponmotion)
 		break;
 	case MOTION_PIERCING:
 		pFile = fopen("data\\MOTION_CHANGE\\piercing.txt", "r");
+		break;
+	case MOTION_SP:
+		pFile = fopen("data\\MOTION_CHANGE\\sp.txt", "r");
 		break;
 	default:
 		pFile = NULL;

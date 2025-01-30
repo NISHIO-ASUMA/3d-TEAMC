@@ -10,6 +10,7 @@
 //****************************
 #include "gameui.h"
 #include "HPGauge.h"
+#include "player.h"
 
 //****************************
 //マクロ定義
@@ -137,6 +138,7 @@ void UninitGameUI(void)
 void UpdateGameUI(void)
 {
 	VERTEX_2D* pVtx;
+	Player* pPlayer = GetPlayer();
 
 	//頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
@@ -156,6 +158,7 @@ void UpdateGameUI(void)
 			{
 				g_GameUI[nCnt].pos.y += 5.0f; // 下に移動
 			}
+
 			break;
 		case UITYPE_FIVER:
 		{
@@ -165,7 +168,7 @@ void UpdateGameUI(void)
 			if (bUp)
 			{
 				g_GameUI[nCnt].pos.y -= 2.0f; // 下に下げる
-				
+
 				if (g_GameUI[nCnt].pos.y < 630.0f)
 				{
 					bUp = false; // 下に下げる
@@ -185,8 +188,9 @@ void UpdateGameUI(void)
 			{
 				g_GameUI[nCnt].bUse = false;
 			}
-		}
+
 			break;
+		}
 		case UITYPE_SYUTYUSEN:
 			g_nCounterAnim++;
 
@@ -220,6 +224,32 @@ void UpdateGameUI(void)
 				g_GameUI[nCnt].bUse = false;
 			}
 
+			break;
+		case UITYPE_BLACK:
+		{
+			static float fcolorA = 0.0f;
+
+			if (fcolorA >= 0.8f)
+			{
+				fcolorA = 0.8f;
+			}
+			else
+			{
+				fcolorA += 0.01f;
+			}
+
+			if (pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.nKey == 4)
+			{
+				g_GameUI[nCnt].bUse = false;
+				fcolorA = 0.0f;
+			}
+
+			//頂点カラーの設定
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
+		}
 			break;
 		default:
 			break;

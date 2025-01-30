@@ -6,7 +6,7 @@
 //============================
 
 //****************************
-//インクルードファイル
+// インクルードファイル
 //****************************
 #include "block.h"
 #include "input.h"
@@ -14,18 +14,18 @@
 #include "camera.h"
 
 //****************************
-//マクロ定義
+// マクロ定義
 //****************************
 #define MAX_WORD (256) // 最大の文字数
 #define HALF_VALUE (0.6f) // 割る数
 
 //****************************
-//プロトタイプ宣言
+// プロトタイプ宣言
 //****************************
 void LoadBlockModel(void); // モデル読み込み処理
 
 //****************************
-//グローバル変数宣言
+// グローバル変数宣言
 //****************************
 BLOCK g_Block[MAX_BLOCK];
 BLOCK g_TexBlock[BLOCKTYPE_MAX];
@@ -34,7 +34,7 @@ int g_NumBlock;
 int g_BlockTypeMax;
 
 //=============================
-//ブロックの初期化処理
+// ブロックの初期化処理
 //=============================
 void InitBlock(void)
 {
@@ -140,7 +140,7 @@ void InitBlock(void)
 	}
 }
 //=============================
-//ブロックの終了処理
+// ブロックの終了処理
 //=============================
 void UninitBlock(void)
 {
@@ -200,14 +200,14 @@ void UninitBlock(void)
 
 }
 //=============================
-//ブロックの更新処理
+// ブロックの更新処理
 //=============================
 void UpdateBlock(void)
 {
 
 }
 //=============================
-//ブロックの描画処理
+// ブロックの描画処理
 //=============================
 void DrawBlock(void)
 {
@@ -274,7 +274,7 @@ void DrawBlock(void)
 	}
 }
 //=======================
-//ブロックの設定処理
+// ブロックの設定処理
 //=======================
 void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal)
 {
@@ -295,7 +295,7 @@ void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal)
 	}
 }
 //=======================
-//ブロックの判定処理
+// ブロックの判定処理
 //=======================
 bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize)
 {
@@ -379,7 +379,7 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 	return bLanding;//着地判定を返す
 }
 //=================================
-//ブロックとアイテムの当たり判定
+// ブロックとアイテムの当たり判定
 //=================================
 bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize)
 {
@@ -468,21 +468,21 @@ bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pM
 	return bHit;
 }
 //=======================
-//ブロックの取得処理
+// ブロックの取得処理
 //=======================
 BLOCK* GetBlock()
 {
 	return &g_Block[0];
 }
 //=======================
-//ブロックの数取得処理
+// ブロックの数取得処理
 //=======================
 int NumBlock(void)
 {
 	return g_NumBlock;
 }
 //=============================
-//ステージのロード処理
+// ステージのロード処理
 //=============================
 void LoadTitleState(void)
 {
@@ -554,7 +554,7 @@ void LoadTitleState(void)
 	fclose(pFile);
 }
 //=============================
-//ブロックのモデルのロード処理
+// ブロックのモデルのロード処理
 //=============================
 void LoadBlockModel(void)
 {
@@ -618,7 +618,7 @@ void LoadBlockModel(void)
 	fclose(pFile);
 }
 //=====================================
-//チュートリアルのモデルのロード処理
+// チュートリアルのモデルのロード処理
 //=====================================
 void tutoload(void)
 {

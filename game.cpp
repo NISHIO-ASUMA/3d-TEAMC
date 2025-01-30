@@ -384,9 +384,6 @@ void DrawGame(void)
 	//メッシュフィールドの描画処理
 	DrawMeshField();
 
-	// 軌跡の描画処理
-	DrawMeshSword();
-
 	//プレイヤーの描画処理
 	DrawPlayer();
 
@@ -416,6 +413,9 @@ void DrawGame(void)
 
 	// 煙の描画処理
 	DrawExplosion();
+
+	// 軌跡の描画処理
+	DrawMeshSword();
 
 	// ダメージの描画処理
 	DrawDamege();
