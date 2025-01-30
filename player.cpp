@@ -59,7 +59,6 @@ MOTION g_LoadMotion[MOTION_MAX];   // モーションの情報を保存しておく変数
 int g_nCounterState,g_AttackState; // 状態カウンター
 bool bNohand; // 投げたか投げてないか
 bool bUsePad;
-bool bChange;
 
 //============================
 //プレイヤーの初期化処理
@@ -94,7 +93,6 @@ void InitPlayer(void)
 	g_player.speed = 1.0f;								   // 足の速さ
 	g_player.nDamage = 100;								   // 攻撃力
 	bUsePad = false;
-	bChange = false;
 
 	//LoadWepon(); // アイテムのロード
 
@@ -338,7 +336,7 @@ void UpdatePlayer(void)
 
 	if (!bUsePad)
 	{
-		if (GetKeyboardPress(DIK_A) && g_player.state != PLAYERSTATE_ATTACK)
+		if (GetKeyboardPress(DIK_A) && g_player.Combostate == COMBO_NO)
 		{
 			//プレイヤーの移動(上)
 			if (GetKeyboardPress(DIK_W) == true)
@@ -372,7 +370,7 @@ void UpdatePlayer(void)
 			}
 		}
 		//プレイヤーの移動(右)
-		else if (GetKeyboardPress(DIK_D) && g_player.state != PLAYERSTATE_ATTACK)
+		else if (GetKeyboardPress(DIK_D) && g_player.Combostate == COMBO_NO)
 		{
 			//プレイヤーの移動(上)
 			if (GetKeyboardPress(DIK_W))
@@ -407,7 +405,7 @@ void UpdatePlayer(void)
 
 		}
 		//プレイヤーの移動(上)
-		else if (GetKeyboardPress(DIK_W) == true && g_player.state != PLAYERSTATE_ATTACK)
+		else if (GetKeyboardPress(DIK_W) == true && g_player.Combostate == COMBO_NO)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -417,7 +415,7 @@ void UpdatePlayer(void)
 			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
 		}
 		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S) == true && g_player.state != PLAYERSTATE_ATTACK)
+		else if (GetKeyboardPress(DIK_S) == true && g_player.Combostate == COMBO_NO)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
@@ -624,28 +622,28 @@ void UpdatePlayer(void)
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
 	if (g_player.bDisp && !bNohand)
 	{
-		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))&&g_player.Combostate == COMBO_NO && g_AttackState <= 50)
+		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))&&g_player.Combostate == COMBO_NO && g_AttackState <= 30)
 		{
-			PlayerComb(MOTIONTYPE_ACTION, 60, 40, COMBO_ATTACK1); // コンボ1
+			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // コンボ1
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 30)
 		{
-			PlayerComb(MOTIONTYPE_ACTION2, 60, 40, COMBO_ATTACK2); // コンボ2
+			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // コンボ2
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 30)
 		{
-			PlayerComb(MOTIONTYPE_ACTION3, 60, 40, COMBO_ATTACK3); // コンボ3
+			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // コンボ3
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 50)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 30)
 		{
-			PlayerComb(MOTIONTYPE_ACTION4, 60, 40, COMBO_ATTACK4); // コンボ4
+			PlayerComb(MOTIONTYPE_ACTION4, 40, 40, COMBO_ATTACK4); // コンボ4
 		}
 	}
 
 	// 投げ物を持っているときの攻撃
 	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand)
 	{
-		PlayerComb(MOTIONTYPE_ACTION, 60, 20, COMBO_ATTACK1); // コンボ1
+		PlayerComb(MOTIONTYPE_ACTION, 40, 20, COMBO_ATTACK1); // コンボ1
 	}
 
 	// モーションの種類が歩き
@@ -694,7 +692,7 @@ void UpdatePlayer(void)
 
 	Item* pItem = GetItem();
 
-	if (g_player.Motion.nNumModel == 16 && KeyboardTrigger(DIK_G))
+	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)))
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -1019,7 +1017,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[4].mtxWorld._41, g_player.Motion.aModel[4].mtxWorld._42, g_player.Motion.aModel[4].mtxWorld._43);
 
 		// 円の範囲
-		if (shpererange(&ModelPos, &pEnemy->pos, 30.0f, 50.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
+		if (sphererange(&ModelPos, &pEnemy->pos, 30.0f, 65.0f)&& g_player.state == PLAYERSTATE_ATTACK && pEnemy->state!=ENEMYSTATE_DAMAGE)
 		{
 			if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.Motion.nKey >= 2)
 			{
@@ -1080,6 +1078,7 @@ void ThrowItem(void)
 			}
 		}
 	}
+
 	D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - pItem[nIdx].pos; // 近い敵の方向を求める
 	D3DXVec3Normalize(&dest, &dest); // 正規化する
 
@@ -1147,7 +1146,7 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 //================================
 // 円の判定
 //================================
-bool shpererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float radius2) // 円の当たり判定
+bool sphererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float radius2) // 円の当たり判定
 {
 	bool bRange = false;
 
@@ -1206,14 +1205,14 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
 			
-			if (pItem[g_player.ItemIdx].state == ITEMSTATE_HOLD)
-			{
-				// プレイヤーの位置を代入
-				pItem[g_player.ItemIdx].pos = g_player.pos;
+			//if (pItem[g_player.ItemIdx].state == ITEMSTATE_HOLD)
+			//{
+			//	// プレイヤーの位置を代入
+			//	pItem[g_player.ItemIdx].pos = g_player.pos;
 
-				// アイテムを使用状態にする
-				pItem[g_player.ItemIdx].bUse = true;
-			}
+			//	// アイテムを使用状態にする
+			//	pItem[g_player.ItemIdx].bUse = true;
+			//}
 
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 			pItem[nIdx].bUse = false;      // 消す
@@ -1353,6 +1352,12 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 //============================
 void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBOSTATE Combstate)
 {
+	ENEMY* pEnemy = GetEnemy();
+	float fDistanceNow = 0.0f;
+	float fDistanceStock = 0.0f;
+	bool bFirst = true;
+	int nIdxEnemy = 0;
+
 	g_player.Motion.nKey = 0;                 // キーを0から始める
 	g_player.Motion.nCountMotion = 0;	      // モーションカウントを0から始める
 	g_player.Motion.motionType = motiontype;  // モーションの種類を変更
@@ -1360,6 +1365,44 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
 	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
 	g_player.Combostate = Combstate;		  // コンボの状態を設定
+
+	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
+	{
+		if (pEnemy[nCnt].bUse)
+		{
+			// 距離を求める
+			float DisposX = pEnemy[nCnt].pos.x - g_player.pos.x;
+			float DisposY = pEnemy[nCnt].pos.y - g_player.pos.y;
+			float DisposZ = pEnemy[nCnt].pos.z - g_player.pos.z;
+
+			// 距離を求める
+			fDistanceNow = sqrtf((DisposX * DisposX) + (DisposY * DisposY) + (DisposZ * DisposZ));
+
+			// 最初だけ通す
+			if (bFirst)
+			{
+				fDistanceStock = fDistanceNow;
+				bFirst = false;
+				nIdxEnemy = nCnt;
+			}
+			else
+			{
+				// 今の距離がストックされた距離より小さかったら
+				if (fDistanceNow < fDistanceStock)
+				{
+					fDistanceStock = fDistanceNow; // 距離を保存
+					nIdxEnemy = nCnt; // 近い敵のインデックスを保存
+				}
+			}
+		}
+	}
+
+	
+	if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 100.0f, 100.0f))
+	{
+		float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
+			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+	}
 }
 //===============================
 // プレイヤーのモーションの変更

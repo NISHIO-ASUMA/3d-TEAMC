@@ -179,7 +179,7 @@ void UninitMeshSword(void)
 //===============================
 void UpdateMeshSword(void)
 {
-	if (OnMouseTriggerDown(LEFT_MOUSE))
+	if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))
 	{
 		ResetMeshSword();
 	}

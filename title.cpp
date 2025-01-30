@@ -148,7 +148,7 @@ void UpdateTitle(void)
 		{
 		case TITLESELECT_GAME:
 
-			if (KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_W))
+			if (KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S))
 			{
 				// âπäyçƒê∂
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -176,7 +176,7 @@ void UpdateTitle(void)
 
 			break;
 		case TITLESELECT_TUTO:
-			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_S))
+			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W))
 			{
 				// âπäyçƒê∂
 				PlaySound(SOUND_LABEL_SELECT_SE);

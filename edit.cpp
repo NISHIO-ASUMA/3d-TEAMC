@@ -25,8 +25,8 @@
 //マクロ定義
 //****************************
 #define OBJ_MOVE (10.0f) // オブジェクトの移動量
-#define MAX_WORD (128) // 文字数
-#define MAX_OBJ (150)
+#define MAX_WORD (128)   // 文字数
+#define MAX_OBJ (256)    // 最大オブジェクト数
 
 //****************************
 //プロトタイプ宣言
@@ -36,7 +36,7 @@ void LoadEditObj(int category); // 編集モードで使うオブジェクトのロード処理
 //****************************
 //グローバル変数
 //****************************
-EDIT_INFO g_Edit[MAX_OBJ];			// エディットの情報
+EDIT_INFO g_Edit[MAX_OBJ];			    // エディットの情報
 EditTex g_BlockTexInfo[EDITMODE_MAX];	// エディットの情報保存用変数
 int g_EditCount, nCntobj;               // オブジェクトのカウント、保存用
 int g_nNumBlock;						// オブジェクトの数
@@ -49,7 +49,7 @@ void InitEdit(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//ブロックの最大数分初期化
-	for (int nCnt = 0; nCnt < MAX_BLOCK; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_OBJ; nCnt++)
 	{
 		g_Edit[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 位置の初期化
 		g_Edit[nCnt].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);	// 大きさの初期化(最小1.0f)
@@ -343,7 +343,7 @@ void DrawEdit(void)
 
 	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
 
-	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
+	for (int nCntBlock = 0; nCntBlock < MAX_OBJ; nCntBlock++)
 	{
 		if (!g_Edit[nCntBlock].bUse)
 		{//未使用だったら
@@ -698,15 +698,15 @@ void ReLoadEdit(void)
 
 	for (int nCnt = 0; nCnt < nCntobj; nCnt++)
 	{
-		g_Edit[g_EditCount + 1].bUse = true; // 置かれていたブロックを使用状態にする
-		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].pModel[g_Edit[nCnt].nType] = g_BlockTexInfo[g_Edit[nCnt].EditCategory].pModel[g_Edit[nCnt].nType]; // 情報を代入
-		g_Edit[g_EditCount + 1].Category[g_Edit[nCnt].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[nCnt].EditCategory].nNumModel; // 情報を代入
+		g_Edit[g_EditCount].bUse = true; // 置かれていたブロックを使用状態にする
+		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
+		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
 
 		if (nCnt != nCntobj - 1)
 		{
 			g_EditCount++;
 			g_nNumBlock++;
-		}
+		}		
 	}
 
 }

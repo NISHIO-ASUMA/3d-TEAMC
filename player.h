@@ -179,5 +179,5 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange);
 void HitSowrd(ENEMY* pEnemy,int nCntEnemy);
 void ThrowItem(void); // アイテムを投げる
 void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, float ENradius); // プレイヤーと敵の当たり判定
-bool shpererange(D3DXVECTOR3* pPos1,D3DXVECTOR3 *pPos2, float radius1, float radius2); // 円の当たり判定
+bool sphererange(D3DXVECTOR3* pPos1,D3DXVECTOR3 *pPos2, float radius1, float radius2); // 円の当たり判定
 #endif

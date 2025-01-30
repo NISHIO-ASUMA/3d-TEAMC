@@ -289,12 +289,12 @@ void CollisionWall(void)
 			//プレイヤーが壁の外に出た
 			if (Cross.y < 0)
 			{
-				pPlayer->move.x = Dot;
-				pPlayer->move.z = Dot;
+				pPlayer->move.x = 0.0f;
+				pPlayer->move.z = 0.0f;
 
 				//プレイヤーの位置を前回の位置に戻す
-				pPlayer->pos.x += vecWall.x;
-				pPlayer->pos.z += vecWall.z;
+				pPlayer->pos.x += vecWall.x * pPlayer->speed;
+				pPlayer->pos.z += vecWall.z * pPlayer->speed;
 
 				DotWall();//内積
 			}
