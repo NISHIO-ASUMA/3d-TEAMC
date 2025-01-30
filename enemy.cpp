@@ -354,7 +354,7 @@ void DrawEnemy(void)
 
 	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
 
-	int nNumEnemy = 0;
+	int nNumEnemy = 0; // ローカル変数
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
@@ -589,26 +589,26 @@ void WaveEnemy(int nSpawner)
 		// スポナー0
 		if (nSpawner == 0)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.2f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 -700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.2f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 -700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
 		}
 		// スポナー1
 		else if (nSpawner == 1)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -530.0f), 0.0f, (float)(rand() % 20 -780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.6f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.7f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -530.0f), 0.0f, (float)(rand() % 20 -780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.6f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.7f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
 		}
 		// スポナー2
 		else if (nSpawner == 2)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.0f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 - 700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.0f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 530.0f), 0.0f, (float)(rand() % 20 - 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.0f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.0f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 - 700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.0f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 530.0f), 0.0f, (float)(rand() % 20 - 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.0f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
 		}
 	}
 }

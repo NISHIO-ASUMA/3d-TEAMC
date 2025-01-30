@@ -120,6 +120,7 @@ typedef enum
 	MOTION_BIGWEPON,
 	MOTION_DBHAND,
 	MOTION_ONE_HAND,
+	MOTION_PIERCING,
 	MOTION_MAX
 }WEPONMOTION; // Žg‚¢‚Ü‚í‚¹‚é‚à‚Ì‚ÍŽg‚¢‚Ü‚í‚·
 

@@ -101,6 +101,7 @@ void InitPlayer(void)
 	LoadMotion(1);
 	LoadMotion(2);
 	LoadMotion(3);
+	LoadMotion(4);
 
 	// 切り替わるモーションの数だけ
 	for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
@@ -640,7 +641,7 @@ void UpdatePlayer(void)
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 30)
 		{
-			PlayerComb(MOTIONTYPE_ACTION4, 50, 40, COMBO_ATTACK4); // コンボ4
+			PlayerComb(MOTIONTYPE_ACTION4, 45, 40, COMBO_ATTACK4); // コンボ4
 		}
 	}
 
@@ -1310,7 +1311,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_RUBBERCUP:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_PIERCING, 0);
 				g_player.SwordOffpos.y = 85.0f;
 				break;
 			case ITEMTYPE_TELEPHONEPOLE:
@@ -1413,7 +1414,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	}
 
 	// 範囲にいる間だけロックオン
-	if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 100.0f, 100.0f))
+	if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 150.0f, 150.0f))
 	{
 		// 角度を求める
 		float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
@@ -1470,7 +1471,6 @@ void MotionChange(int itemtype,int LoadPlayer)
 void LoadMotion(int Weponmotion)
 {
 	FILE* pFile; // ファイルのポインタ
-
 	switch (Weponmotion)
 	{
 	case MOTION_KATANA:
@@ -1484,6 +1484,9 @@ void LoadMotion(int Weponmotion)
 		break;
 	case MOTION_ONE_HAND:
 		pFile = fopen("data\\MOTION_CHANGE\\onehand.txt", "r");
+		break;
+	case MOTION_PIERCING:
+		pFile = fopen("data\\MOTION_CHANGE\\piercing.txt", "r");
 		break;
 	default:
 		pFile = NULL;

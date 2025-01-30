@@ -65,14 +65,19 @@ void InitTutorial3d(void)
 	// 爆発の初期化処理
 	InitExplosion();
 
+	// ステージ
+	LoadTitleState();
+
 	// ブロックをセット
+	// TODO : ここの配置情報を修正---------------------
 	SetBlock(D3DXVECTOR3(-160.0f, 20.0f, 0.0f), 19, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
 	SetBlock(D3DXVECTOR3( -60.0f, 20.0f, 0.0f), 20, D3DXVECTOR3(1.5f, 1.5f, 1.5f)); 
 	SetBlock(D3DXVECTOR3( 40.0f, 20.0f, 0.0f), 21, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
 
 	// アイテムをセット
 	SetItem(D3DXVECTOR3(140.0f, -10.0f, 0.0f), 29, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
-
+	//-------------------------------------------------
+	
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f, 0);
 
