@@ -63,10 +63,10 @@ void InitGauge(void)
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	pVtx[4].pos = D3DXVECTOR3(20.0f, 15.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(960.0f, 15.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(20.0f, 26.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(960.0f, 26.0f, 0.0f);
+	pVtx[4].pos = D3DXVECTOR3(10.0f, 15.0f, 0.0f);
+	pVtx[5].pos = D3DXVECTOR3(970.0f, 15.0f, 0.0f);
+	pVtx[6].pos = D3DXVECTOR3(10.0f, 26.0f, 0.0f);
+	pVtx[7].pos = D3DXVECTOR3(970.0f, 26.0f, 0.0f);
 	pVtx[4].rhw = 1.0f;
 	pVtx[5].rhw = 1.0f;
 	pVtx[6].rhw = 1.0f;
@@ -82,10 +82,10 @@ void InitGauge(void)
 
 	pVtx += 8;
 
-	pVtx[0].pos = D3DXVECTOR3(5.0f, 69.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(975.0f, 69.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(5.0f, 90.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(975.0f, 90.0f, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(5.0f, 650.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(1275.0f, 650.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(5.0f, 700.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(1275.0f, 700.0f, 0.0f);
 	pVtx[0].rhw = 1.0f;
 	pVtx[1].rhw = 1.0f;
 	pVtx[2].rhw = 1.0f;
@@ -99,10 +99,10 @@ void InitGauge(void)
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	pVtx[4].pos = D3DXVECTOR3(20.0f, 75.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(960.0f, 75.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(20.0f, 86.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(960.0f, 86.0f, 0.0f);
+	pVtx[4].pos = D3DXVECTOR3(10.0f, 650.0f, 0.0f);
+	pVtx[5].pos = D3DXVECTOR3(1270.0f, 650.0f, 0.0f);
+	pVtx[6].pos = D3DXVECTOR3(10.0f, 700.0f, 0.0f);
+	pVtx[7].pos = D3DXVECTOR3(1270.0f, 700.0f, 0.0f);
 	pVtx[4].rhw = 1.0f;
 	pVtx[5].rhw = 1.0f;
 	pVtx[6].rhw = 1.0f;
@@ -164,17 +164,17 @@ void UpdateGauge(void)
 
 	// ÇªÇ±Ç©ÇÁÇªÇÃäÑçáÇåvéZÇµí∑Ç≥Ç…Ç∑ÇÈ
 	g_fPer = fLeftHP / fMaxHP;
-	g_fLength = g_fPer * 940;
+	g_fLength = g_fPer * 960;
 	LPDIRECT3DDEVICE9 pDevice;
 	pDevice = GetDevice();
 	VERTEX_2D* pVtx;
 	g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
 
 	// ÇªÇÍÇï`é ÇµíºÇ∑
-	pVtx[4].pos = D3DXVECTOR3(20.0f, 15.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(g_fLength + 20.0f, 15.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(20.0f, 26.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(g_fLength + 20.0f, 26.0f, 0.0f);
+	pVtx[4].pos = D3DXVECTOR3(10.0f, 15.0f, 0.0f);
+	pVtx[5].pos = D3DXVECTOR3(g_fLength + 10.0f, 15.0f, 0.0f);
+	pVtx[6].pos = D3DXVECTOR3(10.0f, 26.0f, 0.0f);
+	pVtx[7].pos = D3DXVECTOR3(g_fLength + 10.0f, 26.0f, 0.0f);
 	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
 	pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
@@ -185,13 +185,13 @@ void UpdateGauge(void)
 
 	// ÇªÇ±Ç©ÇÁÇªÇÃäÑçáÇåvéZÇµí∑Ç≥Ç…Ç∑ÇÈÅAç°ÇÕ100Ç≈É`ÉÉÅ[ÉWäÆóπ
 	g_fPer = g_fFeverCharge / 100.0f;
-	g_fLength = g_fPer * 940;
+	g_fLength = g_fPer * 1270;
 
 	// ÇªÇÍÇï`é ÇµíºÇ∑
-	pVtx[4].pos = D3DXVECTOR3(20.0f, 75.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(g_fLength + 20.0f, 75.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(20.0f, 86.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(g_fLength + 20.0f, 86.0f, 0.0f);
+	pVtx[4].pos = D3DXVECTOR3(5.0f, 650.0f, 0.0f);
+	pVtx[5].pos = D3DXVECTOR3(g_fLength + 5.0f, 650.0f, 0.0f);
+	pVtx[6].pos = D3DXVECTOR3(5.0f, 700.0f, 0.0f);
+	pVtx[7].pos = D3DXVECTOR3(g_fLength + 5.0f, 700.0f, 0.0f);
 	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
 	pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
