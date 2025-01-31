@@ -25,7 +25,6 @@
 LPDIRECT3DTEXTURE9 g_pTextureSPgauge[SPGAUGE_MAX] = {};//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffSPgauge = NULL;//頂点バッファへのポインタ
 SPgauge g_SPgauge[SPGAUGE_MAX];
-bool bSpgauge;
 
 //=====================
 //リザルトの初期化処理
@@ -60,7 +59,6 @@ void InitSPgauge(void)
 	//頂点ロック
 	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
 
-	bSpgauge = false;
 	g_SPgauge[0].nType = SPGAUGE_FRAME;
 	g_SPgauge[1].nType = SPGAUGE_GAUGE;
 
@@ -122,9 +120,9 @@ void UninitSPgauge(void)
 //=====================
 void UpdateSPgauge(void)
 {
-	bSpgauge = false;
 	Player* pPlayer = GetPlayer();
 
+	pPlayer->SpMode = false; // フィーバーモードをオフにする
 	VERTEX_2D* pVtx;
 
 	//頂点ロック
@@ -143,21 +141,43 @@ void UpdateSPgauge(void)
 		else if (g_SPgauge[nCnt].nType == SPGAUGE_GAUGE)
 		{
 			// 最大の値
-			float fDest = g_SPgauge[nCnt].SpGauge / 100.0f;
+			float fDest = g_SPgauge[nCnt].SpGauge / 300.0f;
 
 			// 横幅
 			float fWidth = fDest * 900.0f;
 
+			// 100.0fたまったら発動可能
 			if (g_SPgauge[nCnt].SpGauge >= 100.0f)
 			{
-				bSpgauge = true;
-				g_SPgauge[nCnt].SpGauge = 100.0f;
+				pPlayer->SpMode = true; // 発動可能
+			}
 
+			// 発動可能だったら
+			if (pPlayer->SpMode)
+			{
+				// 発動した瞬間
+				if (pPlayer->WeponMotion == MOTION_SP &&
+					pPlayer->Motion.motionType == MOTIONTYPE_ACTION &&
+					pPlayer->Motion.nKey == 0&&
+					pPlayer->Motion.nCountMotion==1)
+				{
+					g_SPgauge[nCnt].SpGauge -= 100.0f; // ゲージを100.0f消費
+				}
+			}
+
+			// 300.0f以上になったら
+			if (g_SPgauge[nCnt].SpGauge >= 300.0f)
+			{
+				// 300.0f以上にならないようにする
+				g_SPgauge[nCnt].SpGauge = 300.0f;
+
+				// フレーム用変数
 				static int nFrame = 0;
 
+				// フレームが2になったら
 				if (nFrame == 2)
 				{
-					nFrame = 0;
+					nFrame = 0; // フレームを初期化
 					//頂点カラーの設定
 					pVtx[0].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
 					pVtx[1].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
@@ -166,13 +186,8 @@ void UpdateSPgauge(void)
 				}
 				else
 				{
+					// インクリメント
 					nFrame++;
-				}
-
-				if (pPlayer->WeponMotion == MOTION_SP &&
-					pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
-				{
-					g_SPgauge[nCnt].SpGauge = 0.0f;
 				}
 			}
 
@@ -227,15 +242,8 @@ void AddSpgauge(float fValue)
 {
 	Player* pPlayer = GetPlayer();
 
-	if (g_SPgauge[1].SpGauge < 100.0f && pPlayer->WeponMotion !=MOTION_SP)
+	if (g_SPgauge[1].SpGauge < 300.0f && pPlayer->WeponMotion !=MOTION_SP)
 	{
 		g_SPgauge[1].SpGauge += fValue;
 	}
-}
-//=====================
-// ゲージの取得
-//=====================
-bool GetSpgauge(void)
-{
-	return bSpgauge;
 }

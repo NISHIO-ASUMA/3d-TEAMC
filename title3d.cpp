@@ -21,6 +21,7 @@
 #include "mouse.h"
 #include "block.h"
 #include "HPGauge.h"
+#include "spgauge.h"
 
 //****************************
 //グローバル宣言
@@ -57,6 +58,9 @@ void InitTitle3d(void)
 	//ブロックの初期化処理
 	InitBlock();
 	
+	// スペシャルゲージの初期化処理
+	InitSPgauge();
+
 	LoadTitleState();
 
 	//UIをセット
@@ -97,6 +101,9 @@ void UninitTitle3d(void)
 
 	//ブロックの終了処理
 	UninitBlock();
+
+	// スペシャルゲージの終了処理
+	UninitSPgauge();
 
 }
 //============================

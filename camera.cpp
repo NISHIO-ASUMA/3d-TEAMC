@@ -14,6 +14,7 @@
 #include "player.h"
 #include "game.h"
 #include "tutorial3d.h"
+#include "spgauge.h"
 
 //*****************************
 // マクロ定義
@@ -60,6 +61,7 @@ void InitCamera(void)
 		g_camera[nCnt].fDistance = sqrtf((fRotx * fRotx) + (fRoty * fRoty) + (fRotz * fRotz));	// 視点から注視点までの距離
 		g_camera[nCnt].oldDistance = g_camera[nCnt].fDistance;	// 距離を保存しておく
 	}
+	g_camera[MAIN].Direction = 1.0f; // 移動量
 
 	g_camera[MAIN].viewport.X = 0; // 2DX座標
 	g_camera[MAIN].viewport.Y = 0; // 2DY座標
@@ -170,7 +172,38 @@ void UpdateCamera(void)
 		g_camera[MAP].posV.z += ((g_camera[MAP].posVDest.z - g_camera[MAP].posV.z) * 0.3f);
 	}
 	
+	// スペシャルモーションを発動したとき
+	if (pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.nKey <= 3)
+	{
+		// カウント用変数
+		static int nCounter = 0;
 
+		// インクリメント
+		nCounter++;
+
+		// 右に移動
+		if (nCounter >= 0 && nCounter <= 3)
+		{
+			g_camera[MAIN].Direction = 5.0f;
+
+		}
+		// 左に移動
+		if (nCounter >= 3 && nCounter <= 6)
+		{
+			g_camera[MAIN].Direction = - 5.0f;
+		}
+		if (nCounter >= 6)
+		{
+			nCounter = 0; // 初期化
+		}
+
+		// カメラを移動させる
+		g_camera[MAIN].posV.z -= sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].Direction;
+		g_camera[MAIN].posV.x += cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].Direction;
+
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+	}
 #if 0
 	//******************
 	// 視点の旋回
@@ -453,7 +486,7 @@ void MouseView(void)
 		float X = (float)cursorPos.x - prevCursorPos.x;
 		float Y = (float)cursorPos.y - prevCursorPos.y;
 
-		const float mouseSensitivity = 0.0029f;
+		const float mouseSensitivity = 0.00025f;
 
 		X *= mouseSensitivity;
 		Y *= mouseSensitivity;

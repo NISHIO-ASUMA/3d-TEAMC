@@ -61,16 +61,17 @@ void InitEnemy(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		g_Enemy[nCntEnemy].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//座標
-		g_Enemy[nCntEnemy].AttackEnemy = D3DXVECTOR3(5.0f, 10.0f, 5.0f);//
-		g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//移動量
-		g_Enemy[nCntEnemy].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//角度
-		//g_Enemy[nCntEnemy].nType = ENEMYTYPE_ONE;
-		g_Enemy[nCntEnemy].bUse = false;								//未使用状態
-		g_Enemy[nCntEnemy].Motion.bLoopMotion = true;					//ループするか否か
-		g_Enemy[nCntEnemy].nLife = 20;									//体力
-		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;					//状態
-		g_Enemy[nCntEnemy].Speed = 0.0f;							    //足の速さ
+		g_Enemy[nCntEnemy].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 座標
+		g_Enemy[nCntEnemy].AttackEnemy = D3DXVECTOR3(5.0f, 10.0f, 5.0f);// 
+		g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 移動量
+		g_Enemy[nCntEnemy].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 角度
+		//g_Enemy[nCntEnemy].nType = ENEMYTYPE_ONE;						   
+		g_Enemy[nCntEnemy].bUse = false;								// 未使用状態
+		g_Enemy[nCntEnemy].Motion.bLoopMotion = true;					// ループするか否か
+		g_Enemy[nCntEnemy].nLife = 20;									// 体力
+		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;					// 状態
+		g_Enemy[nCntEnemy].Speed = 0.0f;							    // 足の速さ
+		g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;                // 敵が攻撃状態か
 	}
 
 	//グローバル変数の初期化
@@ -94,6 +95,7 @@ void InitEnemy(void)
 		g_LoadEnemy[nCntEnemyType].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	  //座標
 		g_LoadEnemy[nCntEnemyType].state = ENEMYSTATE_NORMAL;			  //状態
 		g_LoadEnemy[nCntEnemyType].Speed = 0.0f;						  //足の速さ
+		g_LoadEnemy[nCntEnemyType].AttackState = ENEMYATTACK_NO;          // 敵が攻撃状態か
 
 
 		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
@@ -322,28 +324,62 @@ void UpdateEnemy(void)
 		// 影の計算
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 
-
-		if (AgentRange(50.0f, 20000.0f, nCntEnemy))
+		// ホーミング範囲
+		if (AgentRange(50.0f, 20000.0f, nCntEnemy) && g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_NO)
 		{
 			AgentEnemy(nCntEnemy);
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
+
+			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+
+			g_Enemy[nCntEnemy].rot.y = fAngle + D3DX_PI; // 角度を代入
+
 		}
 		else
 		{
-			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL;
+			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL; // 範囲外だったらニュートラルに戻す
 		}
 
 		if (pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
 		{
-			CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 50.0f, 10.0f);
+			//CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 50.0f, 10.0f);
 		}
 		else
 		{
-			CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 10.0f, 10.0f);
+			//CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 5.0f, 5.0f);
 		}
 		
 		CollisionToEnemy(nCntEnemy); // 敵と敵の当たり判定
 
+		// 攻撃範囲に入った
+		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 20.0f))
+		{
+			g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f,0.0f,0.0f);
+			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_ATTACK;
+			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_ACTION;
+		}
+
+		// プレイヤーのモデルの情報を代入
+		D3DXVECTOR3 PlayerModel(pPlayer->Motion.aModel[0].mtxWorld._41,
+			pPlayer->Motion.aModel[0].mtxWorld._42,
+			pPlayer->Motion.aModel[0].mtxWorld._43);
+
+		// 敵のモデルの情報を代入
+		D3DXVECTOR3 EnemyModel(g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._41,
+			g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._42,
+			g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._43);
+
+		// 攻撃範囲に入った
+		if (sphererange(&PlayerModel, &EnemyModel, 20.0f, 20.0f) &&
+			g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_ATTACK &&
+			pPlayer->state != PLAYERSTATE_DAMAGE && g_Enemy[nCntEnemy].Motion.nKey >= 4)
+		{
+			HitPlayer(50);
+		}
+		else
+		{
+			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO; // 範囲外だったら攻撃していない状態にする
+		}
 		//モーションの更新
 		UpdateMotion(&g_Enemy[nCntEnemy].Motion);
 	}
@@ -492,9 +528,18 @@ void HitEnemy(int nCnt,int nDamage)
 			4.0f, 8, 15, 20, 5.0f, 0.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-		AddFever(5.0f);
-		AddScore(8100);
-		AddSpgauge(1.0f);
+		if (pPlayer->FeverMode)
+		{
+			AddFever(5.0f);		// フィーバーポイントを取得
+			AddScore(8100);		// スコアを取得
+			AddSpgauge(2.0f);   // SPゲージを取得
+		}
+		else if (!pPlayer->FeverMode)
+		{
+			AddFever(5.0f);		// フィーバーポイントを取得
+			AddScore(8100);		// スコアを取得
+			AddSpgauge(2.0f);   // SPゲージを取得
+		}
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH;//敵の状態を死亡状態にする
 		KillShadow(g_Enemy[nCnt].nIdxShadow);  // 敵の影を消す
@@ -598,26 +643,26 @@ void WaveEnemy(int nSpawner)
 		// スポナー0
 		if (nSpawner == 0)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.2f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 -700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー1
 		else if (nSpawner == 1)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -530.0f), 0.0f, (float)(rand() % 20 -780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.6f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.7f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -530.0f), 0.0f, (float)(rand() % 20 -780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー2
 		else if (nSpawner == 2)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.0f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 - 700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.0f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 530.0f), 0.0f, (float)(rand() % 20 - 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.0f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 2 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 - 700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 530.0f), 0.0f, (float)(rand() % 20 - 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 	}
 }
@@ -1010,10 +1055,6 @@ void AgentEnemy(int nCntEnemy)
 
 	D3DXVECTOR3 fDest = pPlayer->pos - g_Enemy[nCntEnemy].pos; // 敵からプレイヤーまでのベクトルを引く
 	D3DXVec3Normalize(&fDest, &fDest); // 正規化
-
-	float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
-
-	g_Enemy[nCntEnemy].rot.y = fAngle + D3DX_PI; // 角度を代入
 
 	// 移動量の更新
 	g_Enemy[nCntEnemy].move.x += fDest.x * MAX_ENEMYMOVE * g_Enemy[nCntEnemy].Speed; 

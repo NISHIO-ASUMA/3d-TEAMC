@@ -17,6 +17,7 @@
 #include "sound.h"
 #include "player.h"
 #include "Timer.h"
+#include "gameui.h"
 
 //****************************
 //グローバル変数
@@ -29,6 +30,8 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffResult = NULL;//頂点バッファへのポインタ
 //=====================
 void InitResult(void)
 {
+	InitGameUI();
+
 	LPDIRECT3DDEVICE9 pDevice;
 
 	//デバイスを取得
@@ -103,6 +106,8 @@ void UninitResult(void)
 {
 	// 音楽を停止
 	StopSound();
+
+	UninitGameUI();
 
 	//テクスチャの破棄
 	if (g_pTextureResult != NULL)

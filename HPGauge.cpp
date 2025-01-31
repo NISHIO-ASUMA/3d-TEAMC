@@ -200,18 +200,18 @@ void UpdateGauge(void)
 	g_pVtxBuffGauge->Unlock();
 
 	// フィーバーゲージの処理
-	if (g_fFeverCharge >= 100.0f && g_bFeverON == false)
+	if (g_fFeverCharge >= 100.0f && pPlayer->FeverMode == false)
 	{
 		g_fFeverCharge = 100.0f;
-		g_bFeverON = true;
+		pPlayer->FeverMode = true;
 	}
-	else if (g_bFeverON == true)
+	else if (pPlayer->FeverMode == true)
 	{
 		g_fFeverCharge -= 0.2f;
 		if (g_fFeverCharge <= 0.0f)
 		{
 			g_fFeverCharge = 0.0f;
-			g_bFeverON = false;
+			pPlayer->FeverMode = false;
 		}
 	}
 }
@@ -268,13 +268,10 @@ void SetGauge(void)
 
 void AddFever(float Add)
 {
-	if (g_bFeverON == false)
+	Player* pPlayer = GetPlayer();
+
+	if (pPlayer->FeverMode == false)
 	{
 		g_fFeverCharge += Add;
 	}
-}
-
-bool GetFeverMode()
-{
-	return g_bFeverON;
 }

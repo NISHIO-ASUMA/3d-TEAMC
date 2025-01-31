@@ -24,7 +24,7 @@
 #define WIDTH (100.0f) //壁の横幅
 #define HEIGHT (100.0f) //壁の高さ
 #define MAX_MODEL (16)
-#define SWORDVERTEX (4)//剣の架空の位置の数
+#define MAX_ITEM (256)
 
 //****************************
 //ライフの種類
@@ -166,6 +166,11 @@ typedef struct
 	int nDamage;    // プレイヤーの攻撃力 
 	int nOldItem;
 	int WeponMotion; // 武器ごとのモーション
+	int nStockDamage;
+	float fStockSpeed;
+	bool Itembreak[MAX_ITEM];
+	bool FeverMode;
+	bool SpMode;
 }Player;
 
 //**************************

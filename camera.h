@@ -54,6 +54,7 @@ typedef struct
 	CAMERAMODE g_CameraMode;
 	D3DVIEWPORT9 viewport;		// ビューポート
 	float oldDistance;          // 保存用の変数
+	float Direction;            // カメラのうごく方向
 }Camera;
 
 //**********************

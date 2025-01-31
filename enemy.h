@@ -22,28 +22,13 @@
 #define ENEMYFILE002 ("data\\enemy2.txt")
 #define ENEMYFILE003 ("data\\enemy3.txt")
 
-//**************************
-//プレイヤーの種類
-//**************************
-typedef enum
-{
-	ENEMYMOTION_NEUTRAL = 0,
-	ENEMYMOTION_AGENT,
-	ENEMYMOTION_ATTACK,
-	ENEMYMOTION_ATTACK2,
-	ENEMYMOTION_ATTACK3,
-	ENEMYMOTION_MAX
-}ENEMYMOTION;
-
 //****************************
 //敵の攻撃状態
 //****************************
 typedef enum
 {
 	ENEMYATTACK_NO = 0,
-	ENEMYATTACK_ONE,
-	ENEMYATTACK_TWO,
-	ENEMYATTACK_THREE,
+	ENEMYATTACK_ATTACK,
 	ENEMYATTACK_MAX
 }ENEMYATTACK;
 
@@ -107,13 +92,6 @@ typedef struct
 	D3DXVECTOR3 AttackEnemy;
 	D3DXVECTOR3 Size;
 	D3DXVECTOR3 vtxMin,vtxMax;
-	float radius;
-	float EnemyRadius;//敵の半径(敵と剣の当たり判定用)
-	float fenemycollision;
-	float posRadius;//ホーミング範囲
-	float AttackRadius;//攻撃範囲
-	float radAttackEnemy;//攻撃モーション遷移範囲
-	float fcollision;//敵と敵
 	int nLife;
 	int nDamage;
 	ENEMYSTATE state;
@@ -124,7 +102,7 @@ typedef struct
 	EnemyModel EnemyModel[16];
 	bool g_bDamage;
 	float fMove;//ランダム
-	ENEMYATTACK AttackState;
+	int AttackState;
 	float Speed; // 足の速さ
 }ENEMY;
 

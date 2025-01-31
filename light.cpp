@@ -83,7 +83,7 @@ void UpdateLight(void)
 	// デバイスポインタを宣言
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	if (GetFeverMode())
+	if (pPlayer->FeverMode)
 	{
 		g_light[0].Diffuse = D3DXCOLOR(1.0f, 0.3f, 1.0f, 1.0f);
 
@@ -96,7 +96,7 @@ void UpdateLight(void)
 		//ライトを有効にする(ON,OFF)
 		pDevice->LightEnable(0, TRUE);
 	}
-	else if(!GetFeverMode() && pPlayer->WeponMotion != MOTION_SP)
+	else if(!pPlayer->FeverMode && pPlayer->WeponMotion != MOTION_SP)
 	{
 		for (int nCnt1 = 0; nCnt1 < MAX_LIGHT; nCnt1++)
 		{

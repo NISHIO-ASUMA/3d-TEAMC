@@ -18,7 +18,7 @@
 //É}ÉNÉçíËã`
 //***************************
 //#define MAX_TEX (32)
-#define MAX_ITEM (64)
+#define MAX_ITEM (256)
 #define PARENT (5)
 
 //***************************
@@ -68,6 +68,7 @@ typedef enum
 	ITEMSTATE_NORMAL = 0,
 	ITEMSTATE_HOLD,
 	ITEMSTATE_THROW,
+	ITEMSTATE_RELEASE,
 	ITEMSTATE_MAX
 }ItemSTATE;
 

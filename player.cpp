@@ -16,7 +16,6 @@
 #include "motion.h"
 #include "meshfield.h"
 #include "block.h"
-#include "item.h"
 #include "enemy.h"
 #include "wall.h"
 #include "mouse.h"
@@ -33,22 +32,23 @@
 //****************************
 //マクロ定義
 //****************************
-#define MAX_WORD (256) // 最大文字数
-#define PLAYERLIFE (1000) // プレイヤーの体力
-#define MAX_TEXPLAYER (128) // テクスチャの最大数
-#define MAX_JUMP (15.0f) // ジャンプ量
-#define MAX_MOVE (1.0f) // っプレイヤーの移動量
-#define NUM_MTX (8) // 剣の当たり判定のマトリクスの数
-#define LANDINGEXPLOSION (6) // 着地したときに出る煙
+#define MAX_WORD (256)			// 最大文字数
+#define PLAYERLIFE (1000)		// プレイヤーの体力
+#define MAX_TEXPLAYER (128)		// テクスチャの最大数
+#define MAX_JUMP (15.0f)		// ジャンプ量
+#define MAX_MOVE (1.0f)			// プレイヤーの移動量
+#define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
+#define LANDINGEXPLOSION (6)	// 着地したときに出る煙
 
 //****************************
 //プロトタイプ宣言
 //****************************
 void LoadModel(int nType); // プレイヤーのロード処理
 void PlayerComb(MOTIONTYPE motiontype, int AttackState,int nCounterState, COMBOSTATE Combstate); // プレイヤーのコンボ処理
-void LoadMotion(int Weponmotion); // モーションのロード処理
-void MotionChange(int itemtype,int LoadPlayer); // モーション変更
-void StickPad(void);//パッドの移動処理
+void LoadMotion(int Weponmotion);																 // モーションのロード処理
+void MotionChange(int itemtype,int LoadPlayer);													 // モーション変更
+void StickPad(void);																			 // パッドの移動処理
+void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage);							 // プレイヤーのステータス変更
 
 //****************************
 //グローバル変数宣言
@@ -96,7 +96,10 @@ void InitPlayer(void)
 	g_player.nDamage = 100;								   // 攻撃力
 	bUsePad = false;
 	bFirstChange = false;
-
+	g_player.nStockDamage = 100;
+	g_player.fStockSpeed = 3.5f;
+	g_player.FeverMode = false;
+	g_player.SpMode = false;
 	//LoadWepon(); // アイテムのロード
 
 
@@ -142,7 +145,16 @@ void InitPlayer(void)
 		g_LoadPlayer[nCntPlayer].SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
 		g_LoadPlayer[nCntPlayer].SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
 		g_LoadPlayer[nCntPlayer].WeponMotion = MOTION_KATANA;				   // 剣のオフセットの座標z
+		g_LoadPlayer[nCntPlayer].nStockDamage = 100;
+		g_LoadPlayer[nCntPlayer].fStockSpeed = 3.5f;
+		g_LoadPlayer[nCntPlayer].FeverMode = false;
+		g_LoadPlayer[nCntPlayer].SpMode = false;
 
+		// アイテム分回す
+		for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
+		{
+			g_LoadPlayer[nCntPlayer].Itembreak[nCnt] = false; // アイテムが壊れたか
+		}
 		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 		{
 			//マテリアルのデータへのポインタを取得
@@ -336,7 +348,8 @@ void UpdatePlayer(void)
 
 		/*StickPad();*/
 
-	if (GetFeverMode() == true)
+	// フィーバーモードなら
+	if (g_player.FeverMode)
 	{
 		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	}
@@ -565,8 +578,8 @@ void UpdatePlayer(void)
 	}
 
 	//移動量を減衰
-	g_player.move.x += (0.0f - g_player.move.x) * 0.25f;
-	g_player.move.z += (0.0f - g_player.move.z) * 0.25f;
+	g_player.move.x += (0.0f - g_player.move.x) * 0.5f;
+	g_player.move.z += (0.0f - g_player.move.z) * 0.5f;
 
 	//前回の位置を保存
 	g_player.posOld = g_player.pos;
@@ -682,24 +695,51 @@ void UpdatePlayer(void)
 	}
 
 	// フォーバーモード
-	if (GetFeverMode())
+	if (g_player.FeverMode)
 	{
-		g_player.speed = 2.0f;
+		g_player.speed = g_player.fStockSpeed * 1.8f;
 		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 		{
 			g_player.Motion.nCountMotion++;
 		}
-		g_player.nDamage = 200; // ダメージアップ
+		g_player.nDamage = g_player.nStockDamage * 1.5f;
 	}
 	else
 	{
 		// ステータスをもとに戻す
-		g_player.speed = 1.0f;
-		g_player.nDamage = 100;
+		g_player.speed = g_player.fStockSpeed;
+		g_player.nDamage = g_player.nStockDamage;
 	}
 
 	Item* pItem = GetItem();
 
+	// 武器を持っているかつプレイヤーの持っているアイテムが壊れた
+	if (g_player.Motion.nNumModel == 16 && g_player.Itembreak[g_player.ItemIdx])
+	{
+		// モーションをニュートラルにする
+		g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
+
+		// モーションを歩きにする(第2引数に1を入れる)
+		MotionChange(MOTION_DBHAND, 1);
+
+		// 素手の時のモーション情報を代入
+		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
+		{
+			g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].Motion.aModel[nCntModel]; // モデルの情報を代入
+		}
+		for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
+		{
+			g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].Motion.aMotionInfo[nCntMotion];
+		}
+
+		// 投げた後に武器を消す
+		g_player.Motion.nNumModel -= 1;
+
+		// プレイヤーの状態を何も持っていない状態にする
+		g_player.HandState = PLAYERHOLD_NO;
+	}
+
+	// 持っているアイテムを置く処理
 	if (bFirstChange && g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)))
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
@@ -737,13 +777,13 @@ void UpdatePlayer(void)
 
 	static int FiverCnt = 0; // 回数制限
 
-	if (GetFeverMode()&& FiverCnt == 0 && g_player.WeponMotion != MOTION_SP)
+	if (g_player.FeverMode && FiverCnt == 0 && g_player.WeponMotion != MOTION_SP)
 	{
 		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, 0);
 		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
 		FiverCnt = 1; // 制限回数を超えた
 	}
-	if (!GetFeverMode())
+	if (!g_player.FeverMode)
 	{
 		FiverCnt = 0; // 制限回数をリセット
 	}
@@ -751,12 +791,12 @@ void UpdatePlayer(void)
 	// スペシャル
 	if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.nNumModel == 16 && g_player.HandState != PLAYERHOLD_HOLD)
 	{
-		if (g_player.Combostate == COMBO_NO && g_player.WeponMotion != MOTION_SP && GetSpgauge())
+		if (g_player.Combostate == COMBO_NO && g_player.WeponMotion != MOTION_SP && g_player.SpMode)
 		{
-			g_player.SwordOffpos.y = 200.0f;
+			g_player.SwordOffpos.y = 250.0f;
 			MotionChange(MOTION_SP, 0);
 			PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
-			SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
+			SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
 		}
 	}
 
@@ -1009,11 +1049,29 @@ void StickPad(void)
 	}
 }
 //================================
+// プレイヤーのステータス変更
+//================================
+void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage)
+{
+	g_player.speed = speed; // 足の速さ
+	g_player.fStockSpeed = speed; // 足の速さの計算用
+
+	// 剣の当たり判定の広さ
+	g_player.SwordOffpos.x = SwordOffpos.x; 
+	g_player.SwordOffpos.y = SwordOffpos.y;
+	g_player.SwordOffpos.z = SwordOffpos.z;
+
+	g_player.nDamage = nDamage; // プレイヤーの攻撃力
+	g_player.nStockDamage = nDamage; // プレイヤーの攻撃力計算用
+
+}
+//================================
 // プレイヤーの剣と敵の当たり判定
 //================================
 void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 {
 	Player* pPlayer = GetPlayer();
+	Item* pItem = GetItem();
 
 	D3DXVECTOR3 mtxDis,SwordPos;
 
@@ -1052,6 +1110,12 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO)
 			{
 				HitEnemy(nCntEnemy, (pPlayer->nDamage * 5));
+				pItem[g_player.ItemIdx].durability--;
+
+				if (pItem[g_player.ItemIdx].durability <= 0)
+				{
+					g_player.Itembreak[g_player.ItemIdx] = true;
+				}
 				break;
 			}
 		}
@@ -1193,6 +1257,9 @@ void ThrowItem(void)
 
 	// 状態を投げられてる状態にする
 	pItem[nIdx].state = ITEMSTATE_THROW;
+
+	g_player.speed = 3.0f;
+	g_player.fStockSpeed = 3.0f;
 }
 //================================
 // プレイヤーと敵の当たり判定
@@ -1284,143 +1351,136 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	{
 		bCollision = true;
 
-		if (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B) || OnMouseTriggerDown(RIGHT_MOUSE))
+		if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) && g_player.Combostate == COMBO_NO)
 		{
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
 			
-			//if (pItem[g_player.ItemIdx].state == ITEMSTATE_HOLD)
-			//{
-			//	// プレイヤーの位置を代入
-			//	pItem[g_player.ItemIdx].pos = g_player.pos;
-
-			//	// アイテムを使用状態にする
-			//	pItem[g_player.ItemIdx].bUse = true;
-			//}
-
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
+
 			pItem[nIdx].bUse = false;      // 消す
-			pItem[nIdx].state = ITEMSTATE_HOLD;
+
 			bFirstChange = true;
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
+			//g_player.nOldItem = pItem[nIdx].nType;	   // インデックスを渡す
 
 			switch (pItem[nIdx].nType)
 			{
 			case ITEMTYPE_BAT:
 				MotionChange(MOTION_DBHAND,0); // アイテムにあったモーションタイプを入れる(素手の場合は引数2に1を入れる)
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 70);
 				break;
 			case ITEMTYPE_GOLF:
 				MotionChange(MOTION_DBHAND,0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_HUNMER:
 				MotionChange(MOTION_BIGWEPON,0);
-				g_player.SwordOffpos.y = 65.0f;
+				StatusChange(2.8f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
 				break;
 			case ITEMTYPE_STONE:
 				MotionChange(MOTION_BIGWEPON, 1);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 				break;
 			case ITEMTYPE_WOOD:
 				MotionChange(MOTION_DBHAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_STONEBAT:
 				MotionChange(MOTION_DBHAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
 				break;
 			case ITEMTYPE_LIGHT:
 				MotionChange(MOTION_ONE_HAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.7f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_LIGHTWOOD:
 				MotionChange(MOTION_ONE_HAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_HARISEN:
 				MotionChange(MOTION_ONE_HAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_ICEBLOCK:
 				MotionChange(MOTION_DBHAND, 1);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.4f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 				break;
 			case ITEMTYPE_ICEBLOCKSOWRD:
 				MotionChange(MOTION_DBHAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(2.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
 				break;
 			case ITEMTYPE_IRON:
 				MotionChange(MOTION_ONE_HAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
 				break;
 			case ITEMTYPE_IRONBAT:
 				MotionChange(MOTION_DBHAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 90);
 				break;
 			case ITEMTYPE_SURFBOARD:
 				MotionChange(MOTION_DBHAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(2.8f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
 				break;
 			case ITEMTYPE_TORCH:
 				MotionChange(MOTION_ONE_HAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 				break;
 			case ITEMTYPE_TORCHSWORD:
 				MotionChange(MOTION_DBHAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(2.9f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 100);
 				break;
 			case ITEMTYPE_HEADSTATUE:
 				MotionChange(MOTION_BIGWEPON, 1);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 				break;
 			case ITEMTYPE_HEADSTATUTORSO:
 				MotionChange(MOTION_BIGWEPON, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(2.9f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
 				break;
 			case ITEMTYPE_MEGAPHONE:
 				MotionChange(MOTION_ONE_HAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_RUBBERCUP:
 				MotionChange(MOTION_PIERCING, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
 				break;
 			case ITEMTYPE_TELEPHONEPOLE:
 				MotionChange(MOTION_DBHAND, 0);
-				g_player.SwordOffpos.y = 150.0f;
+				StatusChange(2.5f, D3DXVECTOR3(0.0f, 150.0f, 0.0f), 120);
 				break;
 			case ITEMTYPE_TORSO:
 				MotionChange(MOTION_DBHAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 70);
 				break;
 			case ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE:
 				MotionChange(MOTION_DBHAND, 1);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
 				break;
 			case ITEMTYPE_BONESPEAR:
 				MotionChange(MOTION_PIERCING, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 100);
 				break;
 			case ITEMTYPE_FISH:
 				MotionChange(MOTION_ONE_HAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(2.8f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
 				break;
 			case ITEMTYPE_HEX:
 				MotionChange(MOTION_DBHAND, 1);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(1.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 300);
 				break;
 			case ITEMTYPE_HEXMANDOLIN:
 				MotionChange(MOTION_ONE_HAND, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(2.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 100);
 				break;
 			case ITEMTYPE_SURFBOARDFISH:
 				MotionChange(MOTION_BIGWEPON, 0);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
 				break;
 			case ITEMTYPE_TUTORIAL:
 				MotionChange(MOTION_DBHAND, 1);
-				g_player.SwordOffpos.y = 85.0f;
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
 				break;
 			default:
 				break;

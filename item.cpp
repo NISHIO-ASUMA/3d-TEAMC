@@ -22,7 +22,7 @@
 //****************************
 #define MOUSE_SIZE (50.0f)
 #define MAX_WORD (256)
-#define MAX_DURABILITY (20) // 耐久力
+#define MAX_DURABILITY (100) // 耐久力
 
 //****************************
 //プロトタイプ宣言
@@ -68,6 +68,7 @@ void InitItem(void)
 		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
 		g_TexItem[nCntNum].nLife = 120;							//体力
 		g_TexItem[nCntNum].durability = MAX_DURABILITY;							//体力
+		g_TexItem[nCntNum].state = ITEMSTATE_NORMAL;			  //状態
 
 		D3DXMATERIAL* pMat;//マテリアルへのポインタ
 
@@ -349,7 +350,7 @@ bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 			if (fDistance <= fRadius)
 			{
 				bHit = true;
-				if (!GetFeverMode())
+				if (!pPlayer->FeverMode)
 				{
 					g_Item[nCnt].durability--; // 耐久力をへらす
 				}
@@ -369,6 +370,11 @@ void Itemchange(int nType)
 	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].ItemTex[nType].g_dwNumMatItem; // アイテムのマテリアルの情報を代入
 	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].ItemTex[nType].g_pBuffMatItem; // アイテムのバッファの情報を代入
 	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].ItemTex[nType].g_pMeshItem;       // アイテムのメッシュの情報を代入
+
+	//if (g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+	//{
+	//	g_Item[pPlayer->ItemIdx].nType = nType;
+	//}
 }
 //=======================
 //アイテムの取得

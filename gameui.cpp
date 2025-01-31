@@ -184,7 +184,7 @@ void UpdateGameUI(void)
 				}
 			}
 
-			if (!GetFeverMode())
+			if (!pPlayer->FeverMode)
 			{
 				g_GameUI[nCnt].bUse = false;
 			}
@@ -219,7 +219,7 @@ void UpdateGameUI(void)
 				g_nPatternAnim = 0;
 			}
 		
-			if (!GetFeverMode())
+			if (!pPlayer->FeverMode)
 			{
 				g_GameUI[nCnt].bUse = false;
 			}
