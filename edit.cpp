@@ -443,7 +443,7 @@ void SaveEdit(void)
 		fprintf(pFile,
 
 			"+==========================================+\n"
-			"+			   マップエディター             +\n"
+			"+	  マップエディター 作成者 吉田祐人      +\n"
 			"+==========================================+\n\n");
 
 		for (int nCnt = 0; nCnt < g_EditCount; nCnt++)
@@ -452,13 +452,13 @@ void SaveEdit(void)
 			{
 				fprintf(pFile, "BLOCKSET\n");
 
-				fprintf(pFile, "EDITCATEGORY = %d # [%d]カテゴリー%d \n", g_Edit[nCnt].EditCategory,nCnt, g_Edit[nCnt].EditCategory);
+				fprintf(pFile, "EDITCATEGORY = %d			# [ カテゴリー%d ] \n", g_Edit[nCnt].EditCategory,g_Edit[nCnt].EditCategory);
 
-				fprintf(pFile, "   BLOCKTYPE = %d # [ ブロックの種類 ]\n", g_Edit[nCnt].nType);
+				fprintf(pFile, "   BLOCKTYPE = %d			# [ ブロックの種類 ]\n", g_Edit[nCnt].nType);
 
-				fprintf(pFile, "   POS = %.1f %.1f %.1f\n", g_Edit[nCnt].pos.x, g_Edit[nCnt].pos.y, g_Edit[nCnt].pos.z);
+				fprintf(pFile, "   POS = %.1f %.1f %.1f			# [ 位置 ]\n", g_Edit[nCnt].pos.x, g_Edit[nCnt].pos.y, g_Edit[nCnt].pos.z);
 
-				fprintf(pFile, "   SIZE = %.1f %.1f %.1f\n", g_Edit[nCnt].Scal.x, g_Edit[nCnt].Scal.y, g_Edit[nCnt].Scal.z);
+				fprintf(pFile, "   SIZE = %.1f %.1f %.1f		# [ 大きさ ]\n", g_Edit[nCnt].Scal.x, g_Edit[nCnt].Scal.y, g_Edit[nCnt].Scal.z);
 
 				fprintf(pFile, "END_BLOCKSET\n\n");
 			}
@@ -466,20 +466,20 @@ void SaveEdit(void)
 			{
 				fprintf(pFile, "ITEMSET\n");
 
-				fprintf(pFile, "EDITCATEGORY = %d\n", g_Edit[nCnt].EditCategory);
+				fprintf(pFile, "EDITCATEGORY = %d			# [ カテゴリー%d ]\n", g_Edit[nCnt].EditCategory, g_Edit[nCnt].EditCategory);
 
-				fprintf(pFile, "   ITEMTYPE = %d\n", g_Edit[nCnt].nType);
+				fprintf(pFile, "   ITEMTYPE = %d			# [ アイテムの種類 ]\n", g_Edit[nCnt].nType);
 
-				fprintf(pFile, "   POS = %.1f %.1f %.1f\n", g_Edit[nCnt].pos.x, g_Edit[nCnt].pos.y, g_Edit[nCnt].pos.z);
+				fprintf(pFile, "   POS = %.1f %.1f %.1f			# [ 位置 ]\n", g_Edit[nCnt].pos.x, g_Edit[nCnt].pos.y, g_Edit[nCnt].pos.z);
 
-				fprintf(pFile, "   SIZE = %.1f %.1f %.1f\n", g_Edit[nCnt].Scal.x, g_Edit[nCnt].Scal.y, g_Edit[nCnt].Scal.z);
+				fprintf(pFile, "   SIZE = %.1f %.1f %.1f		# [ 大きさ ]\n", g_Edit[nCnt].Scal.x, g_Edit[nCnt].Scal.y, g_Edit[nCnt].Scal.z);
 
 				fprintf(pFile, "END_ITEMSET\n\n");
 			}
 		}
 
-		fprintf(pFile, "BLOCK_COUNT = %d \n", g_EditCount);
-		fprintf(pFile, "END_SCRIPT");
+		fprintf(pFile, "BLOCK_COUNT = %d    # [ ブロックの配置数 ]\n", g_EditCount);
+		fprintf(pFile, "END_SCRIPT # この行は消さないでください!!");
 	}
 	else
 	{

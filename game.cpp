@@ -37,6 +37,7 @@
 #include "mouse.h"
 #include "meshsword.h"
 #include "spgauge.h"
+#include "boss.h"
 
 //****************************
 //グローバル変数
@@ -113,6 +114,9 @@ void InitGame(void)
 	// SPゲージの初期化処理
 	InitSPgauge();
 
+	// ボスの初期化処理
+	InitBoss();
+
 	//エディットの初期化処理
 	InitEdit();
 
@@ -122,6 +126,7 @@ void InitGame(void)
 	WaveEnemy(0); // 敵を出す処理
 	WaveEnemy(1); // 敵を出す処理
 
+	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 5000);
 	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1000.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
@@ -207,6 +212,9 @@ void UninitGame(void)
 
 	// SPゲージの終了処理
 	UninitSPgauge();
+
+	// ボスの終了処理
+	UninitBoss();
 
 	//エディットの終了処理
 	UninitEdit();
@@ -366,6 +374,10 @@ void UpdateGame(void)
 
 			// SPゲージの更新処理
 			UpdateSPgauge();
+
+			// ボスの更新処理
+			UpdateBoss();
+
 		}
 		else if (g_bEditMode)
 		{
@@ -405,6 +417,9 @@ void DrawGame(void)
 
 	//アイテムの描画処理
 	DrawItem();
+
+	// ボスの描画処理
+	DrawBoss();
 
 	//壁の描画処理
 	DrawWall();

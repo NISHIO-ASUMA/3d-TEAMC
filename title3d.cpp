@@ -58,6 +58,9 @@ void InitTitle3d(void)
 	//ブロックの初期化処理
 	InitBlock();
 	
+	// プレイヤーの初期化処理
+	InitPlayer();
+
 	// スペシャルゲージの初期化処理
 	InitSPgauge();
 
@@ -105,6 +108,7 @@ void UninitTitle3d(void)
 	// スペシャルゲージの終了処理
 	UninitSPgauge();
 
+	UninitPlayer();
 }
 //============================
 //タイトル3dの更新処理
@@ -143,5 +147,4 @@ void DrawTitle3d(void)
 
 	//ゲームUIの描画処理
 	DrawGameUI();
-
 }

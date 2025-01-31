@@ -100,182 +100,188 @@ void InitPlayer(void)
 	g_player.fStockSpeed = 3.5f;
 	g_player.FeverMode = false;
 	g_player.SpMode = false;
-	//LoadWepon(); // アイテムのロード
+	g_player.WeponMotion = MOTION_KATANA;
 
-
-	LoadMotion(0);
-	LoadMotion(1);
-	LoadMotion(2);
-	LoadMotion(3);
-	LoadMotion(4);
-	LoadMotion(5);
-
-	// 切り替わるモーションの数だけ
-	for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
+	// タイトルでロードをすると重くなるので
+	if (mode != MODE_TITLE)
 	{
+		//LoadWepon(); // アイテムのロード
 
-	}
 
-	g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f);
+		LoadMotion(0);
+		LoadMotion(1);
+		LoadMotion(2);
+		LoadMotion(3);
+		LoadMotion(4);
+		LoadMotion(5);
 
-	// タイプを代入
-	g_LoadPlayer[0].PlayerType = PLAYERTYPE_NOHAND; 
-	g_LoadPlayer[1].PlayerType = PLAYERTYPE_WEPON;
-
-	D3DXMATERIAL* pMat;//マテリアルへのポインタ
-
-	for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
-	{
-		//必要な情報を設定
-		LoadModel(nCntPlayer);
-
-		g_LoadPlayer[nCntPlayer].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
-		g_LoadPlayer[nCntPlayer].nLife = PLAYERLIFE;
-		g_LoadPlayer[nCntPlayer].nMaxLife = PLAYERLIFE;
-		g_LoadPlayer[nCntPlayer].bDisp = true;
-		g_LoadPlayer[nCntPlayer].Motion.motionType = MOTIONTYPE_NEUTRAL;
-		g_LoadPlayer[nCntPlayer].Motion.bLoopMotion = true;
-		g_LoadPlayer[nCntPlayer].bJumpAttack = false;
-		g_LoadPlayer[nCntPlayer].HandState = PLAYERHOLD_NO;
-		g_LoadPlayer[nCntPlayer].state = PLAYERSTATE_NORMAL;
-		g_LoadPlayer[nCntPlayer].Combostate = COMBO_ATTACK1;
-		g_LoadPlayer[nCntPlayer].speed = 1.0f;
-		g_LoadPlayer[nCntPlayer].nDamage = 100;
-		g_LoadPlayer[nCntPlayer].SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
-		g_LoadPlayer[nCntPlayer].SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
-		g_LoadPlayer[nCntPlayer].SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
-		g_LoadPlayer[nCntPlayer].WeponMotion = MOTION_KATANA;				   // 剣のオフセットの座標z
-		g_LoadPlayer[nCntPlayer].nStockDamage = 100;
-		g_LoadPlayer[nCntPlayer].fStockSpeed = 3.5f;
-		g_LoadPlayer[nCntPlayer].FeverMode = false;
-		g_LoadPlayer[nCntPlayer].SpMode = false;
-
-		// アイテム分回す
-		for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
+		// 切り替わるモーションの数だけ
+		for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
 		{
-			g_LoadPlayer[nCntPlayer].Itembreak[nCnt] = false; // アイテムが壊れたか
+
 		}
-		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
-		{
-			//マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
 
-			for (int nCntMat = 0; nCntMat < (int)g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].dwNumMat; nCntMat++)
+		g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f);
+
+		// タイプを代入
+		g_LoadPlayer[0].PlayerType = PLAYERTYPE_NOHAND;
+		g_LoadPlayer[1].PlayerType = PLAYERTYPE_WEPON;
+
+		D3DXMATERIAL* pMat;//マテリアルへのポインタ
+
+		for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
+		{
+			//必要な情報を設定
+			LoadModel(nCntPlayer);
+
+			g_LoadPlayer[nCntPlayer].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			g_LoadPlayer[nCntPlayer].nLife = PLAYERLIFE;
+			g_LoadPlayer[nCntPlayer].nMaxLife = PLAYERLIFE;
+			g_LoadPlayer[nCntPlayer].bDisp = true;
+			g_LoadPlayer[nCntPlayer].Motion.motionType = MOTIONTYPE_NEUTRAL;
+			g_LoadPlayer[nCntPlayer].Motion.bLoopMotion = true;
+			g_LoadPlayer[nCntPlayer].bJumpAttack = false;
+			g_LoadPlayer[nCntPlayer].HandState = PLAYERHOLD_NO;
+			g_LoadPlayer[nCntPlayer].state = PLAYERSTATE_NORMAL;
+			g_LoadPlayer[nCntPlayer].Combostate = COMBO_ATTACK1;
+			g_LoadPlayer[nCntPlayer].speed = 1.0f;
+			g_LoadPlayer[nCntPlayer].nDamage = 100;
+			g_LoadPlayer[nCntPlayer].SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
+			g_LoadPlayer[nCntPlayer].SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
+			g_LoadPlayer[nCntPlayer].SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
+			g_LoadPlayer[nCntPlayer].WeponMotion = MOTION_KATANA;				   // 剣のオフセットの座標z
+			g_LoadPlayer[nCntPlayer].nStockDamage = 100;
+			g_LoadPlayer[nCntPlayer].fStockSpeed = 3.5f;
+			g_LoadPlayer[nCntPlayer].FeverMode = false;
+			g_LoadPlayer[nCntPlayer].SpMode = false;
+
+			// アイテム分回す
+			for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
 			{
-				if (pMat[nCntMat].pTextureFilename != NULL)
+				g_LoadPlayer[nCntPlayer].Itembreak[nCnt] = false; // アイテムが壊れたか
+			}
+			for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
+			{
+				//マテリアルのデータへのポインタを取得
+				pMat = (D3DXMATERIAL*)g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
+
+				for (int nCntMat = 0; nCntMat < (int)g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 				{
-					//このファイル名を使用してテクスチャを読み込む
-					//テクスチャの読み込み
-					D3DXCreateTextureFromFile(pDevice,						
-					pMat[nCntMat].pTextureFilename,
-					&g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pTexture[nCntMat]);
+					if (pMat[nCntMat].pTextureFilename != NULL)
+					{
+						//このファイル名を使用してテクスチャを読み込む
+						//テクスチャの読み込み
+						D3DXCreateTextureFromFile(pDevice,
+							pMat[nCntMat].pTextureFilename,
+							&g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pTexture[nCntMat]);
+					}
 				}
 			}
 		}
-	}
 
-	//頂点座標の取得
-	int nNumVtx;//頂点数
-	DWORD sizeFVF;//頂点フォーマットのサイズ
-	BYTE* pVtxBuff;//頂点バッファへのポインタ
+		//頂点座標の取得
+		int nNumVtx;//頂点数
+		DWORD sizeFVF;//頂点フォーマットのサイズ
+		BYTE* pVtxBuff;//頂点バッファへのポインタ
 
-	for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
-	{
-		for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
+		for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
 		{
-			//頂点数の取得
-			nNumVtx = g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->GetNumVertices();
-
-			//頂点フォーマットのサイズ取得
-			sizeFVF = D3DXGetFVFVertexSize(g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->GetFVF());
-
-			//頂点バッファのロック
-			g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
-
-			for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
+			for (int nCntModel = 0; nCntModel < g_LoadPlayer[nCntPlayer].Motion.nNumModel; nCntModel++)
 			{
-				//頂点座標の代入
-				D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
+				//頂点数の取得
+				nNumVtx = g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->GetNumVertices();
 
-				//頂点座標を比較してブロックの最小値,最大値を取得
-				if (vtx.x < g_player.vtxMinPlayer.x)
+				//頂点フォーマットのサイズ取得
+				sizeFVF = D3DXGetFVFVertexSize(g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->GetFVF());
+
+				//頂点バッファのロック
+				g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+
+				for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 				{
-					g_player.vtxMinPlayer.x = vtx.x;
-				}
-				else if (vtx.y < g_player.vtxMinPlayer.y)
-				{
-					g_player.vtxMinPlayer.y = vtx.y;
-				}
-				else if (vtx.z < g_player.vtxMinPlayer.z)
-				{
-					g_player.vtxMinPlayer.z = vtx.z;
+					//頂点座標の代入
+					D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
+
+					//頂点座標を比較してブロックの最小値,最大値を取得
+					if (vtx.x < g_player.vtxMinPlayer.x)
+					{
+						g_player.vtxMinPlayer.x = vtx.x;
+					}
+					else if (vtx.y < g_player.vtxMinPlayer.y)
+					{
+						g_player.vtxMinPlayer.y = vtx.y;
+					}
+					else if (vtx.z < g_player.vtxMinPlayer.z)
+					{
+						g_player.vtxMinPlayer.z = vtx.z;
+					}
+
+					else if (vtx.x > g_player.vtxMaxPlayer.x)
+					{
+						g_player.vtxMaxPlayer.x = vtx.x;
+					}
+
+					else if (vtx.y > g_player.vtxMaxPlayer.y)
+					{
+						g_player.vtxMaxPlayer.y = vtx.y;
+					}
+
+					else if (vtx.z > g_player.vtxMaxPlayer.z)
+					{
+						g_player.vtxMaxPlayer.z = vtx.z;
+					}
+
+					if (vtx.x < g_player.Motion.aModel[nCntModel].vtxMin.x)
+					{
+						g_player.Motion.aModel[nCntModel].vtxMin.x = vtx.x;
+					}
+					else if (vtx.y < g_player.Motion.aModel[nCntModel].vtxMin.y)
+					{
+						g_player.Motion.aModel[nCntModel].vtxMin.y = vtx.y;
+					}
+					else if (vtx.z < g_player.Motion.aModel[nCntModel].vtxMin.z)
+					{
+						g_player.Motion.aModel[nCntModel].vtxMin.z = vtx.z;
+					}
+
+					else if (vtx.x > g_player.Motion.aModel[nCntModel].vtxMax.x)
+					{
+						g_player.Motion.aModel[nCntModel].vtxMax.x = vtx.x;
+					}
+
+					else if (vtx.y > g_player.Motion.aModel[nCntModel].vtxMax.y)
+					{
+						g_player.Motion.aModel[nCntModel].vtxMax.y = vtx.y;
+					}
+
+					else if (vtx.z > g_player.Motion.aModel[nCntModel].vtxMax.z)
+					{
+						g_player.Motion.aModel[nCntModel].vtxMax.z = vtx.z;
+					}
+
+
+					//頂点フォーマットのサイズ分ポインタを進める
+					pVtxBuff += sizeFVF;
 				}
 
-				else if (vtx.x > g_player.vtxMaxPlayer.x)
-				{
-					g_player.vtxMaxPlayer.x = vtx.x;
-				}
+				//サイズを代入
+				g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
+				g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
+				g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
 
-				else if (vtx.y > g_player.vtxMaxPlayer.y)
-				{
-					g_player.vtxMaxPlayer.y = vtx.y;
-				}
+				//各モデルごとのサイズを代入
+				g_player.Motion.aModel[nCntModel].Size.x = g_player.Motion.aModel[nCntModel].vtxMax.x - g_player.Motion.aModel[nCntModel].vtxMin.x;
+				g_player.Motion.aModel[nCntModel].Size.y = g_player.Motion.aModel[nCntModel].vtxMax.y - g_player.Motion.aModel[nCntModel].vtxMin.y;
+				g_player.Motion.aModel[nCntModel].Size.z = g_player.Motion.aModel[nCntModel].vtxMax.z - g_player.Motion.aModel[nCntModel].vtxMin.z;
 
-				else if (vtx.z > g_player.vtxMaxPlayer.z)
-				{
-					g_player.vtxMaxPlayer.z = vtx.z;
-				}
-
-				if (vtx.x < g_player.Motion.aModel[nCntModel].vtxMin.x)
-				{
-					g_player.Motion.aModel[nCntModel].vtxMin.x = vtx.x;
-				}
-				else if (vtx.y < g_player.Motion.aModel[nCntModel].vtxMin.y)
-				{
-					g_player.Motion.aModel[nCntModel].vtxMin.y = vtx.y;
-				}
-				else if (vtx.z < g_player.Motion.aModel[nCntModel].vtxMin.z)
-				{
-					g_player.Motion.aModel[nCntModel].vtxMin.z = vtx.z;
-				}
-
-				else if (vtx.x > g_player.Motion.aModel[nCntModel].vtxMax.x)
-				{
-					g_player.Motion.aModel[nCntModel].vtxMax.x = vtx.x;
-				}
-
-				else if (vtx.y > g_player.Motion.aModel[nCntModel].vtxMax.y)
-				{
-					g_player.Motion.aModel[nCntModel].vtxMax.y = vtx.y;
-				}
-
-				else if (vtx.z > g_player.Motion.aModel[nCntModel].vtxMax.z)
-				{
-					g_player.Motion.aModel[nCntModel].vtxMax.z = vtx.z;
-				}
-
-
-				//頂点フォーマットのサイズ分ポインタを進める
-				pVtxBuff += sizeFVF;
+				//頂点バッファのアンロック
+				g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->UnlockVertexBuffer();
 			}
-
-			//サイズを代入
-			g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
-			g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
-			g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
-
-			//各モデルごとのサイズを代入
-			g_player.Motion.aModel[nCntModel].Size.x = g_player.Motion.aModel[nCntModel].vtxMax.x - g_player.Motion.aModel[nCntModel].vtxMin.x;
-			g_player.Motion.aModel[nCntModel].Size.y = g_player.Motion.aModel[nCntModel].vtxMax.y - g_player.Motion.aModel[nCntModel].vtxMin.y;
-			g_player.Motion.aModel[nCntModel].Size.z = g_player.Motion.aModel[nCntModel].vtxMax.z - g_player.Motion.aModel[nCntModel].vtxMin.z;
-
-			//頂点バッファのアンロック
-			g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->UnlockVertexBuffer();
 		}
-	}
 
-	//最初に描画したいプレイヤーの情報を代入
-	g_player = g_LoadPlayer[0];
+		//最初に描画したいプレイヤーの情報を代入
+		g_player = g_LoadPlayer[0];
+	}
 }
 //============================
 //プレイヤーの終了処理
@@ -771,8 +777,8 @@ void UpdatePlayer(void)
 	// 大型武器モーションの時
 	if (g_player.WeponMotion == MOTION_BIGWEPON && g_player.Motion.motionType == MOTIONTYPE_ACTION4 && g_player.Motion.nKey == 0 && GetKeyboardPress(DIK_W))
 	{
-		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 15.0f;
-		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 15.0f;
+		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 30.0f;
+		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 30.0f;
 	}
 
 	static int FiverCnt = 0; // 回数制限
@@ -1555,8 +1561,8 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 
 	if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
 	{
-		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 50.0f;
-		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 50.0f;
+		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
+		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
 	}
 }
 //===============================

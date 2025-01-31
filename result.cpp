@@ -31,7 +31,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffResult = NULL;//頂点バッファへのポインタ
 void InitResult(void)
 {
 	InitGameUI();
-
+	
 	LPDIRECT3DDEVICE9 pDevice;
 
 	//デバイスを取得

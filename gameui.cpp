@@ -20,6 +20,7 @@
 //プロトタイプ宣言
 //****************************
 void UIFlash(int nType);
+float fcolorA;
 
 //****************************
 //グローバル変数
@@ -61,6 +62,7 @@ void InitGameUI(void)
 	//頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
 
+	fcolorA = 0.0f;
 	g_nPatternAnim = 0;
 	g_nCounterAnim = 0;
 
@@ -227,8 +229,6 @@ void UpdateGameUI(void)
 			break;
 		case UITYPE_BLACK:
 		{
-			static float fcolorA = 0.0f; // アルファ値
-
 			if (fcolorA >= 0.9f)
 			{
 				fcolorA = 0.9f; // α値を固定
@@ -272,6 +272,8 @@ void UpdateGameUI(void)
 //============================
 void DrawGameUI(void)
 {
+	MODE mode = GetMode();
+
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
 
     //デバイスの習得

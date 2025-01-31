@@ -22,6 +22,7 @@
 #include "HPGauge.h"
 #include "sound.h"
 #include "spgauge.h"
+#include "boss.h"
 
 //****************************
 //ƒ}ƒNƒ’è‹`
