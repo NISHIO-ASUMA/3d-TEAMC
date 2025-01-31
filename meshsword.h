@@ -19,7 +19,7 @@
 #define SOAD_WIDTH (10.0f) //â°ïù
 #define SOAD_HEIGHT (10.0f) //çÇÇ≥
 
-#define X (8) // X
+#define X (16) // X
 #define Z (1) // Z
 
 #define ORBIT_VERTEX ((X + 1) * (Z + 1)) //í∏ì_êî
