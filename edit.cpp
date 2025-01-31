@@ -178,6 +178,8 @@ void UninitEdit(void)
 //===========================
 void UpdateEdit(void)
 {
+	SetCursorVisibility(true); // カーソルを表示
+
 	static int nLoad = 0; // リロード回数制限用変数の初期化
 
 	Camera* pCamera = GetCamera(); // カメラのポインタを取得
@@ -312,6 +314,13 @@ void UpdateEdit(void)
 		else if (GetKeyboardPress(DIK_DOWN))
 		{
 			g_Edit[g_EditCount].pos.y -= g_Edit[g_EditCount].fMove;
+		}
+
+		// カメラを選択中のオブジェクトの場所へ移動
+		if (KeyboardTrigger(DIK_F6))
+		{
+			pCamera->posV.x = g_Edit[g_EditCount].pos.x;
+			pCamera->posV.z = g_Edit[g_EditCount].pos.z;
 		}
 	}
 

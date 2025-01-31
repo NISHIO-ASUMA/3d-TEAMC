@@ -885,6 +885,7 @@ void DrawEditMode(void)
 	RECT rectCategory = { 0, 200, SCREEN_WIDTH, SCREEN_HEIGHT };
 	RECT rectCamera = { 0, 240, SCREEN_WIDTH, SCREEN_HEIGHT };
 	RECT rectpMove = { 0, 260, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectObjPos = { 0, 280, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 	char aStrGame[256];
 	char aStrType[256];
@@ -897,6 +898,7 @@ void DrawEditMode(void)
 	char aStrCategory[256];
 	char aStrCamera[256];
 	char aStrpMove[256];
+	char aStrObjPos[256];
 
 	wsprintf(&aStrGame[0],
 		"+=================================================+\n"
@@ -914,6 +916,7 @@ void DrawEditMode(void)
 	wsprintf(&aStrCategory[0], "カテゴリー変更:[ 現在のカテゴリー **%d番目** ][ + Y / - U ]\n",pEdit[nNumBlock].EditCategory);
 	wsprintf(&aStrCamera[0], "注視点移動:[ 右クリック ]:視点移動:[ 左クリック ]:ズーム:[ ホイール ]\n");
 	sprintf(&aStrpMove[0], "移動量変更:[ %3.2f ]:[ + H / -J ]\n",pEdit[nNumBlock].fMove);
+	wsprintf(&aStrObjPos[0], "選択中のオブジェクトの場所へ移動:[ F6 ]\n");
 
 	//テキストの描画
 	g_pFont->DrawText(NULL, &aStrType[0], -1, &rectBlockType, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
@@ -928,6 +931,7 @@ void DrawEditMode(void)
 	g_pFont->DrawText(NULL, &aStrCategory[0], -1, &rectCategory, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrCamera[0], -1, &rectCamera, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrpMove[0], -1, &rectpMove, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrObjPos[0], -1, &rectObjPos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 }
 //===========================
 // プレイヤーの情報

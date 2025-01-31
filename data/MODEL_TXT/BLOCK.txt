@@ -2,7 +2,7 @@
 +   ブロックの読み込み処理(種類追加したら一応報告お願いします)   +
 +----------------------------------------------------------------+
 
-MAX_TYPE = 31 # 読み込むモデル数
+MAX_TYPE = 32 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -38,7 +38,7 @@ MODEL_FILENAME = data/MODEL/OBJ/vacant_land.x			# [27]空き地
 MODEL_FILENAME = data/MODEL/OBJ/public_toilet2.x		# [28]仮設トイレ！！！
 MODEL_FILENAME = data/MODEL/OBJ/hydraulic_excavator.x	# [29]油圧ショベル
 MODEL_FILENAME = data/MODEL/OBJ/workbench.x				# [30]作業台
-
+MODEL_FILENAME = data/MODEL/OBJ/manhole.x				# [31]マンホール
 
 # もしやり方わかるならBLOCK.hの列挙型追加頼む
 
