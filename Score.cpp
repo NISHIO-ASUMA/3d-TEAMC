@@ -39,8 +39,8 @@ SCORE g_aScore[MAX_NUM_SCORE];
 //=====================
 int ScoreCounter(int nScore)
 {
-	int nNum = nScore;//スコアの０の部分をカウント
-	int nKeepNum = 0;//スコアの桁数
+	int nNum = nScore;  //スコアの0の部分をカウント
+	int nKeepNum = 0;	//スコアの桁数
 
 	while (nNum != 0)//割り切れなくなるまで繰り返す(０まで)
 	{
