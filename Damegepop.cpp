@@ -5,45 +5,56 @@
 //
 //===================================
 
+//***********************************
+// インクルードファイル宣言
+//***********************************
 #include "Main.h"
-//#include "player.h"
 #include "Damagepop.h"
 
-// 表示する最大数とその桁数、文字の高さ、幅(半径)、隙間
-#define MAXDAMEGE (500)
-#define MAXDIGI (6)
-#define SIZEY (25)
-#define SIZEX (13.0f)
-#define INTERX (30)
+//***********************************
+// マクロ定義
+//***********************************
+#define MAXDAMEGE (500) // 表示する最大数
+#define MAXDIGI (6)		// 桁数
+#define SIZEY (25.0f)	// 文字の高さ
+#define SIZEX (13.0f)	// 文字の横幅
+#define INTERX (30)		// 間隔
+
+//***********************
+// 構造体
+//***********************
+typedef struct
+{
+	D3DXVECTOR3 pos;	// 座標
+	D3DXVECTOR3 move;	// 移動量
+	D3DXCOLOR col;		// カラー
+	D3DXMATRIX mtxWorld;// ワールドマトリックス
+	int nDamege;		// ダメージの数値
+	int nLife;			// 表示フレーム
+	bool bUse;			// 存在するか否か
+	bool bHeal;			// 回復か否か
+}Damege;
+
+//***********************************
+// グローバル変数宣言
+//***********************************
 LPDIRECT3DTEXTURE9 g_pTexture_Damege = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Heal = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffDamege = NULL;
 
-// 構造体、下４つの上から数値、表示フレーム、存在するか否か、回復か否か
-typedef struct
-{
-	D3DXVECTOR3 pos;
-	D3DXVECTOR3 move;
-	D3DXCOLOR col;
-	D3DXMATRIX mtxWorld;
-	int nDamege;
-	int nLife;
-	bool bUse;
-	bool bHeal;
-}Damege;
 Damege g_aDamege[MAXDAMEGE];
 int g_aPosTexU[MAXDIGI];
 
 //=================
 // Init処理色々
 //=================
-
 void InitDamege(void)
 {
+	// デバイスへのポインタを取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
 	int nCntDamege;
 	int nCnt = 0;
-	LPDIRECT3DDEVICE9 pDevice;
-	pDevice = GetDevice();
 
 	// ダメージを受けた時のフォント
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\damagepop.png", &g_pTexture_Damege);
@@ -51,7 +62,7 @@ void InitDamege(void)
 	// 回復した時のフォント
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\damagepop.png", &g_pTexture_Heal);
 
-	// 初期化
+	// 初期化処理
 	for (nCntDamege = 0; nCntDamege < MAXDAMEGE; nCntDamege++)
 	{
 		g_aDamege[nCntDamege].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -62,9 +73,16 @@ void InitDamege(void)
 		g_aDamege[nCntDamege].bUse = false;
 		g_aDamege[nCntDamege].bHeal = false;
 	}
+
+	// 頂点バッファの作成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 6 * MAXDAMEGE * MAXDIGI, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffDamege, NULL);
+
+	// 頂点情報のポインタ
 	VERTEX_3D* pVtx;
+
+	// 頂点バッファをロック
 	g_pVtxBuffDamege->Lock(0, 0, (void**)&pVtx, 0);
+
 	for (nCntDamege = 0; nCntDamege < MAXDAMEGE * MAXDIGI; nCntDamege++)
 	{
 		// 多分大きさと基準値
@@ -73,11 +91,13 @@ void InitDamege(void)
 		pVtx[2].pos = D3DXVECTOR3(-SIZEX, -SIZEY, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(SIZEX, -SIZEY, 0.0f);
 
+		// 法線ベクトル
 		pVtx[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 		pVtx[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 		pVtx[2].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 		pVtx[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
+		// カラー
 		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -97,6 +117,7 @@ void InitDamege(void)
 		pVtx += 4;
 
 		nCnt++;
+
 		if (nCnt >= MAXDIGI)
 		{
 			nCnt = 0;
@@ -104,43 +125,48 @@ void InitDamege(void)
 	}
 	g_pVtxBuffDamege->Unlock();
 }
-
-
 //=================
 // Uninit処理色々
 //=================
-
 void UninitDamege(void)
 {
+	// テクスチャの破棄
 	if (g_pTexture_Damege != NULL)
 	{
 		g_pTexture_Damege->Release();
 		g_pTexture_Damege = NULL;
 	}
+	// バッファの破棄
 	if (g_pVtxBuffDamege != NULL)
 	{
 		g_pVtxBuffDamege->Release();
 		g_pVtxBuffDamege = NULL;
 	}
+
+	// テクスチャの破棄
 	if (g_pTexture_Heal != NULL)
 	{
 		g_pTexture_Heal->Release();
 		g_pTexture_Heal = NULL;
 	}
 }
-
 //=================
 // 更新処理色々
 //=================
-
 void UpdateDamege(void)
 {
+	// デバイスへのポインタを取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
 	int nCntDamege;
 	int nMath;
-	LPDIRECT3DDEVICE9 pDevice;
-	pDevice = GetDevice();
+
+	// 頂点情報のポインタ
 	VERTEX_3D* pVtx;
+
+	// 頂点バッファのロック
 	g_pVtxBuffDamege->Lock(0, 0, (void**)&pVtx, 0);
+
 	// 全て見回して
 	for (nCntDamege = 0; nCntDamege < MAXDAMEGE; nCntDamege++)
 	{
@@ -167,6 +193,7 @@ void UpdateDamege(void)
 			for (int nCnt = 0; nCnt < MAXDIGI; nCnt++)
 			{
 				nMath = pow(10.0f, 5.0f - nCnt);
+
 				// １の位以外かつ最大の桁数を超えているなら表示しない
 				if (g_aDamege[nCntDamege].nDamege >= nMath || nCnt == 5)
 				{
@@ -182,6 +209,7 @@ void UpdateDamege(void)
 					pVtx[2].tex = D3DXVECTOR2(0.0f, 0.0f);
 					pVtx[3].tex = D3DXVECTOR2(0.0f, 0.0f);
 				}
+
 				pVtx[0].col = g_aDamege[nCntDamege].col;
 				pVtx[1].col = g_aDamege[nCntDamege].col;
 				pVtx[2].col = g_aDamege[nCntDamege].col;
@@ -197,6 +225,7 @@ void UpdateDamege(void)
 
 			// 寿命で死ぬ
 			g_aDamege[nCntDamege].nLife--;
+
 			if (g_aDamege[nCntDamege].nLife <= 0)
 			{
 				g_aDamege[nCntDamege].bUse = false;
@@ -208,18 +237,20 @@ void UpdateDamege(void)
 			pVtx += 4 * MAXDIGI;
 		}
 	}
+	// アンロック
 	g_pVtxBuffDamege->Unlock();
 }
-
 //=================
 // 描写処理色々
 //=================
 void DrawDamege(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-	//デバイス取得
-	pDevice = GetDevice();
+	// デバイス取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	 
+	// 計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
+
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	/*pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
@@ -257,8 +288,10 @@ void DrawDamege(void)
 			mtxView._24 = g_aDamege[nCnt].mtxWorld._42;
 			mtxView._34 = g_aDamege[nCnt].mtxWorld._43;
 
+			// 位置を反映
 			D3DXMatrixTranslation(&mtxTrans, g_aDamege[nCnt].pos.x, g_aDamege[nCnt].pos.y, g_aDamege[nCnt].pos.z);
 			D3DXMatrixMultiply(&g_aDamege[nCnt].mtxWorld, &g_aDamege[nCnt].mtxWorld, &mtxTrans);
+
 			pDevice->SetTransform(D3DTS_WORLD, &g_aDamege[nCnt].mtxWorld);
 			pDevice->SetStreamSource(0, g_pVtxBuffDamege, 0, sizeof(VERTEX_3D));
 
@@ -271,15 +304,18 @@ void DrawDamege(void)
 			{
 				pDevice->SetTexture(0, g_pTexture_Damege);
 			}
-			//頂点フォーマットの設定
+			// 頂点フォーマットの設定
+
 			pDevice->SetFVF(FVF_VERTEX_3D);
-			//ポリゴンの描画
+
+			// ポリゴンの描画
 			for (int nCnt2 = 0; nCnt2 < MAXDIGI; nCnt2++)
 			{
 				pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0 + (nCnt * 4 * MAXDIGI) + (nCnt2 * 4), 2);
 			}
 		}
 	}
+
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	/*pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
@@ -287,21 +323,23 @@ void DrawDamege(void)
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);*/
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
-
 //=================
 // 配置処理色々
 //=================
-
 // 左から順に場所、数値、寿命、回復かどうか
 void SetDamege(D3DXVECTOR3 pos, int nDamege, int nLife, bool Heal)
 {
-	int nCnt;
-	LPDIRECT3DDEVICE9 pDevice;
-	pDevice = GetDevice();
+	// デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	// 頂点情報へのポインタ
 	VERTEX_2D* pVtx;
+
+	// 頂点バッファのロック
 	g_pVtxBuffDamege->Lock(0, 0, (void**)&pVtx, 0);
+
 	// 全て見回して
-	for (nCnt = 0; nCnt < MAXDAMEGE; nCnt++)
+	for (int nCnt = 0; nCnt < MAXDAMEGE; nCnt++)
 	{
 		// 働いてない奴に呼びかける
 		if (g_aDamege[nCnt].bUse == false)
@@ -317,5 +355,6 @@ void SetDamege(D3DXVECTOR3 pos, int nDamege, int nLife, bool Heal)
 		}
 		pVtx += 4;
 	}
+	// アンロック
 	g_pVtxBuffDamege->Unlock();
 }

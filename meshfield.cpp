@@ -59,6 +59,7 @@ void InitMeshField(void)
 
 	float fTexX = 1.0f / XVTX;
 	float fTexY = 1.0f / ZVTX;
+	int nCnt = 0;
 
 	//èc
 	for (int nCntZ = 0; nCntZ <= ZVTX; nCntZ++)
