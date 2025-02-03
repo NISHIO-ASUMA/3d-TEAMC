@@ -150,6 +150,7 @@
     <ClCompile Include="Damegepop.cpp" />
     <ClCompile Include="edit.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="effectEdit.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Damagepop.h" />
     <ClInclude Include="edit.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="effectEdit.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />

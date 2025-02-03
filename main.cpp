@@ -510,7 +510,7 @@ void Draw(void)
 	// カメラを取得
 	Camera* pCamera = GetCamera();
 
-	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
+	for (int nCnt = 0; nCnt < CAMERATYPE_MAX; nCnt++)
 	{
 		g_pD3DDevice->SetViewport(&pCamera[nCnt].viewport); // ビューポートの設定
 		

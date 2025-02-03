@@ -12,16 +12,23 @@
 #include "input.h"
 #include "mouse.h"
 #include "camera.h"
+#include "player.h"
+#include "Shadow.h"
+#include "block.h"
 
 //****************************
 // マクロ定義
 //****************************
-#define MAX_WORD (256) // 最大の文字数
+#define MAX_WORD (256)			 // 最大の文字数
+#define SHADOWSIZEOFFSET (40.0f) // 影の大きさのオフセット
+#define SHADOW_A (1.0f)          // 影の濃さの基準
+#define NUM_MTX (8)
 
 //****************************
 // プロトタイプ宣言
 //****************************
-void LoadBoss(void);	// ボスを読み込む
+void LoadBoss(void);	    // ボスを読み込む
+void colisionSword(void);   // 
 
 //****************************
 // グローバル変数宣言
@@ -42,6 +49,8 @@ void InitBoss(void)
 	g_Boss.bUse = false;						 // 未使用状態
 	g_Boss.nLife = 20;							 // 体力
 	g_Boss.state = BOSSSTATE_NORMAL;			 // 状態
+	g_Boss.Speed = 5.0f;						 // 足の速さ
+	g_Boss.AttackState = BOSSATTACK_NO;			 // 攻撃状態
 
 	LoadBoss(); // ボスのロード
 
@@ -162,8 +171,104 @@ void UninitBoss(void)
 //=============================
 void UpdateBoss(void)
 {
-	// モーションの更新処理
-	UpdateMotion(&g_Boss.Motion);
+	Player* pPlayer = GetPlayer();
+
+	// 使用状態のみ
+	if (g_Boss.bUse)
+	{
+		switch (g_Boss.state)
+		{
+		case BOSSSTATE_NORMAL:
+			break;
+		case BOSSSTATE_AGENT:
+			break;
+		case BOSSSTATE_ATTACK:
+			break;
+		case BOSSSTATE_DAMAGE:
+			g_Boss.nCounterState--;
+
+			if (g_Boss.nCounterState <= 0)
+			{
+				g_Boss.state = BOSSSTATE_NORMAL; // 敵の状態をノーマルにする
+			}
+			break;
+		default:
+			break;
+		}
+		// 移動量の減衰
+		g_Boss.move.x += (0.0f - g_Boss.move.x) * 0.25f;
+		g_Boss.move.z += (0.0f - g_Boss.move.z) * 0.25f;
+
+		// 前回の位置を代入
+		g_Boss.posOld = g_Boss.pos;
+
+		// 位置の更新
+		g_Boss.pos += g_Boss.move;
+
+		// ブロックの判定
+		CollisionBlock(&g_Boss.pos, &g_Boss.posOld, &g_Boss.move, &g_Boss.Size);
+
+		// 影の位置の更新
+		SetPositionShadow(g_Boss.nIdxShadow, g_Boss.pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss.pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss.pos.y / 30.0f));
+
+		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
+		if (sphererange(&pPlayer->pos,&g_Boss.pos,50.0f,20000.0f) && g_Boss.AttackState == BOSSATTACK_NO)
+		{
+			g_Boss.Motion.motionType = MOTIONTYPE_MOVE; // モーションの種類を移動にする
+
+			// ボスの向きをプレイヤーの位置を向くようにする
+			float fAngle = atan2f(pPlayer->pos.x - g_Boss.pos.x, pPlayer->pos.z - g_Boss.pos.z);
+
+			// ボスの向き代入
+			g_Boss.rot.y = fAngle + D3DX_PI;
+
+			// プレイヤーの位置を算出
+			D3DXVECTOR3 Dest = pPlayer->pos - g_Boss.pos;
+
+			// 正規化
+			D3DXVec3Normalize(&Dest, &Dest);
+
+			// 移動量に代入
+			g_Boss.move.x = Dest.x * g_Boss.Speed;
+			g_Boss.move.z = Dest.z * g_Boss.Speed;
+
+		}
+		else
+		{
+			if (g_Boss.Motion.motionType != MOTIONTYPE_ACTION)
+			{
+				g_Boss.Motion.motionType = MOTIONTYPE_NEUTRAL; // 攻撃してない
+			}
+		}
+
+		// 攻撃範囲に入ったら
+		if (sphererange(&pPlayer->pos, &g_Boss.pos, 50.0f, 30.0f))
+		{
+			g_Boss.Motion.motionType = MOTIONTYPE_ACTION; // モーションの種類を攻撃にする
+			g_Boss.AttackState = BOSSATTACK_ATTACK;       // 攻撃している
+		}
+
+		// 攻撃範囲に入った
+		if (sphererange(&pPlayer->pos, &g_Boss.pos, 50.0f, 20.0f) &&
+			pPlayer->state != PLAYERSTATE_DAMAGE &&
+			g_Boss.Motion.nKey >= 4 && pPlayer->WeponMotion != MOTION_SP)
+		{
+			HitPlayer(50);
+		}
+		
+		colisionSword();
+		
+		// ループしないモーションが最後まで行ったら
+		if (!g_Boss.Motion.aMotionInfo[g_Boss.Motion.motionType].bLoop && g_Boss.Motion.nKey >= g_Boss.Motion.aMotionInfo[g_Boss.Motion.motionType].nNumkey - 1)
+		{
+			g_Boss.Motion.motionType = MOTIONTYPE_NEUTRAL; 		// ボスのモーションをニュートラルにもどす
+			g_Boss.AttackState = BOSSATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
+		}
+
+		
+		// モーションの更新処理
+		UpdateMotion(&g_Boss.Motion);
+	}
 }
 //=============================
 // ボスの描画処理
@@ -284,9 +389,32 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 	if (!g_Boss.bUse)
 	{// 未使用なら
 		g_Boss.pos = pos;	  // 位置を代入
-		g_Boss.Speed = speed; // 足の速さ
+		//g_Boss.Speed = speed; // 足の速さ
 		g_Boss.nLife = nLife; // 体力を挿入
 		g_Boss.bUse = true;   // 使用状態にする
+
+		g_Boss.nIdxShadow = SetShadow(g_Boss.pos,g_Boss.rot,40.0f);
+	}
+}
+//=============================
+// ボスのヒット処理
+//=============================
+void HitBoss(int nDamage)
+{
+	g_Boss.nLife -= nDamage;
+
+	if (g_Boss.nLife <= 0)
+	{
+		// 消す
+		g_Boss.bUse = false;
+
+		// 影から消す
+		KillShadow(g_Boss.nIdxShadow);
+	}
+	else
+	{
+		g_Boss.state = ENEMYSTATE_DAMAGE;
+		g_Boss.nCounterState = 30;
 	}
 }
 //=============================
@@ -611,4 +739,122 @@ void LoadBoss(void)
 	}
 	// ファイルを閉じる
 	fclose(pFile);
+}
+//=========================
+// 剣の当たり判定
+//=========================
+void colisionSword(void)
+{
+	Player* pPlayer = GetPlayer();
+	Item* pItem = GetItem();
+
+	D3DXVECTOR3 mtxDis, SwordPos;
+
+	if (pPlayer->Motion.nNumModel == 16 && pPlayer->WeponMotion != MOTION_SP)
+	{
+		//剣の長さを求める
+		mtxDis.x = (pPlayer->SwordMtx._41 - pPlayer->Motion.aModel[15].mtxWorld._41);
+		mtxDis.y = (pPlayer->SwordMtx._42 - pPlayer->Motion.aModel[15].mtxWorld._42);
+		mtxDis.z = (pPlayer->SwordMtx._43 - pPlayer->Motion.aModel[15].mtxWorld._43);
+
+		// マトリクスの数分だけ回す
+		for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
+		{
+			// 剣の位置を全て求める
+			SwordPos.x = pPlayer->Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.125f * nCnt;
+			SwordPos.y = pPlayer->Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.125f * nCnt;
+			SwordPos.z = pPlayer->Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.125f * nCnt;
+
+			D3DXVECTOR3 DisPos; // 距離算出用
+
+			DisPos.x =g_Boss.pos.x - SwordPos.x; // 距離Xを求める
+			DisPos.y =g_Boss.pos.y - SwordPos.y; // 距離Yを求める
+			DisPos.z =g_Boss.pos.z - SwordPos.z; // 距離Zを求める
+
+			float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z); // 距離を求める
+
+			float Radius1, Radius2; // 半径
+
+			Radius1 = 15.0f;
+			Radius2 = 50.0f;
+
+			float fRadius = Radius1 + Radius2; // 半径を求める
+
+			fRadius = (fRadius * fRadius); // 半径を求める
+
+			if (fDistance <= fRadius && g_Boss.state != BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO)
+			{
+				HitBoss(pPlayer->nDamage * 5);
+
+				pItem[pPlayer->ItemIdx].durability--;
+
+				if (pItem[pPlayer->ItemIdx].durability <= 0)
+				{
+					pPlayer->Itembreak[pPlayer->ItemIdx] = true;
+				}
+				break;
+			}
+		}
+	}
+	else if (pPlayer->Motion.nNumModel == 15 && pPlayer->WeponMotion != MOTION_SP)
+	{
+		// モデルの位置を変数に代入
+		D3DXVECTOR3 ModelPos(pPlayer->Motion.aModel[4].mtxWorld._41, pPlayer->Motion.aModel[4].mtxWorld._42, pPlayer->Motion.aModel[4].mtxWorld._43);
+
+		// 円の範囲
+		if (sphererange(&ModelPos, &g_Boss.pos, 30.0f, 65.0f) && pPlayer->Combostate != COMBO_NO && g_Boss.state != ENEMYSTATE_DAMAGE)
+		{
+			if (pPlayer->Motion.motionType == MOTIONTYPE_ACTION && pPlayer->Motion.nKey >= 2)
+			{
+				HitBoss(pPlayer->nDamage * 3); // 敵に当たった
+			}
+		}
+	}
+	else if (pPlayer->Motion.nNumModel == 16 && pPlayer->WeponMotion == MOTION_SP)
+	{
+		//剣の長さを求める
+		mtxDis.x = (pPlayer->SwordMtx._41 - pPlayer->Motion.aModel[15].mtxWorld._41);
+		mtxDis.y = (pPlayer->SwordMtx._42 - pPlayer->Motion.aModel[15].mtxWorld._42);
+		mtxDis.z = (pPlayer->SwordMtx._43 - pPlayer->Motion.aModel[15].mtxWorld._43);
+
+		// マトリクスの数分だけ回す
+		for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
+		{
+			// 剣の位置を全て求める
+			SwordPos.x = pPlayer->Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.125f * nCnt;
+			SwordPos.y = pPlayer->Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.125f * nCnt;
+			SwordPos.z = pPlayer->Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.125f * nCnt;
+
+			D3DXVECTOR3 DisPos; // 距離算出用
+
+			DisPos.x = g_Boss.pos.x - SwordPos.x; // 距離Xを求める
+			DisPos.y = g_Boss.pos.y - SwordPos.y; // 距離Yを求める
+			DisPos.z = g_Boss.pos.z - SwordPos.z; // 距離Zを求める
+
+			float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z); // 距離を求める
+
+			float Radius1, Radius2; // 半径
+
+			Radius1 = 200.0f;
+			Radius2 = 50.0f;
+
+			float fRadius = Radius1 + Radius2; // 半径を求める
+
+			fRadius = (fRadius * fRadius); // 半径を求める
+
+			if (fDistance <= fRadius && g_Boss.state != ENEMYSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO && pPlayer->Motion.nKey >= 3)
+			{
+				HitBoss(pPlayer->nDamage * 50);
+				break;
+			}
+		}
+	}
+
+}
+//======================
+// ボスの取得処理
+//======================
+Boss* Getboss(void)
+{
+	return &g_Boss;
 }

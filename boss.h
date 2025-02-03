@@ -75,4 +75,5 @@ void UpdateBoss(void);//ボスの更新処理
 void DrawBoss(void);//ボスの描画処理
 void SetBoss(D3DXVECTOR3 pos, float speed,int nLife);
 void HitBoss(int nDamage);//ボスのヒット処理
+Boss* Getboss(void);
 #endif

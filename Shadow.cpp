@@ -139,7 +139,7 @@ void DrawShadow(void)
 			D3DXMatrixMultiply(&g_aShadow[nCntShadow].mtxWorld, &g_aShadow[nCntShadow].mtxWorld, &mtxRot);
 
 			// 位置を反映
-			D3DXMatrixTranslation(&mtxTrans, g_aShadow[nCntShadow].pos.x, g_aShadow[nCntShadow].pos.y, g_aShadow[nCntShadow].pos.z);
+			D3DXMatrixTranslation(&mtxTrans, g_aShadow[nCntShadow].rot.x, g_aShadow[nCntShadow].rot.y, g_aShadow[nCntShadow].rot.z);
 			D3DXMatrixMultiply(&g_aShadow[nCntShadow].mtxWorld, &g_aShadow[nCntShadow].mtxWorld, &mtxTrans);
 
 			// ワールドマトリックスを設定

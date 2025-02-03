@@ -28,6 +28,7 @@
 #include "sound.h"
 #include "meshsword.h"
 #include "spgauge.h"
+#include "boss.h"
 
 //****************************
 //マクロ定義
@@ -1554,18 +1555,41 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 		}
 	}
 
-	// 範囲にいる間だけロックオン
-	if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 150.0f, 150.0f))
-	{
-		// 角度を求める
-		float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
-			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
-	}
+	Boss* pBoss = Getboss();
 
-	if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
+	// ボスがプレイヤーの近くにいたら
+	if (sphererange(&g_player.pos, &pBoss->pos, 50.0f, 100.0f))
 	{
-		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
-		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
+		// 範囲にいる間だけロックオン
+		if (sphererange(&g_player.pos, &pBoss->pos, 150.0f, 150.0f))
+		{
+			// 角度を求める
+			float fAngle = atan2f(pBoss->pos.x - g_player.pos.x, pBoss->pos.z - g_player.pos.z);
+			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+		}
+
+		// ボスの場所を向く
+		if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
+		{
+			g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
+			g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
+		}
+	}
+	else
+	{
+		// 範囲にいる間だけロックオン
+		if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 150.0f, 150.0f))
+		{
+			// 角度を求める
+			float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
+			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+		}
+
+		if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
+		{
+			g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
+			g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
+		}
 	}
 }
 //===============================
