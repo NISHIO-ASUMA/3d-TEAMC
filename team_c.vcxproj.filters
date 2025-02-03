@@ -144,7 +144,7 @@
     <ClCompile Include="Timer.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
-    <ClCompile Include="mashsword.cpp">
+    <ClCompile Include="meshsword.cpp">
       <Filter>ソース ファイル\obj</Filter>
     </ClCompile>
     <ClCompile Include="spgauge.cpp">

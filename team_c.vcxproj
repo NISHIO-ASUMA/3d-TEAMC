@@ -161,7 +161,7 @@
     <ClCompile Include="item.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mashsword.cpp" />
+    <ClCompile Include="meshsword.cpp" />
     <ClCompile Include="meshfield.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="motion.cpp" />

@@ -1,6 +1,6 @@
 //============================
 //
-// アイテム[item.cpp]
+// アイテム [item.cpp]
 // Author:YOSHIDA YUUTO
 //
 //============================
@@ -20,7 +20,6 @@
 //****************************
 //マクロ定義
 //****************************
-#define MOUSE_SIZE (50.0f)
 #define MAX_WORD (256)
 #define MAX_DURABILITY (100) // 耐久力
 
@@ -32,30 +31,31 @@ void LoadItemModel(void); // アイテムのロード処理
 //****************************
 //グローバル変数宣言
 //****************************
-Item g_Item[MAX_ITEM];
-int g_ItemTypeMax;
-Item g_TexItem[ITEMTYPE_MAX];
+Item g_Item[MAX_ITEM];			// 構造体変数
+int g_ItemTypeMax;				// 種類数
+Item g_TexItem[ITEMTYPE_MAX];	// テクスチャ関係
 
 //=============================
 //ブロックの初期化処理
 //=============================
 void InitItem(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		g_Item[nCntItem].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //座標
-		g_Item[nCntItem].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//移動量
-		g_Item[nCntItem].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //角度
-		g_Item[nCntItem].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
-		g_Item[nCntItem].nType = ITEMTYPE_BAT;				  //種類
-		g_Item[nCntItem].bUse = false;						  //未使用判定
-		g_Item[nCntItem].nLife = 20;						  //体力
-		g_Item[nCntItem].state = ITEMSTATE_NORMAL;			  //状態
-		g_Item[nCntItem].fRadius = 100.0f;					  //半径
-		g_Item[nCntItem].nLife = 180;						  //体力
-		g_Item[nCntItem].durability = MAX_DURABILITY;					  //体力
+		g_Item[nCntItem].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 座標
+		g_Item[nCntItem].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 移動量
+		g_Item[nCntItem].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 角度
+		g_Item[nCntItem].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f); // 拡大率
+		g_Item[nCntItem].nType = ITEMTYPE_BAT;				   // 種類
+		g_Item[nCntItem].bUse = false;						   // 未使用判定
+		g_Item[nCntItem].nLife = 20;						   // 体力
+		g_Item[nCntItem].state = ITEMSTATE_NORMAL;			   // 状態
+		g_Item[nCntItem].fRadius = 100.0f;					   // 半径
+		g_Item[nCntItem].nLife = 180;						   // 体力
+		g_Item[nCntItem].durability = MAX_DURABILITY;		   // 耐久力
 	}
 
 	LoadItemModel(); // アイテムのロード処理
@@ -65,14 +65,14 @@ void InitItem(void)
 		//g_TexItem[nCntNum].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//g_TexItem[nCntNum].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//g_TexItem[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
-		g_TexItem[nCntNum].nLife = 120;							//体力
-		g_TexItem[nCntNum].durability = MAX_DURABILITY;							//体力
-		g_TexItem[nCntNum].state = ITEMSTATE_NORMAL;			  //状態
+		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);// 拡大率
+		g_TexItem[nCntNum].nLife = 120;							// 体力
+		g_TexItem[nCntNum].durability = MAX_DURABILITY;			// 耐久力
+		g_TexItem[nCntNum].state = ITEMSTATE_NORMAL;			// 状態
 
-		D3DXMATERIAL* pMat;//マテリアルへのポインタ
+		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
-		//マテリアルのデータへのポインタを取得
+		// マテリアルのデータへのポインタを取得
 		pMat = (D3DXMATERIAL*)g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatItem->GetBufferPointer();
 
 		for (int nCntMat = 0; nCntMat < (int)g_TexItem[nCntNum].ItemTex[nCntNum].g_dwNumMatItem; nCntMat++)
@@ -80,7 +80,7 @@ void InitItem(void)
 			if (pMat[nCntMat].pTextureFilename != NULL)
 			{
 				//このファイル名を使用してテクスチャを読み込む
-					//テクスチャの読み込み
+				//テクスチャの読み込み
 				D3DXCreateTextureFromFile(pDevice,
 					pMat[nCntMat].pTextureFilename,
 					&g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureItem[nCntMat]);
@@ -88,28 +88,28 @@ void InitItem(void)
 		}
 	}
 
-	//頂点座標の取得
-	int nNumVtx;//頂点数
-	DWORD sizeFVF;//頂点フォーマットのサイズ
-	BYTE* pVtxBuff;//頂点バッファへのポインタ
+	// 頂点座標の取得
+	int nNumVtx;	// 頂点数
+	DWORD sizeFVF;  // 頂点フォーマットのサイズ
+	BYTE* pVtxBuff; // 頂点バッファへのポインタ
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
-		//頂点数の取得
+		// 頂点数の取得
 		nNumVtx = g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->GetNumVertices();
 
-		//頂点フォーマットのサイズ取得
+		// 頂点フォーマットのサイズ取得
 		sizeFVF = D3DXGetFVFVertexSize(g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->GetFVF());
 
-		//頂点バッファのロック
+		// 頂点バッファのロック
 		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
 		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 		{
-			//頂点座標の代入
+			// 頂点座標の代入
 			D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
 
-			//頂点座標を比較してブロックの最小値,最大値を取得
+			// 頂点座標を比較してブロックの最小値,最大値を取得
 			if (vtx.x < g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.x)
 			{
 				g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.x = vtx.x;
@@ -135,16 +135,16 @@ void InitItem(void)
 				g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.z = vtx.z;
 			}
 
-			//頂点フォーマットのサイズ分ポインタを進める
+			// 頂点フォーマットのサイズ分ポインタを進める
 			pVtxBuff += sizeFVF;
 
-			//サイズを代入
+			// サイズを代入
 			g_TexItem[nCntNum].Size.x = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.x - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.x;
 			g_TexItem[nCntNum].Size.y = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.y - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.y;
 			g_TexItem[nCntNum].Size.z = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.z - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.z;
 		}
 
-		//頂点バッファのアンロック
+		// 頂点バッファのアンロック
 		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->UnlockVertexBuffer();
 	}
 }
@@ -155,7 +155,7 @@ void UninitItem(void)
 {
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
-		//テクスチャの破棄
+		// テクスチャの破棄
 		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
 		{
 			if (g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureItem[nCntTex] != NULL)
@@ -165,14 +165,14 @@ void UninitItem(void)
 			}
 		}
 
-		//メッシュの破棄
+		// メッシュの破棄
 		if (g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem != NULL)
 		{
 			g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->Release();
 			g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem = NULL;
 		}
 
-		//マテリアル
+		// マテリアルの破棄
 		if (g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatItem != NULL)
 		{
 			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatItem->Release();
@@ -185,7 +185,8 @@ void UninitItem(void)
 //=============================
 void UpdateItem(void)
 {
-	Player* pPlayer = GetPlayer();//プレイヤー取得
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
@@ -204,7 +205,7 @@ void UpdateItem(void)
 		// 前回の位置を代入
 		g_Item[nCntItem].posOld = g_Item[nCntItem].pos;
 
-		//位置の更新
+		// 位置の更新
 		g_Item[nCntItem].pos += g_Item[nCntItem].move;
 
 		if (CollisionBlockItem(&g_Item[nCntItem].pos, &g_Item[nCntItem].posOld, &g_Item[nCntItem].move, &g_Item[nCntItem].Size))
@@ -214,7 +215,7 @@ void UpdateItem(void)
 		}
 
 		CollisionItem(nCntItem,// アイテムのインデックスを渡す
-			20.0f, // アイテムの半径
+			20.0f,  // アイテムの半径
 			20.0f); // プレイヤーの半径
 
 		// 状態を投げるにする
@@ -240,18 +241,21 @@ void UpdateItem(void)
 //=============================
 void DrawItem(void)
 {
-	MODE mode = GetMode();//現在のモードを取得
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	Player* pPlayer = GetPlayer();//プレイヤーの取得
+	// 現在のモードを取得
+	MODE mode = GetMode();
 
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
 
-	//計算用のマトリックス
+	// 計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal, mtxParent;
 
-	D3DMATERIAL9 matDef;//現在のマテリアル保存用
+	D3DMATERIAL9 matDef; // 現在のマテリアル保存用
 
-	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
+	D3DXMATERIAL* pMat; // マテリアルデータへのポインタ
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
@@ -263,39 +267,39 @@ void DrawItem(void)
 				continue;
 			}
 
-			//ワールドマトリックスの初期化
+			// ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&g_Item[nCntItem].mtxWorldItem);
 
-			//大きさを反映
+			// 大きさを反映
 			D3DXMatrixScaling(&mtxScal, g_Item[nCntItem].Scal.y, g_Item[nCntItem].Scal.x, g_Item[nCntItem].Scal.z);
 			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxScal);
 
-			//向きを反映
+			// 向きを反映
 			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
 			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxRot);
 
-			//位置を反映
+			// 位置を反映
 			D3DXMatrixTranslation(&mtxTrans, g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y, g_Item[nCntItem].pos.z);
 			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxTrans);
 
-			//ワールドマトリックスの設定
+			// ワールドマトリックスの設定
 			pDevice->SetTransform(D3DTS_WORLD, &g_Item[nCntItem].mtxWorldItem);
 			
-			//現在のマテリアルを取得
+			// 現在のマテリアルを取得
 			pDevice->GetMaterial(&matDef);
 
 			for (int nCntMat = 0; nCntMat < (int)g_Item[nCntItem].ItemTex[nCntNum].g_dwNumMatItem; nCntMat++)
 			{
-				//マテリアルのデータへのポインタを取得
+				// マテリアルのデータへのポインタを取得
 				pMat = (D3DXMATERIAL*)g_Item[nCntItem].ItemTex[nCntNum].g_pBuffMatItem->GetBufferPointer();
 
-				//マテリアルの設定
+				// マテリアルの設定
 				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
-				//テクスチャの設定
+				// テクスチャの設定
 				pDevice->SetTexture(0, g_Item[nCntItem].ItemTex[nCntNum].g_apTextureItem[nCntMat]);
 
-				//ブロック(パーツ)の描画
+				// ブロック(パーツ)の描画
 				g_Item[nCntItem].ItemTex[nCntNum].g_pMeshItem->DrawSubset(nCntMat);
 			}
 		}
@@ -309,14 +313,14 @@ void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal)
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		if (!g_Item[nCntItem].bUse)
-		{//未使用状態なら
+		{// 未使用状態なら
 
 			g_Item[nCntItem] = g_TexItem[nType]; // 必要な情報を代入
 
-			g_Item[nCntItem].pos = pos;			 //座標
-			g_Item[nCntItem].nType = nType;		 //種類
-			g_Item[nCntItem].Scal = Scal;		 //拡大率
-			g_Item[nCntItem].bUse = true;		 //使用判定
+			g_Item[nCntItem].pos = pos;			 // 座標
+			g_Item[nCntItem].nType = nType;		 // 種類
+			g_Item[nCntItem].Scal = Scal;		 // 拡大率
+			g_Item[nCntItem].bUse = true;		 // 使用判定
 
 			break;
 		}
@@ -327,29 +331,36 @@ void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal)
 //=======================
 bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 {
+	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
-	bool bHit = false; // 当たったかどうか
+	bool bHit = false;  // 当たったかどうか
 
 	D3DXVECTOR3 DisPos; // 距離計算用変数
 
 	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
 	{
 		if (g_Item[nCnt].state == ITEMSTATE_THROW && g_Item[nCnt].bUse)
-		{
+		{// ITEMSTATE_THROW　かつ bUseがtrue
+
+			// 座標を設定
 			DisPos.x = pPos->x - g_Item[nCnt].pos.x;
 			DisPos.y = pPos->y - g_Item[nCnt].pos.y;
 			DisPos.z = pPos->z - g_Item[nCnt].pos.z;
 
+			// 距離を計算
 			float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z);
 
+			// 半径を計算
 			float fRadius = ItemRadius + EnemyRadius;
 
 			fRadius = fRadius * fRadius;
 
 			if (fDistance <= fRadius)
-			{
-				bHit = true;
+			{// fDistanceがfRadiusより小さい
+
+				bHit = true;	// 判定を有効か
+
 				if (!pPlayer->FeverMode)
 				{
 					g_Item[nCnt].durability--; // 耐久力をへらす
@@ -358,6 +369,7 @@ bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 			}
 		}
 	}
+	// 判定を返す
 	return bHit;
 }
 //=========================
@@ -365,6 +377,7 @@ bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 //=========================
 void Itemchange(int nType)
 {
+	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
 	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].ItemTex[nType].g_dwNumMatItem; // アイテムのマテリアルの情報を代入
@@ -388,13 +401,18 @@ Item* GetItem(void)
 //============================
 void LoadItemModel(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	FILE* pFile; // ファイルのポインタ
+	// ファイルポインタを宣言
+	FILE* pFile;
 
+	// ローカル変数宣言-----------
 	char skip[5];
 	int nType = 0;
+	//----------------------------
 
+	// ファイルを開く
 	pFile = fopen("data\\MODEL_TXT\\ITEM.txt", "r");
 
 	if (pFile != NULL)
@@ -406,12 +424,12 @@ void LoadItemModel(void)
 			fscanf(pFile, "%s", &aString[0]);
 
 			if (strcmp(aString, "MAX_TYPE") == 0)
-			{
+			{// MAX_TYPEを読み取った
 				fscanf(pFile, "%s", &skip[0]);
 				fscanf(pFile, "%d", &g_ItemTypeMax);
 			}
 			else if (strcmp(aString, "MODEL_FILENAME") == 0)
-			{
+			{// MODEL_FILENAMEを読み取った
 				fscanf(pFile, "%s", &skip[0]);
 
 				fscanf(pFile, "%s", &aString[0]);
@@ -433,7 +451,7 @@ void LoadItemModel(void)
 				nType++;
 			}
 			else if (strcmp(aString, "END_SCRIPT") == 0)
-			{
+			{// END_SCRIPTを読み取った
 				break;
 			}
 		}
@@ -444,5 +462,6 @@ void LoadItemModel(void)
 		MessageBox(NULL, "ファイルが開けません。", "エラー(item.cpp)", MB_OK);
 		return;
 	}
+	// ファイルを閉じる
 	fclose(pFile);
 }

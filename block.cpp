@@ -16,7 +16,7 @@
 //****************************
 // マクロ定義
 //****************************
-#define MAX_WORD (256) // 最大の文字数
+#define MAX_WORD (256)	  // 最大の文字数
 #define HALF_VALUE (0.6f) // 割る数
 
 //****************************
@@ -27,51 +27,51 @@ void LoadBlockModel(void); // モデル読み込み処理
 //****************************
 // グローバル変数宣言
 //****************************
-BLOCK g_Block[MAX_BLOCK];
-BLOCK g_TexBlock[BLOCKTYPE_MAX];
-int nCounterStateBlock;
-int g_NumBlock;
-int g_BlockTypeMax;
+BLOCK g_Block[MAX_BLOCK];		// 構造体変数
+BLOCK g_TexBlock[BLOCKTYPE_MAX];// ブロックのテクスチャ情報
+int nCounterStateBlock;			// 状態管理カウンター
+int g_NumBlock;					// ブロックの配置した数
+int g_BlockTypeMax;				// 種類数
 
 //=============================
 // ブロックの初期化処理
 //=============================
 void InitBlock(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
-		g_Block[nCntBlock].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //座標
-		g_Block[nCntBlock].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);//移動量
-		g_Block[nCntBlock].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //角度
-		g_Block[nCntBlock].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//拡大率
-		g_Block[nCntBlock].nType = BLOCKTYPE_APARTMENT;				//種類
-		g_Block[nCntBlock].bUse = false;						//未使用状態
-		g_Block[nCntBlock].nLife = 20;							//体力
-		g_Block[nCntBlock].state = BLOCKSTATE_NORMAL;			//状態
-		g_Block[nCntBlock].fRadius = 100.0f;					//半径
+		g_Block[nCntBlock].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 座標
+		g_Block[nCntBlock].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 移動量
+		g_Block[nCntBlock].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 角度
+		g_Block[nCntBlock].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f); // 拡大率
+		g_Block[nCntBlock].nType = BLOCKTYPE_APARTMENT;			 // 種類
+		g_Block[nCntBlock].bUse = false;						 // 未使用状態
+		g_Block[nCntBlock].nLife = 20;							 // 体力
+		g_Block[nCntBlock].state = BLOCKSTATE_NORMAL;			 // 状態
+		g_Block[nCntBlock].fRadius = 100.0f;					 // 半径
 	}
 
 	LoadBlockModel(); // ブロックのロード
 
 	//グローバル変数の初期化
-	g_NumBlock = 0;		   //ブロックの数
-	nCounterStateBlock = 0;//状態カウンター
+	g_NumBlock = 0;		   // ブロックの数
+	nCounterStateBlock = 0;// 状態カウンター
 
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
-		D3DXMATERIAL* pMat;//マテリアルへのポインタ
+		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
-		//マテリアルのデータへのポインタを取得
+		// マテリアルのデータへのポインタを取得
 		pMat = (D3DXMATERIAL*)g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock->GetBufferPointer();
 
 		for (int nCntMat = 0; nCntMat < (int)g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatBlock; nCntMat++)
 		{
 			if (pMat[nCntMat].pTextureFilename != NULL)
 			{
-				//このファイル名を使用してテクスチャを読み込む
-				//テクスチャの読み込み
+				// テクスチャの読み込み
 				D3DXCreateTextureFromFile(pDevice,
 					pMat[nCntMat].pTextureFilename,
 					&g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntMat]);
@@ -79,28 +79,28 @@ void InitBlock(void)
 		}
 	}
 
-	//頂点座標の取得
-	int nNumVtx;//頂点数
-	DWORD sizeFVF;//頂点フォーマットのサイズ
-	BYTE* pVtxBuff;//頂点バッファへのポインタ
+	// 頂点座標の取得
+	int nNumVtx;	// 頂点数
+	DWORD sizeFVF;  // 頂点フォーマットのサイズ
+	BYTE* pVtxBuff; // 頂点バッファへのポインタ
 
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
-		//頂点数の取得
+		// 頂点数の取得
 		nNumVtx = g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->GetNumVertices();
 
-		//頂点フォーマットのサイズ取得
+		// 頂点フォーマットのサイズ取得
 		sizeFVF = D3DXGetFVFVertexSize(g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->GetFVF());
 
-		//頂点バッファのロック
+		// 頂点バッファのロック
 		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
 		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 		{
-			//頂点座標の代入
+			// 頂点座標の代入
 			D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
 
-			//頂点座標を比較してブロックの最小値,最大値を取得
+			// 頂点座標を比較してブロックの最小値,最大値を取得
 			if (vtx.x < g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.x)
 			{
 				g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.x = vtx.x;
@@ -126,16 +126,16 @@ void InitBlock(void)
 				g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.z = vtx.z;
 			}
 
-			//頂点フォーマットのサイズ分ポインタを進める
+			// 頂点フォーマットのサイズ分ポインタを進める
 			pVtxBuff += sizeFVF;
 
-			//サイズに代入
+			// サイズに代入
 			g_TexBlock[nCntNum].Size.x = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.x - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.x;
 			g_TexBlock[nCntNum].Size.y = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.y - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.y;
 			g_TexBlock[nCntNum].Size.z = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.z - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.z;
 		}
 
-		//頂点バッファのアンロック
+		// 頂点バッファのアンロック
 		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->UnlockVertexBuffer();
 	}
 }
@@ -146,7 +146,7 @@ void UninitBlock(void)
 {
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
-		//テクスチャの破棄
+		// テクスチャの破棄
 		for (int nCntTex = 0; nCntTex < (int)g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatBlock; nCntTex++)
 		{
 			if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntTex] != NULL)
@@ -156,14 +156,14 @@ void UninitBlock(void)
 			}
 		}
 
-		//メッシュの破棄
+		// メッシュの破棄
 		if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock != NULL)
 		{
 			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->Release();
 			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock = NULL;
 		}
 
-		//マテリアルの破棄
+		// マテリアルの破棄
 		if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock != NULL)
 		{
 			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock->Release();
@@ -175,7 +175,7 @@ void UninitBlock(void)
 	{
 		for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 		{
-			//テクスチャの破棄
+			// テクスチャの破棄
 			for (int nCntTex = 0; nCntTex < (int)g_Block[nCnt].BlockTex[nCntNum].g_dwNumMatBlock; nCntTex++)
 			{
 				if (g_Block[nCnt].BlockTex[nCntNum].g_apTextureBlock[nCntTex] != NULL)
@@ -184,13 +184,13 @@ void UninitBlock(void)
 				}
 			}
 
-			//メッシュの破棄
+			// メッシュの破棄
 			if (g_Block[nCnt].BlockTex[nCntNum].g_pMeshBlock != NULL)
 			{
 				g_Block[nCnt].BlockTex[nCntNum].g_pMeshBlock = NULL;
 			}
 
-			//マテリアルの破棄
+			// マテリアルの破棄
 			if (g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatBlock != NULL)
 			{
 				g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatBlock = NULL;
@@ -204,25 +204,28 @@ void UninitBlock(void)
 //=============================
 void UpdateBlock(void)
 {
-
+	// TODO : 後にブロック壊せる処理を追加
 }
 //=============================
 // ブロックの描画処理
 //=============================
 void DrawBlock(void)
 {
-	MODE mode = GetMode();//現在のモードを取得
+	// デバイスのポインタを取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	Player* pPlayer = GetPlayer();//プレイヤー取得
+	// 現在のモードを取得
+	MODE mode = GetMode();
 
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタを取得
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
 
-	//計算用のマトリックス
+	// 計算用のマトリックスを宣言
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal,mtxParent;
 
-	D3DMATERIAL9 matDef;//現在のマテリアル保存用
+	D3DMATERIAL9 matDef; // 現在のマテリアル保存用
 
-	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
+	D3DXMATERIAL* pMat;  // マテリアルデータへのポインタ
 
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
@@ -234,40 +237,39 @@ void DrawBlock(void)
 				continue;
 			}
 
-			//ワールドマトリックスの初期化
+			// ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&g_Block[nCntBlock].mtxWorldBlock);
 
-			//大きさを反映
+			// 大きさを反映
 			D3DXMatrixScaling(&mtxScal, g_Block[nCntBlock].Scal.y, g_Block[nCntBlock].Scal.x, g_Block[nCntBlock].Scal.z);
 			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxScal);
 
-			//向きを反映
+			// 向きを反映
 			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCntBlock].rot.y, g_Block[nCntBlock].rot.x, g_Block[nCntBlock].rot.z);
 			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxRot);
 
-			//位置を反映
+			// 位置を反映
 			D3DXMatrixTranslation(&mtxTrans, g_Block[nCntBlock].pos.x, g_Block[nCntBlock].pos.y, g_Block[nCntBlock].pos.z);
 			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxTrans);
 
-			//ワールドマトリックスの設定
+			// ワールドマトリックスの設定
 			pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].mtxWorldBlock);
 			
-
-			//現在のマテリアルを取得
+			// 現在のマテリアルを取得
 			pDevice->GetMaterial(&matDef);
 
 			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nCntNum].g_dwNumMatBlock; nCntMat++)
 			{
-				//マテリアルのデータへのポインタを取得
+				// マテリアルのデータへのポインタを取得
 				pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nCntNum].g_pBuffMatBlock->GetBufferPointer();
 
-				//マテリアルの設定
+				// マテリアルの設定
 				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
-				//テクスチャの設定
+				// テクスチャの設定
 				pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nCntNum].g_apTextureBlock[nCntMat]);
 
-				//ブロック(パーツ)の描画
+				// ブロック(パーツ)の描画
 				g_Block[nCntBlock].BlockTex[nCntNum].g_pMeshBlock->DrawSubset(nCntMat);
 			}
 		}
@@ -282,14 +284,14 @@ void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal)
 	{
 		if (!g_Block[nCntBlock].bUse)
 		{//未使用状態だったら
-			g_Block[nCntBlock] = g_TexBlock[nType];//テクスチャタイプ
+			g_Block[nCntBlock] = g_TexBlock[nType]; // テクスチャタイプ
 
-			g_Block[nCntBlock].pos = pos;	 //座標
-			g_Block[nCntBlock].Scal = Scal;	 //拡大率
-			g_Block[nCntBlock].nType = nType;//種類
-			g_Block[nCntBlock].bUse = true;  //使用状態
+			g_Block[nCntBlock].pos = pos;	  // 座標
+			g_Block[nCntBlock].Scal = Scal;	  // 拡大率
+			g_Block[nCntBlock].nType = nType; // 種類
+			g_Block[nCntBlock].bUse = true;   // 使用状態
 
-			g_NumBlock++;//インクリメント
+			g_NumBlock++; // インクリメント
 			break;
 		}
 	}
@@ -299,7 +301,10 @@ void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal)
 //=======================
 bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize)
 {
+	// 着地判定
 	bool bLanding = false;
+
+	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
@@ -313,17 +318,17 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 		if (pPosOld->y <= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y
 			&& pPosOld->y + pSize->y >= g_Block[nCntBlock].pos.y)
 		{
-			//左右のめり込み判定
+			// 左右のめり込み判定
 			if (pPos->z - pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
 				&& pPos->z + pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 			{
-				//xが左から右にめり込んだ	
+				// xが左から右にめり込んだ	
 				if (pPosOld->x + pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.y
 					&& pPos->x + pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.y)
 				{
 					pPos->x = g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x - pSize->x * HALF_VALUE - 0.1f;
 				}
-				//xが右から左にめり込んだ	
+				// xが右から左にめり込んだ	
 				else if (pPosOld->x - pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x
 					&& pPos->x - pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x)
 				{
@@ -331,17 +336,17 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 				}
 			}
 
-			//前と後ろの判定
+			// 前と後ろの判定
 			if (pPos->x - pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x
 				&& pPos->x + pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x)
 			{
-				//zが前方からめり込んだ
+				// zが前方からめり込んだ
 				if (pPosOld->z + pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
 					&& pPos->z + pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 				{
 					pPos->z = g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z - pSize->z * HALF_VALUE - 0.1f;
 				}
-				//zが後方からめり込んだ
+				// zが後方からめり込んだ
 				else if (pPosOld->z - pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
 					&& pPos->z - pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 				{
@@ -356,7 +361,7 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 			if (pPos->z - pSize->z * HALF_VALUE <= g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
 				&& pPos->z + pSize->z * HALF_VALUE >= g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 			{
-				//上から下
+				// 上から下
 				if (pPosOld->y >= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y
 					&& pPos->y < g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y)
 				{
@@ -364,7 +369,7 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 					pPos->y = g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y - pSize->y;
 					pMove->y = 0.0f;
 				}
-				//下から上
+				// 下から上
 				else if (pPosOld->y + pSize->y * HALF_VALUE <= g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * HALF_VALUE * g_Block[nCntBlock].Scal.y
 					&& pPos->y + pSize->y * HALF_VALUE > g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * HALF_VALUE * g_Block[nCntBlock].Scal.y)
 				{
@@ -376,38 +381,39 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 		}		
 	}
 
-	return bLanding;//着地判定を返す
+	return bLanding; // 着地判定を返す
 }
 //=================================
 // ブロックとアイテムの当たり判定
 //=================================
 bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize)
 {
+	// 当たったかどうか
 	bool bHit = false;
 
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
 		if (!g_Block[nCntBlock].bUse)
-		{//未使用だったら
-			//読み飛ばしてカウントを進める
+		{// 未使用だったら
+			// 読み飛ばしてカウントを進める
 			continue;
 		}
 
 		if (pPosOld->y <= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y
 			&& pPosOld->y + pSize->y >= g_Block[nCntBlock].pos.y)
 		{
-			//左右のめり込み判定
+			// 左右のめり込み判定
 			if (pPos->z - pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
 				&& pPos->z + pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 			{
-				//xが左から右にめり込んだ	
+				// xが左から右にめり込んだ	
 				if (pPosOld->x + pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.y
 					&& pPos->x + pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.y)
 				{
 					bHit = true;
 					pPos->x = g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x - pSize->x * HALF_VALUE - 0.1f;
 				}
-				//xが右から左にめり込んだ	
+				// xが右から左にめり込んだ	
 				else if (pPosOld->x - pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x
 					&& pPos->x - pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x)
 				{
@@ -416,18 +422,18 @@ bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pM
 				}
 			}
 
-			//前と後ろの判定
+			// 前と後ろの判定
 			if (pPos->x - pSize->x * HALF_VALUE < g_Block[nCntBlock].pos.x + g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x
 				&& pPos->x + pSize->x * HALF_VALUE > g_Block[nCntBlock].pos.x - g_Block[nCntBlock].Size.x * HALF_VALUE * g_Block[nCntBlock].Scal.x)
 			{
-				//zが前方からめり込んだ
+				// zが前方からめり込んだ
 				if (pPosOld->z + pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
 					&& pPos->z + pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 				{
 					bHit = true;
 					pPos->z = g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z - pSize->z * HALF_VALUE - 0.1f;
 				}
-				//zが後方からめり込んだ
+				// zが後方からめり込んだ
 				else if (pPosOld->z - pSize->z * HALF_VALUE > g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
 					&& pPos->z - pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 				{
@@ -443,7 +449,7 @@ bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pM
 			if (pPos->z - pSize->z * HALF_VALUE <= g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z
 				&& pPos->z + pSize->z * HALF_VALUE >= g_Block[nCntBlock].pos.z - g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z)
 			{
-				//上から下
+				// 上から下
 				if (pPosOld->y >= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y
 					&& pPos->y < g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y)
 				{
@@ -451,7 +457,7 @@ bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pM
 					pPos->y = g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y - pSize->y;
 					pMove->y = 0.0f;
 				}
-				//下から上
+				// 下から上
 				else if (pPosOld->y + pSize->y * HALF_VALUE <= g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * HALF_VALUE * g_Block[nCntBlock].Scal.y
 					&& pPos->y + pSize->y * HALF_VALUE > g_Block[nCntBlock].pos.y - g_Block[nCntBlock].Size.y * HALF_VALUE * g_Block[nCntBlock].Scal.y)
 				{
@@ -486,14 +492,19 @@ int NumBlock(void)
 //=============================
 void LoadTitleState(void)
 {
-	FILE* pFile; // ファイルのポインタ
+	FILE* pFile; // ファイルポインタを宣言
 
-	char Skip[3];
+	char Skip[3]; // イコールを読み飛ばす用
+
+	// ローカル変数宣言--------------------
 	D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 Scal(0.0f, 0.0f, 0.0f);
 	int nType = 0;
 	int nIdx = 0;
 
+	//-------------------------------------
+
+	// ファイルを開く
 	pFile = fopen("data\\save.txt", "r");
 
 	if (pFile != NULL)
@@ -505,32 +516,33 @@ void LoadTitleState(void)
 			fscanf(pFile, "%s", &aString[0]);
 
 			if (strcmp(aString, "BLOCKSET") == 0)
-			{
+			{// BLOCKSETを読み取った
 				while (1)
 				{
 					fscanf(pFile, "%s", &aString[0]);
 
 					if (strcmp(aString, "BLOCKTYPE") == 0)
-					{
+					{// BLOCKTYPEを読み取った
 						fscanf(pFile, "%s", &Skip[0]);
 						fscanf(pFile, "%d", &nType);
 					}
 					else if (strcmp(aString, "POS") == 0)
-					{
+					{// POSを読み取った
 						fscanf(pFile, "%s", &Skip[0]);
 						fscanf(pFile, "%f", &pos.x);
 						fscanf(pFile, "%f", &pos.y);
 						fscanf(pFile, "%f", &pos.z);
 					}
 					else if (strcmp(aString, "SIZE") == 0)
-					{
+					{// SIZEを読みとった
 						fscanf(pFile, "%s", &Skip[0]);
 						fscanf(pFile, "%f", &Scal.x);
 						fscanf(pFile, "%f", &Scal.y);
 						fscanf(pFile, "%f", &Scal.z);
 					}
 					else if (strcmp(aString, "END_BLOCKSET") == 0)
-					{
+					{// END_BLOCKSETを読み取った
+						// ブロックにセットする
 						SetBlock(pos, nType, Scal);
 						nIdx++;
 						break;
@@ -539,17 +551,18 @@ void LoadTitleState(void)
 			}
 
 		    if (strcmp(aString, "END_SCRIPT") == 0)
-			{
+			{// END_SCRIPTを読み取った
 				break;
 			}
 		}
 	}
 	else
 	{//開けなかったとき	
-				//メッセージボックス
+		//メッセージボックス
 		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
 		return;
 	}
+
 	// ファイルを閉じる
 	fclose(pFile);
 }
@@ -558,13 +571,18 @@ void LoadTitleState(void)
 //=============================
 void LoadBlockModel(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
-	FILE* pFile; // ファイルのポインタ
+	// ファイルポインタを宣言
+	FILE* pFile; 
 
+	// ローカル変数宣言-----
 	char skip[5];
 	int nType = 0;
+	//----------------------
 
+	// ファイルを開く
 	pFile = fopen("data\\MODEL_TXT\\BLOCK.txt", "r");
 
 	if (pFile != NULL)
@@ -576,18 +594,20 @@ void LoadBlockModel(void)
 			fscanf(pFile, "%s", &aString[0]);
 
 			if (strcmp(aString, "MAX_TYPE") == 0)
-			{
+			{// MAX_TYPEを読み取った
 				fscanf(pFile, "%s", &skip[0]);
 				fscanf(pFile, "%d", &g_BlockTypeMax);
 			}
 			else if (strcmp(aString, "MODEL_FILENAME") == 0)
-			{
+			{// MODEL_FILENAMEを読み取った
 				fscanf(pFile, "%s", &skip[0]);
 
 				fscanf(pFile, "%s", &aString[0]);
 
+				// ファイル名を保存
 				const char* MODEL_FILENAME = {};
 
+				// 読み取ったパスを代入
 				MODEL_FILENAME = aString;
 
 				//Xファイルの読み込み
@@ -603,7 +623,7 @@ void LoadBlockModel(void)
 				nType++;
 			}
 			else if (strcmp(aString, "END_SCRIPT") == 0)
-			{
+			{// END_SCRIPTを読み取った
 				break;
 			}
 		}
@@ -614,6 +634,7 @@ void LoadBlockModel(void)
 		MessageBox(NULL, "ファイルが開けません。", "エラー(Block.cpp)", MB_OK);
 		return;
 	}
+
 	// ファイルを閉じる
 	fclose(pFile);
 }
@@ -622,51 +643,56 @@ void LoadBlockModel(void)
 //=====================================
 void tutoload(void)
 {
-	FILE* pFile; // ファイルのポインタ
+	// ファイルポインタを宣言
+	FILE* pFile; 
 
+	// ローカル変数宣言---------------------
 	char Skip[3];
 	D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 Scal(0.0f, 0.0f, 0.0f);
 	int nType = 0;
 	int nIdx = 0;
+	//--------------------------------------
 
+	// ファイルを開く
 	pFile = fopen("data\\savetuto.txt", "r");
 
 	if (pFile != NULL)
 	{
 		while (1)
 		{
+			// 文字列
 			char aString[MAX_WORD];
 
 			fscanf(pFile, "%s", &aString[0]);
 
 			if (strcmp(aString, "BLOCKSET") == 0)
-			{
+			{// BLOCKSETを読み取った
 				while (1)
 				{
 					fscanf(pFile, "%s", &aString[0]);
 
 					if (strcmp(aString, "BLOCKTYPE") == 0)
-					{
+					{// BLOCKTYPEを読み取った
 						fscanf(pFile, "%s", &Skip[0]);
 						fscanf(pFile, "%d", &nType);
 					}
 					else if (strcmp(aString, "POS") == 0)
-					{
+					{// POSを読み取った
 						fscanf(pFile, "%s", &Skip[0]);
 						fscanf(pFile, "%f", &pos.x);
 						fscanf(pFile, "%f", &pos.y);
 						fscanf(pFile, "%f", &pos.z);
 					}
 					else if (strcmp(aString, "SIZE") == 0)
-					{
+					{// SIZEを読み取った
 						fscanf(pFile, "%s", &Skip[0]);
 						fscanf(pFile, "%f", &Scal.x);
 						fscanf(pFile, "%f", &Scal.y);
 						fscanf(pFile, "%f", &Scal.z);
 					}
 					else if (strcmp(aString, "END_BLOCKSET") == 0)
-					{
+					{// END_BLOCKSETを読み取った
 						SetBlock(pos, nType, Scal);
 						nIdx++;
 						break;
@@ -675,17 +701,18 @@ void tutoload(void)
 			}
 
 			if (strcmp(aString, "END_SCRIPT") == 0)
-			{
+			{// END_SCRIPTを読み取った
 				break;
 			}
 		}
 	}
 	else
 	{//開けなかったとき	
-				//メッセージボックス
+		//メッセージボックス
 		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
 		return;
 	}
+
 	// ファイルを閉じる
 	fclose(pFile);
 

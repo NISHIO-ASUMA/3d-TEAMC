@@ -21,7 +21,7 @@
 //****************************
 // プロトタイプ宣言
 //****************************
-void LoadBoss(void);
+void LoadBoss(void);	// ボスを読み込む
 
 //****************************
 // グローバル変数宣言
@@ -33,22 +33,23 @@ Boss g_Boss; // ボスの情報
 //=============================
 void InitBoss(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
-	g_Boss.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 座標
-	g_Boss.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 移動量
-	g_Boss.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 角度
-	g_Boss.bUse = false;						// 未使用状態
-	g_Boss.nLife = 20;							// 体力
-	g_Boss.state = BOSSSTATE_NORMAL;			// 状態
+	g_Boss.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 座標
+	g_Boss.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 移動量
+	g_Boss.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 角度
+	g_Boss.bUse = false;						 // 未使用状態
+	g_Boss.nLife = 20;							 // 体力
+	g_Boss.state = BOSSSTATE_NORMAL;			 // 状態
 
 	LoadBoss(); // ボスのロード
 
-	D3DXMATERIAL* pMat;//マテリアルへのポインタ
+	D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
 	for (int nCntModel = 0; nCntModel < g_Boss.Motion.nNumModel; nCntModel++)
 	{
-		//マテリアルのデータへのポインタを取得
+		// マテリアルのデータへのポインタを取得
 		pMat = (D3DXMATERIAL*)g_Boss.Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
 
 		for (int nCntMat = 0; nCntMat < (int)g_Boss.Motion.aModel[nCntModel].dwNumMat; nCntMat++)
@@ -64,28 +65,28 @@ void InitBoss(void)
 		}
 	}
 
-	//頂点座標の取得
-	int nNumVtx;//頂点数
-	DWORD sizeFVF;//頂点フォーマットのサイズ
-	BYTE* pVtxBuff;//頂点バッファへのポインタ
+	// 頂点座標の取得
+	int nNumVtx;	//頂点数
+	DWORD sizeFVF;	//頂点フォーマットのサイズ
+	BYTE* pVtxBuff; //頂点バッファへのポインタ
 
 	for (int nCntModel = 0; nCntModel < g_Boss.Motion.nNumModel; nCntModel++)
 	{
-		//頂点数の取得
+		// 頂点数の取得
 		nNumVtx = g_Boss.Motion.aModel[nCntModel].pMesh->GetNumVertices();
 
-		//頂点フォーマットのサイズ取得
+		// 頂点フォーマットのサイズ取得
 		sizeFVF = D3DXGetFVFVertexSize(g_Boss.Motion.aModel[nCntModel].pMesh->GetFVF());
 
-		//頂点バッファのロック
+		// 頂点バッファのロック
 		g_Boss.Motion.aModel[nCntModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
 		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 		{
-			//頂点座標の代入
+			// 頂点座標の代入
 			D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
 
-			//頂点座標を比較してボスの最小値,最大値を取得
+			// 頂点座標を比較してボスの最小値,最大値を取得
 			if (vtx.x < g_Boss.Motion.aModel[nCntModel].vtxMin.x)
 			{
 				g_Boss.Motion.aModel[nCntModel].vtxMin.x = vtx.x;
@@ -111,16 +112,16 @@ void InitBoss(void)
 				g_Boss.Motion.aModel[nCntModel].vtxMax.z = vtx.z;
 			}
 
-			//頂点フォーマットのサイズ分ポインタを進める
+			// 頂点フォーマットのサイズ分ポインタを進める
 			pVtxBuff += sizeFVF;
 
-			//サイズに代入
+			// サイズに代入
 			g_Boss.Motion.aModel[nCntModel].Size.x = g_Boss.Motion.aModel[nCntModel].vtxMax.x - g_Boss.Motion.aModel[nCntModel].vtxMin.x;
 			g_Boss.Motion.aModel[nCntModel].Size.y = g_Boss.Motion.aModel[nCntModel].vtxMax.y - g_Boss.Motion.aModel[nCntModel].vtxMin.y;
 			g_Boss.Motion.aModel[nCntModel].Size.z = g_Boss.Motion.aModel[nCntModel].vtxMax.z - g_Boss.Motion.aModel[nCntModel].vtxMin.z;
 		}
 
-		//頂点バッファのアンロック
+		// 頂点バッファのアンロック
 		g_Boss.Motion.aModel[nCntModel].pMesh->UnlockVertexBuffer();
 	}
 }
@@ -131,7 +132,7 @@ void UninitBoss(void)
 {
 	for (int nCntModel = 0; nCntModel < g_Boss.Motion.nNumModel; nCntModel++)
 	{
-		//テクスチャの破棄
+		// テクスチャの破棄
 		for (int nCntTex = 0; nCntTex < (int)g_Boss.Motion.aModel[nCntModel].dwNumMat; nCntTex++)
 		{
 			if (g_Boss.Motion.aModel[nCntModel].pTexture[nCntTex] != NULL)
@@ -141,14 +142,14 @@ void UninitBoss(void)
 			}
 		}
 
-		//メッシュの破棄
+		// メッシュの破棄
 		if (g_Boss.Motion.aModel[nCntModel].pMesh != NULL)
 		{
 			g_Boss.Motion.aModel[nCntModel].pMesh->Release();
 			g_Boss.Motion.aModel[nCntModel].pMesh = NULL;
 		}
 
-		//マテリアルの破棄
+		// マテリアルの破棄
 		if (g_Boss.Motion.aModel[nCntModel].pBuffMat != NULL)
 		{
 			g_Boss.Motion.aModel[nCntModel].pBuffMat->Release();
@@ -161,6 +162,7 @@ void UninitBoss(void)
 //=============================
 void UpdateBoss(void)
 {
+	// モーションの更新処理
 	UpdateMotion(&g_Boss.Motion);
 }
 //=============================
@@ -168,103 +170,108 @@ void UpdateBoss(void)
 //=============================
 void DrawBoss(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
-	//計算用のマトリックス
+	// 計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
 
-	D3DMATERIAL9 matDef;//現在のマテリアル保存用
+	D3DMATERIAL9 matDef; // 現在のマテリアル保存用
 
-	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
+	D3DXMATERIAL* pMat;	 // マテリアルデータへのポインタ
 
 	if (g_Boss.bUse == true)
 	{
-		//ワールドマトリックスの初期化
+		// ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_Boss.mtxWorld);
 
-		//向きを反映
+		// 向きを反映
 		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Boss.rot.y, g_Boss.rot.x, g_Boss.rot.z);
 		D3DXMatrixMultiply(&g_Boss.mtxWorld, &g_Boss.mtxWorld, &mtxRot);
 
-		//位置を反映
+		// 位置を反映
 		D3DXMatrixTranslation(&mtxTrans, g_Boss.pos.x, g_Boss.pos.y, g_Boss.pos.z);
 		D3DXMatrixMultiply(&g_Boss.mtxWorld, &g_Boss.mtxWorld, &mtxTrans);
 
-		//ワールドマトリックスの設定
+		// ワールドマトリックスの設定
 		pDevice->SetTransform(D3DTS_WORLD, &g_Boss.mtxWorld);
 
-		//現在のマテリアルを取得
+		// 現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
-		//全モデルパーツの描画
+		// 全モデルパーツの描画
 		for (int nCntModel = 0; nCntModel < g_Boss.Motion.nNumModel; nCntModel++)
 		{
-			D3DXMATRIX mtxRotModel, mtxTransform;//計算用
-			D3DXMATRIX mtxParent;//親のマトリックス
+			D3DXMATRIX mtxRotModel, mtxTransform; // 計算用
+			D3DXMATRIX mtxParent;				  // 親のマトリックス
 
-			//パーツのマトリックスの初期化
+			// パーツのマトリックスの初期化
 			D3DXMatrixIdentity(&g_Boss.Motion.aModel[nCntModel].mtxWorld);
 
-			//パーツの向きを反映
+			// パーツの向きを反映
 			D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_Boss.Motion.aModel[nCntModel].rot.y, g_Boss.Motion.aModel[nCntModel].rot.x, g_Boss.Motion.aModel[nCntModel].rot.z);
 			D3DXMatrixMultiply(&g_Boss.Motion.aModel[nCntModel].mtxWorld, &g_Boss.Motion.aModel[nCntModel].mtxWorld, &mtxRotModel);
 
-			//パーツの位置(オフセット)を反映
+			// パーツの位置(オフセット)を反映
 			D3DXMatrixTranslation(&mtxTransform, g_Boss.Motion.aModel[nCntModel].pos.x, g_Boss.Motion.aModel[nCntModel].pos.y, g_Boss.Motion.aModel[nCntModel].pos.z);
 			D3DXMatrixMultiply(&g_Boss.Motion.aModel[nCntModel].mtxWorld, &g_Boss.Motion.aModel[nCntModel].mtxWorld, &mtxTransform);
 
-			//パーツの[親のマトリックス]を設定
+			// パーツの[親のマトリックス]を設定
 			if (g_Boss.Motion.aModel[nCntModel].nIdxModelParent != -1)
 			{
-				//親モデルがある場合
+				// 親モデルがある場合
 				mtxParent = g_Boss.Motion.aModel[g_Boss.Motion.aModel[nCntModel].nIdxModelParent].mtxWorld;
 			}
 			else
-			{//親モデルがない場合
+			{// 親モデルがない場合
 				mtxParent = g_Boss.mtxWorld;
 			}
 
-			//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
+			// 算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
 			D3DXMatrixMultiply(&g_Boss.Motion.aModel[nCntModel].mtxWorld,
 				&g_Boss.Motion.aModel[nCntModel].mtxWorld,
-				&mtxParent);//自分自分親
+				&mtxParent); // 自分,自分,親
 
-			//パーツのワールドマトリックスの設定
+			// パーツのワールドマトリックスの設定
 			pDevice->SetTransform(D3DTS_WORLD,
 				&g_Boss.Motion.aModel[nCntModel].mtxWorld);
 
 			for (int nCntMat = 0; nCntMat < (int)g_Boss.Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 			{
-				//マテリアルのデータへのポインタを取得
+				// マテリアルのデータへのポインタを取得
 				pMat = (D3DXMATERIAL*)g_Boss.Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
 
+				// カラー変更用の変数
 				D3DXMATERIAL color;
 
 				if (g_Boss.state != BOSSSTATE_DAMAGE)
 				{
-					//マテリアルの設定
+					// マテリアルの設定
 					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 				}
 				else if (g_Boss.state == BOSSSTATE_DAMAGE)
 				{
+					// カラーを代入
 					color = pMat[nCntMat];
 
+					// カラーを変更
 					color.MatD3D.Diffuse.r = 1.0f;
 					color.MatD3D.Diffuse.g = 0.3f;
 					color.MatD3D.Diffuse.b = 0.3f;
 					color.MatD3D.Diffuse.a = 1.0f;
 
-					//マテリアルの設定
+					// マテリアルの設定
 					pDevice->SetMaterial(&color.MatD3D);
 				}
 
-				//テクスチャの設定
+				// テクスチャの設定
 				pDevice->SetTexture(0, g_Boss.Motion.aModel[nCntModel].pTexture[nCntMat]);
 
-				//モデル(パーツ)の描画
+				// モデル(パーツ)の描画
 				g_Boss.Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 			}
-			//マテリアルの設定
+
+			// マテリアルの設定
 			pDevice->SetMaterial(&matDef);
 		}
 	}
@@ -275,22 +282,28 @@ void DrawBoss(void)
 void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 {
 	if (!g_Boss.bUse)
-	{
-		g_Boss.pos = pos; // 位置を代入
+	{// 未使用なら
+		g_Boss.pos = pos;	  // 位置を代入
 		g_Boss.Speed = speed; // 足の速さ
 		g_Boss.nLife = nLife; // 体力を挿入
 		g_Boss.bUse = true;   // 使用状態にする
 	}
 }
-
+//=============================
+// ボスの読み込み処理
+//=============================
 void LoadBoss(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
-	FILE* pFile; // ファイルのポインタ
+	// ファイルポインタを宣言
+	FILE* pFile; 
 
+	// ファイルを開く
 	pFile = fopen("data\\MOTION\\boss.txt", "r");
 
+	// ローカル変数宣言-----------------------------
 	int nCntMotion = 0;
 	char Skip[3];
 	int nCntKey = 0;
@@ -299,9 +312,11 @@ void LoadBoss(void)
 	int nCnt = 0;
 	int nNumParts = 0;
 	int nIdx = 0;
+	//----------------------------------------------
 
 	if (pFile != NULL)
 	{//　NULL じゃない
+		// 文字列
 		char aString[MAX_WORD];
 
 		while (1)
