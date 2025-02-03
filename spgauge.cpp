@@ -1,6 +1,6 @@
 //============================
 //
-// リザルト [result.cpp]
+// SPゲージ [spgage.cpp]
 // Author:TEAM_C
 //
 //============================
@@ -22,33 +22,32 @@
 //****************************
 //グローバル変数
 //****************************
-LPDIRECT3DTEXTURE9 g_pTextureSPgauge[SPGAUGE_MAX] = {};//テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffSPgauge = NULL;//頂点バッファへのポインタ
-SPgauge g_SPgauge[SPGAUGE_MAX];
+LPDIRECT3DTEXTURE9 g_pTextureSPgauge[SPGAUGE_MAX] = {}; // テクスチャへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffSPgauge = NULL;       // 頂点バッファへのポインタ
+SPgauge g_SPgauge[SPGAUGE_MAX];							// 構造体変数
 
 //=====================
 //リザルトの初期化処理
 //=====================
 void InitSPgauge(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
+	// デバイスを取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//デバイスを取得
-	pDevice = GetDevice();
-
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	//テクスチャの読み込み
+	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\SP_frame.png",
 		&g_pTextureSPgauge[0]);
 
-	//テクスチャの読み込み
+	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\SP_gage.png",
 		&g_pTextureSPgauge[1]);
 
-	//頂点バッファの生成・頂点情報の設定
+	// 頂点バッファの生成・頂点情報の設定
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * SPGAUGE_MAX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
@@ -56,35 +55,36 @@ void InitSPgauge(void)
 		&g_pVtxBuffSPgauge,
 		NULL);
 
-	//頂点ロック
+	// 頂点ロック
 	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
 
+	// 種類を設定
 	g_SPgauge[0].nType = SPGAUGE_FRAME;
 	g_SPgauge[1].nType = SPGAUGE_GAUGE;
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
 		g_SPgauge[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 位置を初期化
-		g_SPgauge[nCnt].SpGauge = 0.0f; // 大きさ
+		g_SPgauge[nCnt].SpGauge = 0.0f;						 // 大きさ
 
-		//頂点座標の設定
+		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-		//rhwの設定
+		// rhwの設定
 		pVtx[0].rhw = 1.0f;
 		pVtx[1].rhw = 1.0f;
 		pVtx[2].rhw = 1.0f;
 		pVtx[3].rhw = 1.0f;
 
-		//頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
+		// 頂点カラーの設定
+		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		// テクスチャ座標
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
@@ -109,6 +109,7 @@ void UninitSPgauge(void)
 			g_pTextureSPgauge[nCnt] = NULL;
 		}
 	}
+	// バッファの破棄
 	if (g_pVtxBuffSPgauge != NULL)
 	{
 		g_pVtxBuffSPgauge->Release();
@@ -120,19 +121,22 @@ void UninitSPgauge(void)
 //=====================
 void UpdateSPgauge(void)
 {
+	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
 	pPlayer->SpMode = false; // フィーバーモードをオフにする
+
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	//頂点ロック
+	// 頂点ロック
 	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
 		if (g_SPgauge[nCnt].nType == SPGAUGE_FRAME)
 		{
-			//頂点座標の設定
+			// 頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(900.0f, 40.0f, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
@@ -191,7 +195,7 @@ void UpdateSPgauge(void)
 				}
 			}
 
-			//頂点座標の設定
+			// 頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(fWidth, 40.0f, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
@@ -200,7 +204,7 @@ void UpdateSPgauge(void)
 
 		pVtx += 4;
 	}
-	//頂点ロック解除
+	// 頂点ロック解除
 	g_pVtxBuffSPgauge->Unlock();
 }
 //=====================
@@ -208,31 +212,29 @@ void UpdateSPgauge(void)
 //=====================
 void DrawSPgauge(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
+	// デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//デバイスの習得
-	pDevice = GetDevice();
-
-	//頂点バッファをデータストリームに設定
+	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffSPgauge, 0, sizeof(VERTEX_2D));
 
-	//頂点フォーマットの設定
+	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	// ゲージバーの描画----------------------------------
-	//テクスチャの設定
+	// テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureSPgauge[g_SPgauge[1].nType]);
 
-	//ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4, 2);//プリミティブの種類
+	// ポリゴンの描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4, 2); // プリミティブの種類
 	//---------------------------------------------------
 
 	// ゲージの枠の描画-------------------------------
-	//テクスチャの設定
+	// テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureSPgauge[g_SPgauge[0].nType]);
 
-	//ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);//プリミティブの種類
+	// ポリゴンの描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2); // プリミティブの種類
 	//--------------------------------------------------
 }
 //=====================
@@ -240,10 +242,12 @@ void DrawSPgauge(void)
 //=====================
 void AddSpgauge(float fValue)
 {
+	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
 	if (g_SPgauge[1].SpGauge < 300.0f && pPlayer->WeponMotion !=MOTION_SP)
 	{
+		// 加算処理
 		g_SPgauge[1].SpGauge += fValue;
 	}
 }

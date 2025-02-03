@@ -15,13 +15,13 @@
 //****************************
 //マクロ定義
 //****************************
-#define MAX_RANK (5)//表示ランキング数
+#define MAX_RANK (5) // 表示ランキング数
 
 //****************************
 //プロトタイプ宣言
 //****************************
-void InitRanking(void);//ランキングの初期化処理
-void UninitRanking(void);//ランキングの終了処理
-void UpdateRanking(void);//ランキングの更新処理
-void DrawRanking(void);//ランキングの描画処理
+void InitRanking(void);	  // ランキングの初期化処理
+void UninitRanking(void); // ランキングの終了処理
+void UpdateRanking(void); // ランキングの更新処理
+void DrawRanking(void);	  // ランキングの描画処理
 #endif

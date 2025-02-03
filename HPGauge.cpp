@@ -4,9 +4,12 @@
 //Author;長尾悠成
 //
 //===================================
-#include "Main.h"
+
+// インクルードファイル
 #include "player.h"
 #include "HPGauge.h"
+
+// グローバル変数宣言
 LPDIRECT3DTEXTURE9 g_pTexture_Gauge = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Frame = NULL;
 

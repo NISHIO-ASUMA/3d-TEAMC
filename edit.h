@@ -1,6 +1,6 @@
 //============================
 //
-// edit [edit.h]
+// マップエディター [edit.h]
 // Author:YOSHIDA YUUTO
 //
 //============================
@@ -11,7 +11,6 @@
 //***********************
 //インクルードファイル
 //***********************
-
 #include"main.h"
 
 //*******************
@@ -29,14 +28,16 @@ typedef enum
 	EDITMODE_MAX
 }EDITMODE;
 
-
+//**************************
+//エディットモデル構造体宣言
+//**************************
 typedef struct
 {
-	LPD3DXMESH g_pMeshEdit;//メッシュ(頂点座標)へのポインタ
-	LPD3DXBUFFER g_pBuffMatEdit;//マテリアルへのポインタ
-	DWORD g_dwNumMatEdit;//マテリアルの数
-	LPDIRECT3DTEXTURE9 g_apTextureEdit[MAX_TYPE];
-	D3DXVECTOR3 vtxMin, vtxMax;
+	LPD3DXMESH g_pMeshEdit;				// メッシュ(頂点座標)へのポインタ
+	LPD3DXBUFFER g_pBuffMatEdit;		// マテリアルへのポインタ
+	DWORD g_dwNumMatEdit;				// マテリアルの数
+	LPDIRECT3DTEXTURE9 g_apTextureEdit[MAX_TYPE]; // テクスチャ設定
+	D3DXVECTOR3 vtxMin, vtxMax;			// 最大値,最小値
 }EditModel;
 
 //*****************************
@@ -70,13 +71,13 @@ typedef struct
 //*********************
 //プロトタイプ宣言
 //*********************
-void InitEdit(void);//editの初期化処理
-void UninitEdit(void);//editの終了処理
-void UpdateEdit(void);//editの更新処理
-void DrawEdit(void);//editの設定処理
-void SaveEdit(void);
-void LoadEdit(void);
-void ReLoadEdit(void);
-EDIT_INFO* GetEdit(void);
-int GetNumobj(void);
+void InitEdit(void);	// editの初期化処理
+void UninitEdit(void);  // editの終了処理
+void UpdateEdit(void);  // editの更新処理
+void DrawEdit(void);	// editの設定処理
+void SaveEdit(void);	// editの書き出し処理
+void LoadEdit(void);	// editの読み込み処理
+void ReLoadEdit(void);	// editの再読み込み処理
+EDIT_INFO* GetEdit(void); // editの取得処理
+int GetNumobj(void);	// 配置数の取得
 #endif

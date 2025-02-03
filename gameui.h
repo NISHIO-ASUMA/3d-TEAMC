@@ -46,22 +46,22 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 //****************************
 typedef struct
 {
-	D3DXVECTOR3 pos; // 位置
-	D3DXVECTOR3 move; // 移動量
-	D3DXVECTOR3 rot; // 向き
-	int nUseTime; // 出てから消えるまでの時間
-	int nType; // 種類
+	D3DXVECTOR3 pos;	// 位置
+	D3DXVECTOR3 move;	// 移動量
+	D3DXVECTOR3 rot;	// 向き
+	int nUseTime;		// 出てから消えるまでの時間
+	int nType;			// 種類
 	float fWidth, fHeight; // 幅、高さ
-	bool bUse; // 使用状態
+	bool bUse;			// 使用状態
 }Gameui;
 
 //****************************
 // プロトタイプ宣言
 //****************************
-void InitGameUI(void);//UIの初期化処理
-void UninitGameUI(void);//UIの終了処理
-void UpdateGameUI(void);//UIの更新処理
-void DrawGameUI(void);//UIの描画処理
+void InitGameUI(void);	 // UIの初期化処理
+void UninitGameUI(void); // UIの終了処理
+void UpdateGameUI(void); // UIの更新処理
+void DrawGameUI(void);	 // UIの描画処理
 void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUseTime);
 void FlashGameUI(int nSelect);
 #endif
