@@ -9,36 +9,35 @@
 //インクルードファイル
 //****************************
 #include "RankingSet.h"
-#include"ranking.h"
-#include"input.h"
+#include "ranking.h"
+#include "input.h"
 #include "fade.h"
+#include "Score.h"
 #include <stdio.h>
-#include"Score.h"
 
 //****************************
 //グローバル変数
 //****************************
-LPDIRECT3DTEXTURE9 g_pTextureRankSet = NULL;//テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffRankSet = NULL;//頂点バッファへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureRankSet = NULL;	 // テクスチャへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffRankSet = NULL;// 頂点バッファへのポインタ
 
 //=============================
 //ランキング(順位)の初期化処理
 //=============================
 void InitRankingSet(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
 	//デバイスを取得
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	//テクスチャの読み込み(順位)
+	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\rankingback.png",
 		&g_pTextureRankSet);
 
-	//頂点バッファの生成・頂点情報の設定///順位
+	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
@@ -73,6 +72,7 @@ void InitRankingSet(void)
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
+	// アンロック
 	g_pVtxBuffRankSet->Unlock();
 }
 //=============================
@@ -80,12 +80,13 @@ void InitRankingSet(void)
 //=============================
 void UninitRankingSet(void)
 {
-	//テクスチャの破棄
+	// テクスチャの破棄
 	if (g_pTextureRankSet != NULL)
 	{
 		g_pTextureRankSet->Release();
 		g_pTextureRankSet = NULL;
 	}
+	// バッファの破棄
 	if (g_pVtxBuffRankSet != NULL)
 	{
 		g_pVtxBuffRankSet->Release();
@@ -104,20 +105,18 @@ void UpdateRankingSet(void)
 //=============================
 void DrawRankingSet(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//デバイスの習得
-	pDevice = GetDevice();
-
-	//頂点バッファをデータストリームに設定
+	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffRankSet, 0, sizeof(VERTEX_2D));
 
-	//頂点フォーマットの設定
+	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	//テクスチャの設定
+	// テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureRankSet);
 
-	//ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);//プリミティブの種類
+	// ポリゴンの描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }

@@ -464,23 +464,23 @@ void Update(void)
 
 	switch (g_mode)
 	{
-	case MODE_TITLE://タイトル画面
+	case MODE_TITLE: // タイトル画面
 		UpdateTitle3d();
 		break;
 
-	case MODE_TUTORIAL://チュートリアル画面
+	case MODE_TUTORIAL: // チュートリアル画面
 		UpdateTutorial3d();
 		break;
 
-	case MODE_GAME://ゲーム画面
+	case MODE_GAME: // ゲーム画面
 		UpdateGame();
 		break;
 
-	case MODE_RESULT://リザルト画面
+	case MODE_RESULT: // リザルト画面
 		UpdateResult();
 		break;
 
-	case MODE_RANKING://ランキング画面
+	case MODE_RANKING: // ランキング画面
 		UpdateRanking();
 		break;
 	}
@@ -507,6 +507,7 @@ void Update(void)
 //===================
 void Draw(void)
 {
+	// カメラを取得
 	Camera* pCamera = GetCamera();
 
 	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
@@ -531,7 +532,7 @@ void Draw(void)
 			// 現在の画面の終了
 			switch (g_mode)
 			{
-			case MODE_TITLE: // タイトル画面
+			case MODE_TITLE:   // タイトル画面
 				DrawTitle3d();
 				break;
 
@@ -539,10 +540,10 @@ void Draw(void)
 				DrawTutorial3d();
 				break;
 
-			case MODE_GAME: // ゲーム画面
+			case MODE_GAME:	   // ゲーム画面
 				DrawGame();
 				break;
-			case MODE_RESULT: // リザルト
+			case MODE_RESULT:  // リザルト画面
 				DrawResult();
 				break;
 
@@ -555,10 +556,10 @@ void Draw(void)
 
 			if (!GetEditState() && !GetEditStatetuto())
 			{
-				//現在の画面の表示
+				// 現在の画面の表示
 				DrawMode();
 
-				//操作方法
+				// 操作方法
 				DrawOperation();
 
 				// プレイヤーの情報
@@ -566,11 +567,13 @@ void Draw(void)
 			}
 			else if (GetEditState())
 			{
+				// エディター画面の描画
 				DrawEditMode();
 			}
 
 			if (GetEditStatetuto())
 			{
+				// エディター画面の描画
 				DrawEditMode();
 			}
 			// プレイヤーの座標表示

@@ -8,9 +8,9 @@
 //****************************
 //インクルードファイル
 //****************************
-#include"result.h"
-#include"fade.h"
-#include"input.h"
+#include "result.h"
+#include "fade.h"
+#include "input.h"
 #include "time.h"
 #include "camera.h"
 #include "resultscore.h"
@@ -22,41 +22,41 @@
 //****************************
 //グローバル変数
 //****************************
-LPDIRECT3DTEXTURE9 g_pTextureResult = NULL;//テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffResult = NULL;//頂点バッファへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureResult = NULL;		// テクスチャへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffResult = NULL;// 頂点バッファへのポインタ
 
 //=====================
 //リザルトの初期化処理
 //=====================
 void InitResult(void)
 {
+	// UIの初期化
 	InitGameUI();
 	
-	LPDIRECT3DDEVICE9 pDevice;
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//デバイスを取得
-	pDevice = GetDevice();
-
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
 	// テクスチャのパスを保存
 	const char* Texturename = {};
 
 	if (GetPlayer()->bDisp || GetTimer() <= 0)
-	{
+	{// プレイヤーが生存 or タイマーが0秒以下
 		Texturename = "data/TEXTURE/result.png";
 	}
 	else if (GetPlayer()->bDisp == false)
-	{
+	{// プレイヤーが死亡
 		Texturename = "data/TEXTURE/result1.jpg";
 	}
 
-	//テクスチャの読み込み
+	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		Texturename,
 		&g_pTextureResult);
 
-	//頂点バッファの生成・頂点情報の設定
+	// 頂点バッファの生成・頂点情報の設定
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
@@ -64,33 +64,34 @@ void InitResult(void)
 		&g_pVtxBuffResult,
 		NULL);
 
-	//頂点ロック
+	// 頂点バッファのロック
 	g_pVtxBuffResult->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点座標の設定
+	// 頂点座標の設定
 	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pVtx[1].pos = D3DXVECTOR3(1280.0f, 0.0f, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(0.0f, 720.0f, 0.0f);
 	pVtx[3].pos = D3DXVECTOR3(1280.0f, 720.0f, 0.0f);
 
-	//rhwの設定
+	// rhwの設定
 	pVtx[0].rhw = 1.0f;
 	pVtx[1].rhw = 1.0f;
 	pVtx[2].rhw = 1.0f;
 	pVtx[3].rhw = 1.0f;
 
-	//頂点カラーの設定
-	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	// 頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 
+	// テクスチャ設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	//頂点ロック解除
+	//アンロック
 	g_pVtxBuffResult->Unlock();
 
 	// リザルトスコアの初期化処理
@@ -107,6 +108,7 @@ void UninitResult(void)
 	// 音楽を停止
 	StopSound();
 
+	// UIの終了処理
 	UninitGameUI();
 
 	//テクスチャの破棄
@@ -115,6 +117,7 @@ void UninitResult(void)
 		g_pTextureResult->Release();
 		g_pTextureResult = NULL;
 	}
+	// バッファの破棄
 	if (g_pVtxBuffResult != NULL)
 	{
 		g_pVtxBuffResult->Release();
@@ -146,22 +149,20 @@ void UpdateResult(void)
 //=====================
 void DrawResult(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
-	//デバイスの習得
-	pDevice = GetDevice();
-
-	//頂点バッファをデータストリームに設定
+	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffResult, 0, sizeof(VERTEX_2D));
 
-	//頂点フォーマットの設定
+	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	//テクスチャの設定
+	// テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureResult);
 
-	//ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);//プリミティブの種類
+	// ポリゴンの描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
 	// リザルトスコアの描画処理
 	DrawResultScore();

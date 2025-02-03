@@ -23,39 +23,36 @@
 #include "HPGauge.h"
 #include "spgauge.h"
 
-//****************************
-//グローバル宣言
-//****************************
-
 //============================
 //タイトル3dの初期化処理
 //============================
 void InitTitle3d(void)
 {
+	// カーソルを無効化
 	SetCursorVisibility(false);
 
-	//カメラの初期化処理
+	// カメラの初期化処理
 	InitCamera();
 
-	//ライトの初期化処理
+	// ライトの初期化処理
 	InitLight();
 
 	//影の初期化処理
 	InitShadow();
 
-	//メッシュフィールドの初期化処理
+	// メッシュフィールドの初期化処理
 	InitMeshField();
 
-	//タイトルの初期化処理
+	// タイトルの初期化処理
 	InitTitle();
 
 	// ゲージの初期化処理
 	InitGauge();
 
-	//ゲームUIの初期化処理
+	// ゲームUIの初期化処理
 	InitGameUI();
 
-	//ブロックの初期化処理
+	// ブロックの初期化処理
 	InitBlock();
 	
 	// プレイヤーの初期化処理
@@ -64,9 +61,10 @@ void InitTitle3d(void)
 	// スペシャルゲージの初期化処理
 	InitSPgauge();
 
+	// タイトル用のステージを読み込む処理
 	LoadTitleState();
 
-	//UIをセット
+	// UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, -200.0f, 0.0f), UITYPE_TITLE, 450.0f, 150.0f, 0);
 	SetGameUI(D3DXVECTOR3(380.0f, 450.0f, 0.0f), UITYPE_TITLE2, 50.0f, 30.0f, 0);
 
@@ -87,27 +85,28 @@ void UninitTitle3d(void)
 	// ゲージの終了処理
 	UninitGauge();
 
-	//ライトの終了処理
+	// ライトの終了処理
 	UninitLight();
 
-	//影の終了処理
+	// 影の終了処理
 	UninitShadow();
 
-	//メッシュフィールドの終了処理
+	// メッシュフィールドの終了処理
 	UninitMeshField();
 
-	//タイトルの終了処理
+	// タイトルの終了処理
 	UninitTitle();
 
-	//ゲームUIの終了処理
+	// ゲームUIの終了処理
 	UninitGameUI();
 
-	//ブロックの終了処理
+	// ブロックの終了処理
 	UninitBlock();
 
 	// スペシャルゲージの終了処理
 	UninitSPgauge();
 
+	// プレイヤーの終了処理
 	UninitPlayer();
 }
 //============================
@@ -115,17 +114,19 @@ void UninitTitle3d(void)
 //============================
 void UpdateTitle3d(void)
 {
+	// カメラの更新処理
 	UpdateCamera();
 
+	// ライトの更新処理
 	UpdateLight();
 
-	//影の更新処理
+	// 影の更新処理
 	UpdateShadow();
 
-	//タイトルの更新処理
+	// タイトルの更新処理
 	UpdateTitle();
 
-	//ゲームUIの更新処理
+	// ゲームUIの更新処理
 	UpdateGameUI();
 }
 //============================
@@ -133,18 +134,18 @@ void UpdateTitle3d(void)
 //============================
 void DrawTitle3d(void)
 {
-	//ブロックの描画処理
+	// ブロックの描画処理
 	DrawBlock();
 
-	//影の描画処理
+	// 影の描画処理
 	DrawShadow();
 
-	//メッシュフィールドの描画処理
+	// メッシュフィールドの描画処理
 	DrawMeshField();
 
-	//タイトルの描画処理
+	// タイトルの描画処理
 	DrawTitle();
 
-	//ゲームUIの描画処理
+	// ゲームUIの描画処理
 	DrawGameUI();
 }

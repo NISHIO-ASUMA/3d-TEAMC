@@ -77,19 +77,6 @@ void InitCamera(void)
 	g_camera[MAP].viewport.MinZ = 0.0f;
 	g_camera[MAP].viewport.MaxZ = 1.0f;
 	
-	//g_camera[2].viewport.X = 0.0f; // 2DX座標
-	//g_camera[2].viewport.Y = 360.0f; // 2DY座標
-	//g_camera[2].viewport.Width = 640.0f; // 幅
-	//g_camera[2].viewport.Height = 360.0f; // 高さ
-
-	//g_camera[3].viewport.X = 640.0f; // 2DX座標
-	//g_camera[3].viewport.Y = 360.0f; // 2DY座標
-	//g_camera[3].viewport.Width = 640.0f; // 幅
-	//g_camera[3].viewport.Height = 360.0f; // 高さ
-
-	//for (int nCnt = 0; nCnt < 2; nCnt++)
-	//{
-	//}
 }
 //=========================
 // カメラの終了処理

@@ -8,33 +8,37 @@
 //****************************
 //インクルードファイル
 //****************************
-#include"ranking.h"
-#include"input.h"
+#include "ranking.h"
+#include "input.h"
 #include "fade.h"
 #include <stdio.h>
-#include"RankingScore.h"
-#include"RankingSet.h"
+#include "RankingScore.h"
+#include "RankingSet.h"
 #include "sound.h"
 
 //****************************
 //グローバル変数宣言
 //****************************
-int nRankingCount;
+int nRankingCount;	// タイマーカウント
 
 //=============================
 //ランキングの初期化処理
 //=============================
 void InitRanking(void)
 {
+	// 順位の初期化
 	InitRankingSet();
 
+	// スコアの初期化
 	InitRankingScore();
 
+	// ランキングのリセット
 	ResetRanking();
 
+	// スコアのテクスチャ設定
 	RankingTexture();
 
-	// 変数の初期化
+	// グローバル変数の初期化
 	nRankingCount = 0;
 
 	// 音楽を再生
@@ -48,8 +52,10 @@ void UninitRanking(void)
 	// 音楽を停止
 	StopSound();
 
+	// 順位の終了
 	UninitRankingSet();
-
+	
+	// スコアの初期化
 	UninitRankingScore();
 }
 //=============================
@@ -57,15 +63,17 @@ void UninitRanking(void)
 //=============================
 void UpdateRanking(void)
 {
+	// 順位の更新処理
 	UpdateRankingSet();
 
+	// スコアの更新処理
 	UpdateRankingScore();
 
 	nRankingCount++;
 
-	if (nRankingCount >= 600)
-	{// 10秒経過
-		// タイトル画面
+	if (nRankingCount >= 600 || KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A))
+	{// 10秒経過 or Enterキー or Aボタン
+		// タイトル画面に遷移
 		SetFade(MODE_TITLE);
 	}
 }
@@ -74,7 +82,9 @@ void UpdateRanking(void)
 //=============================
 void DrawRanking(void)
 {
+	// 順位の描画
 	DrawRankingSet();
 
+	// スコアの描画
 	DrawRankingScore();
 }

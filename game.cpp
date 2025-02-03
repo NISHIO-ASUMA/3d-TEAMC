@@ -53,7 +53,9 @@ int g_EnemyWaveTime;
 //=======================
 void InitGame(void)
 {
+	// カーソルを無効化
 	SetCursorVisibility(false);
+
 	//カメラの初期化処理
 	InitCamera();
 
@@ -126,17 +128,21 @@ void InitGame(void)
 	WaveEnemy(0); // 敵を出す処理
 	WaveEnemy(1); // 敵を出す処理
 
+	// TODO : テスト用にセット
+	// ボスをセット
 	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 5000);
+
+	// 壁を設置する
 	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1000.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1000.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 
-	g_gameState = GAMESTATE_NORMAL;//通常状態に設定
-	g_nCounterGameState = 0;
+	g_gameState = GAMESTATE_NORMAL; // 通常状態に設定
+	g_nCounterGameState = 0;		// 画面遷移の時間
 
-	g_bPause = false;//ポーズ解除
-	g_bEditMode = false;//エディットモード解除
+	g_bPause = false; // ポーズ解除
+	g_bEditMode = false;// エディットモード解除
 	g_EnemyWaveTime = 1790; // 敵が出てくる時間
 
 	// 音楽を再生
@@ -224,6 +230,7 @@ void UninitGame(void)
 //=======================
 void UpdateGame(void)
 {
+	// 敵の出現時間を加算する
 	g_EnemyWaveTime++;
 
 	// プレイヤーの取得
@@ -234,12 +241,10 @@ void UpdateGame(void)
 
 	// タイマーの取得
 	int nTime = GetTimer();
-
-	// TODO : 敵が全滅したらゲーム終了
 	
 	// 敵が出てくるまでの時間
 	if (g_EnemyWaveTime >= 900 || nNumEnemy <= 0)
-	{
+	{// カウントが900 or 場に出ている敵が0体以下の時
 		int nSpawner = rand() % 2;
 
 		// 敵を出す処理
@@ -255,21 +260,21 @@ void UpdateGame(void)
 	}
 
 	if (!pPlayer->bDisp)
-	{
+	{// プレイヤーが未使用判定
 		g_gameState = GAMESTATE_END;
 	}
 
 	switch (g_gameState)
 	{
-	case GAMESTATE_NORMAL://通常状態
+	case GAMESTATE_NORMAL: //通常状態
 		break;
 
-	case GAMESTATE_END://終了状態
+	case GAMESTATE_END: //終了状態
 		g_nCounterGameState++;
 
 		if (g_nCounterGameState >= 60)
 		{
-			g_nCounterGameState = 0;
+			g_nCounterGameState = 0;	 // カウントを初期化
 			g_gameState = GAMESTATE_NONE;//何もしていない状態
 
 			//画面(モード)の設定
@@ -281,6 +286,7 @@ void UpdateGame(void)
 			//ランキングのセット
 			SetRanking(GetScore());
 		}
+
 		break;
 	}
 
@@ -292,12 +298,14 @@ void UpdateGame(void)
 	{//ポーズ中
 		//ポーズ中の更新処理
 		UpdatePause();
+
+		// カーソルを出現
 		SetCursorVisibility(true);
 	}
 
 	int nNumObj = GetNumobj(); // オブジェクトの数を取得
 
-	//エディットモードだったら
+	// エディットモードだったら
 	if (KeyboardTrigger(DIK_F2) && g_bEditMode)
 	{
 		g_bEditMode = false;
@@ -305,19 +313,19 @@ void UpdateGame(void)
 		InitItem();  // 出ているオブジェクトの初期化
 		LoadEdit();  // ロード
 	}
-	//エディットモードじゃなかったら
+	// エディットモードじゃなかったら
 	else if (KeyboardTrigger(DIK_F2) && !g_bEditMode)
 	{
 		g_bEditMode = true;
 	}
 
 	if (g_bPause == false)
-	{//ポーズ中でなければ
-	//ポーズ中の更新処理
+	{// ポーズ中でなければ
+		// カーソルを無効化
 		SetCursorVisibility(false);
 
 		if (!g_bEditMode)
-		{
+		{// 編集モードじゃなかったら
 			//カメラの更新処理
 			UpdateCamera();
 
@@ -331,7 +339,7 @@ void UpdateGame(void)
 			UpdateExplosion();
 
 			if (pPlayer->bDisp)
-			{
+			{// bDispがtrue
 				//プレイヤーの更新処理
 				UpdatePlayer();
 			}
@@ -384,6 +392,7 @@ void UpdateGame(void)
 			//エディットの更新処理
 			UpdateEdit();
 
+			// カメラの更新処理
 			UpdateCamera();
 		}	
 	}
@@ -391,7 +400,7 @@ void UpdateGame(void)
 #ifdef _DEBUG
 
 	if (KeyboardTrigger(DIK_F10))
-	{
+	{// F10を押した
 		g_gameState = GAMESTATE_END;
 	}
 

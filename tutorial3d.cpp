@@ -27,22 +27,23 @@
 //****************************
 //グローバル変数
 //****************************
-static int nPressTuto;
-bool g_bEditMode2;
+bool g_bEditMode2;		// 編集モードかどうか
+
 //============================
 //チュートリアル3dの初期化処理
 //============================
 void InitTutorial3d(void)
 {
+	// カーソルを無効化
 	SetCursorVisibility(false);
 
-	//カメラの初期化処理
+	// カメラの初期化処理
 	InitCamera();
 	
-	//影の初期化処理
+	// 影の初期化処理
 	InitShadow();
 
-	//メッシュフィールドの初期化処理
+	// メッシュフィールドの初期化処理
 	InitMeshField();
 
 	// 壁の初期化処理
@@ -66,9 +67,10 @@ void InitTutorial3d(void)
 	// 爆発の初期化処理
 	InitExplosion();
 
+	// エディター画面の初期化処理
 	InitEdit();
 
-	// ステージ
+	// ステージを読み込む
 	tutoload();
 
 	// ブロックをセット
@@ -84,7 +86,9 @@ void InitTutorial3d(void)
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f, 0);
 
+	// グローバル変数の初期化
 	g_bEditMode2 = false;
+
 	// 音楽を再生
 	PlaySound(SOUND_LABEL_TUTORIAL_BGM);
 }
@@ -96,13 +100,13 @@ void UninitTutorial3d(void)
 	// 音楽を停止
 	StopSound();
 
-	//カメラの終了処理
+	// カメラの終了処理
 	UninitCamera();
 
-	//影の終了処理
+	// 影の終了処理
 	UninitShadow();
 
-	//メッシュフィールドの終了処理
+	// メッシュフィールドの終了処理
 	UninitMeshField();
 
 	// ゲージの終了
@@ -126,18 +130,18 @@ void UninitTutorial3d(void)
 	// 爆発の終了処理
 	UninitExplosion();
 
+	// エディター画面の終了処理
 	UninitEdit();
-
 }
 //============================
 //チュートリアル3dの更新処理
 //============================
 void UpdateTutorial3d(void)
 {
-	//カメラの更新処理
+	// カメラの更新処理
 	UpdateCamera();
 
-	//影の更新処理
+	// 影の更新処理
 	UpdateShadow();
 
 	// 壁の更新処理
@@ -145,7 +149,6 @@ void UpdateTutorial3d(void)
 
 	// UIの更新処理
 	UpdateGameUI();
-
 
 	// ブロックの更新処理
 	UpdateBlock();
@@ -157,7 +160,7 @@ void UpdateTutorial3d(void)
 	UpdateExplosion();
 
 	if (g_bEditMode2)
-	{
+	{// g_bEditMode2がture
 		UpdateEdit();
 	}
 	else
@@ -166,18 +169,18 @@ void UpdateTutorial3d(void)
 		UpdatePlayer();
 	}
 
-	//エディットモードだったら
+	// エディットモードだったら
 	if (KeyboardTrigger(DIK_F2) && g_bEditMode2)
 	{
-		g_bEditMode2 = false;
+		g_bEditMode2 = false; // 判定を変更
 		InitBlock(); // 出ているオブジェクトの初期化
 		InitItem();  // 出ているオブジェクトの初期化
 		LoadEdit();  // ロード
 	}
-	//エディットモードじゃなかったら
+	// エディットモードじゃなかったら
 	else if (KeyboardTrigger(DIK_F2) && !g_bEditMode2)
 	{
-		g_bEditMode2 = true;
+		g_bEditMode2 = true; // 判定を有効化
 	}
 
 	if ((KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true) && !g_bEditMode2)
@@ -204,7 +207,7 @@ void DrawTutorial3d(void)
 	// プレイヤーの描画処理
 	DrawPlayer();
 
-	//影の描画処理
+	// 影の描画処理
 	DrawShadow();
 
 	// ブロックの描画処理
@@ -220,7 +223,7 @@ void DrawTutorial3d(void)
 	DrawGameUI();
 
 	if (g_bEditMode2)
-	{
+	{// g_bEditMode2がtrue
 		DrawEdit();
 	}
 }
