@@ -111,110 +111,110 @@ void UpdateMotion(MOTION *pMotion)
 			((float)pMotion->nCountMotion /
 				(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-		//pMotion->nNextKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey; // ブレンドモーションの次のキー
+		pMotion->nNextKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey; // ブレンドモーションの次のキー
 
-		//float fRateMotion = (float)pMotion->nCountMotion / (float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame; // 相対値
-		//float fRateBlend = (float)pMotion->nCounterBlend / (float)pMotion->nFrameBlend;
+		float fRateMotion = (float)pMotion->nCountMotion / (float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame; // 相対値
+		float fRateBlend = (float)pMotion->nCounterBlend / (float)pMotion->nFrameBlend;
 
-		//if (pMotion->bFinishMotion && pMotion->bBlendMotion)
-		//{
-		//	//現在のモーションの回転X
-		//	float fDiffMotionRX = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotX -
-		//		pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX;
+		if (pMotion->bFinishMotion && pMotion->bBlendMotion)
+		{
+			//現在のモーションの回転X
+			float fDiffMotionRX = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotX -
+				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX;
 
-		//	float fRotXCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX + (fDiffMotionRX * fRateMotion);
+			float fRotXCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX + (fDiffMotionRX * fRateMotion);
 
-		//	//現在のモーションの回転Y
-		//	float fDiffMotionRY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotY -
-		//		pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY;
+			//現在のモーションの回転Y
+			float fDiffMotionRY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotY -
+				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY;
 
-		//	float fRotYCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY + (fDiffMotionRY * fRateMotion);
+			float fRotYCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY + (fDiffMotionRY * fRateMotion);
 
-		//	//現在のモーションの回転Z
-		//	float fDiffMotionRZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotZ -
-		//		pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ;
+			//現在のモーションの回転Z
+			float fDiffMotionRZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotZ -
+				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ;
 
-		//	float fRotZCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ + (fDiffMotionRZ * fRateMotion);
-
-
-		//	//ブレンドモーションの回転X
-		//	float fDiffMotionBlendRX = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fRotX -
-		//		pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotX;
-
-		//	float fRotXBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotX + (fDiffMotionBlendRX * fRateBlend);
-
-		//	//ブレンドモーションの回転Y
-		//	float fDiffMotionBlendRY = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fRotY -
-		//		pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotY;
-
-		//	float fRotYBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotY + (fDiffMotionBlendRY * fRateBlend);
-
-		//	//ブレンドモーションの回転Z
-		//	float fDiffMotionBlendRZ = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fRotZ -
-		//		pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotZ;
-
-		//	float fRotZBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotZ + (fDiffMotionBlendRZ * fRateBlend);
+			float fRotZCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ + (fDiffMotionRZ * fRateMotion);
 
 
-		//	//現在のモーションの位置X
-		//	float fDiffMotionPX = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosX -
-		//		pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosX;
+			//ブレンドモーションの回転X
+			float fDiffMotionBlendRX = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fRotX -
+				pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotX;
 
-		//	float fPosXCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosX + (fDiffMotionPX * fRateMotion);
+			float fRotXBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotX + (fDiffMotionBlendRX * fRateBlend);
 
-		//	//現在のモーションの位置Y
-		//	float fDiffMotionPY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosY -
-		//		pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosY;
+			//ブレンドモーションの回転Y
+			float fDiffMotionBlendRY = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fRotY -
+				pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotY;
 
-		//	float fPosYCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosY + (fDiffMotionPY * fRateMotion);
+			float fRotYBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotY + (fDiffMotionBlendRY * fRateBlend);
 
-		//	//現在のモーションの位置Z
-		//	float fDiffMotionPZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosZ -
-		//		pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosZ;
+			//ブレンドモーションの回転Z
+			float fDiffMotionBlendRZ = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fRotZ -
+				pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotZ;
 
-		//	float fPosZCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosZ + (fDiffMotionPZ * fRateMotion);
+			float fRotZBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotZ + (fDiffMotionBlendRZ * fRateBlend);
 
 
-		//	//ブレンドモーションの位置X
-		//	float fDiffMotionBlendPX = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fPosX -
-		//		pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosX;
+			//現在のモーションの位置X
+			float fDiffMotionPX = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosX -
+				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosX;
 
-		//	float fPosXBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosX + (fDiffMotionBlendPX * fRateBlend);
+			float fPosXCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosX + (fDiffMotionPX * fRateMotion);
 
-		//	//ブレンドモーションの位置Y
-		//	float fDiffMotionBlendPY = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fPosY -
-		//		pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosY;
+			//現在のモーションの位置Y
+			float fDiffMotionPY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosY -
+				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosY;
 
-		//	float fPosYBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosY + (fDiffMotionBlendPY * fRateBlend);
+			float fPosYCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosY + (fDiffMotionPY * fRateMotion);
 
-		//	//ブレンドモーションの位置Z
-		//	float fDiffMotionBlendPZ = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fPosZ -
-		//		pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosZ;
+			//現在のモーションの位置Z
+			float fDiffMotionPZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fPosZ -
+				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosZ;
 
-		//	float fPosZBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosZ + (fDiffMotionBlendPZ * fRateBlend);
+			float fPosZCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosZ + (fDiffMotionPZ * fRateMotion);
 
-		//	float fDiffBlendRX = fRotXBlend - fRotXCurrent; // 差分
-		//	float fDiffBlendRY = fRotYBlend - fRotYCurrent; // 差分
-		//	float fDiffBlendRZ = fRotZBlend - fRotZCurrent; // 差分
 
-		//	float fRotX = fRotXCurrent + (fDiffBlendRX * fRateBlend); // 求める値
-		//	float fRotY = fRotYCurrent + (fDiffBlendRY * fRateBlend); // 求める値
-		//	float fRotZ = fRotZCurrent + (fDiffBlendRZ * fRateBlend); // 求める値
+			//ブレンドモーションの位置X
+			float fDiffMotionBlendPX = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fPosX -
+				pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosX;
 
-		//	float fDiffBlendPX = fPosXBlend - fPosXCurrent; // 差分
-		//	float fDiffBlendPY = fPosYBlend - fPosYCurrent; // 差分
-		//	float fDiffBlendPZ = fPosZBlend - fPosZCurrent; // 差分
+			float fPosXBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosX + (fDiffMotionBlendPX * fRateBlend);
 
-		//	float fPosX = fPosXCurrent + (fDiffBlendPX * fRateBlend); // 求める値
-		//	float fPosY = fPosYCurrent + (fDiffBlendPY * fRateBlend); // 求める値
-		//	float fPosZ = fPosZCurrent + (fDiffBlendPZ * fRateBlend); // 求める値
+			//ブレンドモーションの位置Y
+			float fDiffMotionBlendPY = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fPosY -
+				pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosY;
 
-		//	// 位置を設定
-		//	pMotion->aModel[nCntModel].pos = D3DXVECTOR3(fPosX, fPosY, fPosZ);
+			float fPosYBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosY + (fDiffMotionBlendPY * fRateBlend);
 
-		//	// 向きを設定
-		//	pMotion->aModel[nCntModel].rot = D3DXVECTOR3(fRotX, fRotY, fRotZ);
-		//}
+			//ブレンドモーションの位置Z
+			float fDiffMotionBlendPZ = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fPosZ -
+				pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosZ;
+
+			float fPosZBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fPosZ + (fDiffMotionBlendPZ * fRateBlend);
+
+			float fDiffBlendRX = fRotXBlend - fRotXCurrent; // 差分
+			float fDiffBlendRY = fRotYBlend - fRotYCurrent; // 差分
+			float fDiffBlendRZ = fRotZBlend - fRotZCurrent; // 差分
+
+			float fRotX = fRotXCurrent + (fDiffBlendRX * fRateBlend); // 求める値
+			float fRotY = fRotYCurrent + (fDiffBlendRY * fRateBlend); // 求める値
+			float fRotZ = fRotZCurrent + (fDiffBlendRZ * fRateBlend); // 求める値
+
+			float fDiffBlendPX = fPosXBlend - fPosXCurrent; // 差分
+			float fDiffBlendPY = fPosYBlend - fPosYCurrent; // 差分
+			float fDiffBlendPZ = fPosZBlend - fPosZCurrent; // 差分
+
+			float fPosX = fPosXCurrent + (fDiffBlendPX * fRateBlend); // 求める値
+			float fPosY = fPosYCurrent + (fDiffBlendPY * fRateBlend); // 求める値
+			float fPosZ = fPosZCurrent + (fDiffBlendPZ * fRateBlend); // 求める値
+
+			// 位置を設定
+			pMotion->aModel[nCntModel].pos = D3DXVECTOR3(fPosX, fPosY, fPosZ);
+
+			// 向きを設定
+			pMotion->aModel[nCntModel].rot = D3DXVECTOR3(fRotX, fRotY, fRotZ);
+		}
 
 		// オフセットを考慮した向き設定
 		pMotion->aModel[nCntModel].rot += pMotion->aModel[nCntModel].offrot;
@@ -230,30 +230,31 @@ void UpdateMotion(MOTION *pMotion)
 		pMotion->nCountMotion = 0;
 	}
 
-	//// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった
-	//if (pMotion->bFinishMotion &&
-	//	pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
-	//	pMotion->nCounterBlend >= pMotion->nFrameBlend)
-	//{
-	//	pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
-	//	pMotion->bFinishMotion = false;           // もとに戻す
-	//	pMotion->bBlendMotion = false;			 // もとに戻す
-	
-
-	if (!pMotion->aMotionInfo[pMotion->motionType].bLoop && pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
+	// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった
+	if (pMotion->bFinishMotion &&
+		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
+		pMotion->nCounterBlend >= pMotion->nFrameBlend&&
+		pMotion->bBlendMotion)
 	{
-		//pMotion->bFinishMotion = true;
 		pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
+		pMotion->bFinishMotion = false;           // もとに戻す
+		pMotion->bBlendMotion = false;			  // もとに戻す
+	}
+	
+	if (!pMotion->aMotionInfo[pMotion->motionType].bLoop &&
+		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
+	{
+		pMotion->bFinishMotion = true;
+		//pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
 	}
 
 	//モーションカウントを加算
 	pMotion->nCountMotion++;
 	
-
-	//if (pMotion->bFinishMotion)
-	//{
-	//	pMotion->nCounterBlend++; // ブレンドモーションカウントをインクリメント
-	//}
+	if (pMotion->bFinishMotion)
+	{
+		pMotion->nCounterBlend++; // ブレンドモーションカウントをインクリメント
+	}
 
 }
 //==============================
@@ -263,13 +264,17 @@ void SetMotion(MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend, bool Blend, in
 {
 	Player* pPlayer = GetPlayer();                       // プレイヤーを取得
 
-	pPlayer->Motion.nKey = 0;							 // 0から始める
-	pPlayer->Motion.nKeyBlend = 0;						 // 0から始める
-	pPlayer->Motion.nCountMotion = 0;					 // 0から始める
-	pPlayer->Motion.nCounterBlend = 0;					 // 0から始める
+	if (Blend == true)
+	{
+		pPlayer->Motion.nKey = 0;							 // 0から始める
+		pPlayer->Motion.nKeyBlend = 0;						 // 0から始める
+		pPlayer->Motion.nCountMotion = 0;					 // 0から始める
+		pPlayer->Motion.nCounterBlend = 0;					 // 0から始める
+		pPlayer->Motion.bBlendMotion = Blend;				 // ブレンドがあるかどうか
+		pPlayer->Motion.nFrameBlend = nFrameBlend;			 // ブレンドのフレームを代入
+		pPlayer->Motion.motiontypeBlend = motiontypeBlend;   // ブレンドするモーションのタイプを代入
+	}
 	pPlayer->Motion.motionType = motiontype;			 // モーションのタイプを代入
-	pPlayer->Motion.bBlendMotion = Blend;				 // ブレンドがあるかどうか
-	pPlayer->Motion.nFrameBlend = nFrameBlend;			 // ブレンドのフレームを代入
-	pPlayer->Motion.motiontypeBlend = motiontypeBlend;   // ブレンドするモーションのタイプを代入
+	pPlayer->Motion.bFinishMotion = false;				 // もとに戻す
 }
 
