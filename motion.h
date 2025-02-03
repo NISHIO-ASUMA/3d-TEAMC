@@ -87,6 +87,9 @@ typedef struct
 	int nStartKey, nEndKey, nStartFrame,nEndFrame;//判定を始めるキーの変数
 }MOTION_INFO;
 
+//**************************
+//モーション構造体
+//**************************
 typedef struct
 {
 	MODEL aModel[MAX_PARTS];					// モデル(パーツ)
@@ -98,10 +101,24 @@ typedef struct
 	int nNumKey;								// キーの総数
 	int nKey;									// 現在のキーNo.
 	int nCountMotion;							// モーションのカウンター
+
+	MOTIONTYPE motiontypeBlend;					// ブレンドの種類
+	bool bBlendMotion;							// ブレンドがあるかどうか
+	bool bLoopMotionBlend;						// ループするかどうか
+	bool bFinishMotion;							// モーションが終わったかどうか
+	int nNumKeyBlend;							// ブレンドモーションの最大のキー
+	int nKeyBlend;								// ブレンドモーションの現在のキー
+	int nNextKeyBlend;							// ブレンドモーションの次のキー
+	int nCounterMotionBlend;					// ブレンドのカウンター
+
+	int nFrameBlend;							// ブレンドのフレーム数
+	int nCounterBlend;							// ブレンドカウンター
+
 }MOTION;
 
 //****************************
 //プロトタイプ宣言
 //****************************
 void UpdateMotion(MOTION* pMotion);
+void SetMotion(MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend);
 #endif

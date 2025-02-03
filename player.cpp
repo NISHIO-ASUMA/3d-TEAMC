@@ -1517,6 +1517,8 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
 	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
 	g_player.Combostate = Combstate;		  // コンボの状態を設定
+	//SetMotion(motiontype, MOTIONTYPE_NEUTRAL, true, 15);
+
 
 	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
