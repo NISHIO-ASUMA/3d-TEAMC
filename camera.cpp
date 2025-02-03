@@ -33,7 +33,7 @@ void MouseEditMode(void); // 編集モードの時のマウス移動
 //*****************************
 // グローバル変数宣言
 //*****************************
-Camera g_camera[MAX_CAMERA];		// カメラ情報
+Camera g_camera[CAMERATYPE_MAX];		// カメラ情報
 //Camera g_camera;						// カメラ情報
 D3DXVECTOR3 Zoom;
 
@@ -46,7 +46,7 @@ void InitCamera(void)
 	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 200.0f, -250.0f);			// カメラの位置
 	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 800.0f, 0.0f);			// カメラの位置
 
-	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
+	for (int nCnt = 0; nCnt < CAMERATYPE_MAX; nCnt++)
 	{
 		g_camera[nCnt].posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// カメラの見ている位置
 		g_camera[nCnt].vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
@@ -319,10 +319,7 @@ void UpdateCamera(void)
 void SetCamera(int nCnt)
 {
 	// デバイスポインタを宣言
-	LPDIRECT3DDEVICE9 pDevice;
-
-	// デバイスを取得
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// ビューマトリックスの初期化
 	D3DXMatrixIdentity(&g_camera[nCnt].mtxView);

@@ -19,14 +19,14 @@
 //****************************
 //プロトタイプ宣言
 //****************************
-void UIFlash(int nType);
+void UIFlash(int nType);	// 点滅処理
 float fcolorA;
 
 //****************************
 //グローバル変数
 //****************************
-LPDIRECT3DTEXTURE9 g_pTextureGameUI[UITYPE_MAX] = {};//テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGameUI = NULL;//頂点バッファへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureGameUI[UITYPE_MAX] = {}; // テクスチャへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGameUI = NULL;      // 頂点バッファへのポインタ
 Gameui g_GameUI[UITYPE_MAX];
 int g_nPatternAnim, g_nCounterAnim;
 
@@ -35,23 +35,21 @@ int g_nPatternAnim, g_nCounterAnim;
 //============================
 void InitGameUI(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
 	//デバイスを取得
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	//テクスチャの読み込み
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
 	{
-		//テクスチャの読み込み
+		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,
 			UITYPE_INFO[nCnt],
 			&g_pTextureGameUI[nCnt]);
 	}
 
-	//頂点バッファの生成・頂点情報の設定
+	// 頂点バッファの生成・頂点情報の設定
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * UITYPE_MAX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
@@ -59,7 +57,7 @@ void InitGameUI(void)
 		&g_pVtxBuffGameUI,
 		NULL);
 
-	//頂点ロック
+	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
 
 	fcolorA = 0.0f;
@@ -77,24 +75,25 @@ void InitGameUI(void)
 		g_GameUI[nCnt].bUse = false;
 		g_GameUI[nCnt].nType = UITYPE_TITLE;
 
-		//頂点座標の設定
+		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-		//rhwの設定
+		// rhwの設定
 		pVtx[0].rhw = 1.0f;
 		pVtx[1].rhw = 1.0f;
 		pVtx[2].rhw = 1.0f;
 		pVtx[3].rhw = 1.0f;
 
-		//頂点カラーの設定
+		// 頂点カラーの設定
 		pVtx[0].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 		pVtx[1].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 		pVtx[3].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 
+		// テクスチャ座標
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
@@ -139,10 +138,13 @@ void UninitGameUI(void)
 //============================
 void UpdateGameUI(void)
 {
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
+
+	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
-	//頂点ロック
+	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
@@ -272,28 +274,29 @@ void UpdateGameUI(void)
 //============================
 void DrawGameUI(void)
 {
+	// 現在のモードを取得
 	MODE mode = GetMode();
 
-	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice; // デバイスへのポインタ
 
-    //デバイスの習得
+    // デバイスの習得
 	pDevice = GetDevice();
 
-	//頂点バッファをデータストリームに設定
+	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffGameUI, 0, sizeof(VERTEX_2D));
 
-	//頂点フォーマットの設定
+	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
 	{
 		if (g_GameUI[nCnt].bUse)
 		{
-			//テクスチャの設定
+			// テクスチャの設定
 			pDevice->SetTexture(0, g_pTextureGameUI[g_GameUI[nCnt].nType]);
 
-			//プレイヤーの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2);//プリミティブの種類
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
 		}
 	}
 }
@@ -302,9 +305,10 @@ void DrawGameUI(void)
 //============================
 void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUseTime)
 {
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	//頂点ロック
+	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
@@ -318,7 +322,7 @@ void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUse
 			g_GameUI[nCnt].nUseTime = nUseTime;
 			g_GameUI[nCnt].bUse = true;
 
-			//頂点座標の設定
+			// 頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
@@ -329,17 +333,18 @@ void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUse
 		pVtx += 4;
 	}
 
-	//頂点ロック解除
+	// 頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
 }
 //============================
-// UI選択処理
+// 選択時のUI点滅処理
 //============================
 void FlashGameUI(int nSelect)
 {
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	//頂点ロック
+	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
@@ -355,7 +360,8 @@ void FlashGameUI(int nSelect)
 				g_GameUI[nCnt].pos.y = 600.0f;
 			}
 		}
-		//頂点座標の設定
+
+		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
@@ -364,7 +370,7 @@ void FlashGameUI(int nSelect)
 		pVtx += 4;
 	}
 
-	//頂点ロック解除
+	// 頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
 }
 //============================

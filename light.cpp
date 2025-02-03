@@ -50,8 +50,6 @@ void InitLight(void)
 	g_vecDir[1] = D3DXVECTOR3(-0.6f, 0.1f, 0.4f);
 	g_vecDir[2] = D3DXVECTOR3(1.0f,-0.5f,0.4f);
 
-
-
 	for (int nCnt1 = 0; nCnt1 < MAX_LIGHT; nCnt1++)
 	{	// 正規化する
 		D3DXVec3Normalize(&g_vecDir[nCnt1], &g_vecDir[nCnt1]); // ベクトルの大きさを1にする
@@ -78,6 +76,7 @@ void UninitLight(void)
 //=========================
 void UpdateLight(void)
 {
+	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
 	// デバイスポインタを宣言
@@ -87,13 +86,13 @@ void UpdateLight(void)
 	{
 		g_light[0].Diffuse = D3DXCOLOR(1.0f, 0.3f, 1.0f, 1.0f);
 
-		//正視化する(大きさ位置のベクトルにする)
+		// 正視化する(大きさ位置のベクトルにする)
 		D3DXVec3Normalize(&g_vecDir[0], &g_vecDir[0]);
 
-		//ライトを設定する
+		// ライトを設定する
 		pDevice->SetLight(0, &g_light[0]);
 
-		//ライトを有効にする(ON,OFF)
+		// ライトを有効にする(ON,OFF)
 		pDevice->LightEnable(0, TRUE);
 	}
 	else if(!pPlayer->FeverMode && pPlayer->WeponMotion != MOTION_SP)
@@ -102,13 +101,13 @@ void UpdateLight(void)
 		{
 			g_light[nCnt1].Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
-			//正視化する(大きさ位置のベクトルにする)
+			// 正視化する(大きさ位置のベクトルにする)
 			D3DXVec3Normalize(&g_vecDir[nCnt1], &g_vecDir[nCnt1]);
 
-			//ライトを設定する
+			// ライトを設定する
 			pDevice->SetLight(nCnt1, &g_light[nCnt1]);
 
-			//ライトを有効にする(ON,OFF)
+			// ライトを有効にする(ON,OFF)
 			pDevice->LightEnable(nCnt1, TRUE);
 		}
 	}
