@@ -28,23 +28,22 @@ D3DXVECTOR3 g_posOlds[(X + 1) * 2];
 int g_nMeshSwordCount;
 
 //===============================
-//メッシュフィールドの初期化処理
+//メッシュソードの初期化処理
 //===============================
 void InitMeshSword(void)
 {
 	int nCnt = 0;
 	g_nMeshSwordCount = 0;
 
-	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
+	// デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	pDevice = GetDevice();//デバイスを取得
-
-		//テクスチャの読み込み
+	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\orbit.png",
 		&g_pTextureMeshSword);
 
-	//頂点バッファの生成
+	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * ORBIT_VERTEX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
@@ -52,7 +51,7 @@ void InitMeshSword(void)
 		&g_pVtxBuffMeshSword,
 		NULL);
 
-	//インデックスバッファの生成
+	// インデックスバッファの生成
 	pDevice->CreateIndexBuffer(sizeof(WORD) * ORBIT_INDEX,
 		D3DUSAGE_WRITEONLY,
 		D3DFMT_INDEX16,
@@ -66,9 +65,11 @@ void InitMeshSword(void)
 	g_MeshSword.col = D3DXCOLOR(1.0f, 1.0f, 1.0f,1.0f);
 	g_MeshSword.Scal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
+	// 頂点情報のポインタ
 	VERTEX_3D* pVtx = NULL;
 
-	Player* pPlayer = GetPlayer();  // プレイヤー情報を取得
+	// プレイヤー情報を取得
+	Player* pPlayer = GetPlayer();  
 
 	//頂点バッファをロック
 	g_pVtxBuffMeshSword->Lock(0, 0, (void**)&pVtx, 0);
@@ -78,6 +79,7 @@ void InitMeshSword(void)
 
 	pVtx[1].pos = D3DXVECTOR3(pPlayer->Motion.aModel[15].mtxWorld._41, pPlayer->Motion.aModel[15].mtxWorld._42, pPlayer->Motion.aModel[15].mtxWorld._43);*/
 
+	// 頂点座標の設定
 	for (int nCount = 0; nCount < X + 1; nCount++)
 	{
 		pVtx[nCount * 2].pos = g_posOlds[nCount * 2];
@@ -90,20 +92,23 @@ void InitMeshSword(void)
 	//pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	//pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	//頂点座標の設定
+	// 法線ベクトルの設定
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
 	for (int nCount = 0; nCount < X; nCount++)
 	{
 		pVtx[nCount * 2 + 2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		pVtx[nCount * 2 + 3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	}
 
+	// テクスチャ設定
 	float Tex = 1.0f / X;
 
-	//頂点座標の設定
+	// カラーの設定
 	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
 	for (int nCount = 0; nCount < X; nCount++)
 	{
 		pVtx[nCount * 2 + 2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - Tex * nCount);
@@ -120,7 +125,7 @@ void InitMeshSword(void)
 		//pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	//}
 	 
-		//頂点座標の設定
+	// テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[1].tex = D3DXVECTOR2(0.0f, 1.0f);
 
@@ -133,6 +138,7 @@ void InitMeshSword(void)
 	//頂点バッファをアンロック
 	g_pVtxBuffMeshSword->Unlock();
 
+	// インデックス
 	WORD* pIdx;
 
 	//インデックスバッファのロック
@@ -148,7 +154,7 @@ void InitMeshSword(void)
 }
 
 //===============================
-//メッシュフィールドの終了処理
+//メッシュソードの終了処理
 //===============================ccc
 void UninitMeshSword(void)
 {
@@ -175,7 +181,7 @@ void UninitMeshSword(void)
 }
 
 //===============================
-//メッシュフィールドの更新処理
+//メッシュソードの更新処理
 //===============================
 void UpdateMeshSword(void)
 {
@@ -183,8 +189,13 @@ void UpdateMeshSword(void)
 	{
 		ResetMeshSword();
 	}
+
 	g_nMeshSwordCount++;
-	Player* pPlayer = GetPlayer();  // プレイヤー情報を取得
+
+	// プレイヤー情報を取得
+	Player* pPlayer = GetPlayer();  
+
+	// 頂点情報のポインタ
 	VERTEX_3D* pVtx;
 
 	int vtxCnt = 0;
@@ -222,16 +233,15 @@ void UpdateMeshSword(void)
 	// 頂点バッファをアンロック
 	g_pVtxBuffMeshSword->Unlock();
 }
-
 //===============================
-//メッシュフィールドの描画処理
+//メッシュソードの描画処理
 //===============================
 void DrawMeshSword(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-	Player* pPlayer = GetPlayer();  // プレイヤー情報を取得
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	pDevice = GetDevice();
+	Player* pPlayer = GetPlayer();  // プレイヤー情報を取得
 	int Min;
 
 	//計算用のマトリックス
@@ -244,31 +254,32 @@ void DrawMeshSword(void)
 		pPlayer->Motion.nNumModel != 15 &&
 		pPlayer->HandState != PLAYERHOLD_HOLD)
 	{
-		//ワールドマトリックスの初期化
+		// ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_MeshSword.mtxWorldMeshSword);
 
 		pDevice->SetRenderState(D3DRS_CULLMODE, TRUE);
-		//向きを反映
+
+		// 向きを反映
 		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_MeshSword.rot.y, g_MeshSword.rot.x, g_MeshSword.rot.z);
 		D3DXMatrixMultiply(&g_MeshSword.mtxWorldMeshSword, &g_MeshSword.mtxWorldMeshSword, &mtxRot);
 
-		//位置を反映
+		// 位置を反映
 		D3DXMatrixTranslation(&mtxTrans, g_MeshSword.pos.x, g_MeshSword.pos.y, g_MeshSword.pos.z);
 		D3DXMatrixMultiply(&g_MeshSword.mtxWorldMeshSword, &g_MeshSword.mtxWorldMeshSword, &mtxTrans);
 
-		//ワールドマトリックスの設定
+		// ワールドマトリックスの設定
 		pDevice->SetTransform(D3DTS_WORLD, &g_MeshSword.mtxWorldMeshSword);
 
-		//頂点バッファをデバイスのデータストリームに設定
+		// 頂点バッファをデバイスのデータストリームに設定
 		pDevice->SetStreamSource(0, g_pVtxBuffMeshSword, 0, sizeof(VERTEX_3D));
 
-		//インデックスバッファをデータストリームに設定
+		// インデックスバッファをデータストリームに設定
 		pDevice->SetIndices(g_pIdxBuffMeshSword);
 
-		//テクスチャフォーマットの設定
+		// テクスチャフォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		//テクスチャの設定
+		// テクスチャの設定
 		pDevice->SetTexture(0, g_pTextureMeshSword);
 
 		if (g_nMeshSwordCount - 2 < ORBIT_POLYGON)
@@ -279,10 +290,10 @@ void DrawMeshSword(void)
 		{
 			Min = ORBIT_POLYGON;
 		}
-		//ポリゴンの描画
+		// ポリゴンの描画
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, Min * 2 + 4, 0, Min);
-		//pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, ORBIT_VERTEX, 0, ORBIT_POLYGON);
 	}
+
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 void ResetMeshSword(void)

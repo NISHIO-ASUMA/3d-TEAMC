@@ -15,9 +15,9 @@
 //****************************
 //グローバル変数宣言
 //****************************
-LPDIRECT3DTEXTURE9 g_pTextureMeshField = NULL;//テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshField = NULL; //頂点バッファへのポインタ
-LPDIRECT3DINDEXBUFFER9 g_pIdxBuffMeshFiled = NULL;//インデックスバッファへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureMeshField = NULL;	    // テクスチャへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshField = NULL; // 頂点バッファへのポインタ
+LPDIRECT3DINDEXBUFFER9 g_pIdxBuffMeshFiled = NULL;  // インデックスバッファへのポインタ
 MESHFILED g_MeshField;
 
 //===============================
@@ -25,9 +25,8 @@ MESHFILED g_MeshField;
 //===============================
 void InitMeshField(void)
 {
-	int nCnt = 0;
-
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
