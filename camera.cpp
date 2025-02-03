@@ -44,7 +44,7 @@ void InitCamera(void)
 {
 	// 変数の初期化
 	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 200.0f, -250.0f);			// カメラの位置
-	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 700.0f, 0.0f);			// カメラの位置
+	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 800.0f, 0.0f);			// カメラの位置
 
 	for (int nCnt = 0; nCnt < MAX_CAMERA; nCnt++)
 	{
