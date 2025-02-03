@@ -5,10 +5,14 @@
 //
 //===================================
 
-// 重複確認とインクルード
+// 重複確認
 #ifndef _GAUGE_H_
 #define _GAUGE_H_
 
+// インクルードファイル
+#include "main.h"
+
+// プロトタイプ宣言
 void InitGauge(void);
 void UninitGauge(void);
 void UpdateGauge(void);

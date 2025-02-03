@@ -5,12 +5,14 @@
 //
 //===================================
 
-// 重複確認とインクルード
+// 重複確認
 #ifndef _DAMEGE_H_
 #define _DAMEGE_H_
+
+// インクルードファイル
 #include "Main.h"
 
-// 処理の色々
+// プロトタイプ宣言
 void InitDamege(void);
 void UninitDamege(void);
 void UpdateDamege(void);

@@ -5,12 +5,14 @@
 //
 //===================================
 
-// 重複確認とインクルード
+// 重複確認
 #ifndef _PARTICLE_H_
 #define _PARTICLE_H_
+
+// インクルードファイル
 #include "Main.h"
 
-//処理の色々
+// プロトタイプ宣言
 void InitParticle(void);
 void UninitParticle(void);
 void UpdateParticle(void);

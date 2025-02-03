@@ -5,12 +5,14 @@
 //
 //===================================
 
-// 重複確認とインクルード
-#include "main.h"
+// 重複確認
 #ifndef _SHADOW_H_
 #define _SHADOW_H_
 
-// 構造体一覧
+// インクルードファイル
+#include "main.h"
+
+// 構造体宣言
 typedef struct
 {
 	D3DXVECTOR3 pos;
@@ -23,7 +25,7 @@ typedef struct
 	bool bHide;
 }Shadow;
 
-// 処理の色々
+// プロトタイプ宣言
 void InitShadow(void);
 void UninitShadow(void);
 void UpdateShadow(void);

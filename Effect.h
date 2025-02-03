@@ -5,10 +5,12 @@
 //
 //===================================
 
-// 重複確認とインクルード
-#include "main.h"
+// 重複確認
 #ifndef _EFFECT_H_
 #define _EFFECT_H_
+
+// インクルードファイル
+#include "main.h"
 
 // 構造体、下４つの上から寿命、移動速度、大きさ、存在してるか否か
 typedef struct
@@ -25,7 +27,7 @@ typedef struct
 	bool bUse;
 }Effect;
 
-// 処理の色々
+// プロトタイプ宣言
 void InitEffect(void);
 void UninitEffect(void);
 void UpdateEffect(void);

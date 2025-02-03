@@ -48,13 +48,13 @@ typedef struct
 //****************************
 //プロトタイプ宣言
 //****************************
-void InitRankingScore(void);//ランキングスコア順位の初期化処理
-void UninitRankingScore(void);//ランキングスコア順位の終了処理
-void UpdateRankingScore(void);//ランキングスコア順位の更新処理
-void DrawRankingScore(void);//ランキングスコア順位の描画処理
-void WriteScore(void);//スコア書き出し	
-void ResetRanking(void);//ランキングスコアのリセット
-void SetRanking(int nScore);//ランキングスコアの設定
-void RankingTexture(void);//ランキングテクスチャ
+void InitRankingScore(void);   // ランキングスコア順位の初期化処理
+void UninitRankingScore(void); // ランキングスコア順位の終了処理
+void UpdateRankingScore(void); // ランキングスコア順位の更新処理
+void DrawRankingScore(void);   // ランキングスコア順位の描画処理
+void WriteScore(void);		   // スコア書き出し	
+void ResetRanking(void);       // ランキングスコアのリセット
+void SetRanking(int nScore);   // ランキングスコアの設定
+void RankingTexture(void);	   // ランキングテクスチャ
 
 #endif

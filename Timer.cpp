@@ -127,8 +127,6 @@ void UninitTimer(void)
 		g_pVtxBuffTimer->Release();
 		g_pVtxBuffTimer = NULL;
 	}
-
-
 }
 //=======================
 // タイマーの更新処理

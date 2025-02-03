@@ -37,6 +37,9 @@ typedef enum
 	LIFE_MAX
 }LIFE;
 
+//*******************************
+// ライフのテクスチャ設定
+//*******************************
 static const char* LIFE_TYPE[LIFE_MAX] =
 {
 	"data\\TEXTURE\\Life001.png",
