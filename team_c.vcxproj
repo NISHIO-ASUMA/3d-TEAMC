@@ -156,6 +156,7 @@
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameui.cpp" />
+    <ClCompile Include="icon.cpp" />
     <ClCompile Include="spgauge.cpp" />
     <ClCompile Include="HPGauge.cpp" />
     <ClCompile Include="input.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameui.h" />
+    <ClInclude Include="icon.h" />
     <ClInclude Include="spgauge.h" />
     <ClInclude Include="HPGauge.h" />
     <ClInclude Include="input.h" />
