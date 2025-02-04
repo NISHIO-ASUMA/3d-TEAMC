@@ -39,6 +39,7 @@ MODEL_FILENAME = data/MODEL/OBJ/public_toilet2.x		# [28]仮設トイレ！！！
 MODEL_FILENAME = data/MODEL/OBJ/hydraulic_excavator.x	# [29]油圧ショベル
 MODEL_FILENAME = data/MODEL/OBJ/workbench.x				# [30]作業台
 MODEL_FILENAME = data/MODEL/OBJ/manhole.x				# [31]マンホール
+MODEL_FILENAME = data/MODEL/OBJ/container.x				# [32]コンテナ(青)
 
 # もしやり方わかるならBLOCK.hの列挙型追加頼む
 
