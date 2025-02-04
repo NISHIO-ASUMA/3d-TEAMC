@@ -134,7 +134,8 @@ void InitGame(void)
 
 	// TODO : テスト用にセット
 	// ボスをセット
-	SetGameUI(D3DXVECTOR3(640.0f,340.0f,0.0f),UITYPE_RED,1280.0f,720.0f,0);
+	
+	//SetGameUI(D3DXVECTOR3(640.0f,340.0f,0.0f),UITYPE_RED,1280.0f,720.0f,0);
 
 	SetIcon(D3DXVECTOR3(80.0f, 550.0f, 0.0f), 80.0f, 80.0f, 0);
 
@@ -259,7 +260,7 @@ void UpdateGame(void)
 	{
 		int Spawn_randvalue = rand() % 100; // 出るか出ないか
 
-		if (Spawn_randvalue <= 40)
+		if (Spawn_randvalue <= 20)
 		{
 			int nSpawner = rand() % 3; // どこから出すか
 
@@ -491,7 +492,6 @@ void DrawGame(void)
 
 	// 軌跡の描画処理
 	DrawMeshSword();
-
 
 	// ダメージの描画処理
 	DrawDamege();

@@ -599,18 +599,37 @@ void UpdatePlayer(void)
 
 	if (CollisionBlock(&g_player.pos, &g_player.posOld, &g_player.move, &g_player.Size))
 	{
+		// モーションがジャンプだったら
+		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
+		{
+			// 着地のときに出す煙分
+			for (int nCnt = 0; nCnt < LANDINGEXPLOSION; nCnt++)
+			{
+				// 角度を求める
+				float fAngle = (D3DX_PI * 2.0f) / LANDINGEXPLOSION * nCnt;
+
+				// 煙を出す
+				SetExplosion(D3DXVECTOR3(g_player.pos.x, g_player.pos.y, g_player.pos.z), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+					60, 15.0f, 15.0f, EXPLOSION_LANDING);
+			}
+			SetMotion(&g_player.Motion, MOTIONTYPE_LANDING, MOTIONTYPE_NEUTRAL, true, 10); // モーションを着地にする
+		}
 		g_player.bJump = true; // ジャンプを可能にする
 	}
 	else if (CollisionField())
 	{
+		// モーションがジャンプだったら
 		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
 		{
+			// 着地のときに出す煙分
 			for (int nCnt = 0; nCnt < LANDINGEXPLOSION; nCnt++)
 			{
+				// 角度を求める
 				float fAngle = (D3DX_PI * 2.0f) / LANDINGEXPLOSION * nCnt;
 
+				// 煙を出す
 				SetExplosion(D3DXVECTOR3(g_player.pos.x,0.0f,g_player.pos.z),D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),
-					60,15.0f,15.0f,1);
+					60,15.0f,15.0f, EXPLOSION_LANDING);
 				g_player.pos.y = 0.0f;
 			}
 			SetMotion(&g_player.Motion, MOTIONTYPE_LANDING, MOTIONTYPE_NEUTRAL, true, 10); // モーションを着地にする
@@ -866,7 +885,9 @@ void UpdatePlayer(void)
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 
-	if (g_player.WeponMotion == MOTION_SPPIERCING && g_player.AttackSp && g_player.Motion.nKey == 21 && g_player.Motion.nCountMotion == 1)
+	if (g_player.WeponMotion == MOTION_SPPIERCING &&		// 槍のspモーションだったら
+		g_player.AttackSp && g_player.Motion.nKey == 21 &&  // モーションのキーが21番目
+		g_player.Motion.nCountMotion == 1)                  // モーションのフレームが1番目
 	{
 		SetParticle(g_player.pos,
 			D3DXVECTOR3(0.0f, 0.0f, 0.0f),

@@ -327,7 +327,8 @@ void UpdateBoss(void)
 			HitPlayer(50);
 		}
 
-		colisionSword(nCnt); // 剣との当たり判定
+		colisionSword(nCnt);   // 剣との当たり判定
+		CollisionToBoss(nCnt); // ボスとボスの当たり判定
 
 		// ループしないモーションが最後まで行ったら
 		if (!g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].bLoop && g_Boss[nCnt].Motion.nKey >= g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].nNumkey - 1)
@@ -1019,7 +1020,8 @@ void CollisionToBoss(int nCntBoss)
 		{
 			if (sphererange(&g_Boss[nCntBoss].pos, &g_Boss[nCnt].pos, 50.0f, 50.0f))
 			{
-				D3DXVECTOR3 vector = g_Boss[nCntBoss].pos - g_Boss[nCntBoss].pos;
+				D3DXVECTOR3 vector = g_Boss[nCntBoss].pos - g_Boss[nCnt].pos;
+
 				D3DXVec3Normalize(&vector, &vector);
 				g_Boss[nCntBoss].move.x -= vector.x * g_Boss[nCntBoss].Speed;
 				g_Boss[nCntBoss].move.z -= vector.z * g_Boss[nCntBoss].Speed;

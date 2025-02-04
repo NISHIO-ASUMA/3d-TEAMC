@@ -25,7 +25,7 @@
 //マクロ定義
 //****************************
 #define OBJ_MOVE (10.0f) // オブジェクトの移動量
-#define MAX_WORD (128)   // 文字数
+#define MAX_WORD (256)   // 文字数
 #define MAX_OBJ (256)    // 最大オブジェクト数
 
 //****************************
@@ -87,12 +87,6 @@ void InitEdit(void)
 			}
 		}
 	}
-
-	//pVtx[0].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
-	//pVtx[1].pos = D3DXVECTOR3(100,0.0f,0.0f);
-	//pVtx[2].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
-	//pVtx[3].pos = D3DXVECTOR3(100 * ,0.0f,0.0f);
-
 
 	g_nNumBlock = 0;												// オブジェクトの数の初期化
 	g_Edit[0].bUse = true;											// 一つ目を使用状態にする
@@ -373,7 +367,7 @@ void DrawEdit(void)
 		D3DXMatrixIdentity(&g_Edit[nCntBlock].mtxWorld);
 
 		//向きを反映
-		D3DXMatrixScaling(&mtxScal, g_Edit[nCntBlock].Scal.y, g_Edit[nCntBlock].Scal.x, g_Edit[nCntBlock].Scal.z);
+		D3DXMatrixScaling(&mtxScal, g_Edit[nCntBlock].Scal.x, g_Edit[nCntBlock].Scal.y, g_Edit[nCntBlock].Scal.z);
 		D3DXMatrixMultiply(&g_Edit[nCntBlock].mtxWorld, &g_Edit[nCntBlock].mtxWorld, &mtxScal);
 
 		//向きを反映
@@ -479,7 +473,7 @@ void SaveEdit(void)
 		}
 
 		fprintf(pFile, "BLOCK_COUNT = %d    # [ ブロックの配置数 ]\n", g_EditCount);
-		fprintf(pFile, "END_SCRIPT # この行は消さないでください!!");
+		fprintf(pFile, "END_SCRIPT          # この行は消さないでください");
 	}
 	else
 	{

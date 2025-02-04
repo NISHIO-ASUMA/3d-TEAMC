@@ -241,6 +241,11 @@ void UpdateMotion(MOTION *pMotion)
 		pMotion->bBlendMotion = false;			  // ‚à‚Æ‚É–ß‚·
 	}
 	
+	if (!pMotion->bBlendMotion && pMotion->bFinishMotion)
+	{
+		pMotion->motionType = MOTIONTYPE_NEUTRAL;
+	}
+
 	if (!pMotion->aMotionInfo[pMotion->motionType].bLoop &&
 		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
 	{

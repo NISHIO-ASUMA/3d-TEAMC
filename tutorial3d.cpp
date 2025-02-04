@@ -67,8 +67,8 @@ void InitTutorial3d(void)
 	// 爆発の初期化処理
 	InitExplosion();
 
-	// エディター画面の初期化処理
-	InitEdit();
+	//// エディター画面の初期化処理
+	//InitEdit();
 
 	// ステージを読み込む
 	tutoload();
@@ -130,8 +130,8 @@ void UninitTutorial3d(void)
 	// 爆発の終了処理
 	UninitExplosion();
 
-	// エディター画面の終了処理
-	UninitEdit();
+	//// エディター画面の終了処理
+	//UninitEdit();
 }
 //============================
 //チュートリアル3dの更新処理
@@ -161,7 +161,7 @@ void UpdateTutorial3d(void)
 
 	if (g_bEditMode2)
 	{// g_bEditMode2がture
-		UpdateEdit();
+		//UpdateEdit();
 	}
 	else
 	{
@@ -224,7 +224,7 @@ void DrawTutorial3d(void)
 
 	if (g_bEditMode2)
 	{// g_bEditMode2がtrue
-		DrawEdit();
+		//DrawEdit();
 	}
 }
 //============================
