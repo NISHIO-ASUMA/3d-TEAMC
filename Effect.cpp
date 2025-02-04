@@ -116,7 +116,7 @@ void UpdateEffect(void)
 			
 			//Žõ–½‚ðŒ¸‚ç‚µ“§–¾“x‚ð‰ÁŽZ‚³‚¹‚é
 			g_Effect[nCnt].nLife--;
-			g_Effect[nCnt].col.a -= 0.02f;
+			g_Effect[nCnt].col.a -= 1.0f / g_Effect[nCnt].nMaxLife;
 			pVtx[0].col = g_Effect[nCnt].col;
 			pVtx[1].col = g_Effect[nCnt].col;
 			pVtx[2].col = g_Effect[nCnt].col;
@@ -244,6 +244,7 @@ void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife, D3DXCOLOR col, float
 			g_Effect[nCntEffect].fSize = fSize;
 			g_Effect[nCntEffect].move = D3DXVECTOR3(sinf(g_Effect[nCntEffect].dir.y) * fSpeed, sinf(g_Effect[nCntEffect].dir.x) * fSpeed, cosf(g_Effect[nCntEffect].dir.y) * fSpeed);
 			g_Effect[nCntEffect].nLife = nLife;
+			g_Effect[nCntEffect].nMaxLife = nLife;
 			g_Effect[nCntEffect].bUse = true;
 			g_Effect[nCntEffect].col = col;
 			break;
@@ -282,6 +283,7 @@ void SetEffect2(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nLife, D3DXCOLOR col, flo
 			g_Effect[nCntEffect].fSpeed = fSpeed;
 			g_Effect[nCntEffect].fSize = fSize;
 			g_Effect[nCntEffect].nLife = nLife;
+			g_Effect[nCntEffect].nMaxLife = nLife;
 			g_Effect[nCntEffect].bUse = true;
 			g_Effect[nCntEffect].col = col;
 			break;

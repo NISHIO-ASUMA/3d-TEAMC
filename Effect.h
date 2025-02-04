@@ -22,6 +22,7 @@ typedef struct
 	D3DXVECTOR3 move;
 	D3DXMATRIX mtxWorld;
 	int nLife;
+	int nMaxLife;
 	float fSpeed;
 	float fSize;
 	bool bUse;
