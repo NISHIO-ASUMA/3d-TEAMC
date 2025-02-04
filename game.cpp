@@ -130,7 +130,7 @@ void InitGame(void)
 
 	// TODO : テスト用にセット
 	// ボスをセット
-	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000);
+	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 15000);
 
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));

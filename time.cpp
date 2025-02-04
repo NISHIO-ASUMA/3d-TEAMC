@@ -9,6 +9,7 @@
 // インクルードファイル
 //****************************
 #include"time.h"
+#include "boss.h"
 
 //****************************
 // マクロ定義
@@ -29,8 +30,10 @@ typedef struct
 //****************************
 LPDIRECT3DTEXTURE9 g_pTextureTimeMinute = NULL;			// テクスチャへのポインタ
 LPDIRECT3DTEXTURE9 g_pTextureTimeSecond = NULL;			// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureTimeCircle = NULL;		// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeMinute = NULL;	// 頂点バッファへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeSecond = NULL;	// 頂点バッファへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeCircle = NULL;	// 頂点バッファへのポインタ
 
 D3DXVECTOR3 g_posTime; // スコアの位置
 int g_nCountTime;      // タイムのカウント
@@ -62,12 +65,17 @@ void InitTime(void)
 		"data\\TEXTURE\\time001.png",
 		&g_pTextureTimeSecond);
 
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\timer_circle.png",
+		&g_pTextureTimeCircle);
+
 	//頂点バッファの生成・頂点情報の設定
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_NUM_TIME,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
-		&g_pVtxBuffTimeMinute,
+		&g_pVtxBuffTimeMinute, // 分
 		NULL);
 
 	//頂点バッファの生成・頂点情報の設定
@@ -75,7 +83,15 @@ void InitTime(void)
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
-		&g_pVtxBuffTimeSecond,
+		&g_pVtxBuffTimeSecond, // 秒
+		NULL);
+
+	//頂点バッファの生成・頂点情報の設定
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_2D,
+		D3DPOOL_MANAGED,
+		&g_pVtxBuffTimeCircle, // コロン
 		NULL);
 
 	g_pVtxBuffTimeMinute->Lock(0, 0, (void**)&pVtx, 0);
@@ -159,6 +175,35 @@ void InitTime(void)
 	// 頂点バッファのアンロック
 	g_pVtxBuffTimeSecond->Unlock();
 
+	// 頂点バッファのロック
+	g_pVtxBuffTimeCircle->Lock(0, 0, (void**)&pVtx, 0);
+
+	//頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(1090.0f,20.0f,0.0f);
+	pVtx[1].pos = D3DXVECTOR3(1110.0f,20.0f,0.0f);
+	pVtx[2].pos = D3DXVECTOR3(1090.0f,55.0f,0.0f);
+	pVtx[3].pos = D3DXVECTOR3(1110.0f,55.0f,0.0f);
+
+	//rhwの設定
+	pVtx[0].rhw = 1.0f;
+	pVtx[1].rhw = 1.0f;
+	pVtx[2].rhw = 1.0f;
+	pVtx[3].rhw = 1.0f;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+
+	//テクスチャの設定
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	// 頂点バッファをアンロック
+	g_pVtxBuffTimeCircle->Unlock();
 }
 //=====================
 //スコアの終了処理
@@ -205,6 +250,8 @@ void UpdateTime(void)
 
 	float offpos = 0.1f;
 
+	Boss* pBoss = Getboss();
+
 	g_nCountTime++;
 
 	if (g_nCountTime >= 60)
@@ -219,6 +266,13 @@ void UpdateTime(void)
 		{
 			g_nTimerSecond = 59;
 			g_nTimerMinute--;
+		}
+
+		if (g_nTimerSecond >= 60)
+		{
+			g_nTimerMinute++;
+
+			//g_nTimerSecond = ;
 		}
 	}
 	
@@ -301,6 +355,16 @@ void DrawTime(void)
 		}
 	}
 
+	pDevice->SetStreamSource(0, g_pVtxBuffTimeCircle, 0, sizeof(VERTEX_2D));
+
+	pDevice->SetFVF(FVF_VERTEX_2D);
+
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_pTextureTimeCircle);
+
+	//プレイヤーの描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);//プリミティブの種類
+
 }
 //=================
 // タイマーの取得処理
@@ -315,4 +379,18 @@ int GetTimeMinute(void)
 int GetTimeSecond(void)
 {
 	return g_nTimerSecond;
+}
+//========================
+// タイマー(分)の加算処理
+//========================
+void AddTimeMinute(int minute)
+{
+	g_nTimerMinute += minute;
+}
+//========================
+// タイマー(秒)の加算処理
+//========================
+void AddTimeSecond(int second)
+{
+	g_nTimerSecond += second;
 }

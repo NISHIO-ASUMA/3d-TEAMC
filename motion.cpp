@@ -272,9 +272,9 @@ void SetMotion(MOTION *pMotion,MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend
 		pMotion->nCounterBlend = 0;					 // 0から始める
 		pMotion->bBlendMotion = Blend;				 // ブレンドがあるかどうか
 		pMotion->nFrameBlend = nFrameBlend;			 // ブレンドのフレームを代入
-		pMotion->motiontypeBlend = motiontypeBlend;   // ブレンドするモーションのタイプを代入
+		pMotion->motiontypeBlend = motiontypeBlend;  // ブレンドするモーションのタイプを代入
 	}
-	pMotion->motionType = motiontype;			 // モーションのタイプを代入
-	pMotion->bFinishMotion = false;				 // もとに戻す
+	pMotion->motionType = motiontype;				 // モーションのタイプを代入
+	pMotion->bFinishMotion = false;				     // もとに戻す
 }
 

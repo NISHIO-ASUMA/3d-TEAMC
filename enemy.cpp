@@ -538,9 +538,8 @@ void HitEnemy(int nCnt,int nDamage)
 
 		if (pPlayer->FeverMode)
 		{
-			AddFever(5.0f);		// フィーバーポイントを取得
-			AddScore(8100);		// スコアを取得
-			AddSpgauge(2.0f);   // SPゲージを取得
+			AddScore(16000);		// スコアを取得
+			AddSpgauge(2.5f);   // SPゲージを取得
 		}
 		else if (!pPlayer->FeverMode)
 		{
