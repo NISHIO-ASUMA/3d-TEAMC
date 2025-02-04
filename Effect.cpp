@@ -116,7 +116,7 @@ void UpdateEffect(void)
 			
 			//Žõ–½‚ðŒ¸‚ç‚µ“§–¾“x‚ð‰ÁŽZ‚³‚¹‚é
 			g_Effect[nCnt].nLife--;
-			g_Effect[nCnt].col.a -= 0.04f;
+			g_Effect[nCnt].col.a -= 0.02f;
 			pVtx[0].col = g_Effect[nCnt].col;
 			pVtx[1].col = g_Effect[nCnt].col;
 			pVtx[2].col = g_Effect[nCnt].col;

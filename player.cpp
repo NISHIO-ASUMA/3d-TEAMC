@@ -857,6 +857,24 @@ void UpdatePlayer(void)
 		g_player.speed = 7.0f;
 		g_player.move.x += sinf(g_player.rot.y + D3DX_PI) * g_player.speed;
 		g_player.move.z += cosf(g_player.rot.y + D3DX_PI) * g_player.speed;
+		SetParticle(SwordPos,
+			g_player.rot,
+			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
+			2.0f, 4, 30, 60, 4.0f, 0.0f,
+			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	}
+
+	if (g_player.WeponMotion == MOTION_SPPIERCING && g_player.AttackSp && g_player.Motion.nKey == 21 && g_player.Motion.nCountMotion == 1)
+	{
+		SetParticle(g_player.pos,
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXVECTOR3(1.57f, 3.14f, 1.57f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+			6.0f, 4, 80, 500, 6.0f, 30.0f,
+			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 	//モーションの更新
 	UpdateMotion(&g_player.Motion);
