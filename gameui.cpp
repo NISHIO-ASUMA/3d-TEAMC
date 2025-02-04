@@ -253,6 +253,16 @@ void UpdateGameUI(void)
 			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
 		}
 			break;
+
+		case UITYPE_KATANA:
+
+			if (g_GameUI[nCnt].pos.x >= 650.0f)
+			{
+				g_GameUI[nCnt].pos.x -= 10.0f; // ¶‚ÉˆÚ“®
+			}
+
+			break;
+
 		default:
 			break;
 		}
