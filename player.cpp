@@ -1268,7 +1268,7 @@ void ThrowItem(void)
 
 	Boss* pBoss = Getboss();
 
-	if (sphererange(&g_player.pos, &pBoss->pos, 50.0f, 100.0f))
+	if (sphererange(&g_player.pos, &pBoss->pos, 50.0f, 100.0f) && pBoss->bUse)
 	{
 		D3DXVECTOR3 dest = pBoss->pos - pItem[nIdx].pos; // 近い敵の方向を求める
 		D3DXVec3Normalize(&dest, &dest); // 正規化する
@@ -1603,7 +1603,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	Boss* pBoss = Getboss();
 
 	// ボスがプレイヤーの近くにいたら
-	if (sphererange(&g_player.pos, &pBoss->pos, 50.0f, 100.0f))
+	if (sphererange(&g_player.pos, &pBoss->pos, 50.0f, 100.0f) && pBoss->bUse)
 	{
 		// 範囲にいる間だけロックオン
 		if (sphererange(&g_player.pos, &pBoss->pos, 150.0f, 150.0f))

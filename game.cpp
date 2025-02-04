@@ -38,6 +38,7 @@
 #include "meshsword.h"
 #include "spgauge.h"
 #include "boss.h"
+#include "icon.h"
 
 //****************************
 //グローバル変数
@@ -119,6 +120,9 @@ void InitGame(void)
 	// ボスの初期化処理
 	InitBoss();
 
+	// アイコンの初期化処理
+	InitIcon();
+
 	//エディットの初期化処理
 	InitEdit();
 
@@ -133,6 +137,7 @@ void InitGame(void)
 	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 15);
 	SetGameUI(D3DXVECTOR3(640.0f,340.0f,0.0f),UITYPE_RED,1280.0f,720.0f,0);
 
+	SetIcon(D3DXVECTOR3(50.0f, 600.0f, 0.0f), 40.0f, 40.0f, 0);
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
@@ -222,6 +227,9 @@ void UninitGame(void)
 
 	// ボスの終了処理
 	UninitBoss();
+
+	// アイコンの終了処理
+	UninitIcon();
 
 	//エディットの終了処理
 	UninitEdit();
@@ -376,12 +384,7 @@ void UpdateGame(void)
 			//HPゲージの更新処理
 			UpdateGauge();
 
-			//// 分と秒が0より上じゃないとうごかない
-			//if (TimeMinute >= 0 && TimeSecond >= 0)
-			//{
-			//	// タイマーの更新処理
-			//	UpdateTime();
-			//}
+			// タイマーの更新処理
 			UpdateTime();
 
 			//壁の更新処理
@@ -395,6 +398,9 @@ void UpdateGame(void)
 
 			// ボスの更新処理
 			UpdateBoss();
+
+			// アイコンの更新処理
+			UpdateIcon();
 
 		}
 		else if (g_bEditMode)
@@ -472,6 +478,9 @@ void DrawGame(void)
 
 	// SPゲージの描画処理
 	DrawSPgauge();
+
+	// アイコンの描画処理
+	DrawIcon();
 
 	// ゲームのUIの描画処理
 	DrawGameUI();

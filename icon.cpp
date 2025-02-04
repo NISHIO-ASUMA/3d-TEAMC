@@ -137,6 +137,9 @@ void UpdateIcon()
 //===============================
 void DrawIcon()
 {
+	Item* pItem = GetItem();
+	Player* pPlayer = GetPlayer();
+
 	// デバイスのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
@@ -150,8 +153,10 @@ void DrawIcon()
 	{
 		if (g_Icon[nCnt].bUse)
 		{
+			int nType = pItem[pPlayer->ItemIdx].nType;
+
 			// テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureIcon[g_Icon[nCnt].nType]);
+			pDevice->SetTexture(0, g_pTextureIcon[nType]);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
