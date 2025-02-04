@@ -854,9 +854,9 @@ void UpdatePlayer(void)
 
 	if (g_player.WeponMotion == MOTION_SPHAMMER && g_player.AttackSp && g_player.Motion.nKey <= 15)
 	{
-		g_player.speed = 7.0f;
-		g_player.move.x += sinf(g_player.rot.y + D3DX_PI) * g_player.speed;
-		g_player.move.z += cosf(g_player.rot.y + D3DX_PI) * g_player.speed;
+		g_player.speed = 7.0f; // スピードを設定
+		g_player.move.x += sinf(g_player.rot.y + D3DX_PI) * g_player.speed; // 移動量を加算
+		g_player.move.z += cosf(g_player.rot.y + D3DX_PI) * g_player.speed; // 移動量を加算
 		SetParticle(SwordPos,
 			g_player.rot,
 			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
@@ -875,8 +875,7 @@ void UpdatePlayer(void)
 			D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
 			6.0f, 4, 80, 500, 6.0f, 30.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	}
-	//モーションの更新
+	}	//モーションの更新
 	UpdateMotion(&g_player.Motion);
 
 	//プレイヤーの向きを目的の向きに近づける
