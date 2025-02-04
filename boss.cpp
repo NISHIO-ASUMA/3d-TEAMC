@@ -299,6 +299,49 @@ void UpdateBoss(void)
 		
 		// モーションの更新処理
 		UpdateMotion(&g_Boss.Motion);
+
+		if (g_Boss.Motion.motionType == MOTIONTYPE_ACTION)
+		{
+			if (g_Boss.Motion.nKey == 0 || g_Boss.Motion.nKey == 1)
+			{
+				float fAngle = atan2f(pPlayer->pos.x - g_Boss.pos.x, pPlayer->pos.z - g_Boss.pos.z);
+
+				// ボスの向き代入
+				g_Boss.rot.y = fAngle + D3DX_PI;
+			}
+			else if (g_Boss.Motion.nKey == 2)
+			{
+				if (g_Boss.Motion.nCountMotion == 1)
+				{
+					SetParticle(D3DXVECTOR3(g_Boss.pos.x, g_Boss.pos.y + g_Boss.Size.y / 1.5f, g_Boss.pos.z),
+						D3DXVECTOR3(1.57f, g_Boss.rot.y, 1.57f),
+						D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+						2.0f, 3, 20, 150, 4.0f, 50.0f,
+						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				}
+			}
+			else if (g_Boss.Motion.nKey == 3)
+			{
+				if (g_Boss.Motion.nCountMotion == 1)
+				{
+					g_Boss.move.x = sinf(g_Boss.rot.y + D3DX_PI) * 70;
+					g_Boss.move.z = cosf(g_Boss.rot.y + D3DX_PI) * 70;
+				}
+				else
+				{
+					g_Boss.pos += g_Boss.move;
+					SetParticle(D3DXVECTOR3(g_Boss.pos.x, g_Boss.pos.y + g_Boss.Size.y / 1.5f, g_Boss.pos.z),
+						g_Boss.rot,
+						D3DXVECTOR3(1.0f, 1.0f, 1.0f), 
+						D3DXVECTOR3(0.0f, 0.0f, 0.0f), 
+						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f), 
+						2.0f, 4, 60, 40, 6.0f, 60.0f, 
+						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				}
+			}
+		}
 	}
 }
 //=============================
