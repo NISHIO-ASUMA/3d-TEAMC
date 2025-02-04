@@ -15,6 +15,7 @@
 #include "player.h"
 #include "Shadow.h"
 #include "block.h"
+#include "Damagepop.h"
 
 //****************************
 // マクロ定義
@@ -242,9 +243,9 @@ void UpdateBoss(void)
 		}
 
 		// 攻撃範囲に入ったら
-		if (sphererange(&pPlayer->pos, &g_Boss.pos, 50.0f, 30.0f))
+		if (sphererange(&pPlayer->pos, &g_Boss.pos, 50.0f, 30.0f)&& g_Boss.AttackState != BOSSATTACK_ATTACK)
 		{
-			g_Boss.Motion.motionType = MOTIONTYPE_ACTION; // モーションの種類を攻撃にする
+			g_Boss.Motion.motionType = MOTIONTYPE_ACTION; // モーションを攻撃にする
 			g_Boss.AttackState = BOSSATTACK_ATTACK;       // 攻撃している
 		}
 
@@ -261,7 +262,7 @@ void UpdateBoss(void)
 		// ループしないモーションが最後まで行ったら
 		if (!g_Boss.Motion.aMotionInfo[g_Boss.Motion.motionType].bLoop && g_Boss.Motion.nKey >= g_Boss.Motion.aMotionInfo[g_Boss.Motion.motionType].nNumkey - 1)
 		{
-			g_Boss.Motion.motionType = MOTIONTYPE_NEUTRAL; 		// ボスのモーションをニュートラルにもどす
+			//g_Boss.Motion.motionType = MOTIONTYPE_NEUTRAL; 		// ボスのモーションをニュートラルにもどす
 			g_Boss.AttackState = BOSSATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
 
@@ -402,6 +403,12 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 void HitBoss(int nDamage)
 {
 	g_Boss.nLife -= nDamage;
+
+	// ダメージを設定
+	SetDamege(D3DXVECTOR3(g_Boss.pos.x, g_Boss.pos.y + g_Boss.Size.y / 1.5f, g_Boss.pos.z), // 位置
+		nDamage,	// ダメージ																								
+		20,			// 寿命
+		false);
 
 	if (g_Boss.nLife <= 0)
 	{
