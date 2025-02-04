@@ -137,7 +137,8 @@ void InitGame(void)
 	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 15);
 	SetGameUI(D3DXVECTOR3(640.0f,340.0f,0.0f),UITYPE_RED,1280.0f,720.0f,0);
 
-	SetIcon(D3DXVECTOR3(50.0f, 600.0f, 0.0f), 40.0f, 40.0f, 0);
+	SetIcon(D3DXVECTOR3(80.0f, 550.0f, 0.0f), 80.0f, 80.0f, 0);
+
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
@@ -467,17 +468,18 @@ void DrawGame(void)
 	// 軌跡の描画処理
 	DrawMeshSword();
 
+
 	// ダメージの描画処理
 	DrawDamege();
 
 	// スコアの描画処理
 	DrawScore();
 
-    //プレイヤーの影の描画処理
-    DrawShadow();
-
 	// SPゲージの描画処理
 	DrawSPgauge();
+
+	// 影の描画処理
+	DrawShadow();
 
 	// アイコンの描画処理
 	DrawIcon();

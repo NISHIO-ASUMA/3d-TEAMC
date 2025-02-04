@@ -107,9 +107,6 @@ void InitPlayer(void)
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)
 	{
-		//LoadWepon(); // アイテムのロード
-
-
 		LoadMotion(0);
 		LoadMotion(1);
 		LoadMotion(2);
@@ -117,11 +114,12 @@ void InitPlayer(void)
 		LoadMotion(4);
 		LoadMotion(5);
 		LoadMotion(6);
+		LoadMotion(7);
+		LoadMotion(8);
 
 		// 切り替わるモーションの数だけ
 		for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
 		{
-
 		}
 
 		g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f);
@@ -355,6 +353,7 @@ void UninitPlayer(void)
 void UpdatePlayer(void)
 {
 	Camera* pCamera = GetCamera();
+	Item* pItem = GetItem();
 
 		/*StickPad();*/
 
@@ -723,8 +722,6 @@ void UpdatePlayer(void)
 		g_player.nDamage = g_player.nStockDamage;
 	}
 
-	Item* pItem = GetItem();
-
 	// 武器を持っているかつプレイヤーの持っているアイテムが壊れた
 	if (g_player.Motion.nNumModel == 16 && g_player.Itembreak[g_player.ItemIdx])
 	{
@@ -800,7 +797,7 @@ void UpdatePlayer(void)
 		FiverCnt = 0; // 制限回数をリセット
 	}
 
-	// スペシャル
+	// スペシャルモードになった時の攻撃
 	if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.nNumModel == 16 && g_player.HandState != PLAYERHOLD_HOLD)
 	{
 		if (g_player.Combostate == COMBO_NO && // 攻撃していない
@@ -815,24 +812,28 @@ void UpdatePlayer(void)
 				g_player.SwordOffpos.y = 250.0f;
 				MotionChange(MOTION_SP, 0);
 				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
+				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_ONE_HAND:
 				g_player.SwordOffpos.y = 250.0f;
-				MotionChange(MOTION_SP, 0);
-				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
+				MotionChange(MOTION_ONEHANDBLOW, 0);
+				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_BIGWEPON:
 				g_player.SwordOffpos.y = 100.0f;
 				MotionChange(MOTION_SPHAMMER, 0);
+				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
+				break;
+			case MOTION_PIERCING:
+				g_player.SwordOffpos.y = 200.0f;
+				MotionChange(MOTION_SPPIERCING, 0);
+				PlayerComb(MOTIONTYPE_ACTION, 180, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			default:
 				break;
 			}
-			PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 		}
 	}
-
-	// スペシャルモードになった時の攻撃
 
 	// スペシャルモーションを発動したら
 	if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.AttackSp)
@@ -853,7 +854,7 @@ void UpdatePlayer(void)
 
 	if (g_player.WeponMotion == MOTION_SPHAMMER && g_player.AttackSp && g_player.Motion.nKey <= 15)
 	{
-		g_player.speed = 5.0f;
+		g_player.speed = 7.0f;
 		g_player.move.x += sinf(g_player.rot.y + D3DX_PI) * g_player.speed;
 		g_player.move.z += cosf(g_player.rot.y + D3DX_PI) * g_player.speed;
 	}
@@ -1205,11 +1206,18 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 
 			fRadius = (fRadius * fRadius); // 半径を求める
 
-			if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 3)
+			if (fDistance <= fRadius &&g_player.WeponMotion != MOTION_SPPIERCING &&
+				pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 3)
 			{
 				HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
 				break;
 			}
+		}
+
+		if (sphererange(&g_player.pos, &pEnemy->pos, 200.0f, 50.0f) && g_player.WeponMotion == MOTION_SPPIERCING &&
+			pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 19)
+		{
+			HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
 		}
 	}
 }
@@ -1413,8 +1421,10 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 
 			pItem[nIdx].bUse = false;      // 消す
-
+			
 			bFirstChange = true;
+			pItem[nIdx].state = ITEMSTATE_HOLD;
+
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 			//g_player.nOldItem = pItem[nIdx].nType;	   // インデックスを渡す
 
@@ -1425,7 +1435,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 70);
 				break;
 			case ITEMTYPE_GOLF:
-				MotionChange(MOTION_DBHAND,0);
+				MotionChange(MOTION_KATANA,0);
 				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_HUNMER:
@@ -1449,7 +1459,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				StatusChange(3.7f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_LIGHTWOOD:
-				MotionChange(MOTION_ONE_HAND, 0);
+				MotionChange(MOTION_KATANA, 0);
 				StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_HARISEN:
@@ -1461,7 +1471,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				StatusChange(3.4f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 				break;
 			case ITEMTYPE_ICEBLOCKSOWRD:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_KATANA, 0);
 				StatusChange(2.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
 				break;
 			case ITEMTYPE_IRON:
@@ -1481,7 +1491,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				StatusChange(3.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 				break;
 			case ITEMTYPE_TORCHSWORD:
-				MotionChange(MOTION_DBHAND, 0);
+				MotionChange(MOTION_KATANA, 0);
 				StatusChange(2.9f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 100);
 				break;
 			case ITEMTYPE_HEADSTATUE:
@@ -1704,6 +1714,12 @@ void LoadMotion(int Weponmotion)
 		break;
 	case MOTION_SPHAMMER:
 		pFile = fopen("data\\MOTION_CHANGE\\sphammer.txt", "r");
+		break;
+	case MOTION_ONEHANDBLOW:
+		pFile = fopen("data\\MOTION_CHANGE\\sponehandblow.txt", "r");
+		break;
+	case MOTION_SPPIERCING:
+		pFile = fopen("data\\MOTION_CHANGE\\sppiercing.txt", "r");
 		break;
 	default:
 		pFile = NULL;

@@ -16,6 +16,7 @@
 #include "player.h"
 #include "explosion.h"
 #include "HPGauge.h"
+#include "Shadow.h"
 
 //****************************
 //マクロ定義
@@ -191,9 +192,10 @@ void UpdateItem(void)
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		// プレイヤーがものを持っているかつ攻撃モーションのキーが3になったら
-		if (pPlayer->HandState == PLAYERHOLD_HOLD && pPlayer->Motion.nKey == 3 && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
+		if (!pPlayer->AttackSp&&pPlayer->HandState == PLAYERHOLD_HOLD && pPlayer->Motion.nKey == 3 && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
 		{
 			ThrowItem();
+			
 		}
 		
 		if (!g_Item[nCntItem].bUse)

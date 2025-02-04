@@ -151,7 +151,7 @@ void DrawIcon()
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
-		if (g_Icon[nCnt].bUse)
+		if (g_Icon[nCnt].bUse && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
 		{
 			int nType = pItem[pPlayer->ItemIdx].nType;
 
