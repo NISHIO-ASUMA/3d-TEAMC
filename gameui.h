@@ -68,4 +68,5 @@ void UpdateGameUI(void); // UI‚ÌXVˆ—
 void DrawGameUI(void);	 // UI‚Ì•`‰æˆ—
 void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUseTime);
 void FlashGameUI(int nSelect);
+
 #endif
