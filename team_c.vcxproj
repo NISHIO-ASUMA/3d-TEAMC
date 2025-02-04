@@ -204,7 +204,6 @@
     <ClInclude Include="HPGauge.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="item.h" />
-    <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="meshfield.h" />
     <ClInclude Include="meshsword.h" />
@@ -221,7 +220,6 @@
     <ClInclude Include="resultscore.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Shadow.h" />
-    <ClInclude Include="sound.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="title.h" />
