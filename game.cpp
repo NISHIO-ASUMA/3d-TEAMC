@@ -134,7 +134,6 @@ void InitGame(void)
 
 	// TODO : テスト用にセット
 	// ボスをセット
-	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 15);
 	SetGameUI(D3DXVECTOR3(640.0f,340.0f,0.0f),UITYPE_RED,1280.0f,720.0f,0);
 
 	SetIcon(D3DXVECTOR3(80.0f, 550.0f, 0.0f), 80.0f, 80.0f, 0);
@@ -255,6 +254,31 @@ void UpdateGame(void)
 	// タイマーの取得
 	int TimeMinute = GetTimeMinute(); // 分
 	int TimeSecond = GetTimeSecond(); // 秒
+
+	if (g_EnemyWaveTime >= 900 || nNumEnemy <= 0)
+	{
+		int Spawn_randvalue = rand() % 100; // 出るか出ないか
+
+		if (Spawn_randvalue <= 40)
+		{
+			int nSpawner = rand() % 3; // どこから出すか
+
+			switch (nSpawner)
+			{
+			case 0:
+				SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+				break;
+			case 1:
+				SetBoss(D3DXVECTOR3(-526.0f, 0.0f, -455.0f), 3.0f, 10000); // ボスをセット
+				break;
+			case 2:
+				SetBoss(D3DXVECTOR3(-506.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+				break;
+			default:
+				break;
+			}
+		}
+	}
 
 	// 敵が出てくるまでの時間
 	if (g_EnemyWaveTime >= 900 || nNumEnemy <= 0)
