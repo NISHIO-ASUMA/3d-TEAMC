@@ -95,7 +95,7 @@ void UpdateLight(void)
 		// ƒ‰ƒCƒg‚ð—LŒø‚É‚·‚é(ON,OFF)
 		pDevice->LightEnable(0, TRUE);
 	}
-	else if(!pPlayer->FeverMode && pPlayer->WeponMotion != MOTION_SP)
+	else if(!pPlayer->FeverMode && !pPlayer->AttackSp)
 	{
 		for (int nCnt1 = 0; nCnt1 < MAX_LIGHT; nCnt1++)
 		{

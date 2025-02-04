@@ -160,7 +160,7 @@ void UpdateSPgauge(void)
 			if (pPlayer->SpMode)
 			{
 				// ”­“®‚µ‚½uŠÔ
-				if (pPlayer->WeponMotion == MOTION_SP &&
+				if (pPlayer->AttackSp &&
 					pPlayer->Motion.motionType == MOTIONTYPE_ACTION &&
 					pPlayer->Motion.nKey == 0&&
 					pPlayer->Motion.nCountMotion==1)
@@ -245,7 +245,7 @@ void AddSpgauge(float fValue)
 	// ƒvƒŒƒCƒ„[‚Ìæ“¾
 	Player* pPlayer = GetPlayer();
 
-	if (g_SPgauge[1].SpGauge < 300.0f && pPlayer->WeponMotion !=MOTION_SP)
+	if (g_SPgauge[1].SpGauge < 300.0f && !pPlayer->AttackSp)
 	{
 		// ‰ÁZˆ—
 		g_SPgauge[1].SpGauge += fValue;

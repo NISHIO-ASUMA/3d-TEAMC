@@ -10,6 +10,7 @@
 //****************************
 #include"time.h"
 #include "boss.h"
+#include "game.h"
 
 //****************************
 // マクロ定義
@@ -251,32 +252,78 @@ void UpdateTime(void)
 	float offpos = 0.1f;
 
 	Boss* pBoss = Getboss();
+	GAMESTATE gamestate = GetGameState();
 
-	g_nCountTime++;
-
-	if (g_nCountTime >= 60)
+	// ゲームが続いているなら
+	if (gamestate != GAMESTATE_END)
 	{
-		g_nCountTime = 0;
+		g_nCountTime++;
 
-		if (g_nTimerSecond > 0)
+		if (g_nCountTime >= 60)
 		{
-			g_nTimerSecond--;
-		}
-		else if(g_nTimerSecond <= 0)
-		{
-			g_nTimerSecond = 59;
-			g_nTimerMinute--;
+			g_nCountTime = 0;
+
+			if (g_nTimerSecond > 0)
+			{
+				g_nTimerSecond--;
+			}
+			else if (g_nTimerSecond <= 0)
+			{
+				g_nTimerSecond = 59;
+				g_nTimerMinute--;
+			}
 		}
 
+		// 60を超えたら
 		if (g_nTimerSecond >= 60)
 		{
-			g_nTimerMinute++;
+			g_nTimerMinute++; // 分を1増やす
 
-			//g_nTimerSecond = ;
+			// 余りが0じゃなかったら(60より上だったら)
+			if (g_nTimerSecond % 60 != 0)
+			{
+				int Time = g_nTimerSecond % 60; // 余りを求める
+
+				g_nTimerSecond = 0; // 0にする
+				g_nTimerSecond += Time; // 余りを加算する
+			}
+			else
+			{
+				g_nTimerSecond = 0; // 0にする
+			}
 		}
 	}
-	
 	g_pVtxBuffTimeMinute->Lock(0, 0, (void**)&pVtx, 0);
+
+	if (g_nTimerMinute <= 0 && g_nTimerSecond <= 10)
+	{
+		//頂点カラーの設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+
+		//頂点カラーの設定
+		pVtx[4].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[5].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[6].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[7].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+
+	}
+	else
+	{
+		//頂点カラーの設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+
+		//頂点カラーの設定
+		pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	}
 
 	//テクスチャの設定
 	pVtx[0].tex = D3DXVECTOR2(offpos * Min10,0.0f);
@@ -293,6 +340,36 @@ void UpdateTime(void)
 	g_pVtxBuffTimeMinute->Unlock();
 
 	g_pVtxBuffTimeSecond->Lock(0, 0, (void**)&pVtx, 0);
+
+	if (g_nTimerMinute <= 0 && g_nTimerSecond <= 10)
+	{
+		//頂点カラーの設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+
+		//頂点カラーの設定
+		pVtx[4].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[5].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[6].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+		pVtx[7].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+
+	}
+	else
+	{
+		//頂点カラーの設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+
+		//頂点カラーの設定
+		pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	}
 
 	//テクスチャの設定
 	pVtx[0].tex = D3DXVECTOR2(offpos * Second10, 0.0f);

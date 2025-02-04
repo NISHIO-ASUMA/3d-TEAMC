@@ -130,7 +130,8 @@ void InitGame(void)
 
 	// TODO : テスト用にセット
 	// ボスをセット
-	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 15000);
+	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 15);
+	SetGameUI(D3DXVECTOR3(640.0f,340.0f,0.0f),UITYPE_RED,1280.0f,720.0f,0);
 
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
@@ -375,12 +376,13 @@ void UpdateGame(void)
 			//HPゲージの更新処理
 			UpdateGauge();
 
-			// 分と秒が0より上じゃないとうごかない
-			if (TimeMinute >= 0 && TimeSecond >= 0)
-			{
-				// タイマーの更新処理
-				UpdateTime();
-			}
+			//// 分と秒が0より上じゃないとうごかない
+			//if (TimeMinute >= 0 && TimeSecond >= 0)
+			//{
+			//	// タイマーの更新処理
+			//	UpdateTime();
+			//}
+			UpdateTime();
 
 			//壁の更新処理
 			UpdateWall();

@@ -102,6 +102,7 @@ void InitPlayer(void)
 	g_player.FeverMode = false;
 	g_player.SpMode = false;
 	g_player.WeponMotion = MOTION_KATANA;
+	g_player.AttackSp = false;
 
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)
@@ -115,6 +116,7 @@ void InitPlayer(void)
 		LoadMotion(3);
 		LoadMotion(4);
 		LoadMotion(5);
+		LoadMotion(6);
 
 		// 切り替わるモーションの数だけ
 		for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
@@ -155,6 +157,7 @@ void InitPlayer(void)
 			g_LoadPlayer[nCntPlayer].fStockSpeed = 3.5f;
 			g_LoadPlayer[nCntPlayer].FeverMode = false;
 			g_LoadPlayer[nCntPlayer].SpMode = false;
+			g_LoadPlayer[nCntPlayer].AttackSp = false;
 
 			// アイテム分回す
 			for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -650,7 +653,7 @@ void UpdatePlayer(void)
 	//SetEffect(D3DXVECTOR3(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1, 20.0f);
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (g_player.bDisp && !bNohand && g_player.WeponMotion != MOTION_SP)
+	if (g_player.bDisp && !bNohand && !g_player.AttackSp)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))&&g_player.Combostate == COMBO_NO && g_AttackState <= 30)
 		{
@@ -671,7 +674,7 @@ void UpdatePlayer(void)
 	}
 
 	// 投げ物を持っているときの攻撃
-	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand && g_player.WeponMotion != MOTION_SP)
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand && !g_player.AttackSp)
 	{
 		PlayerComb(MOTIONTYPE_ACTION, 40, 20, COMBO_ATTACK1); // コンボ1
 	}
@@ -786,7 +789,7 @@ void UpdatePlayer(void)
 
 	static int FiverCnt = 0; // 回数制限
 
-	if (g_player.FeverMode && FiverCnt == 0 && g_player.WeponMotion != MOTION_SP)
+	if (g_player.FeverMode && FiverCnt == 0 && !g_player.AttackSp)
 	{
 		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, 0);
 		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
@@ -800,33 +803,60 @@ void UpdatePlayer(void)
 	// スペシャル
 	if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.nNumModel == 16 && g_player.HandState != PLAYERHOLD_HOLD)
 	{
-		if (g_player.Combostate == COMBO_NO && g_player.WeponMotion != MOTION_SP && g_player.SpMode)
+		if (g_player.Combostate == COMBO_NO && // 攻撃していない
+			!g_player.AttackSp &&              // SP技を発動していない
+			g_player.SpMode)                   // SPゲージがたまった
 		{
-			g_player.SwordOffpos.y = 250.0f;
-			MotionChange(MOTION_SP, 0);
+			g_player.AttackSp = true;          // SP技を発動している
+
+			switch (g_player.WeponMotion)
+			{
+			case MOTION_KATANA:
+				g_player.SwordOffpos.y = 250.0f;
+				MotionChange(MOTION_SP, 0);
+				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
+				break;
+			case MOTION_ONE_HAND:
+				g_player.SwordOffpos.y = 250.0f;
+				MotionChange(MOTION_SP, 0);
+				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
+				break;
+			case MOTION_BIGWEPON:
+				g_player.SwordOffpos.y = 100.0f;
+				MotionChange(MOTION_SPHAMMER, 0);
+				break;
+			default:
+				break;
+			}
 			PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
-			SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
 		}
 	}
 
 	// スペシャルモードになった時の攻撃
 
 	// スペシャルモーションを発動したら
-	if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.WeponMotion == MOTION_SP)
+	if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.AttackSp)
 	{
 		// パーティクル
 		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	}
 
 	// スペシャルモーションからもとに戻す
-	if (g_player.WeponMotion == MOTION_SP && g_player.Motion.nKey >= g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION].nNumkey - 1)
+	if (g_player.AttackSp && g_player.Motion.nKey >= g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION].nNumkey - 1)
 	{
 		g_player.SwordOffpos.y = 65.0f;		// 判定の長さを戻す
 		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
 		g_player.Motion.nNumModel = 15;		// 武器を消す
 		g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
+		g_player.AttackSp = false;
 	}
 
+	if (g_player.WeponMotion == MOTION_SPHAMMER && g_player.AttackSp && g_player.Motion.nKey <= 15)
+	{
+		g_player.speed = 5.0f;
+		g_player.move.x += sinf(g_player.rot.y + D3DX_PI) * g_player.speed;
+		g_player.move.z += cosf(g_player.rot.y + D3DX_PI) * g_player.speed;
+	}
 	//モーションの更新
 	UpdateMotion(&g_player.Motion);
 
@@ -995,7 +1025,7 @@ void SetMtxPos(void)
 //======================
 void HitPlayer(int nDamage)
 {
-	if (g_player.WeponMotion != MOTION_SP)
+	if (!g_player.AttackSp)
 	{
 		g_player.nLife -= nDamage;
 
@@ -1084,7 +1114,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 
 	D3DXVECTOR3 mtxDis,SwordPos;
 
-	if (g_player.Motion.nNumModel == 16 && g_player.WeponMotion != MOTION_SP)
+	if (g_player.Motion.nNumModel == 16 && !g_player.AttackSp)
 	{
 		//剣の長さを求める
 		mtxDis.x = (g_player.SwordMtx._41 - g_player.Motion.aModel[15].mtxWorld._41);
@@ -1129,7 +1159,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			}
 		}
 	}
-	else if(g_player.Motion.nNumModel == 15 && g_player.WeponMotion != MOTION_SP)
+	else if(g_player.Motion.nNumModel == 15 && !g_player.AttackSp)
 	{
 		// モデルの位置を変数に代入
 		D3DXVECTOR3 ModelPos(g_player.Motion.aModel[4].mtxWorld._41, g_player.Motion.aModel[4].mtxWorld._42, g_player.Motion.aModel[4].mtxWorld._43);
@@ -1143,7 +1173,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			}
 		}
 	}
-	else if (g_player.Motion.nNumModel == 16 && g_player.WeponMotion == MOTION_SP)
+	else if (g_player.Motion.nNumModel == 16 && g_player.AttackSp)
 	{
 		//剣の長さを求める
 		mtxDis.x = (g_player.SwordMtx._41 - g_player.Motion.aModel[15].mtxWorld._41);
@@ -1671,6 +1701,9 @@ void LoadMotion(int Weponmotion)
 		break;
 	case MOTION_SP:
 		pFile = fopen("data\\MOTION_CHANGE\\sp.txt", "r");
+		break;
+	case MOTION_SPHAMMER:
+		pFile = fopen("data\\MOTION_CHANGE\\sphammer.txt", "r");
 		break;
 	default:
 		pFile = NULL;

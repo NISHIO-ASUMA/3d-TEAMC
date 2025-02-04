@@ -338,7 +338,7 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL; // 範囲外だったらニュートラルに戻す
 		}
 
-		if (pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
+		if (pPlayer->AttackSp && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
 		{
 			//CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 50.0f, 10.0f);
 		}

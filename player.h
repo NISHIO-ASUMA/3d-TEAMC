@@ -125,6 +125,7 @@ typedef enum
 	MOTION_ONE_HAND,
 	MOTION_PIERCING,
 	MOTION_SP,
+	MOTION_SPHAMMER,
 	MOTION_MAX
 }WEPONMOTION; // égÇ¢Ç‹ÇÌÇπÇÈÇ‡ÇÃÇÕégÇ¢Ç‹ÇÌÇ∑
 
@@ -174,6 +175,7 @@ typedef struct
 	bool Itembreak[MAX_ITEM];
 	bool FeverMode;
 	bool SpMode;
+	bool AttackSp;  // spçUåÇÇÇµÇƒÇ¢ÇÈÇ©
 }Player;
 
 //**************************

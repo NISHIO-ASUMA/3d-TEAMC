@@ -240,7 +240,7 @@ void UpdateGameUI(void)
 				fcolorA += 0.01f; // インクリメント
 			}
 
-			if (pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.nKey == 4)
+			if (pPlayer->AttackSp && pPlayer->Motion.nKey == 4)
 			{
 				g_GameUI[nCnt].bUse = false; // 消す
 				fcolorA = 0.0f; // 初期化
@@ -262,7 +262,25 @@ void UpdateGameUI(void)
 			}
 
 			break;
+		case UITYPE_RED:
 
+			if (pPlayer->nLife <= 150)
+			{
+				//頂点カラーの設定
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
+			}
+			else
+			{
+				//頂点カラーの設定
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+			}
+			break;
 		default:
 			break;
 		}

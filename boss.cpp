@@ -283,7 +283,7 @@ void UpdateBoss(void)
 		// 攻撃範囲に入った
 		if (sphererange(&pPlayer->pos, &g_Boss.pos, 50.0f, 20.0f) &&
 			pPlayer->state != PLAYERSTATE_DAMAGE &&
-			g_Boss.Motion.nKey >= 4 && pPlayer->WeponMotion != MOTION_SP)
+			g_Boss.Motion.nKey >= 4 && !pPlayer->AttackSp)
 		{
 			HitPlayer(50);
 		}
@@ -470,7 +470,7 @@ void HitBoss(int nDamage)
 			AddScore(15000);		// スコアを取得
 			AddSpgauge(2.0f);   // SPゲージを取得
 		}
-		AddTimeSecond(59);
+		AddTimeSecond(15); // 15秒増やす
 	}
 	else
 	{
@@ -815,7 +815,7 @@ void colisionSword(void)
 
 	D3DXVECTOR3 mtxDis, SwordPos;
 
-	if (pPlayer->Motion.nNumModel == 16 && pPlayer->WeponMotion != MOTION_SP)
+	if (pPlayer->Motion.nNumModel == 16 && !pPlayer->AttackSp)
 	{
 		//剣の長さを求める
 		mtxDis.x = (pPlayer->SwordMtx._41 - pPlayer->Motion.aModel[15].mtxWorld._41);
@@ -861,7 +861,7 @@ void colisionSword(void)
 			}
 		}
 	}
-	else if (pPlayer->Motion.nNumModel == 15 && pPlayer->WeponMotion != MOTION_SP)
+	else if (pPlayer->Motion.nNumModel == 15 && !pPlayer->AttackSp)
 	{
 		// モデルの位置を変数に代入
 		D3DXVECTOR3 ModelPos(pPlayer->Motion.aModel[4].mtxWorld._41, pPlayer->Motion.aModel[4].mtxWorld._42, pPlayer->Motion.aModel[4].mtxWorld._43);
@@ -875,7 +875,7 @@ void colisionSword(void)
 			}
 		}
 	}
-	else if (pPlayer->Motion.nNumModel == 16 && pPlayer->WeponMotion == MOTION_SP)
+	else if (pPlayer->Motion.nNumModel == 16 && pPlayer->AttackSp)
 	{
 		//剣の長さを求める
 		mtxDis.x = (pPlayer->SwordMtx._41 - pPlayer->Motion.aModel[15].mtxWorld._41);

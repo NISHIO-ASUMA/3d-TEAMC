@@ -252,7 +252,8 @@ void DrawMeshSword(void)
 		pPlayer->Motion.motionType == MOTIONTYPE_ACTION3 ||
 		pPlayer->Motion.motionType == MOTIONTYPE_ACTION4) &&
 		pPlayer->Motion.nNumModel != 15 &&
-		pPlayer->HandState != PLAYERHOLD_HOLD)
+		pPlayer->HandState != PLAYERHOLD_HOLD&&
+		pPlayer->WeponMotion != MOTION_SPHAMMER)
 	{
 		// ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_MeshSword.mtxWorldMeshSword);
