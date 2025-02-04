@@ -156,8 +156,13 @@
     <ClCompile Include="effectEdit.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="icon.cpp">
       <Filter>ソース ファイル</Filter>
+=======
+    <ClCompile Include="time.cpp">
+      <Filter>ソース ファイル\UI</Filter>
+>>>>>>> d3d8bc7df3e4890098a1c84eb7e67e2b6ece0a5e
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,8 +283,13 @@
     <ClInclude Include="effectEdit.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="icon.h">
       <Filter>ヘッダー ファイル</Filter>
+=======
+    <ClInclude Include="time.h">
+      <Filter>ヘッダー ファイル\UI</Filter>
+>>>>>>> d3d8bc7df3e4890098a1c84eb7e67e2b6ece0a5e
     </ClInclude>
   </ItemGroup>
 </Project>

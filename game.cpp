@@ -108,7 +108,7 @@ void InitGame(void)
 	InitGauge();
 
 	// タイマーの初期化
-	InitTimer();
+	InitTime();
 
 	// 軌跡の初期化処理
 	InitMeshSword();
@@ -130,7 +130,7 @@ void InitGame(void)
 
 	// TODO : テスト用にセット
 	// ボスをセット
-	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 5000);
+	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 15000);
 
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
@@ -143,7 +143,7 @@ void InitGame(void)
 
 	g_bPause = false; // ポーズ解除
 	g_bEditMode = false;// エディットモード解除
-	g_EnemyWaveTime = 1790; // 敵が出てくる時間
+	g_EnemyWaveTime = 0; // 敵が出てくる時間
 
 	// 音楽を再生
 	PlaySound(SOUND_LABEL_GAME_BGM);
@@ -196,7 +196,7 @@ void UninitGame(void)
 	UninitDamege();
 	
 	// タイマーの終了
-	UninitTimer();
+	UninitTime();
 
 	// スコアの終了処理
 	UninitScore();
@@ -239,9 +239,13 @@ void UpdateGame(void)
 	// 敵の取得
 	int nNumEnemy = GetNumEnemy();
 
-	// タイマーの取得
-	int nTime = GetTimer();
+	//// タイマーの取得
+	//int nTime = GetTimer();
 	
+	// タイマーの取得
+	int TimeMinute = GetTimeMinute(); // 分
+	int TimeSecond = GetTimeSecond(); // 秒
+
 	// 敵が出てくるまでの時間
 	if (g_EnemyWaveTime >= 900 || nNumEnemy <= 0)
 	{// カウントが900 or 場に出ている敵が0体以下の時
@@ -254,7 +258,7 @@ void UpdateGame(void)
 		g_EnemyWaveTime = 0;
 	}
 
-	if (nTime <= 0)
+	if (TimeMinute <= 0 && TimeSecond <= 0)
 	{// 敵が全滅 or タイマーが0秒以下
 		g_gameState = GAMESTATE_END;
 	}
@@ -371,8 +375,12 @@ void UpdateGame(void)
 			//HPゲージの更新処理
 			UpdateGauge();
 
-			// タイマーの更新処理
-			UpdateTimer();
+			// 分と秒が0より上じゃないとうごかない
+			if (TimeMinute >= 0 && TimeSecond >= 0)
+			{
+				// タイマーの更新処理
+				UpdateTime();
+			}
 
 			//壁の更新処理
 			UpdateWall();
@@ -443,7 +451,7 @@ void DrawGame(void)
     DrawGauge();
 
 	// タイマーの描画処理
-	DrawTimer();
+	DrawTime();
 
 	// 煙の描画処理
 	DrawExplosion();

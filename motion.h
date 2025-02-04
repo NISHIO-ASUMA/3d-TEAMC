@@ -120,5 +120,5 @@ typedef struct
 //プロトタイプ宣言
 //****************************
 void UpdateMotion(MOTION* pMotion);
-void SetMotion(MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend);
+void SetMotion(MOTION* pMotion, MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend);
 #endif

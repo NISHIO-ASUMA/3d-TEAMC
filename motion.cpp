@@ -260,21 +260,21 @@ void UpdateMotion(MOTION *pMotion)
 //==============================
 // モーションの設定処理
 //==============================
-void SetMotion(MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend)
+void SetMotion(MOTION *pMotion,MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend)
 {
 	Player* pPlayer = GetPlayer();                       // プレイヤーを取得
 
 	if (Blend == true)
 	{
-		pPlayer->Motion.nKey = 0;							 // 0から始める
-		pPlayer->Motion.nKeyBlend = 0;						 // 0から始める
-		pPlayer->Motion.nCountMotion = 0;					 // 0から始める
-		pPlayer->Motion.nCounterBlend = 0;					 // 0から始める
-		pPlayer->Motion.bBlendMotion = Blend;				 // ブレンドがあるかどうか
-		pPlayer->Motion.nFrameBlend = nFrameBlend;			 // ブレンドのフレームを代入
-		pPlayer->Motion.motiontypeBlend = motiontypeBlend;   // ブレンドするモーションのタイプを代入
+		pMotion->nKey = 0;							 // 0から始める
+		pMotion->nKeyBlend = 0;						 // 0から始める
+		pMotion->nCountMotion = 0;					 // 0から始める
+		pMotion->nCounterBlend = 0;					 // 0から始める
+		pMotion->bBlendMotion = Blend;				 // ブレンドがあるかどうか
+		pMotion->nFrameBlend = nFrameBlend;			 // ブレンドのフレームを代入
+		pMotion->motiontypeBlend = motiontypeBlend;  // ブレンドするモーションのタイプを代入
 	}
-	pPlayer->Motion.motionType = motiontype;			 // モーションのタイプを代入
-	pPlayer->Motion.bFinishMotion = false;				 // もとに戻す
+	pMotion->motionType = motiontype;				 // モーションのタイプを代入
+	pMotion->bFinishMotion = false;				     // もとに戻す
 }
 

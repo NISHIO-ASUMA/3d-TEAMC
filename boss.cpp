@@ -15,6 +15,13 @@
 #include "player.h"
 #include "Shadow.h"
 #include "block.h"
+#include "Damagepop.h"
+#include "Particle.h"
+#include "explosion.h"
+#include "HPGauge.h"
+#include "spgauge.h"
+#include "Score.h"
+#include "time.h"
 
 //****************************
 // マクロ定義
@@ -212,8 +219,27 @@ void UpdateBoss(void)
 		SetPositionShadow(g_Boss.nIdxShadow, g_Boss.pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss.pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss.pos.y / 30.0f));
 
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
-		if (sphererange(&pPlayer->pos,&g_Boss.pos,50.0f,20000.0f) && g_Boss.AttackState == BOSSATTACK_NO)
+		if (sphererange(&pPlayer->pos,&g_Boss.pos,50.0f,20000.0f) && g_Boss.Motion.motionType != MOTIONTYPE_ACTION)
 		{
+			// モデル情報を代入
+			D3DXVECTOR3 HootR(g_Boss.Motion.aModel[11].mtxWorld._41, g_Boss.Motion.aModel[11].mtxWorld._42, g_Boss.Motion.aModel[11].mtxWorld._43);
+			D3DXVECTOR3 HootL(g_Boss.Motion.aModel[14].mtxWorld._41, g_Boss.Motion.aModel[14].mtxWorld._42, g_Boss.Motion.aModel[14].mtxWorld._43);
+
+			// モーションがムーブの時1キーの1フレーム目
+			if (g_Boss.Motion.motionType == MOTIONTYPE_MOVE &&
+				g_Boss.Motion.nKey == 1 &&
+				g_Boss.Motion.nCountMotion == 1)
+			{
+				SetExplosion(HootR, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
+			}
+			// モーションがムーブの時3キーの1フレーム目
+			else if (g_Boss.Motion.motionType == MOTIONTYPE_MOVE &&
+				g_Boss.Motion.nKey == 3 &&
+				g_Boss.Motion.nCountMotion == 1)
+			{
+				SetExplosion(HootL, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
+			}
+
 			g_Boss.Motion.motionType = MOTIONTYPE_MOVE; // モーションの種類を移動にする
 
 			// ボスの向きをプレイヤーの位置を向くようにする
@@ -242,10 +268,16 @@ void UpdateBoss(void)
 		}
 
 		// 攻撃範囲に入ったら
-		if (sphererange(&pPlayer->pos, &g_Boss.pos, 50.0f, 30.0f))
+		if (sphererange(&pPlayer->pos, &g_Boss.pos, 50.0f, 30.0f)&& g_Boss.AttackState != BOSSATTACK_ATTACK)
 		{
-			g_Boss.Motion.motionType = MOTIONTYPE_ACTION; // モーションの種類を攻撃にする
-			g_Boss.AttackState = BOSSATTACK_ATTACK;       // 攻撃している
+			// モーションを攻撃にする
+			SetMotion(&g_Boss.Motion, // モーション構造体のアドレス
+				MOTIONTYPE_ACTION,    // モーションタイプ
+				MOTIONTYPE_NEUTRAL,   // ブレンドモーションタイプ
+				true,                 // ブレンドするかしないか
+				10);				  // ブレンドのフレーム
+
+			g_Boss.AttackState = BOSSATTACK_ATTACK; // 攻撃している
 		}
 
 		// 攻撃範囲に入った
@@ -261,7 +293,6 @@ void UpdateBoss(void)
 		// ループしないモーションが最後まで行ったら
 		if (!g_Boss.Motion.aMotionInfo[g_Boss.Motion.motionType].bLoop && g_Boss.Motion.nKey >= g_Boss.Motion.aMotionInfo[g_Boss.Motion.motionType].nNumkey - 1)
 		{
-			g_Boss.Motion.motionType = MOTIONTYPE_NEUTRAL; 		// ボスのモーションをニュートラルにもどす
 			g_Boss.AttackState = BOSSATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
 
@@ -401,20 +432,54 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 //=============================
 void HitBoss(int nDamage)
 {
+	Player* pPlayer = GetPlayer();
+
 	g_Boss.nLife -= nDamage;
+
+	// ダメージを設定
+	SetDamege(D3DXVECTOR3(g_Boss.pos.x, g_Boss.pos.y + g_Boss.Size.y / 1.5f, g_Boss.pos.z), // 位置
+		nDamage,	// ダメージ																								
+		20,			// 寿命
+		false);
 
 	if (g_Boss.nLife <= 0)
 	{
+		// 死んだらパーティクルを出す
+		SetParticle(D3DXVECTOR3(g_Boss.pos.x, g_Boss.pos.y + g_Boss.Size.y / 1.5f, g_Boss.pos.z),
+			g_Boss.rot,
+			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+			4.0f, 8, 15, 20, 5.0f, 0.0f,
+			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 		// 消す
 		g_Boss.bUse = false;
 
 		// 影から消す
 		KillShadow(g_Boss.nIdxShadow);
+
+		if (pPlayer->FeverMode)
+		{
+			AddScore(30000);		// スコアを取得
+			AddSpgauge(2.5f);   // SPゲージを取得
+		}
+		else if (!pPlayer->FeverMode)
+		{
+			AddFever(10.0f);		// フィーバーポイントを取得
+			AddScore(15000);		// スコアを取得
+			AddSpgauge(2.0f);   // SPゲージを取得
+		}
+		AddTimeSecond(59);
 	}
 	else
 	{
+		// パーティクルをセット
+		SetParticle(D3DXVECTOR3(g_Boss.pos.x, g_Boss.pos.y + g_Boss.Size.y / 1.5f, g_Boss.pos.z), g_Boss.rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 30, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 		g_Boss.state = ENEMYSTATE_DAMAGE;
-		g_Boss.nCounterState = 30;
+		g_Boss.nCounterState = 20;
+		AddSpgauge(1.0f);   // SPゲージを取得
 	}
 }
 //=============================

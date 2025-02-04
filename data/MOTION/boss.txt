@@ -1060,7 +1060,7 @@ MOTIONSET
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 5 / 6 >> ---
-		FRAME = 20
+		FRAME = 30
 		KEY	# ----- [ 0 ] -----
 			POS = 0.00 -14.10 0.00
 			ROT = -0.63 -0.00 0.00
