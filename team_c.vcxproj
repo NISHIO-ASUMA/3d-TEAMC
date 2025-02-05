@@ -149,6 +149,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Damegepop.cpp" />
     <ClCompile Include="edit.cpp" />
+    <ClCompile Include="edit2d.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="effectEdit.cpp" />
     <ClCompile Include="enemy.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameui.cpp" />
     <ClCompile Include="icon.cpp" />
+    <ClCompile Include="polygon.cpp" />
     <ClCompile Include="spgauge.cpp" />
     <ClCompile Include="HPGauge.cpp" />
     <ClCompile Include="input.cpp" />
@@ -192,6 +194,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="Damagepop.h" />
     <ClInclude Include="edit.h" />
+    <ClInclude Include="edit2d.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="effectEdit.h" />
     <ClInclude Include="enemy.h" />
@@ -200,6 +203,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gameui.h" />
     <ClInclude Include="icon.h" />
+    <ClInclude Include="polygon.h" />
     <ClInclude Include="spgauge.h" />
     <ClInclude Include="HPGauge.h" />
     <ClInclude Include="input.h" />

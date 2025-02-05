@@ -39,6 +39,8 @@
 #include "spgauge.h"
 #include "boss.h"
 #include "icon.h"
+#include "polygon.h"
+#include "edit2d.h"
 
 //****************************
 //グローバル変数
@@ -123,11 +125,15 @@ void InitGame(void)
 	// アイコンの初期化処理
 	InitIcon();
 
+	// ポリゴンの初期化処理
+	InitPolygon();
+
 	//エディットの初期化処理
 	InitEdit();
 
 	//エディットのロード処理
 	LoadEdit();
+	LoadEdit2d();
 
 	WaveEnemy(0); // 敵を出す処理
 	WaveEnemy(1); // 敵を出す処理
@@ -231,6 +237,9 @@ void UninitGame(void)
 
 	// アイコンの終了処理
 	UninitIcon();
+
+	// ポリゴンの終了処理
+	UninitPolygon();
 
 	//エディットの終了処理
 	UninitEdit();
@@ -428,6 +437,9 @@ void UpdateGame(void)
 			// アイコンの更新処理
 			UpdateIcon();
 
+			// ポリゴンの更新処理
+			UpdatePolygon();
+
 		}
 		else if (g_bEditMode)
 		{
@@ -463,11 +475,17 @@ void DrawGame(void)
 	//敵の描画処理
 	DrawEnemy();
 
-	//ブロックの描画処理
-	DrawBlock();
+	if (!g_bEditMode)
+	{
+		//ブロックの描画処理
+		DrawBlock();
 
-	//アイテムの描画処理
-	DrawItem();
+		// ポリゴンの描画処理
+		DrawPolygon();
+
+		//アイテムの描画処理
+		DrawItem();
+	}
 
 	// ボスの描画処理
 	DrawBoss();

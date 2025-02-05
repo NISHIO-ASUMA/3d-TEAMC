@@ -33,6 +33,7 @@ typedef enum
 //**************************
 typedef struct
 {
+	LPDIRECT3DTEXTURE9 g_pTextureEdit2d;	    // テクスチャへのポインタ
 	LPD3DXMESH g_pMeshEdit;				// メッシュ(頂点座標)へのポインタ
 	LPD3DXBUFFER g_pBuffMatEdit;		// マテリアルへのポインタ
 	DWORD g_dwNumMatEdit;				// マテリアルの数

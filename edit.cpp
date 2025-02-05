@@ -20,6 +20,7 @@
 #include "fade.h"
 #include "game.h"
 #include "mouse.h"
+#include "edit2d.h"
 
 //****************************
 //マクロ定義
@@ -37,9 +38,11 @@ void LoadEditObj(int category); // 編集モードで使うオブジェクトのロード処理
 //グローバル変数
 //****************************
 EDIT_INFO g_Edit[MAX_OBJ];			    // エディットの情報
-EditTex g_BlockTexInfo[EDITMODE_MAX];	// エディットの情報保存用変数
+EditTex g_BlockTexInfo[EDITMODE_MAX];	// エディットの情報保存用変数3d
+LPDIRECT3DTEXTURE9 g_pTex;              // テクスチャ保存
 int g_EditCount, nCntobj;               // オブジェクトのカウント、保存用
 int g_nNumBlock;						// オブジェクトの数
+bool EditMode2d;
 
 //===========================
 //エディット画面の初期化処理
@@ -47,6 +50,8 @@ int g_nNumBlock;						// オブジェクトの数
 void InitEdit(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	InitEdit2d();
 
 	//ブロックの最大数分初期化
 	for (int nCnt = 0; nCnt < MAX_OBJ; nCnt++)
@@ -57,9 +62,11 @@ void InitEdit(void)
 		g_Edit[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 回転量の初期化
 		g_Edit[nCnt].bUse = false;							// 未使用状態
 		g_Edit[nCnt].ObjCnt = 0;							// オブジェの数の保存用変数の初期化
-		g_Edit[nCnt].EditCategory = EDITMODE_BLOCK;				// 現在のオブジェクトのカテゴリーの初期化
+		g_Edit[nCnt].EditCategory = EDITMODE_BLOCK;			// 現在のオブジェクトのカテゴリーの初期化
 		g_Edit[nCnt].fMove = 10.0f;							// オブジェクトの移動量
 	}
+
+	EditMode2d = false; // 2DOBJ編集モードか
 
 	// カテゴリー分回す
 	for (int nCntNum = 0; nCntNum < EDITMODE_MAX; nCntNum++)
@@ -88,6 +95,8 @@ void InitEdit(void)
 		}
 	}
 
+
+
 	g_nNumBlock = 0;												// オブジェクトの数の初期化
 	g_Edit[0].bUse = true;											// 一つ目を使用状態にする
 	g_Edit[0].Category[0].nNumModel = g_BlockTexInfo[0].nNumModel;  // 0番のオブジェクトに種類の数を代入(代入しないと描画されない)
@@ -101,6 +110,8 @@ void InitEdit(void)
 //===========================
 void UninitEdit(void)
 {
+	UninitEdit2d();
+
 	//カテゴリー分回す
 	for (int nCntNum = 0; nCntNum < EDITMODE_MAX; nCntNum++)
 	{
@@ -179,7 +190,7 @@ void UpdateEdit(void)
 	Camera* pCamera = GetCamera(); // カメラのポインタを取得
 
 	//使用状態だったら
-	if (g_Edit[g_EditCount].bUse)
+	if (g_Edit[g_EditCount].bUse && !EditMode2d)
 	{
 		//移動量の減衰
 		g_Edit[g_EditCount].move.x += (0.0f - g_Edit[g_EditCount].move.x) * 0.5f;
@@ -331,10 +342,25 @@ void UpdateEdit(void)
 			pCamera->posV.z = g_Edit[g_EditCount].pos.z;
 		}
 	}
+	else if (EditMode2d)
+	{
+		UpdateEdit2d(); // 2D編集モード
+	}
+
+	if (KeyboardTrigger(DIK_F9) && !EditMode2d)
+	{
+		EditMode2d = true;
+	}
+	else if (KeyboardTrigger(DIK_F9) && EditMode2d)
+	{
+		EditMode2d = false;
+	}
+
 
 	if (KeyboardTrigger(DIK_F7))
 	{
 		SaveEdit(); // 書き出し
+		SaveEdit2d(); // 書き出し
 	}
 
 	else if (KeyboardTrigger(DIK_F8) && nLoad == 0)
@@ -347,6 +373,7 @@ void UpdateEdit(void)
 	{
 		nLoad = 0; // 回数制限解除
 	}
+
 }
 
 //===========================
@@ -430,9 +457,10 @@ void DrawEdit(void)
 			//ブロック(パーツ)の描画
 			g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pMeshEdit->DrawSubset(nCntMat);
 		}
+		pDevice->SetMaterial(&matDef);
 	}
 
-	pDevice->SetMaterial(&matDef);
+	DrawEdit2d(); // 2D編集モードの時
 }
 
 //===========================

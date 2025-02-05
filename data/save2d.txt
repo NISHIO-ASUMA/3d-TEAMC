@@ -1,0 +1,38 @@
++==========================================+
++	  マップエディター 作成者 吉田祐人      +
++==========================================+
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dOBJの種類 ]
+   POS = 24.9 0.0 -109.0				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 位置 ]
+   WIDTH = 100.0						# [ 横幅 ]
+   HEIGHT = 100.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dOBJの種類 ]
+   POS = -48.6 0.0 11.8				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 位置 ]
+   WIDTH = 100.0						# [ 横幅 ]
+   HEIGHT = 100.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dOBJの種類 ]
+   POS = 19.4 0.0 -4.7				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 位置 ]
+   WIDTH = 100.0						# [ 横幅 ]
+   HEIGHT = 100.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dOBJの種類 ]
+   POS = 38.4 0.0 73.0				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 位置 ]
+   WIDTH = 100.0						# [ 横幅 ]
+   HEIGHT = 100.0					# [ 高さ ]
+END_POLYGONSET
+
+OBJ_COUNT = 4    # [ ブロックの配置数 ]
+END_SCRIPT          # この行は消さないでください

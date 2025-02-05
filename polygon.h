@@ -1,0 +1,57 @@
+//============================
+//
+// polygon [polygon.h]
+// Author: YOSHIDA YUTO
+//
+//============================
+
+#ifndef _POLYGON_H_
+#define _POLYGON_H_
+
+//****************************
+// インクルードファイル
+//****************************
+#include"main.h"
+
+//****************************
+// エディットのテクスチャ
+//****************************
+typedef enum
+{
+	POLYGON_TYPE_ONE = 0,
+	POLYGON_TYPE_MAX
+}POLYGONTYPE;
+
+//****************************
+// アイコンのテクスチャ宣言
+//****************************
+static const char* POLYGON_TYPE[POLYGON_TYPE_MAX] =
+{
+	"data\\TEXTURE\\orbit.png",
+};
+
+//****************************
+// editの構造体
+//****************************
+typedef struct
+{
+	LPDIRECT3DTEXTURE9 g_pTexturePolygon;//テクスチャへのポインタ
+	D3DXVECTOR3 pos; // 位置
+	D3DXVECTOR3 rot; // 回転
+	D3DXVECTOR3 move;// 移動量
+	D3DXMATRIX mtxWorld; // ワールドマトリックス
+	float fWidth,fHeight,fLength; // 幅、高さ
+	int nType; // 種類
+	bool bUse; // 使用状態
+	float fMove; // 移動量
+}Polygon_Info;
+
+//****************************
+// プロトタイプ宣言
+//****************************
+void InitPolygon(void);   // エディット2dの初期化処理
+void UninitPolygon(void); // エディット2dの終了処理
+void UpdatePolygon(void); // エディット2dの更新処理
+void DrawPolygon(void);   // エディット2dの描画処理
+void SetPolygon(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight,int nType);
+#endif
