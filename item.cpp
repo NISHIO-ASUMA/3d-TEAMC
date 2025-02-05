@@ -17,6 +17,7 @@
 #include "explosion.h"
 #include "HPGauge.h"
 #include "Shadow.h"
+#include "Particle.h"
 
 //****************************
 //マクロ定義
@@ -202,6 +203,37 @@ void UpdateItem(void)
 		{//使用中じゃなかったら
 			// 処理を読み飛ばす
 			continue;
+		}
+
+		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
+		{
+			if (g_Item[nCntItem].nType == ITEMTYPE_HEX)
+			{
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
+					2.0f, 2, 20, 7, 3.0f, 10.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+					2.0f, 2, 20, 3, 3.0f, 10.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
+			else
+			{
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
+					2.0f, 2, 20, 7, 3.0f, 10.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
 		}
 
 		// 前回の位置を代入

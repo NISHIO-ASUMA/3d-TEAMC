@@ -241,6 +241,52 @@ void UpdateBoss(void)
 		default:
 			break;
 		}
+
+		// ボスの攻撃モーション
+		if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)// ドス突きの状態で
+		{
+			if (g_Boss[nCnt].Motion.nKey == 0 || g_Boss[nCnt].Motion.nKey == 1)// 溜める動作中に
+			{
+				// 向きをプレイヤーに向ける
+				float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);
+
+				// ボスの向き代入
+				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
+			}
+			else if (g_Boss[nCnt].Motion.nKey == 2)// 溜まり切ったモーションになって
+			{
+				if (g_Boss[nCnt].Motion.nCountMotion == 1)// その最初にエフェクトを出す
+				{
+					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
+						D3DXVECTOR3(1.57f, g_Boss[nCnt].rot.y, 1.57f),
+						D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+						2.0f, 3, 20, 150, 4.0f, 50.0f,
+						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				}
+			}
+			else if (g_Boss[nCnt].Motion.nKey == 3)// 突進モーション中の			
+			{
+				if (g_Boss[nCnt].Motion.nCountMotion == 1)// 最初は加速させて
+				{
+					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 70;
+					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 70;
+				}
+				else // その後はエフェクトを纏いながら移動する
+				{
+					g_Boss[nCnt].pos += g_Boss[nCnt].move;
+					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
+						g_Boss[nCnt].rot,
+						D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+						2.0f, 4, 60, 40, 6.0f, 60.0f,
+						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				}
+			}
+		}
+
 		// 移動量の減衰
 		g_Boss[nCnt].move.x += (0.0f - g_Boss[nCnt].move.x) * 0.25f;
 		g_Boss[nCnt].move.z += (0.0f - g_Boss[nCnt].move.z) * 0.25f;
@@ -338,49 +384,6 @@ void UpdateBoss(void)
 
 		// モーションの更新処理
 		UpdateMotion(&g_Boss[nCnt].Motion);
-
-		if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)
-		{
-			if (g_Boss[nCnt].Motion.nKey == 0 || g_Boss[nCnt].Motion.nKey == 1)
-			{
-				float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);
-
-				// ボスの向き代入
-				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
-			}
-			else if (g_Boss[nCnt].Motion.nKey == 2)
-			{
-				if (g_Boss[nCnt].Motion.nCountMotion == 1)
-				{
-					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
-						D3DXVECTOR3(1.57f, g_Boss[nCnt].rot.y, 1.57f),
-						D3DXVECTOR3(0.2f, 3.14f, 0.2f),
-						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 3, 20, 150, 4.0f, 50.0f,
-						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				}
-			}
-			else if (g_Boss[nCnt].Motion.nKey == 3)
-			{
-				if (g_Boss[nCnt].Motion.nCountMotion == 1)
-				{
-					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 70;
-					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 70;
-				}
-				else
-				{
-					g_Boss[nCnt].pos += g_Boss[nCnt].move;
-					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
-						g_Boss[nCnt].rot,
-						D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 4, 60, 40, 6.0f, 60.0f,
-						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				}
-			}
-		}
 	}
 }
 //=============================
