@@ -223,8 +223,12 @@ void UpdateEdit(void)
 			g_Edit[g_EditCount + 1].Scal = g_Edit[g_EditCount].Scal;						// 次のオブジェクトにスケールを代入する
 			g_Edit[g_EditCount + 1].EditCategory = g_Edit[g_EditCount].EditCategory;        // 今のカテゴリーを代入
 			g_Edit[g_EditCount + 1].nType = g_Edit[g_EditCount].nType;						// 今のタイプを代入
-			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
-			g_Edit[g_EditCount + 1].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
+
+			int Category = g_Edit[g_EditCount].EditCategory; // 変数に代入
+			int nType = g_Edit[g_EditCount].nType;           // 変数に代入
+
+			g_Edit[g_EditCount + 1].Category[Category].pModel[nType] = g_Edit[g_EditCount].Category[Category].pModel[nType];
+			g_Edit[g_EditCount + 1].Category[Category].nNumModel = g_BlockTexInfo[Category].nNumModel;
 
 			g_nNumBlock++;																	// オブジェクト数 + 1
 			g_EditCount++;																	// オブジェクトのカウント + 1
@@ -242,14 +246,17 @@ void UpdateEdit(void)
 		if (KeyboardTrigger(DIK_F) && g_Edit[g_EditCount].nType < g_Edit[g_EditCount].Category[category].nNumModel - 1)
 		{
 			g_Edit[g_EditCount].nType++; // 種類 + 1
+			int nType = g_Edit[g_EditCount].nType;           // 変数に代入
+
 			g_Edit[g_EditCount].Category[category].nNumModel = g_BlockTexInfo[category].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
-			g_Edit[g_EditCount].Category[category].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[category].pModel[g_Edit[g_EditCount].nType]; // 現在のオブジェクトの情報を代入
+			g_Edit[g_EditCount].Category[category].pModel[nType] = g_BlockTexInfo[category].pModel[nType]; // 現在のオブジェクトの情報を代入
 		}
 		else if (KeyboardTrigger(DIK_G) && g_Edit[g_EditCount].nType > 0)
 		{
 			g_Edit[g_EditCount].nType--; // 種類 - 1
+			int nType = g_Edit[g_EditCount].nType;           // 変数に代入
 			g_Edit[g_EditCount].Category[category].nNumModel = g_BlockTexInfo[category].nNumModel;	// 次のオブジェクトにカテゴリー0、の種類数を代入 
-			g_Edit[g_EditCount].Category[category].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[category].pModel[g_Edit[g_EditCount].nType]; // 現在のオブジェクトの情報を代入
+			g_Edit[g_EditCount].Category[category].pModel[nType] = g_BlockTexInfo[category].pModel[nType]; // 現在のオブジェクトの情報を代入
 		}
 
 		if (KeyboardTrigger(DIK_V))
@@ -264,13 +271,17 @@ void UpdateEdit(void)
 		// カテゴリー変更
 		if (KeyboardTrigger(DIK_Y) && g_Edit[g_EditCount].EditCategory < EDITMODE_MAX - 1)
 		{
-			g_Edit[g_EditCount].EditCategory++;																											// カテゴリー + 1
-			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;		// 現在のカテゴリーの情報を代入
+			g_Edit[g_EditCount].EditCategory++;
+			int Category = g_Edit[g_EditCount].EditCategory; // 変数に代入
+			int nType = g_Edit[g_EditCount].nType;           // 変数に代入
+
+			// カテゴリー + 1
+			g_Edit[g_EditCount].Category[Category].nNumModel = g_BlockTexInfo[Category].nNumModel;		// 現在のカテゴリーの情報を代入
 
 			// 次のカテゴリーの全種類数が現在のモデルのカテゴリー全種類数より少なかったら
 			if (g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel < g_Edit[g_EditCount].Category[category].nNumModel)
 			{
-				int nNumModel = g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel - 1; // 代入
+				int nNumModel = g_Edit[g_EditCount].Category[Category].nNumModel - 1; // 代入
 				g_Edit[g_EditCount].nType = nNumModel; //一番最後の種類にする
 			}
 
@@ -280,7 +291,9 @@ void UpdateEdit(void)
 		{
 			g_Edit[g_EditCount].EditCategory--;	// カテゴリー + 1
 
-			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;		// 現在のカテゴリーの情報を代入
+			int Category = g_Edit[g_EditCount].EditCategory; // 変数に代入
+
+			g_Edit[g_EditCount].Category[Category].nNumModel = g_BlockTexInfo[Category].nNumModel;		// 現在のカテゴリーの情報を代入
 
 			// 次のカテゴリーの全種類数が現在のモデルのカテゴリー全種類数より少なかったら
 			if (g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel < g_Edit[g_EditCount].Category[category].nNumModel)
@@ -301,6 +314,7 @@ void UpdateEdit(void)
 			g_Edit[g_EditCount].fMove -= 0.1f; // 移動量変更
 		}
 
+		// yの移動
 		if (GetKeyboardPress(DIK_UP))
 		{
 			g_Edit[g_EditCount].pos.y += g_Edit[g_EditCount].fMove;
