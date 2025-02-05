@@ -73,6 +73,21 @@ typedef enum
 }ItemSTATE;
 
 //***************************
+//ブロックの属性の種類(演出面)
+//***************************
+typedef enum
+{
+	ITEMELEMENT_STANDARD = 0,
+	ITEMELEMENT_BLOOD,
+	ITEMELEMENT_FIRE,
+	ITEMELEMENT_FRIEZE,
+	ITEMELEMENT_SPARK,
+	ITEMELEMENT_AQUA,
+	ITEMELEMENT_DARK,
+	ITEMELEMENT_MAX
+}ITEMELEMENT;
+
+//***************************
 //ブロックのテクスチャ構造体
 //***************************
 typedef struct
@@ -99,6 +114,7 @@ typedef struct
 	int nType;
 	int nLife;
 	ItemSTATE state;//ブロックの状態
+	int nElement;//アイテムの属性
 	float fRadius;
 	ItemTex ItemTex[ITEMTYPE_MAX];
 	D3DXMATRIX mtxParent;
@@ -117,4 +133,5 @@ void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal);
 bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius);
 void Itemchange(int nType);
 Item* GetItem(void);
+void ElementChange(int nCountItem);
 #endif

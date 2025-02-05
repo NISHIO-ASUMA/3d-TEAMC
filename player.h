@@ -131,6 +131,21 @@ typedef enum
 	MOTION_MAX
 }WEPONMOTION; // 使いまわせるものは使いまわす
 
+//***************************
+//手持ちの属性(演出面)
+//***************************
+typedef enum
+{
+	WEPONELEMENT_STANDARD = 0,
+	WEPONELEMENT_BLOOD,
+	WEPONELEMENT_FIRE,
+	WEPONELEMENT_FRIEZE,
+	WEPONELEMENT_SPARK,
+	WEPONELEMENT_AQUA,
+	WEPONELEMENT_DARK,
+	WEPONELEMENT_MAX
+}WEPONELEMENT;
+
 //**************************
 //プレイヤー構造体
 //**************************
@@ -168,6 +183,7 @@ typedef struct
 	float fShadowSize;//影の大きさ
 	int Combostate; // コンボの状態をもつ変数 
 	int ItemIdx;    // アイテムのインデックス保管用変数
+	int nElement;   // 手持ちアイテムの属性管理
 	float speed;    // 足の速さ 
 	int nDamage;    // プレイヤーの攻撃力 
 	int nOldItem;
