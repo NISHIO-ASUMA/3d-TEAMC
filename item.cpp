@@ -255,8 +255,8 @@ void UpdateItem(void)
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
 					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(0.0f, 0.5f, 1.0f, 1.0f),
-					2.0f, 2, 20, 7, 3.0f, 10.0f,
+					D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+					2.0f, 2, 50, 7, 0.5f, 10.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 			}
 			else if (g_Item[nCntItem].nElement == ITEMELEMENT_SPARK)
