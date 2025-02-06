@@ -207,26 +207,10 @@ void UpdateItem(void)
 			continue;
 		}
 
+		// 投げられたアイテムにエフェクト
 		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
 		{
-			if (g_Item[nCntItem].nType == ITEMTYPE_HEX)
-			{
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
-					2.0f, 2, 20, 7, 3.0f, 10.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-					2.0f, 2, 20, 3, 3.0f, 10.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-			else
+			if (g_TexItem[nCntItem].nElement == ITEMELEMENT_STANDARD)
 			{
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
@@ -234,6 +218,73 @@ void UpdateItem(void)
 					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 					D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
 					2.0f, 2, 20, 7, 3.0f, 10.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
+			else if(g_TexItem[nCntItem].nElement == ITEMELEMENT_BLOOD)
+			{
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+					3.0f, 2, 20, 7, 3.0f, 10.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
+			else if (g_TexItem[nCntItem].nElement == ITEMELEMENT_FIRE)
+			{
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
+					4.0f, 2, 20, 7, 3.0f, 20.0f,
+					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+					4.0f, 2, 20, 7, 3.0f, 20.0f,
+					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+			}
+			else if (g_TexItem[nCntItem].nElement == ITEMELEMENT_FREEZE)
+			{
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(0.0f, 0.5f, 1.0f, 1.0f),
+					2.0f, 2, 20, 7, 3.0f, 10.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
+			else if (g_TexItem[nCntItem].nElement == ITEMELEMENT_SPARK)
+			{
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(2.0f, 2.0f, 2.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+					1.0f, 2, 10, 20, 9.0f, 10.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
+			else if (g_TexItem[nCntItem].nElement == ITEMELEMENT_AQUA)
+			{
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f),
+					5.0f, 2, 20, 7, 3.0f, 20.0f,
+					true, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
+			}
+			else if (g_TexItem[nCntItem].nElement == ITEMELEMENT_DARK)
+			{
+				SetParticle(g_Item[nCntItem].pos,
+					g_Item[nCntItem].rot,
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+					5.0f, 2, 45, 7, 3.0f, 7.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 			}
 		}
