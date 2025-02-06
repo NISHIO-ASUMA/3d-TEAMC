@@ -6,14 +6,14 @@
 //============================
 
 //****************************
-//インクルードファイル
+// インクルードファイル
 //****************************
 #include "explosion.h"
 #include "camera.h"
 #include "player.h"
 
 //****************************
-//マクロ定義
+// マクロ定義
 //****************************
 #define EXPLOSION_WIDTH (25.0f)  // 横幅
 #define EXPLOSION_HEIGHT (25.0f) // 高さ
@@ -21,7 +21,7 @@
 #define LANDINGEXPLOSION (8)
 
 //****************************
-//グローバル変数宣言
+// グローバル変数宣言
 //****************************
 LPDIRECT3DTEXTURE9 g_pTextureExplosion = NULL;		// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffExplosion = NULL; // 頂点バッファへのポインタ
@@ -32,7 +32,7 @@ EXPLOSION g_Explosion[MAX_EXPLOSION];				// 構造体変数
 //****************************
 
 //============================
-//爆発の初期化処理
+// 爆発の初期化処理
 //============================
 void InitExplosion(void)
 {
@@ -99,13 +99,14 @@ void InitExplosion(void)
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 0.3f);
 		pVtx[3].tex = D3DXVECTOR2(0.25f, 0.3f);
 
+		// 頂点情報を進める
 		pVtx += 4;
 	}
 	// アンロック
 	g_pVtxBuffExplosion->Unlock();
 }
 //============================
-//爆発の終了処理
+// 爆発の終了処理
 //============================
 void UninitExplosion(void)
 {
@@ -116,7 +117,7 @@ void UninitExplosion(void)
 		g_pTextureExplosion = NULL;
 	}
 
-	//頂点バッファの解放
+	// 頂点バッファの破棄
 	if (g_pVtxBuffExplosion != NULL)
 	{
 		g_pVtxBuffExplosion->Release();
@@ -124,7 +125,7 @@ void UninitExplosion(void)
 	}
 }
 //============================
-//爆発の更新処理
+// 爆発の更新処理
 //============================
 void UpdateExplosion(void)
 {
@@ -153,10 +154,11 @@ void UpdateExplosion(void)
 				g_Explosion[nCntExplosion].bUse = false; // 寿命が尽きた
 			}
 
-			// 位置の更新
+			// 移動量の設定
 			g_Explosion[nCntExplosion].move.x += (0.0f - g_Explosion[nCntExplosion].move.x) * 0.01f;
 			g_Explosion[nCntExplosion].move.z += (0.0f - g_Explosion[nCntExplosion].move.z) * 0.01f;
 			   
+			// 位置の更新
 			g_Explosion[nCntExplosion].pos += g_Explosion[nCntExplosion].move;
 			   
 
@@ -191,6 +193,8 @@ void UpdateExplosion(void)
 				}
 			}
 		}
+
+		// 頂点情報を進める
 		pVtx += 4;
 	}
 
@@ -198,7 +202,7 @@ void UpdateExplosion(void)
 	g_pVtxBuffExplosion->Unlock();
 }
 //============================
-//爆発の描画処理
+// 爆発の描画処理
 //============================
 void DrawExplosion(void)
 {
@@ -227,7 +231,8 @@ void DrawExplosion(void)
 			// ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&g_Explosion[nCnt].mtxWorld);
 
-			pDevice->GetTransform(D3DTS_VIEW, &mtxView); // ビューマトリックスの取得
+			// ビューマトリックスの取得
+			pDevice->GetTransform(D3DTS_VIEW, &mtxView); 
 
 			// カメラの逆行列の設定
 			g_Explosion[nCnt].mtxWorld._11 = mtxView._11;
@@ -272,7 +277,7 @@ void DrawExplosion(void)
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 //============================
-//爆発の設定処理
+// 爆発の設定処理
 //============================
 void SetExplosion(D3DXVECTOR3 pos,D3DXCOLOR col, int nLife,float fWidth,float fHeight, int nType)
 {
@@ -302,6 +307,8 @@ void SetExplosion(D3DXVECTOR3 pos,D3DXCOLOR col, int nLife,float fWidth,float fH
 
 			break;
 		}
+
+		// 頂点情報を進める
 		pVtx += 4;
 	}
 	//頂点バッファをアンロック

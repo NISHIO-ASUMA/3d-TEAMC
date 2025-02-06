@@ -1,40 +1,47 @@
 //===================================
 //
-//エフェクト関連のヘッダー
-//Author;長尾悠成
+// エフェクト [ Effect.h ]
+// Author;長尾悠成
 //
 //===================================
 
-// 重複確認
+//************************************
+// 2重インクルード防止
+//************************************
 #ifndef _EFFECT_H_
 #define _EFFECT_H_
 
-// インクルードファイル
+//************************************
+// インクルードファイル宣言
+//************************************
 #include "main.h"
 
-// 構造体、下４つの上から寿命、移動速度、大きさ、存在してるか否か
+//***********************************
+// エフェクトの構造体
+//***********************************
 typedef struct
 {
-	D3DXVECTOR3 pos;
-	D3DXVECTOR3 rot;
-	D3DXVECTOR3 dir;
-	D3DXCOLOR col;
-	D3DXVECTOR3 move;
-	D3DXMATRIX mtxWorld;
-	int nLife;
-	int nMaxLife;
-	float fSpeed;
-	float fSize;
-	bool bUse;
+	D3DXVECTOR3 pos; // 位置
+	D3DXVECTOR3 rot; // 角度
+	D3DXVECTOR3 dir; // 向きベクトル
+	D3DXCOLOR col;	 // 色
+	D3DXVECTOR3 move; // 移動量
+	D3DXMATRIX mtxWorld; // ワールドマトリックス
+	int nLife;	// 寿命
+	int nMaxLife; // 最大寿命
+	float fSpeed; // 移動速度
+	float fSize;  // 大きさ
+	bool bUse;	  // 使用しているか
 }Effect;
 
+//***********************************
 // プロトタイプ宣言
-void InitEffect(void);
-void UninitEffect(void);
-void UpdateEffect(void);
-void DrawEffect(void);
-
-void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife, D3DXCOLOR col, float fSpeed, float fSize);
-void SetEffect2(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nLife, D3DXCOLOR col, float fSpeed, float fSize);
+//***********************************
+void InitEffect(void);	 // 初期化処理
+void UninitEffect(void); // 終了処理
+void UpdateEffect(void); // 更新処理
+void DrawEffect(void);	 // 描画処理
+void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife, D3DXCOLOR col, float fSpeed, float fSize); // 設定処理1
+void SetEffect2(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nLife, D3DXCOLOR col, float fSpeed, float fSize); // 設定処理2
 
 #endif
