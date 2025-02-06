@@ -24,6 +24,7 @@
 //****************************
 void LoadBlockModel(void); // モデル読み込み処理
 void SetMtx(int nCntBlock); // ワールドマトリックスの設定(中心pos)
+void PushPlayer(int nCntBlock); // OBBの押し出し
 
 //****************************
 // グローバル変数宣言
@@ -129,12 +130,12 @@ void InitBlock(void)
 
 			// 頂点フォーマットのサイズ分ポインタを進める
 			pVtxBuff += sizeFVF;
-
-			// サイズに代入
-			g_TexBlock[nCntNum].Size.x = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.x - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.x;
-			g_TexBlock[nCntNum].Size.y = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.y - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.y;
-			g_TexBlock[nCntNum].Size.z = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.z - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.z;
 		}
+
+		// サイズに代入
+		g_TexBlock[nCntNum].Size.x = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.x - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.x;
+		g_TexBlock[nCntNum].Size.y = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.y - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.y;
+		g_TexBlock[nCntNum].Size.z = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.z - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.z;
 
 		// 頂点バッファのアンロック
 		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->UnlockVertexBuffer();
@@ -222,14 +223,7 @@ void UpdateBlock(void)
 		// OBBの判定(未完成)
 		if (collisionObb(nCntBlock))
 		{
-			D3DXVECTOR3 vector = pPlayer->posOld - pPlayer->pos;
-			D3DXVec3Normalize(&vector, &vector);
-			pPlayer->move.x = 0.0f;
-			pPlayer->move.z = 0.0f;
-
-			pPlayer->pos.x += vector.x;
-			pPlayer->pos.z += vector.z;
-
+			PushPlayer(nCntBlock);
 		}	
 	}
 }
@@ -768,9 +762,9 @@ void CreateObb(int nCnt)
 	g_Block[nCnt].Obb.VecRot[2] = D3DXVECTOR3(mtxRot._31, mtxRot._32, mtxRot._33); // 回転行列Z
 
 	// 長さ取得
-	g_Block[nCnt].Obb.Length[0] = fabsf(g_Block[nCnt].BlockTex[nType].vtxMax.x - g_Block[nCnt].BlockTex[nType].vtxMin.x) * 0.5f; // 長さX
-	g_Block[nCnt].Obb.Length[1] = fabsf(g_Block[nCnt].BlockTex[nType].vtxMax.y - g_Block[nCnt].BlockTex[nType].vtxMin.y) * 0.5f; // 長さY
-	g_Block[nCnt].Obb.Length[2] = fabsf(g_Block[nCnt].BlockTex[nType].vtxMax.z - g_Block[nCnt].BlockTex[nType].vtxMin.z) * 0.5f; // 長さZ
+	g_Block[nCnt].Obb.Length[0] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.x * g_Block[nCnt].Scal.x) - (g_Block[nCnt].BlockTex[nType].vtxMin.x * g_Block[nCnt].Scal.x)) * 0.7f; // 長さX
+	g_Block[nCnt].Obb.Length[1] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.y * g_Block[nCnt].Scal.y) - (g_Block[nCnt].BlockTex[nType].vtxMin.y * g_Block[nCnt].Scal.y)) * 0.7f; // 長さY
+	g_Block[nCnt].Obb.Length[2] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.z * g_Block[nCnt].Scal.z) - (g_Block[nCnt].BlockTex[nType].vtxMin.z * g_Block[nCnt].Scal.z)) * 0.6f; // 長さZ
 }
 //=======================
 // OBBの判定
@@ -787,21 +781,18 @@ bool collisionObb(int nCnt)
 	D3DXVECTOR3 NAe2 = g_Block[nCnt].Obb.VecRot[1], Ae2 = NAe2 * g_Block[nCnt].Obb.Length[1];
 	D3DXVECTOR3 NAe3 = g_Block[nCnt].Obb.VecRot[2], Ae3 = NAe3 * g_Block[nCnt].Obb.Length[2];
 
-	// 回転行列の設定
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, pPlayer->rot.y, pPlayer->rot.x, pPlayer->rot.z);
-
 	// 回転行列
-	D3DXVECTOR3 Nbe1(mtxRot._11, mtxRot._12, mtxRot._13);
-	D3DXVECTOR3 Nbe2(mtxRot._21, mtxRot._22, mtxRot._23);
-	D3DXVECTOR3 Nbe3(mtxRot._31, mtxRot._32, mtxRot._33);
+	D3DXVECTOR3 Nbe1(0.0f,0.0f,0.0f);
+	D3DXVECTOR3 Nbe2(0.0f,0.0f,0.0f);
+	D3DXVECTOR3 Nbe3(0.0f,0.0f,0.0f);
 
-	D3DXVECTOR3 Max(pPlayer->Motion.aModel[0].vtxMax.x, pPlayer->Motion.aModel[0].vtxMax.y, pPlayer->Motion.aModel[0].vtxMax.z);
-	D3DXVECTOR3 Min(pPlayer->Motion.aModel[0].vtxMin.x, pPlayer->Motion.aModel[0].vtxMin.y, pPlayer->Motion.aModel[0].vtxMin.z);
+	D3DXVECTOR3 Max(pPlayer->Motion.aModel[2].vtxMax.x, pPlayer->Motion.aModel[2].vtxMax.y, pPlayer->Motion.aModel[2].vtxMax.z);
+	D3DXVECTOR3 Min(pPlayer->Motion.aModel[2].vtxMin.x, pPlayer->Motion.aModel[2].vtxMin.y, pPlayer->Motion.aModel[2].vtxMin.z);
 
 	// Player
-	PlayerLength[0] = fabsf(Max.x - Min.x) * 0.5f;
-	PlayerLength[1] = fabsf(Max.y - Min.y) * 0.5f;
-	PlayerLength[2] = fabsf(Max.z - Min.z) * 0.5f;
+	PlayerLength[0] = fabsf(Max.x - Min.x);
+	PlayerLength[1] = fabsf(Max.y - Min.y);
+	PlayerLength[2] = fabsf(Max.z - Min.z);
 
 	// Player
 	D3DXVECTOR3 NBe1 = Nbe1 * PlayerLength[0];
@@ -981,4 +972,34 @@ void SetMtx(int nCntBlock)
 
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].Obb.ObbMtx);
+}
+//=========================
+// OBBの押し出し処理
+//=========================
+void PushPlayer(int nCntBlock)
+{
+	Player* pPlayer = GetPlayer();
+
+	int nType = g_Block[nCntBlock].nType;
+	D3DXVECTOR3 Nor = {};
+
+	D3DXVECTOR3 VtxPos[4] = {};
+
+	VtxPos[0] = D3DXVECTOR3(g_Block[nCntBlock].BlockTex[nType].vtxMin.x, g_Block[nCntBlock].BlockTex[nType].vtxMax.y,g_Block[nCntBlock].BlockTex[nType].vtxMin.z);
+
+	VtxPos[1] = D3DXVECTOR3(g_Block[nCntBlock].BlockTex[nType].vtxMax.x, g_Block[nCntBlock].BlockTex[nType].vtxMax.y, g_Block[nCntBlock].BlockTex[nType].vtxMin.z);
+
+	VtxPos[2] = D3DXVECTOR3(g_Block[nCntBlock].BlockTex[nType].vtxMin.x, g_Block[nCntBlock].BlockTex[nType].vtxMin.y, g_Block[nCntBlock].BlockTex[nType].vtxMin.z);
+
+	VtxPos[3] = D3DXVECTOR3(g_Block[nCntBlock].BlockTex[nType].vtxMax.x, g_Block[nCntBlock].BlockTex[nType].vtxMin.y, g_Block[nCntBlock].BlockTex[nType].vtxMin.z);
+
+	D3DXVECTOR3 VecA = VtxPos[1] - VtxPos[0];
+
+	D3DXVECTOR3 VecB = VtxPos[2] - VtxPos[0];
+
+	D3DXVec3Cross(&Nor, &VecA, &VecB);
+	D3DXVec3Normalize(&Nor, &Nor);
+	pPlayer->move.x -= Nor.x * pPlayer->speed;
+	pPlayer->move.z -= Nor.z * pPlayer->speed;
+
 }

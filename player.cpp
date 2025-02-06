@@ -205,76 +205,47 @@ void InitPlayer(void)
 					D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
 
 					//頂点座標を比較してブロックの最小値,最大値を取得
-					if (vtx.x < g_player.vtxMinPlayer.x)
+					if (vtx.x < g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.x)
 					{
-						g_player.vtxMinPlayer.x = vtx.x;
+						g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.x = vtx.x;
 					}
-					else if (vtx.y < g_player.vtxMinPlayer.y)
+					else if (vtx.y < g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.y)
 					{
-						g_player.vtxMinPlayer.y = vtx.y;
+						g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.y = vtx.y;
 					}
-					else if (vtx.z < g_player.vtxMinPlayer.z)
+					else if (vtx.z < g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.z)
 					{
-						g_player.vtxMinPlayer.z = vtx.z;
-					}
-
-					else if (vtx.x > g_player.vtxMaxPlayer.x)
-					{
-						g_player.vtxMaxPlayer.x = vtx.x;
+						g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.z = vtx.z;
 					}
 
-					else if (vtx.y > g_player.vtxMaxPlayer.y)
+					else if (vtx.x > g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.x)
 					{
-						g_player.vtxMaxPlayer.y = vtx.y;
+						g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.x = vtx.x;
 					}
 
-					else if (vtx.z > g_player.vtxMaxPlayer.z)
+					else if (vtx.y > g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.y)
 					{
-						g_player.vtxMaxPlayer.z = vtx.z;
+						g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.y = vtx.y;
 					}
 
-					if (vtx.x < g_player.Motion.aModel[nCntModel].vtxMin.x)
+					else if (vtx.z > g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.z)
 					{
-						g_player.Motion.aModel[nCntModel].vtxMin.x = vtx.x;
+						g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.z = vtx.z;
 					}
-					else if (vtx.y < g_player.Motion.aModel[nCntModel].vtxMin.y)
-					{
-						g_player.Motion.aModel[nCntModel].vtxMin.y = vtx.y;
-					}
-					else if (vtx.z < g_player.Motion.aModel[nCntModel].vtxMin.z)
-					{
-						g_player.Motion.aModel[nCntModel].vtxMin.z = vtx.z;
-					}
-
-					else if (vtx.x > g_player.Motion.aModel[nCntModel].vtxMax.x)
-					{
-						g_player.Motion.aModel[nCntModel].vtxMax.x = vtx.x;
-					}
-
-					else if (vtx.y > g_player.Motion.aModel[nCntModel].vtxMax.y)
-					{
-						g_player.Motion.aModel[nCntModel].vtxMax.y = vtx.y;
-					}
-
-					else if (vtx.z > g_player.Motion.aModel[nCntModel].vtxMax.z)
-					{
-						g_player.Motion.aModel[nCntModel].vtxMax.z = vtx.z;
-					}
-
 
 					//頂点フォーマットのサイズ分ポインタを進める
 					pVtxBuff += sizeFVF;
 				}
 
-				//サイズを代入
-				g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
-				g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
-				g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
+				////サイズを代入
+				//g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
+				//g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
+				//g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
 
 				//各モデルごとのサイズを代入
-				g_player.Motion.aModel[nCntModel].Size.x = g_player.Motion.aModel[nCntModel].vtxMax.x - g_player.Motion.aModel[nCntModel].vtxMin.x;
-				g_player.Motion.aModel[nCntModel].Size.y = g_player.Motion.aModel[nCntModel].vtxMax.y - g_player.Motion.aModel[nCntModel].vtxMin.y;
-				g_player.Motion.aModel[nCntModel].Size.z = g_player.Motion.aModel[nCntModel].vtxMax.z - g_player.Motion.aModel[nCntModel].vtxMin.z;
+				g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].Size.x = g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.x -  g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.x;
+				g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].Size.y = g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.y -  g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.y;
+				g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].Size.z = g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMax.z -  g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].vtxMin.z;
 
 				//頂点バッファのアンロック
 				g_LoadPlayer[nCntPlayer].Motion.aModel[nCntModel].pMesh->UnlockVertexBuffer();
@@ -365,15 +336,19 @@ void UpdatePlayer(void)
 
 	StickPad(); // パッドの移動処理
 
-	if (!bUsePad)
+	if (!bUsePad &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION&&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION2&&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION3&&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION4)
 	{
-		if (GetKeyboardPress(DIK_A) && g_player.Combostate == COMBO_NO)
+		if (GetKeyboardPress(DIK_A))
 		{
 			//プレイヤーの移動(上)
 			if (GetKeyboardPress(DIK_W) == true)
 			{
 				//g_player.Motion.motionType = MOTIONTYPE_MOVE;
-				SetMotion(&g_player.Motion,MOTIONTYPE_MOVE, MOTIONTYPE_NEUTRAL, false, 0);
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 				g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
 				g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
@@ -383,7 +358,7 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(下)
 			else if (GetKeyboardPress(DIK_S))
 			{
-				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_NEUTRAL, false, 0);
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 				g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
 				g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
@@ -393,7 +368,7 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(左)
 			else
 			{
-				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_NEUTRAL, false, 0);
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 				g_player.move.z += sinf(pCamera->rot.y) * g_player.speed;
 				g_player.move.x -= cosf(pCamera->rot.y) * g_player.speed;
@@ -402,12 +377,12 @@ void UpdatePlayer(void)
 			}
 		}
 		//プレイヤーの移動(右)
-		else if (GetKeyboardPress(DIK_D) && g_player.Combostate == COMBO_NO)
+		else if (GetKeyboardPress(DIK_D))
 		{
 			//プレイヤーの移動(上)
 			if (GetKeyboardPress(DIK_W))
 			{
-				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_NEUTRAL, false, 0);
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 				g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
 				g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
@@ -417,7 +392,7 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(下)
 			else if (GetKeyboardPress(DIK_S))
 			{
-				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_NEUTRAL, false, 0);
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 				g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
 				g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
@@ -427,7 +402,7 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(右)
 			else
 			{
-				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_NEUTRAL, false, 0);
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 				g_player.move.z -= sinf(pCamera->rot.y) * g_player.speed;
 				g_player.move.x += cosf(pCamera->rot.y) * g_player.speed;
@@ -437,9 +412,9 @@ void UpdatePlayer(void)
 
 		}
 		//プレイヤーの移動(上)
-		else if (GetKeyboardPress(DIK_W) == true && g_player.Combostate == COMBO_NO)
+		else if (GetKeyboardPress(DIK_W) == true)
 		{
-			SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_NEUTRAL, false, 0);
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 			g_player.move.x += sinf(pCamera->rot.y) * g_player.speed;
 			g_player.move.z += cosf(pCamera->rot.y) * g_player.speed;
@@ -447,9 +422,9 @@ void UpdatePlayer(void)
 			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
 		}
 		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S) == true && g_player.Combostate == COMBO_NO)
+		else if (GetKeyboardPress(DIK_S) == true)
 		{
-			SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_NEUTRAL, false, 0);
+			g_player.Motion.motionType = MOTIONTYPE_MOVE;
 
 			g_player.move.x -= sinf(pCamera->rot.y) * g_player.speed;
 			g_player.move.z -= cosf(pCamera->rot.y) * g_player.speed;
@@ -460,7 +435,7 @@ void UpdatePlayer(void)
 		{
 			if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 			{
-				SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_MOVE, true, 40); // モーションをニュートラルにする
+				SetMotion(&g_player.Motion,MOTIONTYPE_NEUTRAL,MOTIONTYPE_NEUTRAL,true,40); // モーションをニュートラルにする
 			}
 		}
 	}
@@ -1641,7 +1616,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
 	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
 	g_player.Combostate = Combstate;		  // コンボの状態を設定
-	SetMotion(&g_player.Motion, motiontype, MOTIONTYPE_NEUTRAL, true, 29);
+	SetMotion(&g_player.Motion, motiontype, MOTIONTYPE_NEUTRAL, true, 28);
 
 	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
