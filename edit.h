@@ -33,6 +33,7 @@ typedef enum
 //**************************
 typedef struct
 {
+	LPDIRECT3DTEXTURE9 g_pTextureEdit2d;	    // テクスチャへのポインタ
 	LPD3DXMESH g_pMeshEdit;				// メッシュ(頂点座標)へのポインタ
 	LPD3DXBUFFER g_pBuffMatEdit;		// マテリアルへのポインタ
 	DWORD g_dwNumMatEdit;				// マテリアルの数
@@ -80,4 +81,5 @@ void LoadEdit(void);	// editの読み込み処理
 void ReLoadEdit(void);	// editの再読み込み処理
 EDIT_INFO* GetEdit(void); // editの取得処理
 int GetNumobj(void);	// 配置数の取得
+bool GetEdit2d(void);   // エディット2dモードかどうか
 #endif

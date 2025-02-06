@@ -124,6 +124,12 @@
     <ClCompile Include="motion.cpp">
       <Filter>ソースファイル\base</Filter>
     </ClCompile>
+    <ClCompile Include="edit2d.cpp">
+      <Filter>ソースファイル\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="polygon.cpp">
+      <Filter>ソースファイル\obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -242,6 +248,12 @@
     </ClInclude>
     <ClInclude Include="motion.h">
       <Filter>ヘッダーファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="edit2d.h">
+      <Filter>ヘッダーファイル\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="polygon.h">
+      <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

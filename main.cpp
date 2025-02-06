@@ -26,6 +26,7 @@
 #include "edit.h"
 #include "sound.h"
 #include "player.h"
+#include "edit2d.h"
 
 //*****************************
 // プロトタイプ宣言
@@ -34,6 +35,7 @@ void DrawMode(void); // 現在の画面の表示
 void DrawOperation(void); // 操作方法
 void DrawEditMode(void);  // 編集モーど
 void DrawPlayerInfo(void); // プレイヤーの情報
+void DrawEditmode2d(void);
 
 //*****************************
 // グローバル変数宣言
@@ -554,7 +556,7 @@ void Draw(void)
 
 #ifdef _DEBUG
 
-			if (!GetEditState() && !GetEditStatetuto())
+			if (!GetEditState() && !GetEditStatetuto() && !GetEdit2d())
 			{
 				// 現在の画面の表示
 				DrawMode();
@@ -567,14 +569,15 @@ void Draw(void)
 			}
 			else if (GetEditState())
 			{
-				// エディター画面の描画
-				DrawEditMode();
-			}
-
-			if (GetEditStatetuto())
-			{
-				// エディター画面の描画
-				DrawEditMode();
+				if (!GetEdit2d())
+				{
+					// エディター画面の描画3d
+					DrawEditMode();
+				}
+				else if (GetEdit2d())
+				{
+					DrawEditmode2d(); // エディター2dの描画
+				}
 			}
 			// プレイヤーの座標表示
 			//DrawDebugPlayerPos();
@@ -904,9 +907,9 @@ void DrawEditMode(void)
 	char aStrObjPos[256];
 
 	wsprintf(&aStrGame[0],
-		"+=================================================+\n"
-		"+   現在のモード[編集モード]::ゲームモード[F2]    +\n"
-		"+=================================================+\n");
+		"+=============================================================+\n"
+		"+   現在のモード[編集モード3d:変更:[2d:F9]::ゲームモード[F2]  +\n"
+		"+=============================================================+\n");
 
 	wsprintf(&aStrType[0], "設置するブロック変更:[ %d種類目 ]:[ + F / - G ]\n",pEdit[nNumBlock].nType);
 	
@@ -977,5 +980,62 @@ void DrawPlayerInfo(void)
 
 	g_pFont->DrawText(NULL, &aStrPos[0], -1, &rectPos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrState[0], -1, &rectState, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+
+}
+//============================
+// エディットモード2dの描画
+//============================
+void DrawEditmode2d(void)
+{
+	EDIT_INFO_2D* pEdit2d = GetEditInfo2D(); // ポインタの取得
+	int nNumCnt = GetNum2d();                // 配置数の取得
+
+	RECT rectGameMode = { 0, 20, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectMove = { 0, 80, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectNumObj = { 0, 100, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectDelet = { 0, 120, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectSet = { 0, 140, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectscal = { 0, 160, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectRot = { 0, 180, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectMouse = { 0, 200, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectFile = { 0, 220, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectObjpos = { 0, 240, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+	char aStrGame[256];
+	char aStrMove[256];
+	char aStrNumObj[256];
+	char aStrDelet[256];
+	char aStrSet[256];
+	char aStrscal[256];
+	char aStrRot[256];
+	char aStrMouse[256];
+	char aStrFile[256];
+	char aStrObj[256];
+
+	wsprintf(&aStrGame[0],
+		"+=============================================================+\n"
+		"+   現在のモード[編集モード2d:変更:[3d:F9]::ゲームモード[F2]  +\n"
+		"+=============================================================+\n");
+
+	wsprintf(&aStrMove[0], "移動:[ WASD  Q / E ]");
+	wsprintf(&aStrNumObj[0], "配置数:[ %d ]", nNumCnt);
+	wsprintf(&aStrDelet[0], "消去:[ BACKSPACE ]");
+	wsprintf(&aStrSet[0], "設置:[ ENTER ]");
+	wsprintf(&aStrscal[0], "大きさ変更:横幅:[ ← / →]:高さ:[ ↑ / ↓ ]");
+	wsprintf(&aStrRot[0], "角度変更:X:[ Z / C ]:Y:[ V / B ]:Z:[ F / G ]");
+	wsprintf(&aStrMouse[0], "注視点移動:[ 右クリック ]:視点移動:[ 左クリック ]:ズーム:[ ホイール ]\n");
+	wsprintf(&aStrFile[0], "セーブ[ F7 ]:前回の配置物読み込み:[ F8 ] <data/saveEdit2d.txt>\n");
+	wsprintf(&aStrObj[0], "選択中のオブジェクトの場所へ移動:[ F6 ]\n");
+
+	g_pFont->DrawText(NULL, &aStrGame[0], -1, &rectGameMode, DT_LEFT, D3DCOLOR_RGBA(0, 200, 0, 255));
+	g_pFont->DrawText(NULL, &aStrGame[0], -1, &rectMove, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrNumObj[0], -1, &rectNumObj, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrDelet[0], -1, &rectDelet, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrSet[0], -1, &rectSet, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrscal[0], -1, &rectscal, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrRot[0], -1, &rectRot, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrMouse[0], -1, &rectMouse, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrFile[0], -1, &rectFile, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrObj[0], -1, &rectObjpos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 
 }

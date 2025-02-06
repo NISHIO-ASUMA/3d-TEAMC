@@ -116,21 +116,7 @@ void UninitIcon()
 //===============================
 void UpdateIcon()
 {
-	// アイテムの取得処理
-	Item* pItem = GetItem();
-
-	// 頂点情報のポインタ
-	VERTEX_2D* pVtx;
-
-	// 頂点バッファのロック
-	g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
-
-	// 頂点座標の設定
-	
-
-	// アンロック
-	g_pVtxBuffIcon->Unlock();
-
+	// 無し
 }
 //===============================
 // アイコンの描画処理
