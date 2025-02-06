@@ -324,8 +324,8 @@ void CollisionWall(void)
 				pPlayer->pos.x -= vector.x * pPlayer->speed;
 				pPlayer->pos.z -= vector.z * pPlayer->speed;
 
-				pPlayer->move.x = WallMove.x * pPlayer->speed;
-				pPlayer->move.z = WallMove.z * pPlayer->speed;
+				pPlayer->move.x += WallMove.x * pPlayer->speed;
+				pPlayer->move.z += WallMove.z * pPlayer->speed;
 			}
 		}
 	}

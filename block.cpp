@@ -12,6 +12,7 @@
 #include "input.h"
 #include "mouse.h"
 #include "camera.h"
+#include "Effect.h"
 
 //****************************
 // マクロ定義
@@ -64,6 +65,8 @@ void InitBlock(void)
 
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
+		g_TexBlock[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 角度
+
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
 		// マテリアルのデータへのポインタを取得
@@ -85,7 +88,6 @@ void InitBlock(void)
 	int nNumVtx;	// 頂点数
 	DWORD sizeFVF;  // 頂点フォーマットのサイズ
 	BYTE* pVtxBuff; // 頂点バッファへのポインタ
-	DWORD normal;
 
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
@@ -764,9 +766,9 @@ void CreateObb(int nCnt)
 	g_Block[nCnt].Obb.VecRot[2] = D3DXVECTOR3(mtxRot._31, mtxRot._32, mtxRot._33); // 回転行列Z
 
 	// 長さ取得
-	g_Block[nCnt].Obb.Length[0] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.x * g_Block[nCnt].Scal.x) - (g_Block[nCnt].BlockTex[nType].vtxMin.x * g_Block[nCnt].Scal.x)) * 0.7f; // 長さX
-	g_Block[nCnt].Obb.Length[1] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.y * g_Block[nCnt].Scal.y) - (g_Block[nCnt].BlockTex[nType].vtxMin.y * g_Block[nCnt].Scal.y)) * 0.7f; // 長さY
-	g_Block[nCnt].Obb.Length[2] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.z * g_Block[nCnt].Scal.z) - (g_Block[nCnt].BlockTex[nType].vtxMin.z * g_Block[nCnt].Scal.z)) * 0.6f; // 長さZ
+	g_Block[nCnt].Obb.Length[0] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.x * g_Block[nCnt].Scal.x) - (g_Block[nCnt].BlockTex[nType].vtxMin.x * g_Block[nCnt].Scal.x)) * 0.5f; // 長さX
+	g_Block[nCnt].Obb.Length[1] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.y * g_Block[nCnt].Scal.y) - (g_Block[nCnt].BlockTex[nType].vtxMin.y * g_Block[nCnt].Scal.y)) * 0.5f; // 長さY
+	g_Block[nCnt].Obb.Length[2] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.z * g_Block[nCnt].Scal.z) - (g_Block[nCnt].BlockTex[nType].vtxMin.z * g_Block[nCnt].Scal.z)) * 0.5f; // 長さZ
 }
 //=======================
 // OBBの判定
@@ -788,8 +790,11 @@ bool collisionObb(int nCnt)
 	D3DXVECTOR3 Nbe2(0.0f,0.0f,0.0f);
 	D3DXVECTOR3 Nbe3(0.0f,0.0f,0.0f);
 
-	D3DXVECTOR3 Max(pPlayer->Motion.aModel[2].vtxMax.x, pPlayer->Motion.aModel[2].vtxMax.y, pPlayer->Motion.aModel[2].vtxMax.z);
-	D3DXVECTOR3 Min(pPlayer->Motion.aModel[2].vtxMin.x, pPlayer->Motion.aModel[2].vtxMin.y, pPlayer->Motion.aModel[2].vtxMin.z);
+	//D3DXVECTOR3 Max(pPlayer->Motion.aModel[2].vtxMax.x, pPlayer->Motion.aModel[2].vtxMax.y, pPlayer->Motion.aModel[2].vtxMax.z);
+	//D3DXVECTOR3 Min(pPlayer->Motion.aModel[2].vtxMin.x, pPlayer->Motion.aModel[2].vtxMin.y, pPlayer->Motion.aModel[2].vtxMin.z);
+
+	D3DXVECTOR3 Max(1000.0f,1000.0f,1000.0f);
+	D3DXVECTOR3 Min(10.0f,0.0f,10.0f);
 
 	// Player
 	PlayerLength[0] = fabsf(Max.x - Min.x);
@@ -802,7 +807,7 @@ bool collisionObb(int nCnt)
 	D3DXVECTOR3 NBe3 = Nbe3 * PlayerLength[2];
 
 	//モデル情報の代入
-	D3DXVECTOR3 Model(pPlayer->Motion.aModel[0].mtxWorld._41, pPlayer->Motion.aModel[0].mtxWorld._42, pPlayer->Motion.aModel[0].mtxWorld._43);
+	D3DXVECTOR3 Model(pPlayer->Motion.aModel[2].mtxWorld._41, pPlayer->Motion.aModel[2].mtxWorld._42, pPlayer->Motion.aModel[2].mtxWorld._43);
 
 	// 中心からプレイヤーの位置を求める
 	D3DXVECTOR3 Interval = Model - g_Block[nCnt].Obb.CenterPos;
@@ -980,22 +985,150 @@ void SetMtx(int nCntBlock)
 //=========================
 void PushPlayer(int nCntBlock)
 {
+	static bool bLanding = false;
+	
 	Player* pPlayer = GetPlayer();
 
 	int nType = g_Block[nCntBlock].nType;
 
+	// 法線ベクトルX
 	D3DXVec3Normalize(&g_Block[nCntBlock].Obb.VecRot[0], &g_Block[nCntBlock].Obb.VecRot[0]);
+
+	// 法線ベクトルY
 	D3DXVec3Normalize(&g_Block[nCntBlock].Obb.VecRot[1], &g_Block[nCntBlock].Obb.VecRot[1]);
+
+	// 法線ベクトルZ
 	D3DXVec3Normalize(&g_Block[nCntBlock].Obb.VecRot[2], &g_Block[nCntBlock].Obb.VecRot[2]);
 
+
 	D3DXVECTOR3 VecMoveF = pPlayer->pos - pPlayer->posOld; // 進行ベクトル
-	float VecA = D3DXVec3Dot(&VecMoveF, &g_Block[nCntBlock].Obb.VecRot[0]);
+	D3DXVec3Normalize(&VecMoveF, &VecMoveF);               // 進行ベクトルの正規化
 
-	D3DXVECTOR3 WallMove = VecMoveF - VecA * g_Block[nCntBlock].Obb.VecRot[0];
-	D3DXVec3Normalize(&WallMove, &WallMove);
+	// 面の位置X(法線プラス)
+	D3DXVECTOR3 faceposXp = g_Block[nCntBlock].Obb.CenterPos + (g_Block[nCntBlock].Obb.VecRot[0] * g_Block[nCntBlock].Obb.Length[0]);
 
-	
-	pPlayer->move.x += WallMove.x * pPlayer->speed;
-	pPlayer->move.z += WallMove.z * pPlayer->speed;
+	// 面の位置X(法線マイナス)
+	D3DXVECTOR3 faceposXm = g_Block[nCntBlock].Obb.CenterPos - (g_Block[nCntBlock].Obb.VecRot[0] * g_Block[nCntBlock].Obb.Length[0]);
 
+	D3DXVECTOR3 PlayerVecXp = pPlayer->pos - faceposXp; // 面の位置とプレイヤーのベクトル
+	D3DXVECTOR3 PlayerVecXm = pPlayer->pos - faceposXm; // 面の位置とプレイヤーのベクトル
+
+	D3DXVec3Normalize(&PlayerVecXp, &PlayerVecXp);
+	D3DXVec3Normalize(&PlayerVecXm, &PlayerVecXm);
+
+	D3DXVECTOR3 norXm = - g_Block[nCntBlock].Obb.VecRot[0];
+
+	float DotXp = fabsf(D3DXVec3Dot(&g_Block[nCntBlock].Obb.VecRot[0], &PlayerVecXp));
+	float DotXm = fabsf(D3DXVec3Dot(&norXm, &PlayerVecXm));
+
+
+
+
+	// 面の位置Y(法線プラス)
+	D3DXVECTOR3 faceposYp = g_Block[nCntBlock].Obb.CenterPos + (g_Block[nCntBlock].Obb.VecRot[1] * g_Block[nCntBlock].Obb.Length[1]);
+
+	// 面の位置Y(法線マイナス)
+	D3DXVECTOR3 faceposYm = g_Block[nCntBlock].Obb.CenterPos - (g_Block[nCntBlock].Obb.VecRot[1] * g_Block[nCntBlock].Obb.Length[1]);
+
+	D3DXVECTOR3 PlayerVecYp = pPlayer->pos - faceposYp; // 面の位置とプレイヤーのベクトル
+	D3DXVECTOR3 PlayerVecYm = pPlayer->pos - faceposYm; // 面の位置とプレイヤーのベクトル
+
+	D3DXVec3Normalize(&PlayerVecYp, &PlayerVecYp);
+	D3DXVec3Normalize(&PlayerVecYm, &PlayerVecYm);
+
+	D3DXVECTOR3 norYm = - g_Block[nCntBlock].Obb.VecRot[1];
+
+	float DotYp = fabsf(D3DXVec3Dot(&g_Block[nCntBlock].Obb.VecRot[1], &PlayerVecYp));
+	float DotYm = fabsf(D3DXVec3Dot(&norYm, &PlayerVecYm));
+
+
+
+
+	// 面の位置Z(法線プラス)
+	D3DXVECTOR3 faceposZp = g_Block[nCntBlock].Obb.CenterPos + (g_Block[nCntBlock].Obb.VecRot[2] * g_Block[nCntBlock].Obb.Length[2]);
+
+	// 面の位置Z(法線マイナス)
+	D3DXVECTOR3 faceposZm = g_Block[nCntBlock].Obb.CenterPos - (g_Block[nCntBlock].Obb.VecRot[2] * g_Block[nCntBlock].Obb.Length[2]);
+
+	D3DXVECTOR3 PlayerVecZp = pPlayer->pos - faceposZp; // 面の位置とプレイヤーのベクトル
+	D3DXVECTOR3 PlayerVecZm = pPlayer->pos - faceposZm; // 面の位置とプレイヤーのベクトル
+
+	D3DXVec3Normalize(&PlayerVecZp, &PlayerVecZp);
+	D3DXVec3Normalize(&PlayerVecZm, &PlayerVecZm);
+
+	D3DXVECTOR3 norZm = -g_Block[nCntBlock].Obb.VecRot[2];
+
+	float DotZp = fabsf(D3DXVec3Dot(&g_Block[nCntBlock].Obb.VecRot[2], &PlayerVecZp));
+	float DotZm = fabsf(D3DXVec3Dot(&norZm, &PlayerVecZm));
+
+	if (!bLanding)
+	{
+		// -Xの面から当たった
+		if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
+		{
+			float VecDot = D3DXVec3Dot(&g_Block[nCntBlock].Obb.VecRot[0], &VecMoveF);
+
+			D3DXVECTOR3 WallMove = VecMoveF - VecDot * g_Block[nCntBlock].Obb.VecRot[0];
+
+			pPlayer->pos.x += g_Block[nCntBlock].Obb.VecRot[0].x * pPlayer->speed;
+			pPlayer->pos.z += g_Block[nCntBlock].Obb.VecRot[0].z * pPlayer->speed;
+
+			pPlayer->move.x = WallMove.x;
+			pPlayer->move.z = WallMove.z;
+		}
+		// -Zの面から当たった
+		if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
+		{
+			float VecDot = D3DXVec3Dot(&norZm, &VecMoveF);
+
+			D3DXVECTOR3 WallMove = VecMoveF - VecDot * norZm;
+
+			pPlayer->pos.x += norZm.x * pPlayer->speed;
+			pPlayer->pos.z += norZm.z * pPlayer->speed;
+
+			pPlayer->move.x = WallMove.x;
+			pPlayer->move.z = WallMove.z;
+		}
+		// +Xの面から当たった
+		if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
+		{
+			float VecDot = D3DXVec3Dot(&norXm, &VecMoveF);
+
+			D3DXVECTOR3 WallMove = VecMoveF - VecDot * norXm;
+
+			pPlayer->pos.x += norXm.x * pPlayer->speed;
+			pPlayer->pos.z += norXm.z * pPlayer->speed;
+
+			pPlayer->move.x = WallMove.x;
+			pPlayer->move.z = WallMove.z;
+		}
+		// +Zの面から当たった
+		if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
+		{
+			float VecDot = D3DXVec3Dot(&g_Block[nCntBlock].Obb.VecRot[2], &VecMoveF);
+
+			D3DXVECTOR3 WallMove = VecMoveF - VecDot * g_Block[nCntBlock].Obb.VecRot[2];
+
+			pPlayer->pos.x += g_Block[nCntBlock].Obb.VecRot[2].x * pPlayer->speed;
+			pPlayer->pos.z += g_Block[nCntBlock].Obb.VecRot[2].z * pPlayer->speed;
+
+			pPlayer->move.x = WallMove.x;
+			pPlayer->move.z = WallMove.z;
+		}
+	}
+	if (DotYp <= DotYm && DotYp <= DotXp && DotYp <= DotXm  && DotYp <= DotZp && DotYm <= DotZm)
+	{
+		bLanding = true;
+
+		pPlayer->bJump = true;
+		SetMotion(&pPlayer->Motion, MOTIONTYPE_LANDING, MOTIONTYPE_NEUTRAL, true, 10);
+		pPlayer->pos.y = pPlayer->posOld.y;
+		pPlayer->move.y = 0.0f;
+	}
+	else
+	{
+		bLanding = false;
+	}
+
+	SetEffect(faceposYp,D3DXVECTOR3(0.0f,0.0f,0.0f),10,D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),10,30.0f);
 }
