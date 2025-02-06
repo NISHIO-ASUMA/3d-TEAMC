@@ -137,11 +137,9 @@ void InitGame(void)
 
 	WaveEnemy(0); // 敵を出す処理
 	WaveEnemy(1); // 敵を出す処理
-
-	// TODO : テスト用にセット
-	// ボスをセット
 	
-	//SetGameUI(D3DXVECTOR3(640.0f,340.0f,0.0f),UITYPE_RED,1280.0f,720.0f,0);
+	// UIをセット
+	SetGameUI(D3DXVECTOR3(80.0f,550.0f,0.0f),UITYPE_ICONFRAME,80.0f,80.0f,0);
 
 	SetIcon(D3DXVECTOR3(80.0f, 550.0f, 0.0f), 80.0f, 80.0f, 0);
 
