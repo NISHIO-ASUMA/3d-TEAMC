@@ -71,7 +71,7 @@ static const char* ICON_TEXTURE[WEPONTYPE_MAX] =
 	"data\\TEXTURE\\iceblocksword.png", // 氷の剣
 	"data\\TEXTURE\\iron.png",			// 鉄パイプ
 	"data\\TEXTURE\\ironbat.png",		// 金属バット
-	"data\\TEXTURE\\sulfboard.png",		// サーフボード
+	"data\\TEXTURE\\surfboard.png",		// サーフボード
 	"data\\TEXTURE\\torch.png",			// トーチ
 	"data\\TEXTURE\\torchsword.png",	// トーチソード
 	"data\\TEXTURE\\bar.png",			// バール

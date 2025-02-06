@@ -70,6 +70,7 @@ void UpdateRanking(void)
 	// スコアの更新処理
 	UpdateRankingScore();
 
+	// カウントを加算
 	nRankingCount++;
 
 	if (nRankingCount >= 600 || KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))

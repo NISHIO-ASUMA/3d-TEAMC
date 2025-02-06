@@ -572,6 +572,7 @@ void HitBoss(int nCntBoss,int nDamage)
 			AddScore(15000);		// スコアを取得
 			AddSpgauge(2.0f);   // SPゲージを取得
 		}
+
 		AddTimeSecond(15); // 15秒増やす
 
 		switch (pItem[pPlayer->ItemIdx].nType)
