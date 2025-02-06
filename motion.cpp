@@ -223,6 +223,29 @@ void UpdateMotion(MOTION *pMotion)
 		pMotion->aModel[nCntModel].pos += pMotion->aModel[nCntModel].offpos;
 	}
 
+	if (!pMotion->aMotionInfo[pMotion->motionType].bLoop &&
+		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
+	{
+		pMotion->bFinishMotion = true;
+		//pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
+	}
+
+	// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった
+	if (pMotion->bFinishMotion &&
+		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
+		pMotion->nCounterBlend >= pMotion->nFrameBlend &&
+		pMotion->bBlendMotion)
+	{
+		pMotion->bFinishMotion = false;           // もとに戻す
+		pMotion->bBlendMotion = false;			  // もとに戻す
+		pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
+	}
+
+	if (!pMotion->bBlendMotion && pMotion->bFinishMotion)
+	{
+		pMotion->motionType = MOTIONTYPE_NEUTRAL;
+	}
+
 	if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame)
 	{
 		//モーションカウントが最大になったら0に戻す
@@ -230,28 +253,6 @@ void UpdateMotion(MOTION *pMotion)
 		pMotion->nCountMotion = 0;
 	}
 
-	// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった
-	if (pMotion->bFinishMotion &&
-		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
-		pMotion->nCounterBlend >= pMotion->nFrameBlend&&
-		pMotion->bBlendMotion)
-	{
-		pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
-		pMotion->bFinishMotion = false;           // もとに戻す
-		pMotion->bBlendMotion = false;			  // もとに戻す
-	}
-	
-	if (!pMotion->bBlendMotion && pMotion->bFinishMotion)
-	{
-		pMotion->motionType = MOTIONTYPE_NEUTRAL;
-	}
-
-	if (!pMotion->aMotionInfo[pMotion->motionType].bLoop &&
-		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
-	{
-		pMotion->bFinishMotion = true;
-		//pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
-	}
 
 	//モーションカウントを加算
 	pMotion->nCountMotion++;
