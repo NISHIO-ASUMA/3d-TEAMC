@@ -336,6 +336,7 @@ void UpdatePlayer(void)
 
 	StickPad(); // パッドの移動処理
 
+	// パッドを使っていないかつ攻撃モーションじゃない
 	if (!bUsePad &&
 		g_player.Motion.motionType != MOTIONTYPE_ACTION&&
 		g_player.Motion.motionType != MOTIONTYPE_ACTION2&&

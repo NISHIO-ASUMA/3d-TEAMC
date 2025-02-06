@@ -999,7 +999,7 @@ void PushPlayer(int nCntBlock)
 
 	D3DXVec3Cross(&Nor, &VecA, &VecB);
 	D3DXVec3Normalize(&Nor, &Nor);
-	pPlayer->move.x -= Nor.x * pPlayer->speed;
-	pPlayer->move.z -= Nor.z * pPlayer->speed;
+	pPlayer->pos.x -= Nor.x * pPlayer->speed;
+	pPlayer->pos.z -= Nor.z * pPlayer->speed;
 
 }
