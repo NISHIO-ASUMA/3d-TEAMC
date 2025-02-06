@@ -29,16 +29,16 @@ typedef enum
 //****************************
 typedef struct
 {
-	D3DXVECTOR3 pos;//位置
-	D3DXVECTOR3 move;
-	D3DXMATRIX mtxWorld;//ワールドマトリックス
-	D3DXCOLOR col;//色
-	int nCounterAnim;
-	int nPatternAnim;
-	int nIdxShadow;//番号
-	int nLife;//寿命
-	bool bUse;//使用しているかどうか
-	float speed, radius;
+	D3DXVECTOR3 pos; // 位置
+	D3DXVECTOR3 move; // 移動量
+	D3DXMATRIX mtxWorld; // ワールドマトリックス
+	D3DXCOLOR col; // 色
+	int nCounterAnim; // アニメーションカウント
+	int nPatternAnim; // パターンカウント
+	int nIdxShadow; // 番号
+	int nLife; // 寿命
+	bool bUse; // 使用しているかどうか
+	float speed, radius; // 移動速度,半径
 	float fWidth, fHeight;//幅,高さ
 	int nType; // 種類
 }EXPLOSION;
