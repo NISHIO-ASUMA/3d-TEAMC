@@ -22,6 +22,7 @@
 #include "spgauge.h"
 #include "Score.h"
 #include "time.h"
+#include "sound.h"
 
 //****************************
 // マクロ定義
@@ -528,8 +529,13 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 //=============================
 void HitBoss(int nCntBoss,int nDamage)
 {
+	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
+	// アイテムの取得
+	Item* pItem = GetItem();
+
+	// ダメージを減らす
 	g_Boss[nCntBoss].nLife -= nDamage;
 
 	// ダメージを設定
@@ -567,9 +573,56 @@ void HitBoss(int nCntBoss,int nDamage)
 			AddSpgauge(2.0f);   // SPゲージを取得
 		}
 		AddTimeSecond(15); // 15秒増やす
+
+		switch (pItem[pPlayer->ItemIdx].nType)
+		{
+		case ITEMTYPE_BAT:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_BAT_SE);
+
+			break;
+
+		case ITEMTYPE_HUNMER:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_HAMMER_SE);
+
+			break;
+		default:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_ACTION_SE);
+
+			break;
+		}
+
 	}
 	else
 	{
+		switch (pItem[pPlayer->ItemIdx].nType)
+		{
+		case ITEMTYPE_BAT:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_BAT_SE);
+
+			break;
+
+		case ITEMTYPE_HUNMER:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_HAMMER_SE);
+
+			break;
+		default:
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_ACTION_SE);
+
+			break;
+		}
+
 		// パーティクルをセット
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z), g_Boss[nCntBoss].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 30, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
