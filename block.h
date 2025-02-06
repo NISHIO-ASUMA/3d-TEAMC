@@ -110,6 +110,8 @@ typedef struct
 	D3DXVECTOR3 rot; // 向き
 	D3DXVECTOR3 Scal;// 大きさ
 	D3DXVECTOR3 Size;// サイズ
+	D3DXVECTOR3 nor; // 法線ベクトル
+
 	D3DXMATRIX mtxWorldBlock;// ワールドマトリックス
 	bool bUse;
 	int nType;

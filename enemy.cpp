@@ -323,7 +323,7 @@ void UpdateEnemy(void)
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 
 		// ホーミング範囲
-		if (AgentRange(50.0f, 20000.0f, nCntEnemy) && g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_NO)
+		if (AgentRange(50.0f, 20000.0f, nCntEnemy) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
 		{
 			AgentEnemy(nCntEnemy);
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
@@ -332,10 +332,6 @@ void UpdateEnemy(void)
 
 			g_Enemy[nCntEnemy].rot.y = fAngle + D3DX_PI; // 角度を代入
 
-		}
-		else
-		{
-			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL; // 範囲外だったらニュートラルに戻す
 		}
 
 		if (pPlayer->AttackSp && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
@@ -350,11 +346,16 @@ void UpdateEnemy(void)
 		CollisionToEnemy(nCntEnemy); // 敵と敵の当たり判定
 
 		// 攻撃範囲に入った
-		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 20.0f))
+		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 20.0f) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
 		{
-			g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f,0.0f,0.0f);
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_ATTACK;
-			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_ACTION;
+			SetMotion(&g_Enemy[nCntEnemy].Motion, MOTIONTYPE_ACTION, MOTIONTYPE_NEUTRAL, true, 20); // モーションをニュートラルにする
+		}
+
+		// 攻撃状態だったら動きを止める
+		if (g_Enemy[nCntEnemy].Motion.motionType == MOTIONTYPE_ACTION)
+		{
+			g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		}
 
 		// プレイヤーのモデルの情報を代入
@@ -374,9 +375,11 @@ void UpdateEnemy(void)
 		{
 			HitPlayer(50);
 		}
-		else
+
+		if (!g_Enemy[nCntEnemy].Motion.aMotionInfo[g_Enemy[nCntEnemy].Motion.motionType].bLoop &&
+			g_Enemy[nCntEnemy].Motion.nKey >= g_Enemy[nCntEnemy].Motion.aMotionInfo[g_Enemy[nCntEnemy].Motion.motionType].nNumkey - 1)
 		{
-			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO; // 範囲外だったら攻撃していない状態にする
+			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
 
 		//モーションの更新

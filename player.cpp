@@ -749,7 +749,7 @@ void UpdatePlayer(void)
 	if (g_player.Motion.nNumModel == 16 && g_player.Itembreak[g_player.ItemIdx])
 	{
 		// モーションをニュートラルにする
-		g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
+		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -868,6 +868,7 @@ void UpdatePlayer(void)
 	// スペシャルモーションからもとに戻す
 	if (g_player.AttackSp && g_player.Motion.nKey >= g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION].nNumkey - 1)
 	{
+		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
 		g_player.SwordOffpos.y = 65.0f;		// 判定の長さを戻す
 		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
 		g_player.Motion.nNumModel = 15;		// 武器を消す
@@ -901,6 +902,7 @@ void UpdatePlayer(void)
 			6.0f, 4, 80, 500, 6.0f, 30.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}	//モーションの更新
+
 	UpdateMotion(&g_player.Motion);
 
 	//プレイヤーの向きを目的の向きに近づける

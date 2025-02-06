@@ -298,14 +298,34 @@ void CollisionWall(void)
 			// プレイヤーが壁の外に出た
 			if (Cross.y < 0)
 			{
+				Player* pPlayer = GetPlayer();
+
+				D3DXVECTOR3 VecMoveF = pPlayer->pos - pPlayer->posOld; // 進行ベクトル
+
+				D3DXVECTOR3 Vector1 = g_Wall[nCnt].vtxPos[1] - g_Wall[nCnt].vtxPos[0];
+				D3DXVECTOR3 Vector2 = g_Wall[nCnt].vtxPos[2] - g_Wall[nCnt].vtxPos[0];
+				D3DXVECTOR3 Nor;
+
+				D3DXVec3Cross(&Nor, &Vector1, &Vector2);
+				D3DXVec3Normalize(&Nor, &Nor);
+				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
+
+				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
+
+				D3DXVec3Normalize(&WallMove, &WallMove);
+
+				D3DXVECTOR3 vector = pPlayer->posOld - WallMove;
+
+				D3DXVec3Normalize(&vector, &vector);
+
 				pPlayer->move.x = 0.0f;
 				pPlayer->move.z = 0.0f;
 
-				// プレイヤーの位置を前回の位置に戻す
-				pPlayer->pos.x += vecWall.x * pPlayer->speed;
-				pPlayer->pos.z += vecWall.z * pPlayer->speed;
+				pPlayer->pos.x -= vector.x * pPlayer->speed;
+				pPlayer->pos.z -= vector.z * pPlayer->speed;
 
-				DotWall(); // 内積
+				pPlayer->move.x = WallMove.x * pPlayer->speed;
+				pPlayer->move.z = WallMove.z * pPlayer->speed;
 			}
 		}
 	}
@@ -318,41 +338,7 @@ void CollisionWall(void)
 //==========================
 void DotWall(void)
 {
-	// プレイヤーの取得
-	Player* pPlayer = GetPlayer();
 
-	for (int nCnt = 0; nCnt < MAX_WALL; nCnt++)
-	{
-		D3DXVECTOR3 vecA;
-		D3DXVECTOR3 vecLine;
-		D3DXVECTOR3 vecLineB;
-		D3DXVECTOR3 vecB;	// 法線
-		D3DXVECTOR3 vecMove;
-		D3DXVECTOR3 VecC;
-		D3DXVECTOR3 vecWall;
-		D3DXVECTOR3 vecCross;
-
-		vecA = pPlayer->pos - pPlayer->posOld;// プレーヤーの移動
-
-		D3DXVec3Normalize(&vecA, &vecA); // 正規化
-
-		vecLine = g_Wall[nCnt].vtxPos[1] - g_Wall[nCnt].vtxPos[0];  // ベクトルA
-		vecLineB = g_Wall[nCnt].vtxPos[2] - g_Wall[nCnt].vtxPos[0]; // ベクトルB
-
-		D3DXVec3Cross(&vecB, &vecLine, &vecLineB); // 外積
-		D3DXVec3Normalize(&vecB, &vecB);           // ベクトルB
-
-		// 内積
-		float fDot = D3DXVec3Dot(&vecA,&vecB);
-
-		vecWall = fDot * vecB;
-
-		// 正規化
-		D3DXVec3Normalize(&vecWall, &vecWall);
-
-		pPlayer->move.x = vecWall.x;
-		pPlayer->move.z = vecWall.z;
-	}
 }
 ////========================
 ////弾の判定

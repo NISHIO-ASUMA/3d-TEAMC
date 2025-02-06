@@ -85,6 +85,7 @@ void InitBlock(void)
 	int nNumVtx;	// 頂点数
 	DWORD sizeFVF;  // 頂点フォーマットのサイズ
 	BYTE* pVtxBuff; // 頂点バッファへのポインタ
+	DWORD normal;
 
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
@@ -93,7 +94,7 @@ void InitBlock(void)
 
 		// 頂点フォーマットのサイズ取得
 		sizeFVF = D3DXGetFVFVertexSize(g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->GetFVF());
-
+		
 		// 頂点バッファのロック
 		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
@@ -295,6 +296,7 @@ void DrawBlock(void)
 		}
 		SetMtx(nCntBlock);
 	}
+	
 }
 //=======================
 // ブロックの設定処理
@@ -981,25 +983,19 @@ void PushPlayer(int nCntBlock)
 	Player* pPlayer = GetPlayer();
 
 	int nType = g_Block[nCntBlock].nType;
-	D3DXVECTOR3 Nor = {};
 
-	D3DXVECTOR3 VtxPos[4] = {};
+	D3DXVec3Normalize(&g_Block[nCntBlock].Obb.VecRot[0], &g_Block[nCntBlock].Obb.VecRot[0]);
+	D3DXVec3Normalize(&g_Block[nCntBlock].Obb.VecRot[1], &g_Block[nCntBlock].Obb.VecRot[1]);
+	D3DXVec3Normalize(&g_Block[nCntBlock].Obb.VecRot[2], &g_Block[nCntBlock].Obb.VecRot[2]);
 
-	VtxPos[0] = D3DXVECTOR3(g_Block[nCntBlock].BlockTex[nType].vtxMin.x, g_Block[nCntBlock].BlockTex[nType].vtxMax.y,g_Block[nCntBlock].BlockTex[nType].vtxMin.z);
+	D3DXVECTOR3 VecMoveF = pPlayer->pos - pPlayer->posOld; // 進行ベクトル
+	float VecA = D3DXVec3Dot(&VecMoveF, &g_Block[nCntBlock].Obb.VecRot[0]);
 
-	VtxPos[1] = D3DXVECTOR3(g_Block[nCntBlock].BlockTex[nType].vtxMax.x, g_Block[nCntBlock].BlockTex[nType].vtxMax.y, g_Block[nCntBlock].BlockTex[nType].vtxMin.z);
+	D3DXVECTOR3 WallMove = VecMoveF - VecA * g_Block[nCntBlock].Obb.VecRot[0];
+	D3DXVec3Normalize(&WallMove, &WallMove);
 
-	VtxPos[2] = D3DXVECTOR3(g_Block[nCntBlock].BlockTex[nType].vtxMin.x, g_Block[nCntBlock].BlockTex[nType].vtxMin.y, g_Block[nCntBlock].BlockTex[nType].vtxMin.z);
-
-	VtxPos[3] = D3DXVECTOR3(g_Block[nCntBlock].BlockTex[nType].vtxMax.x, g_Block[nCntBlock].BlockTex[nType].vtxMin.y, g_Block[nCntBlock].BlockTex[nType].vtxMin.z);
-
-	D3DXVECTOR3 VecA = VtxPos[1] - VtxPos[0];
-
-	D3DXVECTOR3 VecB = VtxPos[2] - VtxPos[0];
-
-	D3DXVec3Cross(&Nor, &VecA, &VecB);
-	D3DXVec3Normalize(&Nor, &Nor);
-	pPlayer->pos.x -= Nor.x * pPlayer->speed;
-	pPlayer->pos.z -= Nor.z * pPlayer->speed;
+	
+	pPlayer->move.x += WallMove.x * pPlayer->speed;
+	pPlayer->move.z += WallMove.z * pPlayer->speed;
 
 }

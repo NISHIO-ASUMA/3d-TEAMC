@@ -223,6 +223,7 @@ void UpdateBoss(void)
 		{
 			continue;
 		}
+
 		switch (g_Boss[nCnt].state)
 		{
 		case BOSSSTATE_NORMAL:
@@ -271,8 +272,8 @@ void UpdateBoss(void)
 			{
 				if (g_Boss[nCnt].Motion.nCountMotion == 1)// 最初は加速させて
 				{
-					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 70;
-					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 70;
+					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 70.0f;
+					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 70.0f;
 				}
 				else // その後はエフェクトを纏いながら移動する
 				{
