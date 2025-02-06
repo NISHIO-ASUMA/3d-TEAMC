@@ -26,6 +26,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEdit2d = NULL; //頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9 g_pTextureEditOrigin2d;//テクスチャへのポインタ保存用
 EDIT_INFO_2D g_Edit2d[MAX_EDIT];//影の構造体
 int g_EditCnt;
+int g_ObjCount;
 
 //=============================
 //影の初期化処理
@@ -62,6 +63,7 @@ void InitEdit2d(void)
 	}
 	g_Edit2d[0].bUse = true;
 	g_EditCnt = 0;
+	g_ObjCount = 0;
 
 	//頂点バッファをロック
 	g_pVtxBuffEdit2d->Lock(0, 0, (void**)&pVtx, 0);
@@ -240,6 +242,20 @@ void UpdateEdit2d(void)
 			g_Edit2d[g_EditCnt].rot.z += 0.01f;
 		}
 
+		// カメラを選択中のオブジェクトの場所へ移動
+		if (KeyboardTrigger(DIK_F6))
+		{
+			pCamera->posV.x = g_Edit2d[g_EditCnt].pos.x;
+			pCamera->posV.z = g_Edit2d[g_EditCnt].pos.z;
+		}
+
+		//ブロック消去
+		if (KeyboardTrigger(DIK_BACKSPACE) && g_EditCnt > 0)
+		{
+			g_Edit2d[g_EditCnt].bUse = false; // 選択中のオブジェクトを消す
+			g_EditCnt--;                    // オブジェクトのカウントを減らす
+		}
+
 		pVtx += 4 * g_EditCnt;
 
 		//頂点座標の設定
@@ -321,7 +337,7 @@ void SaveEdit2d(void)
 			{
 				fprintf(pFile, "POLYGONSET\n");
 
-				fprintf(pFile, "   TEX_TYPE = %d					# [ 2dOBJの種類 ]\n", g_Edit2d[nCnt].nType);
+				fprintf(pFile, "   TEX_TYPE = %d					# [ 2dオブジェクトの種類 ]\n", g_Edit2d[nCnt].nType);
 
 				fprintf(pFile, "   POS = %.1f %.1f %.1f				# [ 位置 ]\n", g_Edit2d[nCnt].pos.x, g_Edit2d[nCnt].pos.y, g_Edit2d[nCnt].pos.z);
 
@@ -335,7 +351,7 @@ void SaveEdit2d(void)
 			}
 		}
 
-		fprintf(pFile, "OBJ_COUNT = %d    # [ ブロックの配置数 ]\n", g_EditCnt);
+		fprintf(pFile, "OBJ_COUNT = %d    # [ 2dオブジェクトの配置数 ]\n", g_EditCnt);
 		fprintf(pFile, "END_SCRIPT          # この行は消さないでください");
 	}
 	else
@@ -354,7 +370,7 @@ void LoadEdit2d(void)
 {
 	FILE* pFile;
 
-	D3DXVECTOR3 pos,rot;
+	D3DXVECTOR3 pos, rot;
 	int nType = 0;
 	D3DXVECTOR2 fLength;
 	char skip[3];
@@ -412,6 +428,11 @@ void LoadEdit2d(void)
 					}
 				}
 			}
+			if (strcmp(aString, "OBJ_COUNT") == 0)
+			{
+				fscanf(pFile, "%s", &skip[0]);
+				fscanf(pFile, "%d", &g_ObjCount);
+			}
 			else if (strcmp(aString, "END_SCRIPT") == 0)
 			{
 				break;
@@ -425,5 +446,115 @@ void LoadEdit2d(void)
 		return;
 	}
 	fclose(pFile);
-
 }
+//======================
+// 再読み込み処理
+//======================
+void ReLoadEdit2d(void)
+{
+	FILE* pFile;
+
+	D3DXVECTOR3 pos, rot;
+	int nType = 0;
+	D3DXVECTOR2 fLength;
+	char skip[3];
+	int nIdx = 0;
+
+	pFile = fopen("data\\save2d.txt", "r");
+
+	if (pFile != NULL)
+	{
+		char aString[256];
+
+		while (1)
+		{
+			fscanf(pFile, "%s", &aString[0]);
+
+			if (strcmp(aString, "POLYGONSET") == 0)
+			{
+				while (1)
+				{
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(aString, "TEX_TYPE") == 0)
+					{
+						fscanf(pFile, "%s", &skip[0]);
+						fscanf(pFile, "%d", &g_Edit2d[nIdx].nType);
+					}
+					else if (strcmp(aString, "POS") == 0)
+					{
+						fscanf(pFile, "%s", &skip[0]);
+						fscanf(pFile, "%f", &g_Edit2d[nIdx].pos.x);
+						fscanf(pFile, "%f", &g_Edit2d[nIdx].pos.y);
+						fscanf(pFile, "%f", &g_Edit2d[nIdx].pos.z);
+					}
+					else if (strcmp(aString, "ROT") == 0)
+					{
+						fscanf(pFile, "%s", &skip[0]);
+						fscanf(pFile, "%f", &g_Edit2d[nIdx].rot.x);
+						fscanf(pFile, "%f", &g_Edit2d[nIdx].rot.y);
+						fscanf(pFile, "%f", &g_Edit2d[nIdx].rot.z);
+					}
+
+					else if (strcmp(aString, "WIDTH") == 0)
+					{
+						fscanf(pFile, "%s", &skip[0]);
+						fscanf(pFile, "%f", &g_Edit2d[nIdx].fWidth);
+					}
+					else if (strcmp(aString, "HEIGHT") == 0)
+					{
+						fscanf(pFile, "%s", &skip[0]);
+						fscanf(pFile, "%f", &g_Edit2d[nIdx].fHeight);
+					}
+					else if (strcmp(aString, "END_POLYGONSET") == 0)
+					{
+						nIdx++;
+						break;
+					}
+				}
+			}
+			if (strcmp(aString, "OBJ_COUNT") == 0)
+			{
+				fscanf(pFile, "%s", &skip[0]);
+				fscanf(pFile, "%d", &g_ObjCount);
+			}
+			else if (strcmp(aString, "END_SCRIPT") == 0)
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		//メッセージボックス
+		MessageBox(NULL, "ファイルが開けません。", "エラー(ReLoadEdit2d)", MB_OK);
+		return;
+	}
+	fclose(pFile);
+
+	for (int nCnt = 0; nCnt < g_ObjCount; nCnt++)
+	{
+		g_Edit2d[g_EditCnt].bUse = true;
+		g_Edit2d[g_EditCnt].g_pTextureEdit2d = g_pTextureEditOrigin2d;
+
+		if (nCnt != g_ObjCount - 1)
+		{
+			g_EditCnt++;
+		}
+	}
+}
+//====================================
+// エディット2dの取得処理
+//====================================
+EDIT_INFO_2D* GetEditInfo2D(void)
+{
+	return &g_Edit2d[0];
+}
+//====================================
+// 配置数の取得
+//====================================
+int GetNum2d(void)
+{
+	return g_EditCnt;
+}
+

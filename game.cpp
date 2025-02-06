@@ -359,6 +359,7 @@ void UpdateGame(void)
 		g_bEditMode = false;
 		InitBlock(); // 出ているオブジェクトの初期化
 		InitItem();  // 出ているオブジェクトの初期化
+		InitPolygon(); // ポリゴンの初期化
 		LoadEdit();  // ロード
 	}
 	// エディットモードじゃなかったら

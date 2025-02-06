@@ -367,6 +367,7 @@ void UpdateEdit(void)
 	{
 		nLoad = 1; // 回数制限
 		ReLoadEdit(); // リロード
+		ReLoadEdit2d(); // リロード2d
 	}
 
 	if (KeyboardTrigger(DIK_F2) && nLoad == 1)
@@ -848,4 +849,11 @@ void LoadEditObj(int category)
 		return;
 	}
 	fclose(pFile);
+}
+//=============================
+// エディット2dモードかどうか
+//============================
+bool GetEdit2d(void)
+{
+	return EditMode2d;
 }

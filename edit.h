@@ -81,4 +81,5 @@ void LoadEdit(void);	// editの読み込み処理
 void ReLoadEdit(void);	// editの再読み込み処理
 EDIT_INFO* GetEdit(void); // editの取得処理
 int GetNumobj(void);	// 配置数の取得
+bool GetEdit2d(void);   // エディット2dモードかどうか
 #endif
