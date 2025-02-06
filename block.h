@@ -90,6 +90,17 @@ typedef struct
 }BLOCKTEX;
 
 //***************************
+//ブロックの構造体
+//***************************
+typedef struct
+{
+	D3DXVECTOR3 CenterPos; // 中心点の座標
+	D3DXVECTOR3 VecRot[3];   // 回転
+	float Length[3];         // XYZの長さ
+	D3DXMATRIX ObbMtx;
+}OBB;
+
+//***************************
 // ブロックの構造体
 //***************************
 typedef struct
@@ -107,6 +118,7 @@ typedef struct
 	float fRadius;
 	BLOCKTEX BlockTex[BLOCKTYPE_MAX];
 	D3DXMATRIX mtxParent;
+	OBB Obb;
 }BLOCK;
 
 //***************************
@@ -123,5 +135,8 @@ int NumBlock(void);	// ブロック数の取得
 void LoadTitleState(void);	// タイトルのブロック読み込み処理
 BLOCK* GetBlock();	// ブロック情報の取得
 void tutoload(void);// チュートリアルでの読み込み処理
+void CreateObb(int nCnt);
+bool collisionObb(int nCnt);
+float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D3DXVECTOR3* e3);
 
 #endif
