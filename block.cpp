@@ -795,21 +795,24 @@ bool collisionObb(int nCnt)
 	D3DXVECTOR3 Nbe2(mtxRot._21, mtxRot._22, mtxRot._23);
 	D3DXVECTOR3 Nbe3(mtxRot._31, mtxRot._32, mtxRot._33);
 
+	D3DXVECTOR3 Max(pPlayer->Motion.aModel[0].vtxMax.x, pPlayer->Motion.aModel[0].vtxMax.y, pPlayer->Motion.aModel[0].vtxMax.z);
+	D3DXVECTOR3 Min(pPlayer->Motion.aModel[0].vtxMin.x, pPlayer->Motion.aModel[0].vtxMin.y, pPlayer->Motion.aModel[0].vtxMin.z);
+
 	// Player
-	PlayerLength[0] = fabsf(pPlayer->vtxMaxPlayer.x - pPlayer->vtxMinPlayer.x) * 0.5f;
-	PlayerLength[1] = fabsf(pPlayer->vtxMaxPlayer.y - pPlayer->vtxMinPlayer.y) * 0.5f;
-	PlayerLength[2] = fabsf(pPlayer->vtxMaxPlayer.z - pPlayer->vtxMinPlayer.z) * 0.5f;
+	PlayerLength[0] = fabsf(Max.x - Min.x) * 0.5f;
+	PlayerLength[1] = fabsf(Max.y - Min.y) * 0.5f;
+	PlayerLength[2] = fabsf(Max.z - Min.z) * 0.5f;
 
 	// Player
 	D3DXVECTOR3 NBe1 = Nbe1 * PlayerLength[0];
 	D3DXVECTOR3 NBe2 = Nbe2 * PlayerLength[1];
 	D3DXVECTOR3 NBe3 = Nbe3 * PlayerLength[2];
 
-	// モデル情報の代入
-	//D3DXVECTOR3 Model(pPlayer->Motion.aModel[0].mtxWorld._41, pPlayer->Motion.aModel[0].mtxWorld._42, pPlayer->Motion.aModel[0].mtxWorld._43);
+	//モデル情報の代入
+	D3DXVECTOR3 Model(pPlayer->Motion.aModel[0].mtxWorld._41, pPlayer->Motion.aModel[0].mtxWorld._42, pPlayer->Motion.aModel[0].mtxWorld._43);
 
 	// 中心からプレイヤーの位置を求める
-	D3DXVECTOR3 Interval = pPlayer->pos - g_Block[nCnt].Obb.CenterPos;
+	D3DXVECTOR3 Interval = Model - g_Block[nCnt].Obb.CenterPos;
 
 	// 分離軸を求める
 	float VecL = fabsf(D3DXVec3Dot(&Interval, &NAe1));
