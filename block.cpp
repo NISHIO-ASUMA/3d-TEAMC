@@ -23,6 +23,7 @@
 // プロトタイプ宣言
 //****************************
 void LoadBlockModel(void); // モデル読み込み処理
+void SetMtx(int nCntBlock); // ワールドマトリックスの設定(中心pos)
 
 //****************************
 // グローバル変数宣言
@@ -204,7 +205,33 @@ void UninitBlock(void)
 //=============================
 void UpdateBlock(void)
 {
-	// TODO : 後にブロック壊せる処理を追加
+	Player* pPlayer = GetPlayer(); // プレイヤーの取得
+
+	// 全部ブロック分回す
+	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
+	{
+		// ブロックが使われていない
+		if (!g_Block[nCntBlock].bUse)
+		{
+			// 処理を読み飛ばす
+			continue;
+		}
+
+		CreateObb(nCntBlock);
+
+		// OBBの判定(未完成)
+		if (collisionObb(nCntBlock))
+		{
+			D3DXVECTOR3 vector = pPlayer->posOld - pPlayer->pos;
+			D3DXVec3Normalize(&vector, &vector);
+			pPlayer->move.x = 0.0f;
+			pPlayer->move.z = 0.0f;
+
+			pPlayer->pos.x += vector.x;
+			pPlayer->pos.z += vector.z;
+
+		}	
+	}
 }
 //=============================
 // ブロックの描画処理
@@ -227,52 +254,52 @@ void DrawBlock(void)
 
 	D3DXMATERIAL* pMat;  // マテリアルデータへのポインタ
 
-	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
+	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
-		for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
-		{
-			if (!g_Block[nCntBlock].bUse)
-			{//未使用だったら
-				//読み飛ばしてカウントを進める
-				continue;
-			}
-
-			// ワールドマトリックスの初期化
-			D3DXMatrixIdentity(&g_Block[nCntBlock].mtxWorldBlock);
-
-			// 大きさを反映
-			D3DXMatrixScaling(&mtxScal, g_Block[nCntBlock].Scal.y, g_Block[nCntBlock].Scal.x, g_Block[nCntBlock].Scal.z);
-			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxScal);
-
-			// 向きを反映
-			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCntBlock].rot.y, g_Block[nCntBlock].rot.x, g_Block[nCntBlock].rot.z);
-			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxRot);
-
-			// 位置を反映
-			D3DXMatrixTranslation(&mtxTrans, g_Block[nCntBlock].pos.x, g_Block[nCntBlock].pos.y, g_Block[nCntBlock].pos.z);
-			D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxTrans);
-
-			// ワールドマトリックスの設定
-			pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].mtxWorldBlock);
-			
-			// 現在のマテリアルを取得
-			pDevice->GetMaterial(&matDef);
-
-			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nCntNum].g_dwNumMatBlock; nCntMat++)
-			{
-				// マテリアルのデータへのポインタを取得
-				pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nCntNum].g_pBuffMatBlock->GetBufferPointer();
-
-				// マテリアルの設定
-				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-
-				// テクスチャの設定
-				pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nCntNum].g_apTextureBlock[nCntMat]);
-
-				// ブロック(パーツ)の描画
-				g_Block[nCntBlock].BlockTex[nCntNum].g_pMeshBlock->DrawSubset(nCntMat);
-			}
+		if (!g_Block[nCntBlock].bUse)
+		{//未使用だったら
+			//読み飛ばしてカウントを進める
+			continue;
 		}
+
+		int nType = g_Block[nCntBlock].nType;
+
+		// ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&g_Block[nCntBlock].mtxWorldBlock);
+
+		// 大きさを反映
+		D3DXMatrixScaling(&mtxScal, g_Block[nCntBlock].Scal.y, g_Block[nCntBlock].Scal.x, g_Block[nCntBlock].Scal.z);
+		D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxScal);
+
+		// 向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCntBlock].rot.y, g_Block[nCntBlock].rot.x, g_Block[nCntBlock].rot.z);
+		D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxRot);
+
+		// 位置を反映
+		D3DXMatrixTranslation(&mtxTrans, g_Block[nCntBlock].pos.x, g_Block[nCntBlock].pos.y, g_Block[nCntBlock].pos.z);
+		D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxTrans);
+
+		// ワールドマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].mtxWorldBlock);
+		
+		// 現在のマテリアルを取得
+		pDevice->GetMaterial(&matDef);
+
+		for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatBlock; nCntMat++)
+		{
+			// マテリアルのデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatBlock->GetBufferPointer();
+
+			// マテリアルの設定
+			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureBlock[nCntMat]);
+
+			// ブロック(パーツ)の描画
+			g_Block[nCntBlock].BlockTex[nType].g_pMeshBlock->DrawSubset(nCntMat);
+		}
+		SetMtx(nCntBlock);
 	}
 }
 //=======================
@@ -716,4 +743,239 @@ void tutoload(void)
 	// ファイルを閉じる
 	fclose(pFile);
 
+}
+//=======================
+//ブロックOBBの作成
+//=======================
+void CreateObb(int nCnt)
+{
+	int nType = g_Block[nCnt].nType; // 種類を代入
+
+	D3DXMATRIX mtxRot; // 計算用マトリックス
+
+	// 位置を代入
+	D3DXVECTOR3 pos(g_Block[nCnt].Obb.ObbMtx._41, g_Block[nCnt].Obb.ObbMtx._42, g_Block[nCnt].Obb.ObbMtx._43);
+
+	// 位置
+	g_Block[nCnt].Obb.CenterPos = pos;
+
+	// 回転行列の設定
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCnt].rot.y, g_Block[nCnt].rot.x, g_Block[nCnt].rot.z);
+
+	// 回転行列
+	g_Block[nCnt].Obb.VecRot[0] = D3DXVECTOR3(mtxRot._11, mtxRot._12, mtxRot._13); // 回転行列X
+	g_Block[nCnt].Obb.VecRot[1] = D3DXVECTOR3(mtxRot._21, mtxRot._22, mtxRot._23); // 回転行列Y
+	g_Block[nCnt].Obb.VecRot[2] = D3DXVECTOR3(mtxRot._31, mtxRot._32, mtxRot._33); // 回転行列Z
+
+	// 長さ取得
+	g_Block[nCnt].Obb.Length[0] = fabsf(g_Block[nCnt].BlockTex[nType].vtxMax.x - g_Block[nCnt].BlockTex[nType].vtxMin.x) * 0.5f; // 長さX
+	g_Block[nCnt].Obb.Length[1] = fabsf(g_Block[nCnt].BlockTex[nType].vtxMax.y - g_Block[nCnt].BlockTex[nType].vtxMin.y) * 0.5f; // 長さY
+	g_Block[nCnt].Obb.Length[2] = fabsf(g_Block[nCnt].BlockTex[nType].vtxMax.z - g_Block[nCnt].BlockTex[nType].vtxMin.z) * 0.5f; // 長さZ
+}
+//=======================
+// OBBの判定
+//=======================
+bool collisionObb(int nCnt)
+{
+	Player* pPlayer = GetPlayer();
+	D3DXMATRIX mtxRot; // 計算用マトリックス
+
+	float PlayerLength[3];
+
+	// OBBの回転
+	D3DXVECTOR3 NAe1 = g_Block[nCnt].Obb.VecRot[0], Ae1 = NAe1 * g_Block[nCnt].Obb.Length[0];
+	D3DXVECTOR3 NAe2 = g_Block[nCnt].Obb.VecRot[1], Ae2 = NAe2 * g_Block[nCnt].Obb.Length[1];
+	D3DXVECTOR3 NAe3 = g_Block[nCnt].Obb.VecRot[2], Ae3 = NAe3 * g_Block[nCnt].Obb.Length[2];
+
+	// 回転行列の設定
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, pPlayer->rot.y, pPlayer->rot.x, pPlayer->rot.z);
+
+	// 回転行列
+	D3DXVECTOR3 Nbe1(mtxRot._11, mtxRot._12, mtxRot._13);
+	D3DXVECTOR3 Nbe2(mtxRot._21, mtxRot._22, mtxRot._23);
+	D3DXVECTOR3 Nbe3(mtxRot._31, mtxRot._32, mtxRot._33);
+
+	// Player
+	PlayerLength[0] = fabsf(pPlayer->vtxMaxPlayer.x - pPlayer->vtxMinPlayer.x) * 0.5f;
+	PlayerLength[1] = fabsf(pPlayer->vtxMaxPlayer.y - pPlayer->vtxMinPlayer.y) * 0.5f;
+	PlayerLength[2] = fabsf(pPlayer->vtxMaxPlayer.z - pPlayer->vtxMinPlayer.z) * 0.5f;
+
+	// Player
+	D3DXVECTOR3 NBe1 = Nbe1 * PlayerLength[0];
+	D3DXVECTOR3 NBe2 = Nbe2 * PlayerLength[1];
+	D3DXVECTOR3 NBe3 = Nbe3 * PlayerLength[2];
+
+	// モデル情報の代入
+	//D3DXVECTOR3 Model(pPlayer->Motion.aModel[0].mtxWorld._41, pPlayer->Motion.aModel[0].mtxWorld._42, pPlayer->Motion.aModel[0].mtxWorld._43);
+
+	// 中心からプレイヤーの位置を求める
+	D3DXVECTOR3 Interval = pPlayer->pos - g_Block[nCnt].Obb.CenterPos;
+
+	// 分離軸を求める
+	float VecL = fabsf(D3DXVec3Dot(&Interval, &NAe1));
+	float rA = D3DXVec3Length(&Ae1);
+	float rB = LenSegOnSeparateAxis(&NAe1, &NBe1, &NBe2, &NBe3);
+
+	// 触れていない
+	if (VecL > rA + rB)
+	{
+		return false;
+	}
+
+	// 分離軸 : Ae2
+	rA = D3DXVec3Length(&Ae2);
+	rB = LenSegOnSeparateAxis(&NAe2, &NBe1, &NBe2, &NBe3);
+	VecL = fabs(D3DXVec3Dot(&Interval, &NAe2));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : Ae3
+	rA = D3DXVec3Length(&Ae3);
+	rB = LenSegOnSeparateAxis(&NAe3, &NBe1, &NBe2, &NBe3);
+	VecL = fabs(D3DXVec3Dot(&Interval, &NAe3));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : Be1
+	rA = LenSegOnSeparateAxis(&NBe1, &Ae1, &Ae2, &Ae3);
+	rB = D3DXVec3Length(&NBe1);
+	VecL = fabs(D3DXVec3Dot(&Interval, &NBe1));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : Be2
+	rA = LenSegOnSeparateAxis(&NBe2, &Ae1, &Ae2, &Ae3);
+	rB = D3DXVec3Length(&NBe2);
+	VecL = fabs(D3DXVec3Dot(&Interval, &NBe2));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : Be3
+	rA = LenSegOnSeparateAxis(&NBe3, &Ae1, &Ae2, &Ae3);
+	rB = D3DXVec3Length(&NBe3);
+	VecL = fabs(D3DXVec3Dot(&Interval, &NBe3));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C11
+	D3DXVECTOR3 Cross;
+	D3DXVec3Cross(&Cross, &NAe1, &NBe1);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C12
+	D3DXVec3Cross(&Cross, &NAe1, &NBe2);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C13
+	D3DXVec3Cross(&Cross, &NAe1, &NBe3);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C21
+	D3DXVec3Cross(&Cross, &NAe2, &NBe1);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C22
+	D3DXVec3Cross(&Cross, &NAe2, &NBe2);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C23
+	D3DXVec3Cross(&Cross, &NAe2, &NBe3);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C31
+	D3DXVec3Cross(&Cross, &NAe3, &NBe1);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C32
+	D3DXVec3Cross(&Cross, &NAe3, &NBe2);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	// 分離軸 : C33
+	D3DXVec3Cross(&Cross, &NAe3, &NBe3);
+	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
+	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
+	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	if (VecL > rA + rB)
+		return false;
+
+	return true; // 当たっている
+}
+//=============================
+// 超平面の計算?
+//=============================
+float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D3DXVECTOR3* e3)
+{
+	// 3つの内積の絶対値の和で投影線分長を計算
+	// 分離軸Sepは標準化されていること
+	float r1 = fabs(D3DXVec3Dot(Sep, e1));
+	float r2 = fabs(D3DXVec3Dot(Sep, e2));
+	float r3 = e3 ? (fabs(D3DXVec3Dot(Sep, e3))) : 0;
+	return r1 + r2 + r3;
+}
+//=======================
+//ブロックのマトリックス
+//=======================
+void SetMtx(int nCntBlock)
+{
+	LPDIRECT3DDEVICE9 pDevice;
+
+	pDevice = GetDevice();
+
+	//計算用のマトリックス
+	D3DXMATRIX mtxRot, mtxTrans, mtxScal, mtxParent;
+	Player* pPlayer = GetPlayer();
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&g_Block[nCntBlock].Obb.ObbMtx);
+
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCntBlock].rot.y, g_Block[nCntBlock].rot.x, g_Block[nCntBlock].rot.z);
+	D3DXMatrixMultiply(&g_Block[nCntBlock].Obb.ObbMtx, &g_Block[nCntBlock].Obb.ObbMtx, &mtxRot);
+
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans, 0.0f, g_Block[nCntBlock].Size.y * 0.5f, 0.0f);
+	D3DXMatrixMultiply(&g_Block[nCntBlock].Obb.ObbMtx, &g_Block[nCntBlock].Obb.ObbMtx, &mtxTrans);
+
+
+	mtxParent = g_Block[nCntBlock].mtxWorldBlock;
+
+	//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
+	D3DXMatrixMultiply(&g_Block[nCntBlock].Obb.ObbMtx,
+		&g_Block[nCntBlock].Obb.ObbMtx,
+		&mtxParent);//自分自分親
+
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].Obb.ObbMtx);
 }
