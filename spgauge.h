@@ -17,7 +17,10 @@
 //****************************
 typedef enum
 {
-	SPGAUGE_FRAME = 0,
+	SPGAUGE_FRAME0 = 0,
+	SPGAUGE_FRAME1,
+	SPGAUGE_FRAME2,
+	SPGAUGE_FRAME3,
 	SPGAUGE_GAUGE,
 	SPGAUGE_MAX
 }SPGAUGE;
