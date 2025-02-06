@@ -15,6 +15,7 @@
 #include "RankingScore.h"
 #include "RankingSet.h"
 #include "sound.h"
+#include "mouse.h"
 
 //****************************
 //グローバル変数宣言
@@ -71,8 +72,8 @@ void UpdateRanking(void)
 
 	nRankingCount++;
 
-	if (nRankingCount >= 600 || KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A))
-	{// 10秒経過 or Enterキー or Aボタン
+	if (nRankingCount >= 600 || KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))
+	{// 10秒経過 or Enterキー or Aボタン or 左クリック
 		// タイトル画面に遷移
 		SetFade(MODE_TITLE);
 	}

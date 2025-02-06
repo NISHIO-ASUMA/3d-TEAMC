@@ -18,6 +18,7 @@
 #include "player.h"
 #include "Timer.h"
 #include "gameui.h"
+#include "mouse.h"
 
 //****************************
 //グローバル変数
@@ -135,8 +136,8 @@ void UpdateResult(void)
 	// 現在のモードを取得
 	MODE Mode = GetMode();
 
-	if (KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_A)==true)
-	{// Enterキー or パッドのAボタンが押された
+	if (KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_A)==true || OnMouseTriggerDown(LEFT_MOUSE))
+	{// Enterキー or パッドのAボタン or 左クリック 
 		// ランキングに遷移
 		SetFade(MODE_RANKING);
 	}
