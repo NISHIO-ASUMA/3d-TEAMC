@@ -200,7 +200,7 @@ void UpdateTitle(void)
 				SetFade(MODE_TUTORIAL);
 
 				// âπäyçƒê∂
-				PlaySound(SOUND_LABEL_SELECT_SE);
+				PlaySound(SOUND_LABEL_ENTER_SE);
 
 				g_Title[nCnt].state = TITLESTATE_FLASH; // ÉQÅ[ÉÄì_ñ≈
 			}

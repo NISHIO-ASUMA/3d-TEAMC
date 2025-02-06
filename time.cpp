@@ -293,6 +293,7 @@ void UpdateTime(void)
 			}
 		}
 	}
+
 	g_pVtxBuffTimeMinute->Lock(0, 0, (void**)&pVtx, 0);
 
 	if (g_nTimerMinute <= 0 && g_nTimerSecond <= 10)
