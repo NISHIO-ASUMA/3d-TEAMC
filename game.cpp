@@ -357,10 +357,10 @@ void UpdateGame(void)
 	if (KeyboardTrigger(DIK_F2) && g_bEditMode)
 	{
 		g_bEditMode = false;
-		InitBlock(); // 出ているオブジェクトの初期化
-		InitItem();  // 出ているオブジェクトの初期化
+		InitBlock();   // 出ているオブジェクトの初期化
+		InitItem();    // 出ているオブジェクトの初期化
 		InitPolygon(); // ポリゴンの初期化
-		LoadEdit();  // ロード
+		LoadEdit();    // ロード
 	}
 	// エディットモードじゃなかったら
 	else if (KeyboardTrigger(DIK_F2) && !g_bEditMode)
