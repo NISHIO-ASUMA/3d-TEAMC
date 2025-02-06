@@ -20,7 +20,7 @@
 //****************************
 //グローバル変数宣言
 //****************************
-LPDIRECT3DTEXTURE9 g_pTextureMeshSword = NULL;		// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureMeshSword[WEPONELEMENT_MAX] = {};		// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshSword = NULL; // 頂点バッファへのポインタ
 LPDIRECT3DINDEXBUFFER9 g_pIdxBuffMeshSword = NULL;  // インデックスバッファへのポインタ
 MESHSOAD g_MeshSword;
@@ -38,10 +38,34 @@ void InitMeshSword(void)
 	// デバイスへのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	// テクスチャの読み込み
+	// テクスチャの読み込み(無属性)
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\orbit.png",
-		&g_pTextureMeshSword);
+		&g_pTextureMeshSword[0]);
+	// テクスチャの読み込み(出血属性)
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\Orbits\\OrbitBlood.png",
+		&g_pTextureMeshSword[1]);
+	// テクスチャの読み込み(炎属性)
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\Orbits\\OrbitFire.png",
+		&g_pTextureMeshSword[2]);
+	// テクスチャの読み込み(氷属性)
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\Orbits\\OrbitFreeze.png",
+		&g_pTextureMeshSword[3]);
+	// テクスチャの読み込み(雷属性)
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\Orbits\\OrbitSpark.png",
+		&g_pTextureMeshSword[4]);
+	// テクスチャの読み込み(水属性)
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\Orbits\\OrbitFreeze.png",
+		&g_pTextureMeshSword[5]);
+	// テクスチャの読み込み(闇属性)
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\Orbits\\OrbitDark.png",
+		&g_pTextureMeshSword[6]);
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * ORBIT_VERTEX,
@@ -158,11 +182,14 @@ void InitMeshSword(void)
 //===============================ccc
 void UninitMeshSword(void)
 {
-	//テクスチャの解放
-	if (g_pTextureMeshSword != NULL)
+	for (int nCount = 0; nCount < WEPONELEMENT_MAX; nCount++)
 	{
-		g_pTextureMeshSword->Release();
-		g_pTextureMeshSword = NULL;
+		//テクスチャの解放
+		if (g_pTextureMeshSword[nCount] != NULL)
+		{
+			g_pTextureMeshSword[nCount]->Release();
+			g_pTextureMeshSword[nCount] = NULL;
+		}
 	}
 
 	//頂点バッファの解放
@@ -280,7 +307,7 @@ void DrawMeshSword(void)
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
 		// テクスチャの設定
-		pDevice->SetTexture(0, g_pTextureMeshSword);
+		pDevice->SetTexture(0, g_pTextureMeshSword[pPlayer->nElement]);
 
 		if (g_nMeshSwordCount - 2 < ORBIT_POLYGON)
 		{

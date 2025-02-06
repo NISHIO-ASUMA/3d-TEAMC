@@ -547,11 +547,11 @@ void ElementChange(int nTypeItem)
 	}
 	else if (g_TexItem[nTypeItem].nType == 9) // •X‰ò‚Ì‘®«
 	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FRIEZE;
+		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FREEZE;
 	}
 	else if (g_TexItem[nTypeItem].nType == 10) // “€Œ‹Œ•‚Ì‘®«
 	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FRIEZE;
+		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FREEZE;
 	}
 	else if (g_TexItem[nTypeItem].nType == 11) // “SƒpƒCƒv‚Ì‘®«
 	{
