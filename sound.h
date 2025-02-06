@@ -30,6 +30,7 @@ typedef enum
 	SOUND_LABEL_HAMMER_SE,		// 大型武器系統SE
 	SOUND_LABEL_ITEM_SE,		// アイテム取得SE
 	SOUND_LABEL_DAMAGE_SE,		// ダメージSE
+	SOUND_LABEL_SP_SE,			// SP攻撃SE
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 

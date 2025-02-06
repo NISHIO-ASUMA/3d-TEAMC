@@ -45,7 +45,11 @@ void InitSPgauge(void)
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\SP_gage.png",
-		&g_pTextureSPgauge[1]);
+		&g_pTextureSPgauge[4]);
+
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\SP_frameCha01.png", &g_pTextureSPgauge[1]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\SP_frameCha02.png", &g_pTextureSPgauge[2]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\SP_frameCha03.png", &g_pTextureSPgauge[3]);
 
 	// 頂点バッファの生成・頂点情報の設定
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * SPGAUGE_MAX,
@@ -59,7 +63,7 @@ void InitSPgauge(void)
 	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 種類を設定
-	g_SPgauge[0].nType = SPGAUGE_FRAME;
+	g_SPgauge[0].nType = SPGAUGE_FRAME0;
 	g_SPgauge[1].nType = SPGAUGE_GAUGE;
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
@@ -134,15 +138,7 @@ void UpdateSPgauge(void)
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
-		if (g_SPgauge[nCnt].nType == SPGAUGE_FRAME)
-		{
-			// 頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(900.0f, 40.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(900.0f, 70.0f, 0.0f);
-		}
-		else if (g_SPgauge[nCnt].nType == SPGAUGE_GAUGE)
+		if (g_SPgauge[nCnt].nType == SPGAUGE_GAUGE)
 		{
 			// 最大の値
 			float fDest = g_SPgauge[nCnt].SpGauge / 300.0f;
@@ -162,8 +158,8 @@ void UpdateSPgauge(void)
 				// 発動した瞬間
 				if (pPlayer->AttackSp &&
 					pPlayer->Motion.motionType == MOTIONTYPE_ACTION &&
-					pPlayer->Motion.nKey == 0&&
-					pPlayer->Motion.nCountMotion==1)
+					pPlayer->Motion.nKey == 0 &&
+					pPlayer->Motion.nCountMotion == 1)
 				{
 					g_SPgauge[nCnt].SpGauge -= 100.0f; // ゲージを100.0f消費
 				}
@@ -174,7 +170,24 @@ void UpdateSPgauge(void)
 			{
 				// 300.0f以上にならないようにする
 				g_SPgauge[nCnt].SpGauge = 300.0f;
+			}
 
+			// 頂点座標の設定
+			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(fWidth, 40.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(fWidth, 70.0f, 0.0f);
+		}
+		else
+		{
+			g_SPgauge[nCnt].nType = g_SPgauge[1].SpGauge / 100;
+			// 頂点座標の設定
+			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(900.0f, 40.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(900.0f, 70.0f, 0.0f);
+			if (g_SPgauge[1].SpGauge >= 100)
+			{
 				// フレーム用変数
 				static int nFrame = 0;
 
@@ -194,14 +207,7 @@ void UpdateSPgauge(void)
 					nFrame++;
 				}
 			}
-
-			// 頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(fWidth, 40.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(fWidth, 70.0f, 0.0f);
 		}
-
 		pVtx += 4;
 	}
 	// 頂点ロック解除

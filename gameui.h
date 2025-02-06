@@ -27,6 +27,7 @@ typedef enum
 	UITYPE_BLACK,
 	UITYPE_KATANA,
 	UITYPE_RED,
+	UITYPE_ICONFRAME,
 	UITYPE_MAX
 }UITYPE;
 
@@ -43,6 +44,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\black.png",
 	"data\\TEXTURE\\title_katana.png",
 	"data\\TEXTURE\\hpred.png",
+	"data\\TEXTURE\\icon_frame.png",
 };
 
 //****************************

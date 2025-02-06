@@ -14,7 +14,7 @@ LPDIRECT3DTEXTURE9 g_pTexture_Gauge = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Frame = NULL;
 
 LPDIRECT3DTEXTURE9 g_pTexture_Fevgauge = NULL;
-LPDIRECT3DTEXTURE9 g_pTexture_Fevframe = NULL;
+LPDIRECT3DTEXTURE9 g_pTexture_Fevframe = {};
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGauge = NULL;
 
 // 各ゲージの計算用変数
