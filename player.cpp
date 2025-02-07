@@ -349,7 +349,11 @@ void UpdatePlayer(void)
 			if (GetKeyboardPress(DIK_W) == true)
 			{
 				//g_player.Motion.motionType = MOTIONTYPE_MOVE;
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+
+				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				{
+					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				}
 
 				g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
 				g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
@@ -359,7 +363,10 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(下)
 			else if (GetKeyboardPress(DIK_S))
 			{
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				{
+					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				}
 
 				g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
 				g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
@@ -369,7 +376,10 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(左)
 			else
 			{
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				{
+					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				}
 
 				g_player.move.z += sinf(pCamera->rot.y) * g_player.speed;
 				g_player.move.x -= cosf(pCamera->rot.y) * g_player.speed;
@@ -383,7 +393,10 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(上)
 			if (GetKeyboardPress(DIK_W))
 			{
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				{
+					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				}
 
 				g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
 				g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
@@ -393,7 +406,10 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(下)
 			else if (GetKeyboardPress(DIK_S))
 			{
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				{
+					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				}
 
 				g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
 				g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
@@ -403,7 +419,10 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(右)
 			else
 			{
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				{
+					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				}
 
 				g_player.move.z -= sinf(pCamera->rot.y) * g_player.speed;
 				g_player.move.x += cosf(pCamera->rot.y) * g_player.speed;
@@ -415,7 +434,10 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(上)
 		else if (GetKeyboardPress(DIK_W) == true)
 		{
-			g_player.Motion.motionType = MOTIONTYPE_MOVE;
+			if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+			}
 
 			g_player.move.x += sinf(pCamera->rot.y) * g_player.speed;
 			g_player.move.z += cosf(pCamera->rot.y) * g_player.speed;
@@ -425,7 +447,10 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(下)
 		else if (GetKeyboardPress(DIK_S) == true)
 		{
+		if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+		{
 			g_player.Motion.motionType = MOTIONTYPE_MOVE;
+		}
 
 			g_player.move.x -= sinf(pCamera->rot.y) * g_player.speed;
 			g_player.move.z -= cosf(pCamera->rot.y) * g_player.speed;
@@ -446,10 +471,6 @@ void UpdatePlayer(void)
 	case MOTIONTYPE_NEUTRAL:
 		break;
 	case MOTIONTYPE_MOVE:
-		if (!g_player.bJump)
-		{
-			g_player.Motion.motionType = MOTIONTYPE_JUMP; // モーションをジャンプにする
-		}
 		break;
 	case MOTIONTYPE_ACTION:
 		break;
