@@ -116,7 +116,62 @@ void UninitIcon()
 //===============================
 void UpdateIcon()
 {
-	// 無し
+	Item* pItem = GetItem();
+	Player* pPlayer = GetPlayer();
+
+	// フレーム用変数
+	static int fFrame;
+	static bool bUP;
+
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	// 頂点バッファのロック
+	g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)// 全てのアイコンを数え
+	{
+		if (g_Icon[nCnt].bUse && pItem[pPlayer->ItemIdx].state)// 使用されてるかつアイテム持ち
+		{
+			if (pItem[pPlayer->ItemIdx].durability < 15)// 更に耐久力が減ってたら赤く点滅
+			{
+				if (bUP)
+				{
+					fFrame++;
+				}
+				else
+				{
+					fFrame--;
+				}
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+				if (fFrame >= 10)
+				{
+					bUP = false;
+				}
+				else if (fFrame <= 0)
+				{
+					bUP = true;
+				}
+			}
+			else // そうでなかったら色を戻す
+			{
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				fFrame = 0;
+				bUP = true;
+			}
+		}
+		// 頂点座標を進める
+		pVtx += 4;
+	}
+
+	// アンロック
+	g_pVtxBuffIcon->Unlock();
 }
 //===============================
 // アイコンの描画処理
