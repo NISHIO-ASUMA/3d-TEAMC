@@ -23,6 +23,7 @@
 #include "sound.h"
 #include "spgauge.h"
 #include "boss.h"
+#include "time.h"
 
 //****************************
 //マクロ定義
@@ -529,6 +530,8 @@ void HitEnemy(int nCnt,int nDamage)
 
 	g_Enemy[nCnt].nLife -= nDamage;
 
+	int nMin = GetTimeMinute();
+	int nSec = GetTimeSecond();
 	if (g_Enemy[nCnt].nLife <= 0)
 	{// 体力が0以下なら
 		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z),
@@ -538,17 +541,19 @@ void HitEnemy(int nCnt,int nDamage)
 			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
 			4.0f, 8, 15, 20, 5.0f, 0.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-
-		if (pPlayer->FeverMode)
+		if (nMin <= 0 && nSec <= 0)
 		{
-			AddScore(16000);		// スコアを取得
-			AddSpgauge(2.5f);   // SPゲージを取得
-		}
-		else if (!pPlayer->FeverMode)
-		{
-			AddFever(5.0f);		// フィーバーポイントを取得
-			AddScore(8100);		// スコアを取得
-			AddSpgauge(2.0f);   // SPゲージを取得
+			if (pPlayer->FeverMode)
+			{
+				AddScore(16000);		// スコアを取得
+				AddSpgauge(2.5f);   // SPゲージを取得
+			}
+			else if (!pPlayer->FeverMode)
+			{
+				AddFever(5.0f);		// フィーバーポイントを取得
+				AddScore(8100);		// スコアを取得
+				AddSpgauge(2.0f);   // SPゲージを取得
+			}
 		}
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH; // 敵の状態を死亡状態にする
@@ -616,7 +621,10 @@ void HitEnemy(int nCnt,int nDamage)
 		g_Enemy[nCnt].nCounterState = 30;		 // ダメージ状態からノーマルに戻るまでの時間
 
 		// スコアを加算
-		AddScore(4300);
+		if (nMin <= 0 && nSec <= 0)
+		{
+			AddScore(4300);
+		}
 	}
 }
 //=======================
