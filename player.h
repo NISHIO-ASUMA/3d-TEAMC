@@ -193,7 +193,9 @@ typedef struct
 	bool Itembreak[MAX_ITEM];
 	bool FeverMode;
 	bool SpMode;
-	bool AttackSp;  // spUŒ‚‚ğ‚µ‚Ä‚¢‚é‚©
+	bool AttackSp;
+	bool bLandingOBB; // OBB‚Ìã‚É’…’n‰º‚©‚Ç‚¤‚©
+
 }Player;
 
 //**************************

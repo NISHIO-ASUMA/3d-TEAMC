@@ -135,8 +135,8 @@ void InitGame(void)
 	LoadEdit();
 	LoadEdit2d();
 
-	WaveEnemy(0); // 敵を出す処理
-	WaveEnemy(1); // 敵を出す処理
+	//WaveEnemy(0); // 敵を出す処理
+	//WaveEnemy(1); // 敵を出す処理
 	
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(80.0f,550.0f,0.0f),UITYPE_ICONFRAME,80.0f,80.0f,0);
@@ -294,7 +294,7 @@ void UpdateGame(void)
 		int nSpawner = rand() % 2;
 
 		// 敵を出す処理
-		WaveEnemy(nSpawner);
+		//WaveEnemy(nSpawner);
 
 		// タイムを初期化する
 		g_EnemyWaveTime = 0;
