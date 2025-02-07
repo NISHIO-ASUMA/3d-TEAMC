@@ -19,6 +19,7 @@
 //****************************
 #define MAX_WORD (256)	  // 最大の文字数
 #define HALF_VALUE (0.6f) // 割る数
+#define PLAYERJUMPHEIGHT (50.0f) // プレイヤーのジャンプ量
 
 //****************************
 // プロトタイプ宣言
@@ -231,14 +232,29 @@ void UpdateBlock(void)
 			{
 				// ジャンプをtrue
 				//pPlayer->bJump = true;
-
 				if (pPlayer->Motion.motionType == MOTIONTYPE_JUMP)
 				{
 					SetMotion(&pPlayer->Motion, MOTIONTYPE_LANDING, MOTIONTYPE_NEUTRAL, true, 10);
 				}
 			}
+			else
+			{
+				//pPlayer->bLandingOBB = false;
+			}
+		}
 
-		}	
+		if (GetKeyboardPress(DIK_L))
+		{
+			g_Block[nCntBlock].rot.y += 0.01f;
+		}
+		if (g_Block[nCntBlock].rot.y < -D3DX_PI)
+		{
+			g_Block[nCntBlock].rot.y += D3DX_PI * 2.0f;
+		}
+		else if (g_Block[nCntBlock].rot.y > D3DX_PI)
+		{
+			g_Block[nCntBlock].rot.y += -D3DX_PI * 2.0f;
+		}
 	}
 }
 //=============================
@@ -770,7 +786,7 @@ void CreateObb(int nCnt)
 
 	// 回転行列の設定
 	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCnt].rot.y, g_Block[nCnt].rot.x, g_Block[nCnt].rot.z);
-	
+
 	// 回転行列
 	g_Block[nCnt].Obb.VecRot[0] = D3DXVECTOR3(mtxRot._11, mtxRot._12, mtxRot._13); // 回転行列X
 	g_Block[nCnt].Obb.VecRot[1] = D3DXVECTOR3(mtxRot._21, mtxRot._22, mtxRot._23); // 回転行列Y
@@ -1035,6 +1051,10 @@ bool PushPlayer(int nCntBlock)
 	VecRot[1] = g_Block[nCntBlock].Obb.VecRot[1];
 	VecRot[2] = g_Block[nCntBlock].Obb.VecRot[2];
 
+	D3DXVec3Normalize(&VecRot[0], &VecRot[0]);               // 進行ベクトルの正規化
+	D3DXVec3Normalize(&VecRot[1], &VecRot[1]);               // 進行ベクトルの正規化
+	D3DXVec3Normalize(&VecRot[2], &VecRot[2]);               // 進行ベクトルの正規化
+
 	D3DXVECTOR3 VecMoveF = pPlayer->pos - pPlayer->posOld; // 進行ベクトル
 	D3DXVec3Normalize(&VecMoveF, &VecMoveF);               // 進行ベクトルの正規化
 
@@ -1097,76 +1117,154 @@ bool PushPlayer(int nCntBlock)
 	float DotZm = fabsf(D3DXVec3Dot(&norZm, &PlayerVecZm));     // 内積Z-を求める
 
 	// ブロックの上に乗っていない
-		// -Xの面から当たった
-		if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
+	// 
+	if (DotYp < DotYm && DotYp <= DotXp && DotYp <= DotXm && DotYp <= DotZp && DotYp <= DotZm)
+	{
+		bLanding = true;
+		//pPlayer->bJump = true;
+
+		if (!pPlayer->bJump) 
 		{
-			D3DXVECTOR3 Nor = VecRot[0];
-
-			D3DXVec3Normalize(&Nor, &Nor);
-
-			float D = -(Nor.x * faceposXp.x + Nor.y * faceposXp.y + Nor.z * faceposXp.z);
-
-			float PlayerPosX = -(Nor.y * pPlayer->pos.y + Nor.z * pPlayer->pos.z + D) / Nor.x;
-
-			pPlayer->pos.x = PlayerPosX;
-
-			D3DXVECTOR3 Wallmove = Nor - D3DXVec3Dot(&Nor, &VecMoveF) * Nor;
-
-			pPlayer->move.x = Wallmove.x;
-			pPlayer->move.z = Wallmove.z;
+			pPlayer->bJump = true; // 地面に着地したのでジャンプフラグを切り替える
+			pPlayer->move.y = 0.0f;
 		}
-		//// +Xの面から当たった
-		//else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
-		//{
-		//	D3DXVECTOR3 Nor = norXm;
 
-		//	D3DXVec3Normalize(&Nor, &Nor);
+		// 法線ベクトルの計算
+		D3DXVECTOR3 Nor = VecRot[1];
+		D3DXVec3Normalize(&Nor, &Nor);
 
-		//	float D = -(Nor.x * faceposXm.x + Nor.y * faceposXm.y + Nor.z * faceposXm.z);
+		// プレイヤーの位置を面に合わせるための補正
+		float D = -D3DXVec3Dot(&Nor, &faceposYp);
 
-		//	float PlayerPosX = -(Nor.y * pPlayer->pos.y + Nor.z * pPlayer->pos.z + D) / Nor.x;
+		// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+		float facePlayerPos = -(D3DXVec3Dot(&Nor, &pPlayer->pos) + D) / D3DXVec3Dot(&Nor, &Nor);
 
-		//	pPlayer->pos.x = PlayerPosX;
+		// プレイヤーの位置を面に合わせて補正
+		D3DXVECTOR3 NewPlayerPos = pPlayer->pos + facePlayerPos * Nor;
 
-		//	D3DXVECTOR3 Wallmove = Nor - D3DXVec3Dot(&Nor, &VecMoveF) * Nor;
+		pPlayer->pos.y = NewPlayerPos.y; // 位置を面に合わせる
 
-		//	pPlayer->move.x = Wallmove.x;
-		//	pPlayer->move.z = Wallmove.z;
-		//}
-		//// -Zの面から当たった
-		//else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
-		//{
-		//	float D = -(norZm.x * faceposZm.x + norZm.y * faceposZm.y + norZm.z * faceposZm.z);
+		if (pPlayer->bJump && KeyboardTrigger(DIK_SPACE))
+		{
+			// ジャンプ中の動き（上昇/下降）
+			pPlayer->move.y = 15.0f; // ジャンプ速度で上昇
 
-		//	float PlayerPosZ = -(norZm.x * pPlayer->pos.x + norZm.y * pPlayer->pos.y + D) / norZm.z;
+			if (pPlayer->pos.y >= PLAYERJUMPHEIGHT)
+			{
+				pPlayer->bJump = false;  // 最大ジャンプ高度に達したら、ジャンプ終了
+			}
+		}
+		else
+		{
+			// 地面に着地した場合、重力を加える
+			if (!bLanding) 
+			{
+				pPlayer->move.y = -15.0f;  // 重力による落下
+				pPlayer->bLandingOBB = true;
+			}
+		}
 
-		//	pPlayer->pos.z = PlayerPosZ;
+	}
+	else if (DotYp > DotYm && DotYp >= DotXp && DotYp >= DotXm && DotYp >= DotZp && DotYp >= DotZm)
+	{
+		// 法線ベクトルの計算
+		D3DXVECTOR3 Nor = VecRot[1];
+		D3DXVec3Normalize(&Nor, &Nor);
 
-		//}
-		//// +Zの面から当たった
-		//else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
-		//{
-		//	float D = -(VecRot[2].x * faceposZp.x + VecRot[2].y * faceposZp.y + VecRot[2].z * faceposZp.z);
+		// プレイヤーの位置を面に合わせるための補正
+		float D = -D3DXVec3Dot(&Nor, &faceposYm);
 
-		//	float PlayerPosZ = -(VecRot[2].x * pPlayer->pos.x + VecRot[2].y * pPlayer->pos.y + D) / VecRot[2].z;
+		// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+		float facePlayerPos = -(D3DXVec3Dot(&Nor, &pPlayer->pos) + D) / D3DXVec3Dot(&Nor, &Nor);
 
-		//	pPlayer->pos.z = PlayerPosZ;
-		//}
+		// プレイヤーの位置を面に合わせて補正
+		D3DXVECTOR3 NewPlayerPos = pPlayer->pos + facePlayerPos * Nor;
+
+		pPlayer->pos.y = NewPlayerPos.y; // 位置を面に合わせる
+
+	}
+
+	// -Xの面から当たった
+	else if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
+	{
+		D3DXVECTOR3 Nor = VecRot[0];
+		D3DXVec3Normalize(&Nor, &Nor);
+
+		float D = -D3DXVec3Dot(&Nor, &faceposXp);
+
+		// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+		float facePlayerPos = (-D - D3DXVec3Dot(&Nor, &pPlayer->pos)) / D3DXVec3Dot(&Nor, &Nor);
+
+		// プレイヤーの位置を面に合わせる
+		D3DXVECTOR3 NewPlayerPos = pPlayer->pos + (Nor * facePlayerPos);  // プレイヤーを面に合わせて補正
+
+		// プレイヤーの位置を更新
+		pPlayer->pos = NewPlayerPos;
+	}
+	// +Xの面から当たった
+	else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
+	{
+		D3DXVECTOR3 Nor = -VecRot[0];
+		D3DXVec3Normalize(&Nor, &Nor);
+
+		float D = -D3DXVec3Dot(&Nor, &faceposXm);
+
+		// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+		float facePlayerPos = (-D - D3DXVec3Dot(&Nor, &pPlayer->pos)) / D3DXVec3Dot(&Nor, &Nor);
+
+		// プレイヤーの位置を面に合わせる
+		D3DXVECTOR3 NewPlayerPos = pPlayer->pos + (Nor * facePlayerPos);  // プレイヤーを面に合わせて補正
+
+		// プレイヤーの位置を更新
+		pPlayer->pos = NewPlayerPos;
+	}
+	// -Zの面から当たった
+	else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
+	{
+		D3DXVECTOR3 Nor = -VecRot[2];
+		D3DXVec3Normalize(&Nor, &Nor);
+
+		float D = -D3DXVec3Dot(&Nor, &faceposZm);
+
+		// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+		float facePlayerPos = (-D - D3DXVec3Dot(&Nor, &pPlayer->pos)) / D3DXVec3Dot(&Nor, &Nor);
+
+		// プレイヤーの位置を面に合わせる
+		D3DXVECTOR3 NewPlayerPos = pPlayer->pos + (Nor * facePlayerPos);  // プレイヤーを面に合わせて補正
+
+		// プレイヤーの位置を更新
+		pPlayer->pos = NewPlayerPos;
+
+	}
+	// +Zの面から当たった
+	else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
+	{
+		D3DXVECTOR3 Nor = VecRot[2];
+		D3DXVec3Normalize(&Nor, &Nor);
+
+		float D = -D3DXVec3Dot(&Nor, &faceposZp);
+
+		// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+		float facePlayerPos = (-D - D3DXVec3Dot(&Nor, &pPlayer->pos)) / D3DXVec3Dot(&Nor, &Nor);
+
+		// プレイヤーの位置を面に合わせる
+		D3DXVECTOR3 NewPlayerPos = pPlayer->pos + (Nor * facePlayerPos);  // プレイヤーを面に合わせて補正
+
+		// プレイヤーの位置を更新
+		pPlayer->pos = NewPlayerPos;
+	}
 	
-
-	//if (DotYp < DotYm && DotYp <= DotXp && DotYp <= DotXm && DotYp <= DotZp && DotYp <= DotZm)
+	//if (DotYp > DotYm && DotYp >= DotXp && DotYp >= DotXm && DotYp >= DotZp && DotYp >= DotZm)
 	//{
-	//	bLanding = true;
-	//	pPlayer->bLandingOBB = true;
-	//	pPlayer->bJump = true;
+	//	D3DXVECTOR3 Nor = -VecRot[1];
 
-	//	float D = -(VecRot[1].x * faceposYp.x + VecRot[1].y * faceposYp.y + VecRot[1].z * faceposYp.z);
+	//	float D = -(Nor.x * faceposYm.x + Nor.y * faceposYm.y + Nor.z * faceposYm.z);
 
-	//	float PlayerPosY = -(VecRot[1].z * pPlayer->pos.z + VecRot[1].x * pPlayer->pos.x + D) / VecRot[1].y;
+	//	float PlayerPosY = -(Nor.z * pPlayer->pos.z + Nor.x * pPlayer->pos.x + D) / Nor.y;
 
-	//	pPlayer->pos.y = PlayerPosY;
-	//	pPlayer->move.y = 0.0f;
+	//	pPlayer->pos.y = PlayerPosY + pPlayer->Size.y;
 	//}
+
 	//SetEffect(faceposYm,D3DXVECTOR3(0.0f,0.0f,0.0f),10,D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),10,30.0f);
 
 	return bLanding;

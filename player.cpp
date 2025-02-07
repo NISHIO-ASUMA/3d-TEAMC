@@ -643,10 +643,7 @@ void UpdatePlayer(void)
 	//	}
 	//	g_player.bJump = true; // ƒWƒƒƒ“ƒv‚ð‰Â”\‚É‚·‚é
 	//}
-	if (g_player.bLandingOBB)
-	{
-		g_player.bJump = true;
-	}
+
 	if (CollisionField())
 	{
 		g_player.bLandingOBB = false;
@@ -670,10 +667,7 @@ void UpdatePlayer(void)
 	}
 	else
 	{
-		if (!g_player.bLandingOBB)
-		{
-			g_player.bJump = false;
-		}
+		g_player.bJump = false;
 	}
 
 	CollisionWall();
