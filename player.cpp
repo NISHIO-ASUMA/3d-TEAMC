@@ -1502,13 +1502,14 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 		if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) && g_player.Combostate == COMBO_NO)
 		{
+			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
-			
+
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 
 			pItem[nIdx].bUse = false;      // 消す
-			
+
 			bFirstChange = true;
 			pItem[nIdx].state = ITEMSTATE_HOLD;
 
@@ -1518,15 +1519,15 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			switch (pItem[nIdx].nType)
 			{
 			case ITEMTYPE_BAT:
-				MotionChange(MOTION_DBHAND,0); // アイテムにあったモーションタイプを入れる(素手の場合は引数2に1を入れる)
+				MotionChange(MOTION_DBHAND, 0); // アイテムにあったモーションタイプを入れる(素手の場合は引数2に1を入れる)
 				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 70);
 				break;
 			case ITEMTYPE_GOLF:
-				MotionChange(MOTION_KATANA,0);
+				MotionChange(MOTION_KATANA, 0);
 				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_HUNMER:
-				MotionChange(MOTION_BIGWEPON,0);
+				MotionChange(MOTION_BIGWEPON, 0);
 				StatusChange(2.8f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
 				break;
 			case ITEMTYPE_STONE:
