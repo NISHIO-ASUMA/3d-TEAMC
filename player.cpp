@@ -103,6 +103,7 @@ void InitPlayer(void)
 	g_player.SpMode = false;
 	g_player.WeponMotion = MOTION_KATANA;
 	g_player.AttackSp = false;
+	g_player.bLandingOBB = false;
 
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)
@@ -156,6 +157,7 @@ void InitPlayer(void)
 			g_LoadPlayer[nCntPlayer].FeverMode = false;
 			g_LoadPlayer[nCntPlayer].SpMode = false;
 			g_LoadPlayer[nCntPlayer].AttackSp = false;
+			g_LoadPlayer[nCntPlayer].bLandingOBB = false;
 
 			// アイテム分回す
 			for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -641,8 +643,13 @@ void UpdatePlayer(void)
 	//	}
 	//	g_player.bJump = true; // ジャンプを可能にする
 	//}
+	if (g_player.bLandingOBB)
+	{
+		g_player.bJump = true;
+	}
 	if (CollisionField())
 	{
+		g_player.bLandingOBB = false;
 		// モーションがジャンプだったら
 		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
 		{
@@ -663,13 +670,18 @@ void UpdatePlayer(void)
 	}
 	else
 	{
-		g_player.bJump = false;
+		if (!g_player.bLandingOBB)
+		{
+			g_player.bJump = false;
+		}
 	}
 
 	CollisionWall();
 
+	
 	//プレイヤーの重力
 	g_player.move.y -= 1.0f;
+	
 
 	// 影の計算
 	SetPositionShadow(g_player.nIdxShadow,g_player.pos,30.0f + 30.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
