@@ -879,6 +879,7 @@ void UpdatePlayer(void)
 		g_player.Motion.nNumModel = 15;		// •Ší‚ğÁ‚·
 		g_player.HandState = PLAYERHOLD_NO; // ‰½‚à‚Á‚Ä‚¢‚È‚¢ó‘Ô‚É‚·‚é
 		g_player.AttackSp = false;
+		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
 	}
 
 	if (g_player.WeponMotion == MOTION_SPHAMMER && g_player.AttackSp && g_player.Motion.nKey <= 15)
