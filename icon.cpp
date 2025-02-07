@@ -138,7 +138,9 @@ void DrawIcon()
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
 		if (g_Icon[nCnt].bUse && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
-		{
+		{// アイコンが使用状態 かつ アイテムの状態がホールドなら
+
+			// 種類
 			int nType = pItem[pPlayer->ItemIdx].nType;
 
 			// テクスチャの設定
@@ -146,6 +148,7 @@ void DrawIcon()
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
+			
 		}
 	}
 }
