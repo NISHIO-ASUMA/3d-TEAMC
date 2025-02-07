@@ -1099,13 +1099,9 @@ bool PushPlayer(int nCntBlock)
 	float DotZp = fabsf(D3DXVec3Dot(&g_Block[nCntBlock].Obb.VecRot[2], &PlayerVecZp));
 	float DotZm = fabsf(D3DXVec3Dot(&norZm, &PlayerVecZm));
 
-	if (DotYp > -1.0f && DotYp > DotXp && DotYp > DotXm)
-	{
-
-	}
-
+	
 	// -X‚Ì–Ê‚©‚ç“–‚½‚Á‚½
-	if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
+	if (DotXp < DotXm && DotXp < DotYp && DotXp < DotZp && DotXp < DotZm)
 	{
 		float VecDot = D3DXVec3Dot(&g_Block[nCntBlock].Obb.VecRot[0], &VecMoveF);
 
@@ -1157,6 +1153,20 @@ bool PushPlayer(int nCntBlock)
 		pPlayer->move.z = WallMove.z * 0.1f;
 	}
 	
+
+	if (DotYp < DotYm && DotYp >= DotXp && DotYp >= DotXm && DotYp >= DotZp && DotYp >= DotZm)
+	{
+		bLanding = true;
+		float VecDot = D3DXVec3Dot(&g_Block[nCntBlock].Obb.VecRot[1], &VecMoveF);
+
+       	D3DXVECTOR3 WallMove = VecMoveF - VecDot * g_Block[nCntBlock].Obb.VecRot[1];
+
+		pPlayer->pos.y = pPlayer->posOld.y;
+
+		pPlayer->move.x = WallMove.x * 0.1f;
+		pPlayer->move.z = WallMove.z * 0.1f;
+	}
+
 
 	//SetEffect(faceposYm,D3DXVECTOR3(0.0f,0.0f,0.0f),10,D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),10,30.0f);
 
