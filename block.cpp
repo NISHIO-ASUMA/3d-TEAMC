@@ -67,8 +67,6 @@ void InitBlock(void)
 
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
-		g_TexBlock[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 角度
-
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
 		// マテリアルのデータへのポインタを取得
@@ -1144,7 +1142,7 @@ bool PushPlayer(int nCntBlock)
 
 		pPlayer->pos.y = NewPlayerPos.y; // 位置を面に合わせる
 
-		if (pPlayer->bJump && KeyboardTrigger(DIK_SPACE))
+		if (pPlayer->bJump && KeyboardTrigger(DIK_SPACE) || JoypadTrigger(JOYKEY_A))
 		{
 			// ジャンプ中の動き（上昇/下降）
 			pPlayer->move.y = 15.0f; // ジャンプ速度で上昇
