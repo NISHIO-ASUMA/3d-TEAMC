@@ -545,6 +545,9 @@ void HitBoss(int nCntBoss,int nDamage)
 		20,			// 寿命
 		false);
 
+	int nMin = GetTimeMinute();
+	int nSec = GetTimeSecond();
+
 	if (g_Boss[nCntBoss].nLife <= 0)
 	{
 		// 死んだらパーティクルを出す
@@ -562,16 +565,19 @@ void HitBoss(int nCntBoss,int nDamage)
 		// 影から消す
 		KillShadow(g_Boss[nCntBoss].nIdxShadow);
 
-		if (pPlayer->FeverMode)
+		if (nMin <= 0 && nSec <= 0)
 		{
-			AddScore(30000);		// スコアを取得
-			AddSpgauge(2.5f);   // SPゲージを取得
-		}
-		else if (!pPlayer->FeverMode)
-		{
-			AddFever(10.0f);		// フィーバーポイントを取得
-			AddScore(15000);		// スコアを取得
-			AddSpgauge(2.0f);   // SPゲージを取得
+			if (pPlayer->FeverMode)
+			{
+				AddScore(30000);		// スコアを取得
+				AddSpgauge(2.5f);   // SPゲージを取得
+			}
+			else if (!pPlayer->FeverMode)
+			{
+				AddFever(10.0f);		// フィーバーポイントを取得
+				AddScore(15000);		// スコアを取得
+				AddSpgauge(2.0f);   // SPゲージを取得
+			}
 		}
 
 		AddTimeSecond(15); // 15秒増やす
