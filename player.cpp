@@ -790,6 +790,10 @@ void UpdatePlayer(void)
 
 		// プレイヤーの状態を何も持っていない状態にする
 		g_player.HandState = PLAYERHOLD_NO;
+
+		// 状態を変更
+		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
+
 	}
 
 	// 持っているアイテムを置く処理
