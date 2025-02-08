@@ -99,8 +99,8 @@ void InitTime(void)
 		g_aTime[nCnt1].nCountTimeCounter = 0;
 		g_aTime[nCnt1].bUse = true;
 	}
-	g_nTimerMinute = 1; // 分を初期化
-	g_nTimerSecond = 40; // 秒を初期化
+	g_nTimerMinute = 0; // 分を初期化
+	g_nTimerSecond = 10; // 秒を初期化
 	g_nCountTime = 0;   // タイムのカウントを初期化
 
 	// 分の頂点座標

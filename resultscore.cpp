@@ -1,9 +1,9 @@
-//========================================
+//==========================================================================================================================
 //
 // リザルトスコア処理 [resultscore.cpp]
 // Author:Asuma Nishio
 //
-//========================================
+//==========================================================================================================================
 
 //*******************************
 // インクルードファイル宣言
@@ -16,13 +16,19 @@
 //**********************************
 // マクロ定義
 //**********************************
-#define MAX_NUM_SCORE (8) // 桁数
+#define MAX_NUM_SCORE (8)    // 桁数
+#define MAX_WIDTH  (100.0f)  // 横幅
+#define MAX_HEIGHT (60.0f)   // 横幅
+#define SPEED (12.0f)         // 小さくなるスピード
+#define SCALVALUE (23.0f)    // 大きさの倍率
 
 //**********************************
 // リザルトスコアの構造体宣言
 //**********************************
 typedef struct
 {
+	D3DXVECTOR3 pos; // 位置
+	float fWidth,fHeight; // 横幅、高さ
 	bool bUse; // 未使用判定
 }Result;
 
@@ -34,10 +40,11 @@ LPDIRECT3DTEXTURE9 g_pTextureResultScore = NULL;	  // テクスチャのポインタ
 
 Result g_aResult[MAX_NUM_SCORE];	// リザルトスコアの構造体
 int g_nResultScore;					// リザルトスコア用
+int g_nResultScoreDest;             // 目的のスコアの値
 
-//=========================
+//===========================================================================================================
 // リザルトスコアの初期化
-//=========================
+//===========================================================================================================
 void InitResultScore(void)
 {
 	// デバイスへのポインタ
@@ -60,6 +67,7 @@ void InitResultScore(void)
 
 	// グローバル変数の初期化
 	g_nResultScore = 0;
+	g_nResultScoreDest = 0;
 
 	// 頂点バッファをロックし,頂点情報へのポインタを取得
 	g_pVtxBuffResultScore->Lock(0, 0, (void**)&pVtx, 0);
@@ -67,13 +75,17 @@ void InitResultScore(void)
 	for (int nCnt = 0; nCnt < MAX_NUM_SCORE; nCnt++)
 	{
 		// 使用している状態
-		g_aResult[nCnt].bUse = true;		
+		g_aResult[nCnt].bUse = true;
+		g_aResult[nCnt].fHeight = MAX_HEIGHT * SCALVALUE; // 高さを決める
+		g_aResult[nCnt].fWidth = MAX_WIDTH * SCALVALUE;   // 横幅を決める
+
+		g_aResult[nCnt].pos = D3DXVECTOR3(10.0f,450.0f,0.0f);
 
 		// 頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(290.0f + nCnt * 110.0f, 400.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(290.0f + nCnt * 110.0f + 110.0f, 400.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(290.0f + nCnt * 110.0f, 550.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(290.0f + nCnt * 110.0f + 110.0f, 550.0f, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		// rhwの設定(1.0fで固定)
 		pVtx[0].rhw = 1.0f;
@@ -102,12 +114,10 @@ void InitResultScore(void)
 	g_pVtxBuffResultScore->Unlock();
 
 	LoadScore();			// スコアを読み込む
-
-	SetResultScore();		// リザルトスコアの設定
 }
-//======================
+//========================================================================================================
 // リザルトスコアの終了
-//======================
+//========================================================================================================
 void UninitResultScore(void)
 {
 	// テクスチャの破棄
@@ -125,20 +135,59 @@ void UninitResultScore(void)
 	}
 
 }
-//======================
+//========================================================================================================
 // リザルトスコアの更新
-//======================
+//========================================================================================================
 void UpdateResultScore(void)
 {
-	// 無し
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	// 頂点バッファをロックし,頂点情報へのポインタを取得
+	g_pVtxBuffResultScore->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 桁数分回す
+	for (int nCnt = 0; nCnt < MAX_NUM_SCORE; nCnt++)
+	{
+
+		if (g_aResult[nCnt].fWidth <= MAX_WIDTH)
+		{
+			g_aResult[nCnt].fWidth = MAX_WIDTH;
+		}
+		else
+		{
+			g_aResult[nCnt].fWidth -= (MAX_WIDTH / SCALVALUE) * SPEED;
+		}
+
+		if (g_aResult[nCnt].fHeight <= MAX_HEIGHT)
+		{
+			g_aResult[nCnt].fHeight = MAX_HEIGHT;
+		}
+		else
+		{
+			g_aResult[nCnt].fHeight -= (MAX_HEIGHT / SCALVALUE) * SPEED;
+		}
+		// 頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(g_aResult[nCnt].pos.x + g_aResult[nCnt].fWidth + nCnt * 110.0f, g_aResult[nCnt].pos.y - g_aResult[nCnt].fHeight, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(g_aResult[nCnt].pos.x + g_aResult[nCnt].fWidth + nCnt * 110.0f + 110.0f, g_aResult[nCnt].pos.y - g_aResult[nCnt].fHeight, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(g_aResult[nCnt].pos.x + g_aResult[nCnt].fWidth + nCnt * 110.0f, g_aResult[nCnt].pos.y + g_aResult[nCnt].fHeight, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(g_aResult[nCnt].pos.x + g_aResult[nCnt].fWidth + nCnt * 110.0f + 110.0f, g_aResult[nCnt].pos.y + g_aResult[nCnt].fHeight, 0.0f);
+		pVtx += 4;
+	}
+	// アンロック
+	g_pVtxBuffResultScore->Unlock();
+
+	// 目的の値に近づける
+	g_nResultScore += (g_nResultScoreDest - g_nResultScore) * 0.1f;
+	SetResultScore(g_nResultScore);		// リザルトスコアの設定
 }
-//======================
+//========================================================================================================
 // リザルトスコアの描画
-//======================
+//========================================================================================================
 void DrawResultScore(void)
 {
 	// デバイスへのポインタ
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();		
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();	
 
 	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffResultScore, 0, sizeof(VERTEX_2D));
@@ -158,10 +207,10 @@ void DrawResultScore(void)
 		}
 	}
 }
-//=============================
+//===============================================================================================================
 // リザルトスコアの設定
-//=============================
-void SetResultScore()
+//===============================================================================================================
+void SetResultScore(int nScore)
 {
 	int aPosTexU[MAX_NUM_SCORE] = {};	// 桁数分の数字を格納
 	int aData = 10000000;				// 8桁
@@ -176,12 +225,12 @@ void SetResultScore()
 	{
 		if (nCntscore == 0)		// 0番目の時
 		{
-			aPosTexU[0] = g_nResultScore / aData;
+			aPosTexU[0] = nScore / aData;
 		}
 		else
 		{
 			// 0番目以外の時
-			aPosTexU[nCntscore] = g_nResultScore % aData / aData2;
+			aPosTexU[nCntscore] = nScore % aData / aData2;
 			aData = aData / 10;
 			aData2 = aData2 / 10;
 		}
@@ -200,9 +249,9 @@ void SetResultScore()
 	// アンロック
 	g_pVtxBuffResultScore->Unlock();
 }
-//================================
+//==================================================================================================================
 // スコアの読み込み
-//================================
+//==================================================================================================================
 void LoadScore(void)
 {
 	// ファイル
@@ -214,14 +263,14 @@ void LoadScore(void)
 	if (pFile != NULL)
 	{
 		// ファイル開けたら
-		fscanf(pFile, "%d", &g_nResultScore);
+		fscanf(pFile, "%d", &g_nResultScoreDest);
 		
 	}
 	else
 	{
 		// 開けなかった時
 		// メッセージBOXの表示
-		MessageBox(NULL, "開けません", "エラー", MB_OK);
+		MessageBox(NULL, "開けません", "エラー(ResultScore.cpp)", MB_OK);
 
 		return;
 	}
