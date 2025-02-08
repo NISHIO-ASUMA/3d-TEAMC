@@ -165,32 +165,33 @@ void UpdateRankingScore(void)
 				Rank--;	    // 順位を減らす
 				Avalue = 0; // A値をリセット
 			}
-			else
-			{
-				bFlash = true; // フラッシュできる
-
-				// 順位分回す
-				for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
-				{
-					// 桁数分回す
-					for (int nCnt1 = 0; nCnt1 < MAX_DIGIT; nCnt1++)
-					{
-						// 色をもとに戻しておく
-						pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-						pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-						pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-						pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
-						pVtx += 4;
-					}
-				}
-			}
 		}
 		else
 		{
 			Avalue += 5; // 加算量
 		}
 
+		// 順位0番目の透明度を設定し終わったら
+		if (Rank <= 0 && Avalue >= 255)
+		{
+			// 順位分回す
+			for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
+			{
+				// 桁数分回す
+				for (int nCnt1 = 0; nCnt1 < MAX_DIGIT; nCnt1++)
+				{
+					// 色をもとに戻しておく
+					pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+					pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+					pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+					pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+
+					pVtx += 4;
+				}
+			}
+			bFlash = true; // フラッシュできる
+		}
+		
 		// フラッシュできなかったら(上でtrueにしているので通る可能性があるから)
 		if (!bFlash)
 		{
