@@ -32,6 +32,7 @@ LPDIRECT3DTEXTURE9 g_pTextureScore = NULL;//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffScore=NULL;//頂点バッファへのポインタ
 D3DXVECTOR3 g_posScore;//スコアの位置
 int g_nScore;//スコアの値
+int g_nDestScore; // 目的の値
 SCORE g_aScore[MAX_NUM_SCORE];
 
 //=====================
@@ -89,7 +90,8 @@ void InitScore(void)
 		g_aScore[nCnt1].nCountScoreCounter = 0;
 		g_aScore[nCnt1].bUse = false;
 	}
-		g_nScore = 0;//値を初期化する
+		g_nScore = 0;     //値を初期化する
+		g_nDestScore = 0; //値を初期化する
 
 	for (nCntScore = 0; nCntScore < MAX_NUM_SCORE; nCntScore++)
 	{
@@ -162,7 +164,13 @@ void UpdateScore(void)
 			//それ以外の状態のとき
 			g_aScore[nData1].bUse = false;
 		}
-	}	
+	}
+	
+	// 目的のスコアに近づける
+	g_nScore += (g_nDestScore - g_nScore) * 0.1f;
+
+	// スコアをセット
+	SetScore(g_nScore);
 }
 //=====================
 //スコアの描画処理
@@ -201,6 +209,11 @@ void SetScore(int nScore)
 	int aData2 = 1000000;
 
 	g_nScore = nScore;
+
+	if (g_nScore <= 0)
+	{
+		g_nScore = 0;
+	}
 
 	VERTEX_2D* pVtx;
 
@@ -244,7 +257,7 @@ void AddScore(int nValue)
 	int aData = 10000000;
 	int aData2 = 1000000;
 
-	g_nScore += nValue;
+	g_nDestScore += nValue;
 
 	g_pVtxBuffScore->Lock(0, 0, (void**)&pVtx, 0);
 

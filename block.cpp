@@ -328,7 +328,7 @@ void DrawBlock(void)
 //=======================
 // ブロックの設定処理
 //=======================
-void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal)
+void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
 {
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
@@ -337,6 +337,7 @@ void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal)
 			g_Block[nCntBlock] = g_TexBlock[nType]; // テクスチャタイプ
 
 			g_Block[nCntBlock].pos = pos;	  // 座標
+			g_Block[nCntBlock].rot = rot;	  // 座標
 			g_Block[nCntBlock].Scal = Scal;	  // 拡大率
 			g_Block[nCntBlock].nType = nType; // 種類
 			g_Block[nCntBlock].bUse = true;   // 使用状態
@@ -549,6 +550,8 @@ void LoadTitleState(void)
 	// ローカル変数宣言--------------------
 	D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 Scal(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 rot(0.0f, 0.0f, 0.0f);
+
 	int nType = 0;
 	int nIdx = 0;
 
@@ -583,6 +586,13 @@ void LoadTitleState(void)
 						fscanf(pFile, "%f", &pos.y);
 						fscanf(pFile, "%f", &pos.z);
 					}
+					else if (strcmp(aString, "ROT") == 0)
+					{// POSを読み取った
+						fscanf(pFile, "%s", &Skip[0]);
+						fscanf(pFile, "%f", &rot.x);
+						fscanf(pFile, "%f", &rot.y);
+						fscanf(pFile, "%f", &rot.z);
+					}
 					else if (strcmp(aString, "SIZE") == 0)
 					{// SIZEを読みとった
 						fscanf(pFile, "%s", &Skip[0]);
@@ -593,7 +603,7 @@ void LoadTitleState(void)
 					else if (strcmp(aString, "END_BLOCKSET") == 0)
 					{// END_BLOCKSETを読み取った
 						// ブロックにセットする
-						SetBlock(pos, nType, Scal);
+						SetBlock(pos,rot, nType, Scal);
 						nIdx++;
 						break;
 					}
@@ -700,6 +710,7 @@ void tutoload(void)
 	char Skip[3];
 	D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 Scal(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 rot(0.0f, 0.0f, 0.0f);
 	int nType = 0;
 	int nIdx = 0;
 	//--------------------------------------
@@ -734,6 +745,13 @@ void tutoload(void)
 						fscanf(pFile, "%f", &pos.y);
 						fscanf(pFile, "%f", &pos.z);
 					}
+					else if (strcmp(aString, "ROT") == 0)
+					{// POSを読み取った
+						fscanf(pFile, "%s", &Skip[0]);
+						fscanf(pFile, "%f", &rot.x);
+						fscanf(pFile, "%f", &rot.y);
+						fscanf(pFile, "%f", &rot.z);
+					}
 					else if (strcmp(aString, "SIZE") == 0)
 					{// SIZEを読み取った
 						fscanf(pFile, "%s", &Skip[0]);
@@ -743,7 +761,7 @@ void tutoload(void)
 					}
 					else if (strcmp(aString, "END_BLOCKSET") == 0)
 					{// END_BLOCKSETを読み取った
-						SetBlock(pos, nType, Scal);
+						SetBlock(pos, rot,nType, Scal);
 						nIdx++;
 						break;
 					}
@@ -853,35 +871,45 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&NAe2, &NBe1, &NBe2, &NBe3);
 	VecL = fabs(D3DXVec3Dot(&Interval, &NAe2));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : Ae3
 	rA = D3DXVec3Length(&Ae3);
 	rB = LenSegOnSeparateAxis(&NAe3, &NBe1, &NBe2, &NBe3);
 	VecL = fabs(D3DXVec3Dot(&Interval, &NAe3));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : Be1
 	rA = LenSegOnSeparateAxis(&NBe1, &Ae1, &Ae2, &Ae3);
 	rB = D3DXVec3Length(&NBe1);
 	VecL = fabs(D3DXVec3Dot(&Interval, &NBe1));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : Be2
 	rA = LenSegOnSeparateAxis(&NBe2, &Ae1, &Ae2, &Ae3);
 	rB = D3DXVec3Length(&NBe2);
 	VecL = fabs(D3DXVec3Dot(&Interval, &NBe2));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : Be3
 	rA = LenSegOnSeparateAxis(&NBe3, &Ae1, &Ae2, &Ae3);
 	rB = D3DXVec3Length(&NBe3);
 	VecL = fabs(D3DXVec3Dot(&Interval, &NBe3));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C11
 	D3DXVECTOR3 Cross;
@@ -890,7 +918,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C12
 	D3DXVec3Cross(&Cross, &NAe1, &NBe2);
@@ -898,7 +928,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C13
 	D3DXVec3Cross(&Cross, &NAe1, &NBe3);
@@ -906,7 +938,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C21
 	D3DXVec3Cross(&Cross, &NAe2, &NBe1);
@@ -914,7 +948,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C22
 	D3DXVec3Cross(&Cross, &NAe2, &NBe2);
@@ -922,7 +958,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C23
 	D3DXVec3Cross(&Cross, &NAe2, &NBe3);
@@ -930,7 +968,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C31
 	D3DXVec3Cross(&Cross, &NAe3, &NBe1);
@@ -938,7 +978,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C32
 	D3DXVec3Cross(&Cross, &NAe3, &NBe2);
@@ -946,7 +988,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	// 分離軸 : C33
 	D3DXVec3Cross(&Cross, &NAe3, &NBe3);
@@ -954,7 +998,9 @@ bool collisionObb(int nCnt)
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
 	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
+	{
 		return false;
+	}
 
 	return true; // 当たっている
 }
@@ -1096,7 +1142,6 @@ bool PushPlayer(int nCntBlock)
 
 
 
-
 	// 面の位置Z(法線プラス)
 	D3DXVECTOR3 faceposZp = g_Block[nCntBlock].Obb.CenterPos + (VecRot[2] * g_Block[nCntBlock].Obb.Length[2]);
 
@@ -1114,14 +1159,13 @@ bool PushPlayer(int nCntBlock)
 	float DotZp = fabsf(D3DXVec3Dot(&VecRot[2], &PlayerVecZp)); // 内積Z+を求める
 	float DotZm = fabsf(D3DXVec3Dot(&norZm, &PlayerVecZm));     // 内積Z-を求める
 
-	// ブロックの上に乗っていない
-	// 
+	// ブロックの上に乗っている 
 	if (DotYp < DotYm && DotYp <= DotXp && DotYp <= DotXm && DotYp <= DotZp && DotYp <= DotZm)
 	{
 		bLanding = true;
 		//pPlayer->bJump = true;
 
-		if (!pPlayer->bJump) 
+		if (!pPlayer->bJump)
 		{
 			pPlayer->bJump = true; // 地面に着地したのでジャンプフラグを切り替える
 			pPlayer->move.y = 0.0f;
@@ -1155,33 +1199,14 @@ bool PushPlayer(int nCntBlock)
 		else
 		{
 			// 地面に着地した場合、重力を加える
-			if (!bLanding) 
+			if (!bLanding)
 			{
-				pPlayer->move.y = -15.0f;  // 重力による落下
+				//pPlayer->move.y = -1.0f;  // 重力による落下
 				pPlayer->bLandingOBB = true;
 			}
 		}
 
 	}
-	else if (DotYp > DotYm && DotYp >= DotXp && DotYp >= DotXm && DotYp >= DotZp && DotYp >= DotZm)
-	{
-		// 法線ベクトルの計算
-		D3DXVECTOR3 Nor = VecRot[1];
-		D3DXVec3Normalize(&Nor, &Nor);
-
-		// プレイヤーの位置を面に合わせるための補正
-		float D = -D3DXVec3Dot(&Nor, &faceposYm);
-
-		// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
-		float facePlayerPos = -(D3DXVec3Dot(&Nor, &pPlayer->pos) + D) / D3DXVec3Dot(&Nor, &Nor);
-
-		// プレイヤーの位置を面に合わせて補正
-		D3DXVECTOR3 NewPlayerPos = pPlayer->pos + facePlayerPos * Nor;
-
-		pPlayer->pos.y = NewPlayerPos.y; // 位置を面に合わせる
-
-	}
-
 	// -Xの面から当たった
 	else if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
 	{
@@ -1198,6 +1223,7 @@ bool PushPlayer(int nCntBlock)
 
 		// プレイヤーの位置を更新
 		pPlayer->pos = NewPlayerPos;
+		
 	}
 	// +Xの面から当たった
 	else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
@@ -1252,15 +1278,24 @@ bool PushPlayer(int nCntBlock)
 		pPlayer->pos = NewPlayerPos;
 	}
 	
-	//if (DotYp > DotYm && DotYp >= DotXp && DotYp >= DotXm && DotYp >= DotZp && DotYp >= DotZm)
+	
+	//if (DotYp > DotYm && DotYp <= DotXp && DotYp <= DotXm && DotYp <= DotZp && DotYp <= DotZm)
 	//{
+	//	// 法線ベクトルの計算
 	//	D3DXVECTOR3 Nor = -VecRot[1];
+	//	D3DXVec3Normalize(&Nor, &Nor);
 
-	//	float D = -(Nor.x * faceposYm.x + Nor.y * faceposYm.y + Nor.z * faceposYm.z);
+	//	// プレイヤーの位置を面に合わせるための補正
+	//	float D = -D3DXVec3Dot(&Nor, &faceposYm);
 
-	//	float PlayerPosY = -(Nor.z * pPlayer->pos.z + Nor.x * pPlayer->pos.x + D) / Nor.y;
+	//	// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+	//	float facePlayerPos = -(D3DXVec3Dot(&Nor, &pPlayer->pos) + D) / D3DXVec3Dot(&Nor, &Nor);
 
-	//	pPlayer->pos.y = PlayerPosY + pPlayer->Size.y;
+	//	// プレイヤーの位置を面に合わせて補正
+	//	D3DXVECTOR3 NewPlayerPos = pPlayer->pos + facePlayerPos * Nor;
+
+	//	pPlayer->pos.y = NewPlayerPos.y; // 位置を面に合わせる
+
 	//}
 
 	//SetEffect(faceposYm,D3DXVECTOR3(0.0f,0.0f,0.0f),10,D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),10,30.0f);

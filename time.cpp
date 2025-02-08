@@ -1,9 +1,9 @@
-//============================
+//==============================================================================================================
 //
 // timer [timer.cpp]
 // Author:YOSHIDA YUUTO
 //
-//============================
+//==============================================================================================================
 
 //****************************
 // インクルードファイル
@@ -29,12 +29,12 @@ typedef struct
 //****************************
 // グローバル変数
 //****************************
-LPDIRECT3DTEXTURE9 g_pTextureTimeMinute = NULL;			// テクスチャへのポインタ
-LPDIRECT3DTEXTURE9 g_pTextureTimeSecond = NULL;			// テクスチャへのポインタ
-LPDIRECT3DTEXTURE9 g_pTextureTimeCircle = NULL;		// テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeMinute = NULL;	// 頂点バッファへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeSecond = NULL;	// 頂点バッファへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeCircle = NULL;	// 頂点バッファへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureTimeMinute = NULL;			// テクスチャへのポインタ分
+LPDIRECT3DTEXTURE9 g_pTextureTimeSecond = NULL;			// テクスチャへのポインタ秒
+LPDIRECT3DTEXTURE9 g_pTextureTimeCircle = NULL;			// テクスチャへのポインタコロン
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeMinute = NULL;	// 頂点バッファへのポインタ分
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeSecond = NULL;	// 頂点バッファへのポインタ秒
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeCircle = NULL;	// 頂点バッファへのポインタコロン
 
 D3DXVECTOR3 g_posTime; // スコアの位置
 int g_nCountTime;      // タイムのカウント
@@ -44,29 +44,26 @@ int g_nTimerSecond;    // 秒
 
 TIME g_aTime[MAX_NUM_TIME]; // 最大数分
 
-//=====================
+//=======================================================================================================
 //スコアの初期化処理
-//=====================
+//=======================================================================================================
 void InitTime(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
+	LPDIRECT3DDEVICE9 pDevice = GetDevice(); // デバイスの取得
 
-	//デバイスの取得
-	pDevice = GetDevice();
+	VERTEX_2D* pVtx; // 頂点バッファへのポインタ
 
-	VERTEX_2D* pVtx;
-
-	//テクスチャの読み込み
+	//テクスチャの読み込み(分)
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\time001.png",
 		&g_pTextureTimeMinute);
 
-	//テクスチャの読み込み
+	//テクスチャの読み込み(秒)
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\time001.png",
 		&g_pTextureTimeSecond);
 
-	//テクスチャの読み込み
+	//テクスチャの読み込み(コロン)
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\timer_circle.png",
 		&g_pTextureTimeCircle);
@@ -179,7 +176,7 @@ void InitTime(void)
 	// 頂点バッファのロック
 	g_pVtxBuffTimeCircle->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点座標の設定
+	//頂点座標の設定 (コロン)
 	pVtx[0].pos = D3DXVECTOR3(1090.0f,20.0f,0.0f);
 	pVtx[1].pos = D3DXVECTOR3(1110.0f,20.0f,0.0f);
 	pVtx[2].pos = D3DXVECTOR3(1090.0f,55.0f,0.0f);
@@ -206,9 +203,9 @@ void InitTime(void)
 	// 頂点バッファをアンロック
 	g_pVtxBuffTimeCircle->Unlock();
 }
-//=====================
+//=======================================================================================================
 //スコアの終了処理
-//=====================
+//=======================================================================================================
 void UninitTime(void)
 {
 	//テクスチャの破棄
@@ -217,6 +214,8 @@ void UninitTime(void)
 		g_pTextureTimeMinute->Release();
 		g_pTextureTimeMinute = NULL;
 	}
+
+	// 頂点バッファの破棄
 	if (g_pVtxBuffTimeMinute != NULL)
 	{
 		g_pVtxBuffTimeMinute->Release();
@@ -229,47 +228,66 @@ void UninitTime(void)
 		g_pTextureTimeSecond->Release();
 		g_pTextureTimeSecond = NULL;
 	}
+	// 頂点バッファの破棄
 	if (g_pVtxBuffTimeSecond != NULL)
 	{
 		g_pVtxBuffTimeSecond->Release();
 		g_pVtxBuffTimeSecond = NULL;
 	}
 
+	//テクスチャの破棄
+	if (g_pTextureTimeCircle != NULL)
+	{
+		g_pTextureTimeCircle->Release();
+		g_pTextureTimeCircle = NULL;
+	}
+	// 頂点バッファの破棄
+	if (g_pVtxBuffTimeCircle != NULL)
+	{
+		g_pVtxBuffTimeCircle->Release();
+		g_pVtxBuffTimeCircle = NULL;
+	}
+
 }
-//=====================
+//=======================================================================================================
 //スコアの更新処理
-//=====================
+//=======================================================================================================
 void UpdateTime(void)
 {
 	VERTEX_2D* pVtx;
 
-	int Min10 = g_nTimerMinute / 10;
-	int Min1 = g_nTimerMinute % 10;
+	int Min10 = g_nTimerMinute / 10;	  // 分の十の桁
+	int Min1 = g_nTimerMinute % 10;		  // 分の一の桁
 
-	int Second10 = g_nTimerSecond / 10;
-	int Second1 = g_nTimerSecond % 10;
+	int Second10 = g_nTimerSecond / 10;	  // 秒の十の桁
+	int Second1 = g_nTimerSecond % 10;	  // 秒の十の桁
 
-	float offpos = 0.1f;
+	float offpos = 0.1f;				  // テクスチャ座標のオフセット
 
-	Boss* pBoss = Getboss();
-	GAMESTATE gamestate = GetGameState();
+	GAMESTATE gamestate = GetGameState(); // ゲームの状態を取得
 
 	// ゲームが続いているなら
 	if (gamestate != GAMESTATE_END)
 	{
-		g_nCountTime++;
+		g_nCountTime++; // タイマーカウントを加算
 
+		// 1秒たったら
 		if (g_nCountTime >= 60)
 		{
-			g_nCountTime = 0;
+			g_nCountTime = 0; // タイマーカウントを初期化
 
+			// 秒が0より大きかったら
 			if (g_nTimerSecond > 0)
 			{
-				g_nTimerSecond--;
+				g_nTimerSecond--; // 秒数を減らす
 			}
+			// 秒数が0より小さくなったら
 			else if (g_nTimerSecond <= 0)
 			{
+				// 秒数を59にする
 				g_nTimerSecond = 59;
+
+				// 分を一つ減らす
 				g_nTimerMinute--;
 			}
 		}
@@ -296,6 +314,7 @@ void UpdateTime(void)
 
 	g_pVtxBuffTimeMinute->Lock(0, 0, (void**)&pVtx, 0);
 
+	// 残り10秒になったら
 	if (g_nTimerMinute <= 0 && g_nTimerSecond <= 10)
 	{
 		//頂点カラーの設定
@@ -313,6 +332,8 @@ void UpdateTime(void)
 	}
 	else
 	{
+		// 残り10秒じゃなかったら
+
 		//頂点カラーの設定
 		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
@@ -342,6 +363,7 @@ void UpdateTime(void)
 
 	g_pVtxBuffTimeSecond->Lock(0, 0, (void**)&pVtx, 0);
 
+	// 残り10秒になったら
 	if (g_nTimerMinute <= 0 && g_nTimerSecond <= 10)
 	{
 		//頂点カラーの設定
@@ -358,7 +380,8 @@ void UpdateTime(void)
 
 	}
 	else
-	{
+	{		// 残り10秒じゃなかったら
+
 		//頂点カラーの設定
 		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
@@ -387,9 +410,9 @@ void UpdateTime(void)
 	g_pVtxBuffTimeSecond->Unlock();
 
 }
-//=====================
+//=======================================================================================================
 //スコアの描画処理
-//=====================
+//=======================================================================================================
 void DrawTime(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;//デバイスへのポインタ
@@ -444,30 +467,30 @@ void DrawTime(void)
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);//プリミティブの種類
 
 }
-//=================
+//=====================================================================================================================================================================
 // タイマーの取得処理
-//=================
+//=====================================================================================================================================================================
 int GetTimeMinute(void)
 {
-	return g_nTimerMinute;
+	return g_nTimerMinute; // 分の取得
 }
-//=================
+//=====================================================================================================================================================================
 // タイマーの取得処理
-//=================
+//=====================================================================================================================================================================
 int GetTimeSecond(void)
 {
 	return g_nTimerSecond;
 }
-//========================
+//=====================================================================================================================================================================
 // タイマー(分)の加算処理
-//========================
+//=====================================================================================================================================================================
 void AddTimeMinute(int minute)
 {
 	g_nTimerMinute += minute;
 }
-//========================
+//=====================================================================================================================================================================
 // タイマー(秒)の加算処理
-//========================
+//=====================================================================================================================================================================
 void AddTimeSecond(int second)
 {
 	g_nTimerSecond += second;

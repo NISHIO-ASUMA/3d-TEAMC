@@ -341,6 +341,60 @@ void UpdateEdit(void)
 			pCamera->posV.x = g_Edit[g_EditCount].pos.x;
 			pCamera->posV.z = g_Edit[g_EditCount].pos.z;
 		}
+
+		// 向きの変更
+		if (GetKeyboardPress(DIK_1))
+		{
+			g_Edit[g_EditCount].rot.x += 0.01f;
+		}
+		else if (GetKeyboardPress(DIK_2))
+		{
+			g_Edit[g_EditCount].rot.y += 0.01f;
+		}
+		else if (GetKeyboardPress(DIK_3))
+		{
+			g_Edit[g_EditCount].rot.z += 0.01f;
+		}
+		else if (GetKeyboardPress(DIK_4))
+		{
+			g_Edit[g_EditCount].rot.x -= 0.01f;
+		}
+		else if (GetKeyboardPress(DIK_5))
+		{
+			g_Edit[g_EditCount].rot.y -= 0.01f;
+		}
+		else if (GetKeyboardPress(DIK_6))
+		{
+			g_Edit[g_EditCount].rot.z -= 0.01f;
+		}
+
+		// 向きの正規化
+		if (g_Edit[g_EditCount].rot.x < -D3DX_PI)
+		{
+			g_Edit[g_EditCount].rot.x += D3DX_PI * 2.0f;
+		}
+		if (g_Edit[g_EditCount].rot.y < -D3DX_PI)
+		{
+			g_Edit[g_EditCount].rot.y += D3DX_PI * 2.0f;
+		}
+		if (g_Edit[g_EditCount].rot.z < -D3DX_PI)
+		{
+			g_Edit[g_EditCount].rot.z += D3DX_PI * 2.0f;
+		}
+		// 向きの正規化
+		if (g_Edit[g_EditCount].rot.x > D3DX_PI)
+		{
+			g_Edit[g_EditCount].rot.x += -D3DX_PI * 2.0f;
+		}
+		if (g_Edit[g_EditCount].rot.y > D3DX_PI)
+		{
+			g_Edit[g_EditCount].rot.y += -D3DX_PI * 2.0f;
+		}
+		if (g_Edit[g_EditCount].rot.z > D3DX_PI)
+		{
+			g_Edit[g_EditCount].rot.z += -D3DX_PI * 2.0f;
+		}
+
 	}
 	else if (EditMode2d)
 	{
@@ -495,6 +549,8 @@ void SaveEdit(void)
 
 				fprintf(pFile, "   POS = %.1f %.1f %.1f			# [ 位置 ]\n", g_Edit[nCnt].pos.x, g_Edit[nCnt].pos.y, g_Edit[nCnt].pos.z);
 
+				fprintf(pFile, "   ROT = %.1f %.1f %.1f			# [ 向き ]\n", g_Edit[nCnt].rot.x, g_Edit[nCnt].rot.y, g_Edit[nCnt].rot.z);
+
 				fprintf(pFile, "   SIZE = %.1f %.1f %.1f		# [ 大きさ ]\n", g_Edit[nCnt].Scal.x, g_Edit[nCnt].Scal.y, g_Edit[nCnt].Scal.z);
 
 				fprintf(pFile, "END_BLOCKSET\n\n");
@@ -548,6 +604,7 @@ void LoadEdit(void)
 	move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 Scal(0.0f, 0.0f, 0.0f);
 
 	//switch (g_LoadCnt)
@@ -594,6 +651,13 @@ void LoadEdit(void)
 						fscanf(pFile, "%f", &pos.y);
 						fscanf(pFile, "%f", &pos.z);
 					}
+					else if (strcmp(aString, "ROT") == 0)
+					{
+						fscanf(pFile, "%s", &skip[0]);
+						fscanf(pFile, "%f", &rot.x);
+						fscanf(pFile, "%f", &rot.y);
+						fscanf(pFile, "%f", &rot.z);
+					}
 					else if (strcmp(aString, "SIZE") == 0)
 					{
 						fscanf(pFile, "%s", &skip[0]);
@@ -603,7 +667,7 @@ void LoadEdit(void)
 					}
 					else if (strcmp(aString, "END_BLOCKSET") == 0)
 					{
-						SetBlock(pos, nType, Scal);
+						SetBlock(pos, rot,nType, Scal);
 						break;
 					}
 					else if (strcmp(aString, "END_ITEMSET") == 0)
@@ -708,6 +772,13 @@ void ReLoadEdit(void)
 						fscanf(pFile, "%f", &g_Edit[nIdx].pos.y);
 						fscanf(pFile, "%f", &g_Edit[nIdx].pos.z);
 					}
+					else if (strcmp(aString, "ROT") == 0)
+					{
+						fscanf(pFile, "%s", &skip[0]);
+						fscanf(pFile, "%f", &g_Edit[nIdx].rot.x);
+						fscanf(pFile, "%f", &g_Edit[nIdx].rot.y);
+						fscanf(pFile, "%f", &g_Edit[nIdx].rot.z);
+					}
 					else if (strcmp(aString, "SIZE") == 0)
 					{
 						fscanf(pFile, "%s", &skip[0]);
@@ -754,13 +825,13 @@ void ReLoadEdit(void)
 		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
 		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
 
-		if (nCnt != nCntobj - 1)
-		{
-			g_EditCount++;
-			g_nNumBlock++;
-		}		
+		g_EditCount++;
+		g_nNumBlock++;	
 	}
-
+	// 使用状態にする
+	g_Edit[g_EditCount].bUse = true;
+	g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
+	g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
 }
 
 //===========================

@@ -1357,25 +1357,29 @@ void ThrowItem(void)
 
 	Boss* pBoss = Getboss();
 
-	if (sphererange(&g_player.pos, &pBoss->pos, 50.0f, 100.0f) && pBoss->bUse)
+	for (int nCntBoss = 0; nCntBoss < MAX_BOSS; nCntBoss++)
 	{
-		D3DXVECTOR3 dest = pBoss->pos - pItem[nIdx].pos; // 近い敵の方向を求める
-		D3DXVec3Normalize(&dest, &dest); // 正規化する
+		if (sphererange(&g_player.pos, &pBoss[nCntBoss].pos, 50.0f, 100.0f) && pBoss[nCntBoss].bUse)
+		{
+			D3DXVECTOR3 dest = pBoss[nCntBoss].pos - pItem[nIdx].pos; // 近い敵の方向を求める
+			D3DXVec3Normalize(&dest, &dest); // 正規化する
 
-		// 飛ばす方向を設定
-		pItem[nIdx].move.x = dest.x * 10.0f;
-		pItem[nIdx].move.z = dest.z * 10.0f;
-		pItem[nIdx].bUse = true; // 使用状態をtrueにする
-	}
-	else
-	{
-		D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - pItem[nIdx].pos; // 近い敵の方向を求める
-		D3DXVec3Normalize(&dest, &dest); // 正規化する
+			// 飛ばす方向を設定
+			pItem[nIdx].move.x = dest.x * 10.0f;
+			pItem[nIdx].move.z = dest.z * 10.0f;
+			pItem[nIdx].bUse = true; // 使用状態をtrueにする
+		}
+		else
+		{
+			D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - pItem[nIdx].pos; // 近い敵の方向を求める
+			D3DXVec3Normalize(&dest, &dest); // 正規化する
 
-		// 飛ばす方向を設定
-		pItem[nIdx].move.x = dest.x * 10.0f;
-		pItem[nIdx].move.z = dest.z * 10.0f;
-		pItem[nIdx].bUse = true; // 使用状態をtrueにする
+			// 飛ばす方向を設定
+			pItem[nIdx].move.x = dest.x * 10.0f;
+			pItem[nIdx].move.z = dest.z * 10.0f;
+			pItem[nIdx].bUse = true; // 使用状態をtrueにする
+			break;
+		}
 	}
 
 	// 素手の時のモーション情報を代入

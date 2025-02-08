@@ -31,7 +31,6 @@
 #define SHADOWSIZEOFFSET (40.0f) // 影の大きさのオフセット
 #define SHADOW_A (1.0f)          // 影の濃さの基準
 #define NUM_MTX (8)
-#define MAX_BOSS (10)
 
 //****************************
 // プロトタイプ宣言
@@ -244,6 +243,9 @@ void UpdateBoss(void)
 			break;
 		}
 
+		// 影の位置の更新
+		SetPositionShadow(g_Boss[nCnt].nIdxShadow, g_Boss[nCnt].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss[nCnt].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss[nCnt].pos.y / 30.0f));
+
 		// ボスの攻撃モーション
 		if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)// ドス突きの状態で
 		{
@@ -302,9 +304,6 @@ void UpdateBoss(void)
 		// ブロックの判定
 		CollisionBlock(&g_Boss[nCnt].pos, &g_Boss[nCnt].posOld, &g_Boss[nCnt].move, &g_Boss[nCnt].Size);
 
-		// 影の位置の更新
-		SetPositionShadow(g_Boss[nCnt].nIdxShadow, g_Boss[nCnt].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss[nCnt].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss[nCnt].pos.y / 30.0f));
-
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20000.0f) && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION)
 		{
@@ -319,6 +318,7 @@ void UpdateBoss(void)
 			{
 				SetExplosion(HootR, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
 			}
+
 			// モーションがムーブの時3キーの1フレーム目
 			else if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_MOVE &&
 				g_Boss[nCnt].Motion.nKey == 3 &&
@@ -355,7 +355,7 @@ void UpdateBoss(void)
 		}
 
 		// 攻撃範囲に入ったら
-		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 30.0f) && g_Boss[nCnt].AttackState != BOSSATTACK_ATTACK)
+		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 50.0f) && g_Boss[nCnt].AttackState != BOSSATTACK_ATTACK)
 		{
 			// モーションを攻撃にする
 			SetMotion(&g_Boss[nCnt].Motion, // モーション構造体のアドレス
@@ -630,6 +630,7 @@ void HitBoss(int nCntBoss,int nDamage)
 
 			break;
 		}
+		AddFever(10.0f);		// フィーバーポイントを取得
 
 		// パーティクルをセット
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z), g_Boss[nCntBoss].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 30, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -1084,7 +1085,7 @@ void CollisionToBoss(int nCntBoss)
 		{
 			if (sphererange(&g_Boss[nCntBoss].pos, &g_Boss[nCnt].pos, 50.0f, 50.0f))
 			{
-				D3DXVECTOR3 vector = g_Boss[nCntBoss].pos - g_Boss[nCnt].pos;
+				D3DXVECTOR3 vector = g_Boss[nCnt].pos - g_Boss[nCntBoss].pos;
 
 				D3DXVec3Normalize(&vector, &vector);
 				g_Boss[nCntBoss].move.x -= vector.x * g_Boss[nCntBoss].Speed;

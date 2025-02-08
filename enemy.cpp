@@ -24,6 +24,7 @@
 #include "spgauge.h"
 #include "boss.h"
 #include "time.h"
+#include "game.h"
 
 //****************************
 //マクロ定義
@@ -331,8 +332,7 @@ void UpdateEnemy(void)
 
 			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
 
-			g_Enemy[nCntEnemy].rot.y = fAngle + D3DX_PI; // 角度を代入
-
+			g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
 		}
 
 		if (pPlayer->AttackSp && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
@@ -385,6 +385,19 @@ void UpdateEnemy(void)
 
 		//モーションの更新
 		UpdateMotion(&g_Enemy[nCntEnemy].Motion);
+
+		//敵の角度の正規化
+		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
+		{
+			g_Enemy[nCntEnemy].rot.y += D3DX_PI * 2.0f;
+		}
+		else if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y <= -D3DX_PI)
+		{
+			g_Enemy[nCntEnemy].rot.y -= D3DX_PI * 2.0f;
+		}
+
+		// 目的の角度に近づける
+		g_Enemy[nCntEnemy].rot.y += (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y) * 0.1f;
 	}
 }
 //=============================
@@ -522,6 +535,8 @@ void HitEnemy(int nCnt,int nDamage)
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
+	GAMESTATE gamestate = GetGameState();
+
 	// ダメージを設定
 	SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), // 位置
 		nDamage,	// ダメージ																								
@@ -541,7 +556,9 @@ void HitEnemy(int nCnt,int nDamage)
 			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
 			4.0f, 8, 15, 20, 5.0f, 0.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-		if (nMin <= 0 && nSec <= 0)
+
+		// ゲームが続いていたら
+		if (gamestate != GAMESTATE_END)
 		{
 			if (pPlayer->FeverMode)
 			{
@@ -621,7 +638,7 @@ void HitEnemy(int nCnt,int nDamage)
 		g_Enemy[nCnt].nCounterState = 30;		 // ダメージ状態からノーマルに戻るまでの時間
 
 		// スコアを加算
-		if (nMin <= 0 && nSec <= 0)
+		if (gamestate != GAMESTATE_END)
 		{
 			AddScore(4300);
 		}
@@ -1076,12 +1093,15 @@ void AgentEnemy(int nCntEnemy)
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
-	D3DXVECTOR3 fDest = pPlayer->pos - g_Enemy[nCntEnemy].pos; // 敵からプレイヤーまでのベクトルを引く
-	D3DXVec3Normalize(&fDest, &fDest); // 正規化
+	float fRotMove, fRotDest, fRotDiff;
 
-	// 移動量の更新
-	g_Enemy[nCntEnemy].move.x += fDest.x * MAX_ENEMYMOVE * g_Enemy[nCntEnemy].Speed; 
-	g_Enemy[nCntEnemy].move.z += fDest.z * MAX_ENEMYMOVE * g_Enemy[nCntEnemy].Speed;
+	fRotDest = atan2f(g_Enemy[nCntEnemy].pos.x - pPlayer->pos.x, g_Enemy[nCntEnemy].pos.z - pPlayer->pos.z);//目標の移動方向(角度)
+
+	fRotDiff = fRotDest - g_Enemy[nCntEnemy].rot.y;//目標の移動方向(角度)
+
+	g_Enemy[nCntEnemy].move.x += sinf(g_Enemy[nCntEnemy].rot.y) * -g_Enemy[nCntEnemy].Speed * MAX_ENEMYMOVE;
+
+	g_Enemy[nCntEnemy].move.z += cosf(g_Enemy[nCntEnemy].rot.y) * -g_Enemy[nCntEnemy].Speed * MAX_ENEMYMOVE;
 }
 //=============================
 // 敵と敵の当たり判定

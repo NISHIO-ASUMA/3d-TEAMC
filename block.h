@@ -121,6 +121,7 @@ typedef struct
 	BLOCKTEX BlockTex[BLOCKTYPE_MAX];
 	D3DXMATRIX mtxParent;
 	OBB Obb;
+	int nIdxShadow;   // 影のインデックス
 }BLOCK;
 
 //***************************
@@ -130,7 +131,7 @@ void InitBlock(void);			// ブロックの初期化処理
 void UninitBlock(void);			// ブロックの終了処理
 void UpdateBlock(void);			// ブロックの更新処理
 void DrawBlock(void);			// ブロックの描画処理
-void SetBlock(D3DXVECTOR3 pos, int nType, D3DXVECTOR3 Scal);	// ブロックの設定処理
+void SetBlock(D3DXVECTOR3 pos, D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal);	// ブロックの設定処理
 bool CollisionBlock(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld,D3DXVECTOR3 *pMove,D3DXVECTOR3 *pSize);	// 当たり判定
 bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize);// アイテムとの当たり判定
 int NumBlock(void);	// ブロック数の取得

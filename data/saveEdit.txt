@@ -1,5 +1,5 @@
 +==========================================+
-+	  マップエディター 作成者 吉田祐人      +
++	  マップエディター 作成者 吉田祐人  バックアップ    +
 +==========================================+
 
 BLOCKSET
@@ -1024,40 +1024,5 @@ EDITCATEGORY = 1			# [ カテゴリー1 ]
    SIZE = 1.2 1.2 1.2		# [ 大きさ ]
 END_ITEMSET
 
-BLOCKSET
-EDITCATEGORY = 0			# [ カテゴリー0 ] 
-   BLOCKTYPE = 31			# [ ブロックの種類 ]
-   POS = -509.6 -0.4 686.6			# [ 位置 ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
-END_BLOCKSET
-
-BLOCKSET
-EDITCATEGORY = 0			# [ カテゴリー0 ] 
-   BLOCKTYPE = 31			# [ ブロックの種類 ]
-   POS = -523.4 -0.4 -458.3			# [ 位置 ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
-END_BLOCKSET
-
-BLOCKSET
-EDITCATEGORY = 0			# [ カテゴリー0 ] 
-   BLOCKTYPE = 32			# [ ブロックの種類 ]
-   POS = 967.2 -0.4 -925.5			# [ 位置 ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
-END_BLOCKSET
-
-BLOCKSET
-EDITCATEGORY = 0			# [ カテゴリー0 ] 
-   BLOCKTYPE = 32			# [ ブロックの種類 ]
-   POS = 966.1 -0.4 921.7			# [ 位置 ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
-END_BLOCKSET
-
-BLOCKSET
-EDITCATEGORY = 0			# [ カテゴリー0 ] 
-   BLOCKTYPE = 32			# [ ブロックの種類 ]
-   POS = -394.9 -0.4 921.9			# [ 位置 ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
-END_BLOCKSET
-
-BLOCK_COUNT = 151    # [ ブロックの配置数 ]
+BLOCK_COUNT = 146    # [ ブロックの配置数 ]
 END_SCRIPT          # この行は消さないでください
