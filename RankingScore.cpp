@@ -172,11 +172,8 @@ void UpdateRankingScore(void)
 		}
 
 		// ‡ˆÊ0”Ô–Ú‚Ì“§–¾“x‚ğİ’è‚µI‚í‚Á‚½‚ç
-		if (Rank <= 0 && Avalue >= 255 || KeyboardTrigger(DIK_RETURN))
+		if (Rank <= 0 && Avalue >= 255)
 		{
-			Avalue = 255;
-			Rank = 0;
-
 			// ‡ˆÊ•ª‰ñ‚·
 			for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
 			{

@@ -133,10 +133,10 @@ void InitGame(void)
 
 	//エディットのロード処理
 	LoadEdit();
-	LoadEdit2d();
+	//LoadEdit2d();
 
-	//WaveEnemy(0); // 敵を出す処理
-	//WaveEnemy(1); // 敵を出す処理
+	WaveEnemy(0); // 敵を出す処理
+	WaveEnemy(1); // 敵を出す処理
 
 	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 
@@ -363,6 +363,7 @@ void UpdateGame(void)
 		InitItem();    // 出ているオブジェクトの初期化
 		InitPolygon(); // ポリゴンの初期化
 		LoadEdit();    // ロード
+		LoadEdit2d();
 	}
 	// エディットモードじゃなかったら
 	else if (KeyboardTrigger(DIK_F2) && !g_bEditMode)

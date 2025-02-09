@@ -12,18 +12,17 @@
 #include "player.h"
 #include "camera.h"
 #include "input.h"
-#include "polygon.h"
 
 //**************************************************************************************************************
 //マクロ定義
 //**************************************************************************************************************
-#define MAX_EDIT (10)
+#define MAX_EDIT (256)
 
 //**************************************************************************************************************
 //グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEdit2d = NULL; //頂点バッファへのポインタ
-LPDIRECT3DTEXTURE9 g_pTextureEditOrigin2d;//テクスチャへのポインタ保存用
+LPDIRECT3DTEXTURE9 g_pTextureEditOrigin2d[POLYGON_TYPE_MAX] = {};//テクスチャへのポインタ保存用
 EDIT_INFO_2D g_Edit2d[MAX_EDIT];//影の構造体
 int g_EditCnt;
 int g_ObjCount;
@@ -37,10 +36,13 @@ void InitEdit2d(void)
 
 	pDevice = GetDevice();
 
-	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		POLYGON_TYPE[0],
-		&g_pTextureEditOrigin2d);
+	for (int nCntEdit2d = 0; nCntEdit2d < POLYGON_TYPE_MAX; nCntEdit2d++)
+	{
+		//テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,
+			POLYGON_TYPE[nCntEdit2d],
+			&g_pTextureEditOrigin2d[nCntEdit2d]);
+	}
 
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_EDIT,
 		D3DUSAGE_WRITEONLY,
@@ -53,7 +55,7 @@ void InitEdit2d(void)
 
 	for (int nCntEdit2d = 0; nCntEdit2d < MAX_EDIT; nCntEdit2d++)
 	{
-		g_Edit2d[nCntEdit2d].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_Edit2d[nCntEdit2d].pos = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		g_Edit2d[nCntEdit2d].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_Edit2d[nCntEdit2d].fWidth = 100.0f;
 		g_Edit2d[nCntEdit2d].fHeight = 100.0f;
@@ -62,6 +64,7 @@ void InitEdit2d(void)
 		g_Edit2d[nCntEdit2d].fMove = 10.0f;
 	}
 	g_Edit2d[0].bUse = true;
+	g_Edit2d[0].g_pTextureEdit2d[0] = g_pTextureEditOrigin2d[0];
 	g_EditCnt = 0;
 	g_ObjCount = 0;
 
@@ -71,10 +74,10 @@ void InitEdit2d(void)
 	for (int nCntEdit2d = 0; nCntEdit2d < MAX_EDIT; nCntEdit2d++)
 	{
 		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(50.0f, 0.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(0.0f, 50.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(50.0f, 50.0f, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 50.0f);
+		pVtx[1].pos = D3DXVECTOR3(50.0f, 0.0f, 50.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(50.0f, 0.0f, 0.0f);
 
 		//各頂点の法線の設定(ベクトルの大きさは１にする必要がある)
 		pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -107,16 +110,20 @@ void UninitEdit2d(void)
 
 	for (int nCntEdit2d = 0; nCntEdit2d < MAX_EDIT; nCntEdit2d++)
 	{
-		if (g_Edit2d[nCntEdit2d].g_pTextureEdit2d != NULL)
+		int nType = g_Edit2d[nCntEdit2d].nType;
+		if (g_Edit2d[nCntEdit2d].g_pTextureEdit2d[nType] != NULL)
 		{
-			g_Edit2d[nCntEdit2d].g_pTextureEdit2d = NULL;
+			g_Edit2d[nCntEdit2d].g_pTextureEdit2d[nType] = NULL;
 		}
 	}
 
-	if (g_pTextureEditOrigin2d != NULL)
+	for (int nCntEdit2d = 0; nCntEdit2d < POLYGON_TYPE_MAX; nCntEdit2d++)
 	{
-		g_pTextureEditOrigin2d->Release();
-		g_pTextureEditOrigin2d = NULL;
+		if (g_pTextureEditOrigin2d[nCntEdit2d] != NULL)
+		{
+			g_pTextureEditOrigin2d[nCntEdit2d]->Release();
+			g_pTextureEditOrigin2d[nCntEdit2d] = NULL;
+		}
 	}
 
 	//頂点バッファの解放
@@ -188,7 +195,12 @@ void UpdateEdit2d(void)
 		{
 			g_Edit2d[g_EditCnt + 1].pos = g_Edit2d[g_EditCnt].pos;
 			g_Edit2d[g_EditCnt + 1].bUse = true;
-			g_Edit2d[g_EditCnt + 1].g_pTextureEdit2d = g_pTextureEditOrigin2d;
+			g_Edit2d[g_EditCnt + 1].g_pTextureEdit2d[0] = g_pTextureEditOrigin2d[g_Edit2d[g_EditCnt].nType];
+			g_Edit2d[g_EditCnt + 1].fHeight = g_Edit2d[g_EditCnt].fHeight;
+			g_Edit2d[g_EditCnt + 1].fWidth = g_Edit2d[g_EditCnt].fWidth;
+			g_Edit2d[g_EditCnt + 1].fMove = g_Edit2d[g_EditCnt].fMove;
+			g_Edit2d[g_EditCnt + 1].rot = g_Edit2d[g_EditCnt].rot;
+
 			g_EditCnt++;
 		}
 
@@ -215,31 +227,31 @@ void UpdateEdit2d(void)
 		// 回転Y
 		if (GetKeyboardPress(DIK_Z))
 		{
-			g_Edit2d[g_EditCnt].rot.y -= 0.01f;
+			g_Edit2d[g_EditCnt].rot.y -= 0.001f;
 		}
 		if (GetKeyboardPress(DIK_C))
 		{
-			g_Edit2d[g_EditCnt].rot.y += 0.01f;
+			g_Edit2d[g_EditCnt].rot.y += 0.001f;
 		}
 
 		// 回転X
 		if (GetKeyboardPress(DIK_V))
 		{
-			g_Edit2d[g_EditCnt].rot.x -= 0.01f;
+			g_Edit2d[g_EditCnt].rot.x -= 0.001f;
 		}
 		if (GetKeyboardPress(DIK_B))
 		{
-			g_Edit2d[g_EditCnt].rot.x += 0.01f;
+			g_Edit2d[g_EditCnt].rot.x += 0.001f;
 		}
 
 		// 回転Z
 		if (GetKeyboardPress(DIK_F))
 		{
-			g_Edit2d[g_EditCnt].rot.z -= 0.01f;
+			g_Edit2d[g_EditCnt].rot.z -= 0.001f;
 		}
 		if (GetKeyboardPress(DIK_G))
 		{
-			g_Edit2d[g_EditCnt].rot.z += 0.01f;
+			g_Edit2d[g_EditCnt].rot.z += 0.001f;
 		}
 
 		// カメラを選択中のオブジェクトの場所へ移動
@@ -256,14 +268,41 @@ void UpdateEdit2d(void)
 			g_EditCnt--;                    // オブジェクトのカウントを減らす
 		}
 
+		if (GetKeyboardPress(DIK_O))
+		{
+			g_Edit2d[g_EditCnt].fMove += 0.1f; // 移動量変更
+		}
+		else if (GetKeyboardPress(DIK_I) && g_Edit2d[g_EditCnt].fMove > 0.0f)
+		{
+			g_Edit2d[g_EditCnt].fMove -= 0.1f; // 移動量変更
+		}
+
+		if (KeyboardTrigger(DIK_1))
+		{
+			g_Edit2d[g_EditCnt].nType++;
+			g_Edit2d[g_EditCnt].g_pTextureEdit2d[1] = g_pTextureEditOrigin2d[1];
+		}
+		else if (KeyboardTrigger(DIK_2) && g_Edit2d[g_EditCnt].nType > 0)
+		{
+			g_Edit2d[g_EditCnt].nType--;
+			g_Edit2d[g_EditCnt].g_pTextureEdit2d[1] = g_pTextureEditOrigin2d[0];
+		}
+
 		pVtx += 4 * g_EditCnt;
 
 		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth, g_Edit2d[g_EditCnt].pos.y - g_Edit2d[g_EditCnt].fHeight,0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, g_Edit2d[g_EditCnt].pos.y - g_Edit2d[g_EditCnt].fHeight,0.0f);
-		pVtx[2].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth, g_Edit2d[g_EditCnt].pos.y + g_Edit2d[g_EditCnt].fHeight,0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, g_Edit2d[g_EditCnt].pos.y + g_Edit2d[g_EditCnt].fHeight,0.0f);
+		pVtx[0].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth,0.0f, g_Edit2d[g_EditCnt].pos.z + g_Edit2d[g_EditCnt].fHeight);
+		pVtx[1].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z + g_Edit2d[g_EditCnt].fHeight);
+		pVtx[2].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z - g_Edit2d[g_EditCnt].fHeight);
+		pVtx[3].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z - g_Edit2d[g_EditCnt].fHeight);
+
+		//テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 	}
+
 	g_pVtxBuffEdit2d->Unlock();
 }
 //===============================================================================================================
@@ -284,6 +323,7 @@ void DrawEdit2d(void)
 		{
 			continue;
 		}
+		int nType = g_Edit2d[nCntEdit2d].nType;
 
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_Edit2d[nCntEdit2d].mtxWorld);
@@ -305,8 +345,16 @@ void DrawEdit2d(void)
 		//テクスチャフォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_Edit2d[nCntEdit2d].g_pTextureEdit2d);
+		if (g_Edit2d[nCntEdit2d].nType == 0)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_Edit2d[nCntEdit2d].g_pTextureEdit2d[0]);
+		}
+		if (g_Edit2d[nCntEdit2d].g_pTextureEdit2d[1] != NULL)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_Edit2d[nCntEdit2d].g_pTextureEdit2d[1]);
+		}
 
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntEdit2d * 4, 2);
@@ -535,7 +583,7 @@ void ReLoadEdit2d(void)
 	for (int nCnt = 0; nCnt < g_ObjCount; nCnt++)
 	{
 		g_Edit2d[g_EditCnt].bUse = true;
-		g_Edit2d[g_EditCnt].g_pTextureEdit2d = g_pTextureEditOrigin2d;
+		g_Edit2d[g_EditCnt].g_pTextureEdit2d[g_Edit2d[g_EditCnt].nType] = g_pTextureEditOrigin2d[g_Edit2d[g_EditCnt].nType];
 
 		if (nCnt != g_ObjCount - 1)
 		{
@@ -543,7 +591,7 @@ void ReLoadEdit2d(void)
 		}
 	}
 	g_Edit2d[g_EditCnt].bUse = true;
-	g_Edit2d[g_EditCnt].g_pTextureEdit2d = g_pTextureEditOrigin2d;
+	g_Edit2d[g_EditCnt].g_pTextureEdit2d[g_Edit2d[g_EditCnt].nType] = g_pTextureEditOrigin2d[g_Edit2d[g_EditCnt].nType];
 }
 //======================================================================================================================
 // エディット2dの取得処理

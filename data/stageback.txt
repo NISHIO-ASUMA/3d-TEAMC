@@ -1,0 +1,110 @@
++==========================================+
++	  マップエディター 作成者 吉田祐人      +
++==========================================+
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 3			# [ ブロックの種類 ]
+   POS = -386.7 0.0 -239.9			# [ 位置 ]
+   ROT = 0.0 -1.6 0.0			# [ 向き ]
+   SIZE = 1.9 1.9 1.9		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 1			# [ ブロックの種類 ]
+   POS = -113.6 0.0 -232.6			# [ 位置 ]
+   ROT = 0.0 1.6 0.0			# [ 向き ]
+   SIZE = 1.5 1.5 1.5		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 1			# [ ブロックの種類 ]
+   POS = 56.4 0.0 -233.0			# [ 位置 ]
+   ROT = 0.0 0.0 0.0			# [ 向き ]
+   SIZE = 1.5 1.5 1.5		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 0			# [ ブロックの種類 ]
+   POS = 293.9 0.0 -203.3			# [ 位置 ]
+   ROT = 0.0 -1.6 0.0			# [ 向き ]
+   SIZE = 1.7 1.7 1.7		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 3			# [ ブロックの種類 ]
+   POS = 565.9 0.0 -201.5			# [ 位置 ]
+   ROT = 0.0 1.6 0.0			# [ 向き ]
+   SIZE = 1.2 1.2 1.2		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 3			# [ ブロックの種類 ]
+   POS = 644.6 0.0 -358.8			# [ 位置 ]
+   ROT = 0.0 0.0 0.0			# [ 向き ]
+   SIZE = 1.2 1.2 1.2		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 18			# [ ブロックの種類 ]
+   POS = 633.8 0.0 -789.1			# [ 位置 ]
+   ROT = 0.0 0.0 0.0			# [ 向き ]
+   SIZE = 1.2 1.2 1.2		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 25			# [ ブロックの種類 ]
+   POS = 749.2 0.0 490.1			# [ 位置 ]
+   ROT = 0.0 0.0 0.0			# [ 向き ]
+   SIZE = 2.2 2.2 2.2		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 26			# [ ブロックの種類 ]
+   POS = 954.7 0.0 179.5			# [ 位置 ]
+   ROT = 0.0 -3.1 0.0			# [ 向き ]
+   SIZE = 2.2 2.2 2.2		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 24			# [ ブロックの種類 ]
+   POS = 757.2 0.0 -213.7			# [ 位置 ]
+   ROT = 0.0 0.0 0.0			# [ 向き ]
+   SIZE = 2.6 2.6 2.6		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 24			# [ ブロックの種類 ]
+   POS = 272.9 0.0 -104.5			# [ 位置 ]
+   ROT = 0.0 1.2 0.0			# [ 向き ]
+   SIZE = 2.6 2.6 2.6		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 22			# [ ブロックの種類 ]
+   POS = 171.0 0.0 85.8			# [ 位置 ]
+   ROT = 0.0 -1.5 0.0			# [ 向き ]
+   SIZE = 1.9 1.9 1.9		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 27			# [ ブロックの種類 ]
+   POS = -500.8 0.0 308.8			# [ 位置 ]
+   ROT = 0.0 0.0 0.0			# [ 向き ]
+   SIZE = 1.9 1.9 1.9		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCK_COUNT = 13    # [ ブロックの配置数 ]
+END_SCRIPT          # この行は消さないでください
