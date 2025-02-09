@@ -542,6 +542,8 @@ void ReLoadEdit2d(void)
 			g_EditCnt++;
 		}
 	}
+	g_Edit2d[g_EditCnt].bUse = true;
+	g_Edit2d[g_EditCnt].g_pTextureEdit2d = g_pTextureEditOrigin2d;
 }
 //======================================================================================================================
 // エディット2dの取得処理

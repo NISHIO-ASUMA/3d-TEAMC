@@ -1,36 +1,37 @@
-//==============================================================================================================
+//============================
 //
 // ブロック[block.cpp]
 // Author:YOSHIDA YUUTO
 //
-//==============================================================================================================
+//============================
 
-//****************************
+//**************************************************************************************************************
 // インクルードファイル
-//****************************
+//**************************************************************************************************************
 #include "block.h"
 #include "input.h"
 #include "mouse.h"
 #include "camera.h"
 #include "Effect.h"
 
-//****************************
+//**************************************************************************************************************
 // マクロ定義
-//****************************
+//**************************************************************************************************************
 #define MAX_WORD (256)	  // 最大の文字数
 #define HALF_VALUE (0.6f) // 割る数
 #define PLAYERJUMPHEIGHT (50.0f) // プレイヤーのジャンプ量
 
-//****************************
+//**************************************************************************************************************
 // プロトタイプ宣言
-//****************************
+//**************************************************************************************************************
 void LoadBlockModel(void); // モデル読み込み処理
 void SetMtx(int nCntBlock); // ワールドマトリックスの設定(中心pos)
 bool PushPlayer(int nCntBlock); // OBBの押し出し
+bool PushEnemy(int nCntBlock, int nIdx);
 
-//****************************
+//**************************************************************************************************************
 // グローバル変数宣言
-//****************************
+//**************************************************************************************************************
 BLOCK g_Block[MAX_BLOCK];		// 構造体変数
 BLOCK g_TexBlock[BLOCKTYPE_MAX];// ブロックのテクスチャ情報
 int nCounterStateBlock;			// 状態管理カウンター
@@ -38,9 +39,9 @@ int g_NumBlock;					// ブロックの配置した数
 int g_BlockTypeMax;				// 種類数
 //bool bLanding;
 
-//===============================================================================================================
+//=============================
 // ブロックの初期化処理
-//===============================================================================================================
+//=============================
 void InitBlock(void)
 {
 	// デバイスの取得
@@ -144,9 +145,9 @@ void InitBlock(void)
 		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->UnlockVertexBuffer();
 	}
 }
-//===============================================================================================================
+//=============================
 // ブロックの終了処理
-//===============================================================================================================
+//=============================
 void UninitBlock(void)
 {
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
@@ -204,12 +205,13 @@ void UninitBlock(void)
 	}
 
 }
-//===============================================================================================================
+//=============================
 // ブロックの更新処理
-//===============================================================================================================
+//=============================
 void UpdateBlock(void)
 {
 	Player* pPlayer = GetPlayer(); // プレイヤーの取得
+	ENEMY* pEnemy = GetEnemy();
 
 	// 全部ブロック分回す
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
@@ -241,6 +243,10 @@ void UpdateBlock(void)
 			}
 		}
 
+		if (collisionObbEne(nCntBlock))
+		{
+		}
+
 		if (GetKeyboardPress(DIK_L))
 		{
 			g_Block[nCntBlock].rot.y += 0.01f;
@@ -255,9 +261,9 @@ void UpdateBlock(void)
 		}
 	}
 }
-//===============================================================================================================
+//=============================
 // ブロックの描画処理
-//===============================================================================================================
+//=============================
 void DrawBlock(void)
 {
 	// デバイスのポインタを取得
@@ -325,9 +331,9 @@ void DrawBlock(void)
 	}
 	
 }
-//=========================================================================================================
+//=======================
 // ブロックの設定処理
-//=========================================================================================================
+//=======================
 void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
 {
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
@@ -347,9 +353,9 @@ void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
 		}
 	}
 }
-//=========================================================================================================
+//=======================
 // ブロックの判定処理
-//=========================================================================================================
+//=======================
 bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize)
 {
 	// 着地判定
@@ -434,9 +440,9 @@ bool CollisionBlock(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove,
 
 	return bLanding; // 着地判定を返す
 }
-//===================================================================================================================
+//=================================
 // ブロックとアイテムの当たり判定
-//===================================================================================================================
+//=================================
 bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize)
 {
 	// 当たったかどうか
@@ -524,23 +530,23 @@ bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pM
 	// 判定を返す
 	return bHit;
 }
-//=========================================================================================================
+//=======================
 // ブロックの取得処理
-//=========================================================================================================
+//=======================
 BLOCK* GetBlock()
 {
 	return &g_Block[0];
 }
-//=========================================================================================================
+//=======================
 // ブロックの数取得処理
-//=========================================================================================================
+//=======================
 int NumBlock(void)
 {
 	return g_NumBlock;
 }
-//===============================================================================================================
+//=============================
 // ステージのロード処理
-//===============================================================================================================
+//=============================
 void LoadTitleState(void)
 {
 	FILE* pFile; // ファイルポインタを宣言
@@ -626,9 +632,9 @@ void LoadTitleState(void)
 	// ファイルを閉じる
 	fclose(pFile);
 }
-//===============================================================================================================
+//=============================
 // ブロックのモデルのロード処理
-//===============================================================================================================
+//=============================
 void LoadBlockModel(void)
 {
 	// デバイスのポインタ
@@ -698,9 +704,9 @@ void LoadBlockModel(void)
 	// ファイルを閉じる
 	fclose(pFile);
 }
-//=======================================================================================================================
+//=====================================
 // チュートリアルのモデルのロード処理
-//=======================================================================================================================
+//=====================================
 void tutoload(void)
 {
 	// ファイルポインタを宣言
@@ -785,9 +791,9 @@ void tutoload(void)
 	fclose(pFile);
 
 }
-//=========================================================================================================
+//=======================
 //ブロックOBBの作成
-//=========================================================================================================
+//=======================
 void CreateObb(int nCnt)
 {
 	int nType = g_Block[nCnt].nType; // 種類を代入
@@ -813,9 +819,9 @@ void CreateObb(int nCnt)
 	g_Block[nCnt].Obb.Length[1] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.y * g_Block[nCnt].Scal.y) - (g_Block[nCnt].BlockTex[nType].vtxMin.y * g_Block[nCnt].Scal.y)) * 0.6f; // 長さY
 	g_Block[nCnt].Obb.Length[2] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.z * g_Block[nCnt].Scal.z) - (g_Block[nCnt].BlockTex[nType].vtxMin.z * g_Block[nCnt].Scal.z)) * 0.6f; // 長さZ
 }
-//=========================================================================================================
+//=======================
 // OBBの判定
-//=========================================================================================================
+//=======================
 bool collisionObb(int nCnt)
 {
 	Player* pPlayer = GetPlayer();
@@ -1004,9 +1010,215 @@ bool collisionObb(int nCnt)
 
 	return true; // 当たっている
 }
-//===============================================================================================================
-// 超平面の計算?
-//===============================================================================================================
+//===========================================================================
+// OBBの判定敵
+//===========================================================================
+bool collisionObbEne(int nCntBlock)
+{
+	bool bHit = false;
+
+	ENEMY* pEnemy = GetEnemy();
+	D3DXMATRIX mtxRot; // 計算用マトリックス
+
+	float EnemyLength[3];
+
+	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
+	{
+		if (!pEnemy[nCnt].bUse)
+		{
+			continue;
+		}
+
+		// OBBの回転
+		D3DXVECTOR3 NAe1 = g_Block[nCntBlock].Obb.VecRot[0], Ae1 = NAe1 * g_Block[nCntBlock].Obb.Length[0];
+		D3DXVECTOR3 NAe2 = g_Block[nCntBlock].Obb.VecRot[1], Ae2 = NAe2 * g_Block[nCntBlock].Obb.Length[1];
+		D3DXVECTOR3 NAe3 = g_Block[nCntBlock].Obb.VecRot[2], Ae3 = NAe3 * g_Block[nCntBlock].Obb.Length[2];
+
+		// 回転行列
+		D3DXVECTOR3 Nbe1(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 Nbe2(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 Nbe3(0.0f, 0.0f, 0.0f);
+
+		D3DXVECTOR3 Max(pEnemy[nCnt].Motion.aModel[0].vtxMax.x, pEnemy[nCnt].Motion.aModel[0].vtxMax.y, pEnemy[nCnt].Motion.aModel[0].vtxMax.z);
+		D3DXVECTOR3 Min(pEnemy[nCnt].Motion.aModel[0].vtxMin.x, pEnemy[nCnt].Motion.aModel[0].vtxMin.y, pEnemy[nCnt].Motion.aModel[0].vtxMin.z);
+
+		//D3DXVECTOR3 Max(1000.0f,1000.0f,1000.0f);
+		//D3DXVECTOR3 Min(10.0f,0.0f,10.0f);
+
+		// Player
+		EnemyLength[0] = fabsf(Max.x - Min.x);
+		EnemyLength[1] = fabsf(Max.y - Min.y);
+		EnemyLength[2] = fabsf(Max.z - Min.z);
+
+		// Player
+		D3DXVECTOR3 NBe1 = Nbe1 * EnemyLength[0];
+		D3DXVECTOR3 NBe2 = Nbe2 * EnemyLength[1];
+		D3DXVECTOR3 NBe3 = Nbe3 * EnemyLength[2];
+
+		//モデル情報の代入
+		//D3DXVECTOR3 Model(pPlayer->Motion.aModel[2].mtxWorld._41, pPlayer->Motion.aModel[2].mtxWorld._42, pPlayer->Motion.aModel[2].mtxWorld._43);
+
+		// 中心からプレイヤーの位置を求める
+		D3DXVECTOR3 Interval = pEnemy[nCnt].pos - g_Block[nCntBlock].Obb.CenterPos;
+
+		// 分離軸を求める
+		float VecL = fabsf(D3DXVec3Dot(&Interval, &NAe1));
+		float rA = D3DXVec3Length(&Ae1);
+		float rB = LenSegOnSeparateAxis(&NAe1, &NBe1, &NBe2, &NBe3);
+
+		// 触れていない
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : Ae2
+		rA = D3DXVec3Length(&Ae2);
+		rB = LenSegOnSeparateAxis(&NAe2, &NBe1, &NBe2, &NBe3);
+		VecL = fabs(D3DXVec3Dot(&Interval, &NAe2));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : Ae3
+		rA = D3DXVec3Length(&Ae3);
+		rB = LenSegOnSeparateAxis(&NAe3, &NBe1, &NBe2, &NBe3);
+		VecL = fabs(D3DXVec3Dot(&Interval, &NAe3));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : Be1
+		rA = LenSegOnSeparateAxis(&NBe1, &Ae1, &Ae2, &Ae3);
+		rB = D3DXVec3Length(&NBe1);
+		VecL = fabs(D3DXVec3Dot(&Interval, &NBe1));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : Be2
+		rA = LenSegOnSeparateAxis(&NBe2, &Ae1, &Ae2, &Ae3);
+		rB = D3DXVec3Length(&NBe2);
+		VecL = fabs(D3DXVec3Dot(&Interval, &NBe2));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : Be3
+		rA = LenSegOnSeparateAxis(&NBe3, &Ae1, &Ae2, &Ae3);
+		rB = D3DXVec3Length(&NBe3);
+		VecL = fabs(D3DXVec3Dot(&Interval, &NBe3));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C11
+		D3DXVECTOR3 Cross;
+		D3DXVec3Cross(&Cross, &NAe1, &NBe1);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C12
+		D3DXVec3Cross(&Cross, &NAe1, &NBe2);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C13
+		D3DXVec3Cross(&Cross, &NAe1, &NBe3);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C21
+		D3DXVec3Cross(&Cross, &NAe2, &NBe1);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C22
+		D3DXVec3Cross(&Cross, &NAe2, &NBe2);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C23
+		D3DXVec3Cross(&Cross, &NAe2, &NBe3);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C31
+		D3DXVec3Cross(&Cross, &NAe3, &NBe1);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C32
+		D3DXVec3Cross(&Cross, &NAe3, &NBe2);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// 分離軸 : C33
+		D3DXVec3Cross(&Cross, &NAe3, &NBe3);
+		rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
+		rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
+		VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+		if (VecL > rA + rB)
+		{
+			continue;
+		}
+
+		// ブロックに当たっている
+		bHit = true;
+
+		// 当たったブロックのインデックスと当たった敵のインデックス番号を渡すs
+		PushEnemy(nCntBlock, nCnt);
+	}
+	return bHit; // 当たっている
+}
+//===========================================================================
+//投影線分を計算する
+//===========================================================================
 float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D3DXVECTOR3* e3)
 {
 	// 3つの内積の絶対値の和で投影線分長を計算
@@ -1016,9 +1228,9 @@ float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D
 	float r3 = e3 ? (fabs(D3DXVec3Dot(Sep, e3))) : 0;
 	return r1 + r2 + r3;
 }
-//=========================================================================================================
+//===========================================================================
 //ブロックのマトリックス
-//=========================================================================================================
+//===========================================================================
 void SetMtx(int nCntBlock)
 {
 	LPDIRECT3DDEVICE9 pDevice;
@@ -1027,7 +1239,6 @@ void SetMtx(int nCntBlock)
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal, mtxParent;
-	Player* pPlayer = GetPlayer();
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&g_Block[nCntBlock].Obb.ObbMtx);
@@ -1041,7 +1252,7 @@ void SetMtx(int nCntBlock)
 	D3DXMatrixMultiply(&g_Block[nCntBlock].Obb.ObbMtx, &g_Block[nCntBlock].Obb.ObbMtx, &mtxTrans);
 
 
-	mtxParent = g_Block[nCntBlock].mtxWorldBlock;
+	mtxParent = g_Block[nCntBlock].mtxWorldBlock; // 親のワールドマトリックスを代入
 
 	//算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
 	D3DXMatrixMultiply(&g_Block[nCntBlock].Obb.ObbMtx,
@@ -1051,37 +1262,11 @@ void SetMtx(int nCntBlock)
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].Obb.ObbMtx);
 }
-//===========================================================================================================
+//===========================================================================
 // OBBの押し出し処理
-//===========================================================================================================
+//===========================================================================
 bool PushPlayer(int nCntBlock)
 {
-	//float r = 0.0f;
-	//D3DXVECTOR3 PlayerVec[3] = {};
-
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	D3DXVECTOR3 Direct = g_Block[nCntBlock].Obb.VecRot[i];
-	//	D3DXVECTOR3 facepos = g_Block[nCntBlock].Obb.CenterPos + Direct * g_Block[nCntBlock].Obb.Length[i];
-	//	r += fabs(D3DXVec3Dot(&facepos, &VecMoveF));
-	//}
-
-	//D3DXVECTOR3 ObbPos = g_Block[nCntBlock].Obb.CenterPos;
-	//D3DXVECTOR3 Interval = ObbPos - pPlayer->pos;
-
-	//float s = D3DXVec3Dot(&Interval, &VecMoveF);
-
-	//// 戻し距離を算出
-	//if (s > 0)
-	//	pPlayer->pos.x += r - fabs(s);
-	//else
-	//	pPlayer->pos.x += r + fabs(s);
-
-
-	//// 衝突判定
-	//if (fabs(s) - r < 0.0f)
-	//	return true; // 衝突している
-
 	bool bLanding = false;
 	
 	Player* pPlayer = GetPlayer();
@@ -1278,7 +1463,6 @@ bool PushPlayer(int nCntBlock)
 		pPlayer->pos = NewPlayerPos;
 	}
 	
-	
 	//if (DotYp > DotYm && DotYp <= DotXp && DotYp <= DotXm && DotYp <= DotZp && DotYp <= DotZm)
 	//{
 	//	// 法線ベクトルの計算
@@ -1299,6 +1483,180 @@ bool PushPlayer(int nCntBlock)
 	//}
 
 	//SetEffect(faceposYm,D3DXVECTOR3(0.0f,0.0f,0.0f),10,D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),10,30.0f);
+
+	return bLanding;
+}
+//===========================================================================
+// OBBの押し出し敵
+//===========================================================================
+bool PushEnemy(int nCntBlock,int nIdx)
+{
+	bool bLanding = false;
+	ENEMY* pEnemy = GetEnemy();
+
+	D3DXVECTOR3 VecRot[3] = {}; // 法線格納用変数
+
+	// 敵が使用状態だったら
+	if (pEnemy[nIdx].bUse)
+	{
+		// 辺の回転の傾きを代入
+		VecRot[0] = g_Block[nCntBlock].Obb.VecRot[0];
+		VecRot[1] = g_Block[nCntBlock].Obb.VecRot[1];
+		VecRot[2] = g_Block[nCntBlock].Obb.VecRot[2];
+
+		// 正規化して単位ベクトルにする
+		D3DXVec3Normalize(&VecRot[0], &VecRot[0]);               // 進行ベクトルの正規化
+		D3DXVec3Normalize(&VecRot[1], &VecRot[1]);               // 進行ベクトルの正規化
+		D3DXVec3Normalize(&VecRot[2], &VecRot[2]);               // 進行ベクトルの正規化
+
+		D3DXVECTOR3 VecMoveF = pEnemy[nIdx].pos - pEnemy[nIdx].posOld; // 進行ベクトル
+		D3DXVec3Normalize(&VecMoveF, &VecMoveF);               // 進行ベクトルの正規化
+
+
+		// 面の位置X(法線プラス)
+		D3DXVECTOR3 faceposXp = g_Block[nCntBlock].Obb.CenterPos + (VecRot[0] * g_Block[nCntBlock].Obb.Length[0]);
+
+		// 面の位置X(法線マイナス)
+		D3DXVECTOR3 faceposXm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[0] * g_Block[nCntBlock].Obb.Length[0]);
+
+		D3DXVECTOR3 EnemyVecXp = pEnemy[nIdx].pos - faceposXp; // 面のPosとプレイヤーのベクトル+
+		D3DXVECTOR3 EnemyVecXm = pEnemy[nIdx].pos - faceposXm; // 面のPosとプレイヤーのベクトル-
+
+		D3DXVec3Normalize(&EnemyVecXp, &EnemyVecXp);      // 正規化する
+		D3DXVec3Normalize(&EnemyVecXm, &EnemyVecXm);      // 正規化する
+
+		D3DXVECTOR3 norXm = -VecRot[0];                     // 負の値にする
+
+		float DotXp = fabsf(D3DXVec3Dot(&VecRot[0], &EnemyVecXp)); 	// 内積X+を求める
+		
+		float DotXm = fabsf(D3DXVec3Dot(&norXm, &EnemyVecXm));         // 内積X-を求める
+												 
+
+
+		// 面の位置Y(法線プラス)
+		D3DXVECTOR3 faceposYp = g_Block[nCntBlock].Obb.CenterPos + (VecRot[1] * g_Block[nCntBlock].Obb.Length[1]);
+
+		// 面の位置Y(法線マイナス)
+		D3DXVECTOR3 faceposYm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[1] * g_Block[nCntBlock].Obb.Length[1]);
+
+		D3DXVECTOR3 EnemyVecYp = pEnemy[nIdx].pos - faceposYp; // 面の位置とプレイヤーのベクトル
+		D3DXVECTOR3 EnemyVecYm = pEnemy[nIdx].pos - faceposYm; // 面の位置とプレイヤーのベクトル
+
+		D3DXVec3Normalize(&EnemyVecYp, &EnemyVecYp); // 正規化する
+		D3DXVec3Normalize(&EnemyVecYm, &EnemyVecYm); // 正規化する
+
+		D3DXVECTOR3 norYm = -VecRot[1];                // 負の値にする
+
+		float DotYp = fabsf(D3DXVec3Dot(&VecRot[1], &EnemyVecYp)); // 内積Y+を求める
+		float DotYm = fabsf(D3DXVec3Dot(&norYm, &EnemyVecYm));     // 内積Y-を求める
+
+
+
+		// 面の位置Z(法線プラス)
+		D3DXVECTOR3 faceposZp = g_Block[nCntBlock].Obb.CenterPos + (VecRot[2] * g_Block[nCntBlock].Obb.Length[2]);
+
+		// 面の位置Z(法線マイナス)
+		D3DXVECTOR3 faceposZm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[2] * g_Block[nCntBlock].Obb.Length[2]);
+
+		D3DXVECTOR3 EnemyVecZp = pEnemy[nIdx].pos - faceposZp; // 面の位置とプレイヤーのベクトル
+		D3DXVECTOR3 EnemyVecZm = pEnemy[nIdx].pos - faceposZm; // 面の位置とプレイヤーのベクトル
+
+		D3DXVec3Normalize(&EnemyVecZp, &EnemyVecZp); // 正規化する
+		D3DXVec3Normalize(&EnemyVecZm, &EnemyVecZm); // 正規化する
+
+		D3DXVECTOR3 norZm = -VecRot[2];				   // 負の値にする
+
+		float DotZp = fabsf(D3DXVec3Dot(&VecRot[2], &EnemyVecZp)); // 内積Z+を求める
+		float DotZm = fabsf(D3DXVec3Dot(&norZm, &EnemyVecZm));     // 内積Z-を求める
+
+		// ブロックの上に乗っている 
+		if (DotYp < DotYm && DotYp <= DotXp && DotYp <= DotXm && DotYp <= DotZp && DotYp <= DotZm)
+		{
+			// 法線ベクトルの計算
+			D3DXVECTOR3 Nor = VecRot[1];
+			D3DXVec3Normalize(&Nor, &Nor);
+
+			// プレイヤーの位置を面に合わせるための補正
+			float D = -D3DXVec3Dot(&Nor, &faceposYp);
+
+			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			float faceEnemyPos = -(D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos) + D) / D3DXVec3Dot(&Nor, &Nor);
+
+			// プレイヤーの位置を面に合わせて補正
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + faceEnemyPos * Nor;
+
+			pEnemy[nIdx].pos.y = NewEnemyPos.y; // 位置を面に合わせる
+		}
+
+		// -Xの面から当たった
+		else if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
+		{
+			D3DXVECTOR3 Nor = VecRot[0];
+			D3DXVec3Normalize(&Nor, &Nor);
+
+			float D = -D3DXVec3Dot(&Nor, &faceposXp);
+
+			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			float faceEnemyPos = (-D - D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
+
+			// プレイヤーの位置を面に合わせる
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // プレイヤーを面に合わせて補正
+
+			// プレイヤーの位置を更新
+			pEnemy[nIdx].pos = NewEnemyPos;
+		}
+		// +Xの面から当たった
+		else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
+		{
+			D3DXVECTOR3 Nor = -VecRot[0];
+			D3DXVec3Normalize(&Nor, &Nor);
+
+			float D = -D3DXVec3Dot(&Nor, &faceposXm);
+
+			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			float faceEnemyPos = (-D - D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
+
+			// プレイヤーの位置を面に合わせる
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // プレイヤーを面に合わせて補正
+
+			// プレイヤーの位置を更新
+			pEnemy[nIdx].pos = NewEnemyPos;
+		}
+		// -Zの面から当たった
+		else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
+		{
+			D3DXVECTOR3 Nor = -VecRot[2];
+			D3DXVec3Normalize(&Nor, &Nor);
+
+			float D = -D3DXVec3Dot(&Nor, &faceposZm);
+
+			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			float faceEnemyPos = (-D - D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
+
+			// プレイヤーの位置を面に合わせる
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // プレイヤーを面に合わせて補正
+
+			// プレイヤーの位置を更新
+			pEnemy[nIdx].pos = NewEnemyPos;
+		}
+		// +Zの面から当たった
+		else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
+		{
+			D3DXVECTOR3 Nor = VecRot[2];
+			D3DXVec3Normalize(&Nor, &Nor);
+
+			float D = -D3DXVec3Dot(&Nor, &faceposZp);
+
+			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			float faceEnemyPos = (-D - D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
+
+			// プレイヤーの位置を面に合わせる
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // プレイヤーを面に合わせて補正
+
+			// プレイヤーの位置を更新
+			pEnemy[nIdx].pos = NewEnemyPos;
+		}
+	}
 
 	return bLanding;
 }

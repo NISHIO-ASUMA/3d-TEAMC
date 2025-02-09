@@ -307,11 +307,11 @@ void UpdateEnemy(void)
 		// 位置の更新
 		g_Enemy[nCntEnemy].pos += g_Enemy[nCntEnemy].move;
 
-		// ブロックの当たり判定
-		if (CollisionBlock(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, &g_Enemy[nCntEnemy].Size))
-		{
+		//// ブロックの当たり判定
+		//if (CollisionBlock(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, &g_Enemy[nCntEnemy].Size))
+		//{
 
-		}
+		//}
 
 		// アイテムが当たったか
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f)&& g_Enemy[nCntEnemy].state!=ENEMYSTATE_DAMAGE)

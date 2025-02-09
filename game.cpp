@@ -135,9 +135,12 @@ void InitGame(void)
 	LoadEdit();
 	LoadEdit2d();
 
-	WaveEnemy(0); // 敵を出す処理
-	WaveEnemy(1); // 敵を出す処理
+	//WaveEnemy(0); // 敵を出す処理
+	//WaveEnemy(1); // 敵を出す処理
 	
+	SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+	SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(80.0f,550.0f,0.0f),UITYPE_ICONFRAME,80.0f,80.0f,0);
 
