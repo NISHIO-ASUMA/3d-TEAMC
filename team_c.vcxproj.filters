@@ -255,6 +255,12 @@
     <ClInclude Include="polygon.h">
       <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
+    <ClInclude Include="sound.h">
+      <Filter>ヘッダーファイル\os</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>ヘッダーファイル\os</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ソースファイル">

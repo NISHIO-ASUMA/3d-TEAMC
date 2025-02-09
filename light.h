@@ -33,5 +33,4 @@ typedef enum
 void InitLight(void);		// ライトの初期化
 void UninitLight(void);		// ライトの終了
 void UpdateLight(void);		// ライトの更新
-
 #endif

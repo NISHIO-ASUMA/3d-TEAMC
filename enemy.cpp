@@ -665,7 +665,7 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 			g_Enemy[nCntEnemy].bUse = true;   // 使用状態
 
 			// 影を設定
-			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), g_Enemy[nCntEnemy].rot, 40.0f);
+			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), g_Enemy[nCntEnemy].rot, 40.0f, 1.0f);
 
 			g_nNumEnemy++; // インクリメント
 			break;

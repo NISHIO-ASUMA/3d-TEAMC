@@ -142,7 +142,6 @@ void CreateObb(int nCnt);
 bool collisionObb(int nCnt);
 bool collisionObbEnemy(int nCntBlock);
 bool collisionObbBoss(int nCntBlock);
-
 float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D3DXVECTOR3* e3);
 
 #endif

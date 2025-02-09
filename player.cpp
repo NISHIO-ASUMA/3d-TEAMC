@@ -123,7 +123,7 @@ void InitPlayer(void)
 		{
 		}
 
-		g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f);
+		g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f, 1.0f);
 
 		// タイプを代入
 		g_LoadPlayer[0].PlayerType = PLAYERTYPE_NOHAND;
@@ -953,7 +953,7 @@ void DrawPlayer(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスのポインタ
 
 	//計算用のマトリックス
-	D3DXMATRIX mtxRot, mtxTrans,mtxSize;
+	D3DXMATRIX mtxRot, mtxTrans,mtxSize,mtxShadow;
 
 	D3DMATERIAL9 matDef;//現在のマテリアル保存用
 
@@ -973,6 +973,8 @@ void DrawPlayer(void)
 		//位置を反映
 		D3DXMatrixTranslation(&mtxTrans, g_player.pos.x, g_player.pos.y, g_player.pos.z);
 		D3DXMatrixMultiply(&g_player.mtxWorldPlayer, &g_player.mtxWorldPlayer, &mtxTrans);
+
+		//D3DXMatrixShadow(&mtxShadow, &Light, &plane);
 
 		//ワールドマトリックスの設定
 		pDevice->SetTransform(D3DTS_WORLD, &g_player.mtxWorldPlayer);
@@ -1016,6 +1018,7 @@ void DrawPlayer(void)
 			//パーツのワールドマトリックスの設定
 			pDevice->SetTransform(D3DTS_WORLD,
 				&g_player.Motion.aModel[nCntModel].mtxWorld);
+
 
 			for (int nCntMat = 0; nCntMat < (int)g_player.Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 			{
@@ -1196,6 +1199,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 
 	D3DXVECTOR3 mtxDis,SwordPos;
 
+	// プレイヤーが武器を持っているかつスペシャル攻撃じゃない
 	if (g_player.Motion.nNumModel == 16 && !g_player.AttackSp)
 	{
 		//剣の長さを求める
@@ -1228,19 +1232,26 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 
 			fRadius = (fRadius * fRadius); // 半径を求める
 
+			// 範囲内に入った
 			if (fDistance <= fRadius && pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO)
 			{
+				// 敵に当たった
 				HitEnemy(nCntEnemy, (pPlayer->nDamage * 5));
+
+				// 耐久絵欲を減らす
 				pItem[g_player.ItemIdx].durability--;
 
+				// アイテムの耐久力が0になったら
 				if (pItem[g_player.ItemIdx].durability <= 0)
 				{
+					// 0になったアイテムを消す
 					g_player.Itembreak[g_player.ItemIdx] = true;
 				}
 				break;
 			}
 		}
 	}
+	// 素手の時かつ攻撃がスペシャルじゃない
 	else if(g_player.Motion.nNumModel == 15 && !g_player.AttackSp)
 	{
 		// モデルの位置を変数に代入
@@ -1255,6 +1266,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			}
 		}
 	}
+	// 剣を持っているかつスペシャル攻撃中
 	else if (g_player.Motion.nNumModel == 16 && g_player.AttackSp)
 	{
 		//剣の長さを求める
@@ -1287,17 +1299,21 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 
 			fRadius = (fRadius * fRadius); // 半径を求める
 
+			// 範囲内にいたら
 			if (fDistance <= fRadius &&g_player.WeponMotion != MOTION_SPPIERCING &&
 				pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 3)
 			{
+				// 敵にダメージを与える
 				HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
 				break;
 			}
 		}
 
+		// 範囲内にいたら
 		if (sphererange(&g_player.pos, &pEnemy->pos, 200.0f, 50.0f) && g_player.WeponMotion == MOTION_SPPIERCING &&
 			pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 19)
 		{
+			// 敵にダメージを与える
 			HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
 		}
 	}
@@ -1357,28 +1373,50 @@ void ThrowItem(void)
 
 	Boss* pBoss = Getboss();
 
+	// 全ボス分回す
 	for (int nCntBoss = 0; nCntBoss < MAX_BOSS; nCntBoss++)
 	{
-		if (sphererange(&g_player.pos, &pBoss[nCntBoss].pos, 50.0f, 100.0f) && pBoss[nCntBoss].bUse)
+		// ボスが範囲内にいたら
+		if (sphererange(&g_player.pos, &pBoss[nCntBoss].pos, 50.0f, 150.0f) && pBoss[nCntBoss].bUse)
 		{
-			D3DXVECTOR3 dest = pBoss[nCntBoss].pos - pItem[nIdx].pos; // 近い敵の方向を求める
+			D3DXVECTOR3 dest =  pBoss[nCntBoss].pos - g_player.pos; // 近いボスの方向を求める
 			D3DXVec3Normalize(&dest, &dest); // 正規化する
 
 			// 飛ばす方向を設定
 			pItem[nIdx].move.x = dest.x * 10.0f;
 			pItem[nIdx].move.z = dest.z * 10.0f;
 			pItem[nIdx].bUse = true; // 使用状態をtrueにする
+
+				// プレイヤーの向きを一番近いボスの場所にする
+			float fAngle = atan2f(pBoss[nCntBoss].pos.x - g_player.pos.x, pBoss[nCntBoss].pos.z - g_player.pos.z);
+			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+
+			break;
 		}
+		// 敵が範囲内にいたら
+		else if(sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 50.0f, 300.0f) && pEnemy[nIdxEnemy].pos)
+		{
+			D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - g_player.pos; // 近い敵の方向を求める
+			D3DXVec3Normalize(&dest, &dest); // 正規化する
+
+			// 飛ばす方向を設定
+			pItem[nIdx].move.x = dest.x * 10.0f;
+			pItem[nIdx].move.z = dest.z * 10.0f;
+			pItem[nIdx].bUse = true; // 使用状態をtrueにする
+
+				// プレイヤーの向きを一番近い敵の場所にする
+			float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
+			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+
+			break;
+		}
+		// 範囲内に誰もいなかったら
 		else
 		{
-			D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - pItem[nIdx].pos; // 近い敵の方向を求める
-			D3DXVec3Normalize(&dest, &dest); // 正規化する
-
 			// 飛ばす方向を設定
-			pItem[nIdx].move.x = dest.x * 10.0f;
-			pItem[nIdx].move.z = dest.z * 10.0f;
+			pItem[nIdx].move.x = sinf(g_player.rot.y + D3DX_PI) * 10.0f;
+			pItem[nIdx].move.z = cosf(g_player.rot.y + D3DX_PI) * 10.0f;
 			pItem[nIdx].bUse = true; // 使用状態をtrueにする
-			break;
 		}
 	}
 
@@ -1392,10 +1430,6 @@ void ThrowItem(void)
 		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].Motion.aMotionInfo[nCntMotion];
 	}
 
-	// プレイヤーの向きを一番近い敵の場所にする
-	float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
-	g_player.rotDestPlayer.y = fAngle + D3DX_PI;
-
 	// 投げた後に武器を消す
 	g_player.Motion.nNumModel -= 1;
 
@@ -1405,8 +1439,8 @@ void ThrowItem(void)
 	// 状態を投げられてる状態にする
 	pItem[nIdx].state = ITEMSTATE_THROW;
 
-	g_player.speed = 3.0f;
-	g_player.fStockSpeed = 3.0f;
+	g_player.speed = 3.0f; // プレイヤーの移動速度をリセット
+	g_player.fStockSpeed = 3.0f; // プレイヤーの移動速度を保存
 }
 //================================
 // プレイヤーと敵の当たり判定
@@ -1698,38 +1732,43 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 
 	Boss* pBoss = Getboss();
 
-	// ボスがプレイヤーの近くにいたら
-	if (sphererange(&g_player.pos, &pBoss->pos, 50.0f, 100.0f) && pBoss->bUse)
+	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
-		// 範囲にいる間だけロックオン
-		if (sphererange(&g_player.pos, &pBoss->pos, 150.0f, 150.0f))
+		// ボスがプレイヤーの近くにいたら
+		if (sphererange(&g_player.pos, &pBoss[nCnt].pos, 50.0f, 140.0f) && pBoss[nCnt].bUse)
 		{
-			// 角度を求める
-			float fAngle = atan2f(pBoss->pos.x - g_player.pos.x, pBoss->pos.z - g_player.pos.z);
-			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
-		}
+			// 範囲にいる間だけロックオン
+			if (sphererange(&g_player.pos, &pBoss[nCnt].pos, 150.0f, 150.0f))
+			{
+				// 角度を求める
+				float fAngle = atan2f(pBoss[nCnt].pos.x - g_player.pos.x, pBoss[nCnt].pos.z - g_player.pos.z);
+				g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+			}
 
-		// ボスの場所を向く
-		if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
-		{
-			g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
-			g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
+			// ボスの場所を向く
+			if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
+			{
+				g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
+				g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
+				break;
+			}
 		}
-	}
-	else
-	{
-		// 範囲にいる間だけロックオン
-		if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 150.0f, 150.0f))
+		else
 		{
-			// 角度を求める
-			float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
-			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
-		}
+			// 範囲にいる間だけロックオン
+			if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 150.0f, 150.0f))
+			{
+				// 角度を求める
+				float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
+				g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+			}
 
-		if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
-		{
-			g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
-			g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
+			if (g_player.WeponMotion == MOTION_DBHAND && g_player.Motion.motionType == MOTIONTYPE_ACTION2 && GetKeyboardPress(DIK_W))
+			{
+				g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
+				g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
+				break;
+			}
 		}
 	}
 }

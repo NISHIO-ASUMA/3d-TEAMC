@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "Effect.h"
 #include "boss.h"
+#include "Shadow.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -30,6 +31,7 @@ void SetMtx(int nCntBlock); // ワールドマトリックスの設定(中心pos)
 bool PushPlayer(int nCntBlock); // OBBの押し出し
 bool PushEnemy(int nCntBlock, int nIdx);
 bool PushBoss(int nCntBlock, int nIdx); 
+float ShadowSize(D3DXVECTOR3 Size);
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -353,6 +355,7 @@ void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
 			g_Block[nCntBlock].nType = nType; // 種類
 			g_Block[nCntBlock].bUse = true;   // 使用状態
 
+			g_Block[nCntBlock].nIdxShadow = SetShadow(D3DXVECTOR3(g_Block[nCntBlock].pos.x,1.0f, g_Block[nCntBlock].pos.z),D3DXVECTOR3(0.0f, 0.0f, 0.0f), ShadowSize(g_Block[nCntBlock].Size), 0.3f);
 			g_NumBlock++; // インクリメント
 			break;
 		}
@@ -1731,8 +1734,8 @@ bool PushEnemy(int nCntBlock,int nIdx)
 		// 面の位置X(法線マイナス)
 		D3DXVECTOR3 faceposXm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[0] * g_Block[nCntBlock].Obb.Length[0]);
 
-		D3DXVECTOR3 EnemyVecXp = pEnemy[nIdx].pos - faceposXp; // 面のPosとプレイヤーのベクトル+
-		D3DXVECTOR3 EnemyVecXm = pEnemy[nIdx].pos - faceposXm; // 面のPosとプレイヤーのベクトル-
+		D3DXVECTOR3 EnemyVecXp = pEnemy[nIdx].pos - faceposXp; // 面のPosと敵のベクトル+
+		D3DXVECTOR3 EnemyVecXm = pEnemy[nIdx].pos - faceposXm; // 面のPosと敵のベクトル-
 
 		D3DXVec3Normalize(&EnemyVecXp, &EnemyVecXp);      // 正規化する
 		D3DXVec3Normalize(&EnemyVecXm, &EnemyVecXm);      // 正規化する
@@ -1751,8 +1754,8 @@ bool PushEnemy(int nCntBlock,int nIdx)
 		// 面の位置Y(法線マイナス)
 		D3DXVECTOR3 faceposYm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[1] * g_Block[nCntBlock].Obb.Length[1]);
 
-		D3DXVECTOR3 EnemyVecYp = pEnemy[nIdx].pos - faceposYp; // 面の位置とプレイヤーのベクトル
-		D3DXVECTOR3 EnemyVecYm = pEnemy[nIdx].pos - faceposYm; // 面の位置とプレイヤーのベクトル
+		D3DXVECTOR3 EnemyVecYp = pEnemy[nIdx].pos - faceposYp; // 面の位置と敵のベクトル
+		D3DXVECTOR3 EnemyVecYm = pEnemy[nIdx].pos - faceposYm; // 面の位置と敵のベクトル
 
 		D3DXVec3Normalize(&EnemyVecYp, &EnemyVecYp); // 正規化する
 		D3DXVec3Normalize(&EnemyVecYm, &EnemyVecYm); // 正規化する
@@ -1770,8 +1773,8 @@ bool PushEnemy(int nCntBlock,int nIdx)
 		// 面の位置Z(法線マイナス)
 		D3DXVECTOR3 faceposZm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[2] * g_Block[nCntBlock].Obb.Length[2]);
 
-		D3DXVECTOR3 EnemyVecZp = pEnemy[nIdx].pos - faceposZp; // 面の位置とプレイヤーのベクトル
-		D3DXVECTOR3 EnemyVecZm = pEnemy[nIdx].pos - faceposZm; // 面の位置とプレイヤーのベクトル
+		D3DXVECTOR3 EnemyVecZp = pEnemy[nIdx].pos - faceposZp; // 面の位置と敵のベクトル
+		D3DXVECTOR3 EnemyVecZm = pEnemy[nIdx].pos - faceposZm; // 面の位置と敵のベクトル
 
 		D3DXVec3Normalize(&EnemyVecZp, &EnemyVecZp); // 正規化する
 		D3DXVec3Normalize(&EnemyVecZm, &EnemyVecZm); // 正規化する
@@ -1788,13 +1791,13 @@ bool PushEnemy(int nCntBlock,int nIdx)
 			D3DXVECTOR3 Nor = VecRot[1];
 			D3DXVec3Normalize(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせるための補正
+			// 敵の位置を面に合わせるための補正
 			float D = -D3DXVec3Dot(&Nor, &faceposYp);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// 敵の位置 (x, y, z) に対して面上の高さを求める
 			float faceEnemyPos = -(D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos) + D) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせて補正
+			// 敵の位置を面に合わせて補正
 			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + faceEnemyPos * Nor;
 
 			pEnemy[nIdx].pos.y = NewEnemyPos.y; // 位置を面に合わせる
@@ -1808,13 +1811,13 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			float D = -D3DXVec3Dot(&Nor, &faceposXp);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// 敵の位置 (x, y, z) に対して面上の高さを求める
 			float faceEnemyPos = (-D - D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせる
-			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // プレイヤーを面に合わせて補正
+			// 敵の位置を面に合わせる
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // 敵を面に合わせて補正
 
-			// プレイヤーの位置を更新
+			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
 		}
 		// +Xの面から当たった
@@ -1825,13 +1828,13 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			float D = -D3DXVec3Dot(&Nor, &faceposXm);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// 敵の位置 (x, y, z) に対して面上の高さを求める
 			float faceEnemyPos = (-D - D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせる
-			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // プレイヤーを面に合わせて補正
+			// 敵の位置を面に合わせる
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // 敵を面に合わせて補正
 
-			// プレイヤーの位置を更新
+			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
 		}
 		// -Zの面から当たった
@@ -1842,13 +1845,13 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			float D = -D3DXVec3Dot(&Nor, &faceposZm);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// 敵の位置 (x, y, z) に対して面上の高さを求める
 			float faceEnemyPos = (-D - D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせる
-			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // プレイヤーを面に合わせて補正
+			// 敵の位置を面に合わせる
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // 敵を面に合わせて補正
 
-			// プレイヤーの位置を更新
+			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
 		}
 		// +Zの面から当たった
@@ -1859,13 +1862,13 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			float D = -D3DXVec3Dot(&Nor, &faceposZp);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// 敵の位置 (x, y, z) に対して面上の高さを求める
 			float faceEnemyPos = (-D - D3DXVec3Dot(&Nor, &pEnemy[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせる
-			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // プレイヤーを面に合わせて補正
+			// 敵の位置を面に合わせる
+			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + (Nor * faceEnemyPos);  // 敵を面に合わせて補正
 
-			// プレイヤーの位置を更新
+			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
 		}
 	}
@@ -1905,8 +1908,8 @@ bool PushBoss(int nCntBlock, int nIdx)
 		// 面の位置X(法線マイナス)
 		D3DXVECTOR3 faceposXm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[0] * g_Block[nCntBlock].Obb.Length[0]);
 
-		D3DXVECTOR3 BossVecXp = pBoss[nIdx].pos - faceposXp; // 面のPosとプレイヤーのベクトル+
-		D3DXVECTOR3 BossVecXm = pBoss[nIdx].pos - faceposXm; // 面のPosとプレイヤーのベクトル-
+		D3DXVECTOR3 BossVecXp = pBoss[nIdx].pos - faceposXp; // 面のPosとボスのベクトル+
+		D3DXVECTOR3 BossVecXm = pBoss[nIdx].pos - faceposXm; // 面のPosとボスのベクトル-
 
 		D3DXVec3Normalize(&BossVecXp, &BossVecXp);      // 正規化する
 		D3DXVec3Normalize(&BossVecXm, &BossVecXm);      // 正規化する
@@ -1925,8 +1928,8 @@ bool PushBoss(int nCntBlock, int nIdx)
 		// 面の位置Y(法線マイナス)
 		D3DXVECTOR3 faceposYm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[1] * g_Block[nCntBlock].Obb.Length[1]);
 
-		D3DXVECTOR3 BossVecYp = pBoss[nIdx].pos - faceposYp; // 面の位置とプレイヤーのベクトル
-		D3DXVECTOR3 BossVecYm = pBoss[nIdx].pos - faceposYm; // 面の位置とプレイヤーのベクトル
+		D3DXVECTOR3 BossVecYp = pBoss[nIdx].pos - faceposYp; // 面の位置とボスのベクトル
+		D3DXVECTOR3 BossVecYm = pBoss[nIdx].pos - faceposYm; // 面の位置とボスのベクトル
 
 		D3DXVec3Normalize(&BossVecYp, &BossVecYp); // 正規化する
 		D3DXVec3Normalize(&BossVecYm, &BossVecYm); // 正規化する
@@ -1944,8 +1947,8 @@ bool PushBoss(int nCntBlock, int nIdx)
 		// 面の位置Z(法線マイナス)
 		D3DXVECTOR3 faceposZm = g_Block[nCntBlock].Obb.CenterPos - (VecRot[2] * g_Block[nCntBlock].Obb.Length[2]);
 
-		D3DXVECTOR3 BossVecZp = pBoss[nIdx].pos - faceposZp; // 面の位置とプレイヤーのベクトル
-		D3DXVECTOR3 BossVecZm = pBoss[nIdx].pos - faceposZm; // 面の位置とプレイヤーのベクトル
+		D3DXVECTOR3 BossVecZp = pBoss[nIdx].pos - faceposZp; // 面の位置とボスのベクトル
+		D3DXVECTOR3 BossVecZm = pBoss[nIdx].pos - faceposZm; // 面の位置とボスのベクトル
 
 		D3DXVec3Normalize(&BossVecZp, &BossVecZp); // 正規化する
 		D3DXVec3Normalize(&BossVecZm, &BossVecZm); // 正規化する
@@ -1962,13 +1965,13 @@ bool PushBoss(int nCntBlock, int nIdx)
 			D3DXVECTOR3 Nor = VecRot[1];
 			D3DXVec3Normalize(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせるための補正
+			// ボスの位置を面に合わせるための補正
 			float D = -D3DXVec3Dot(&Nor, &faceposYp);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// ボスの位置 (x, y, z) に対して面上の高さを求める
 			float faceBossPos = -(D3DXVec3Dot(&Nor, &pBoss[nIdx].pos) + D) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせて補正
+			// ボスの位置を面に合わせて補正
 			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + faceBossPos * Nor;
 
 			pBoss[nIdx].pos.y = NewBossPos.y; // 位置を面に合わせる
@@ -1982,13 +1985,13 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			float D = -D3DXVec3Dot(&Nor, &faceposXp);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// ボスの位置 (x, y, z) に対して面上の高さを求める
 			float faceBossPos = (-D - D3DXVec3Dot(&Nor, &pBoss[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせる
-			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + (Nor * faceBossPos);  // プレイヤーを面に合わせて補正
+			// ボスの位置を面に合わせる
+			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + (Nor * faceBossPos);  // ボスを面に合わせて補正
 
-			// プレイヤーの位置を更新
+			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
 		}
 		// +Xの面から当たった
@@ -1999,13 +2002,13 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			float D = -D3DXVec3Dot(&Nor, &faceposXm);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// ボスの位置 (x, y, z) に対して面上の高さを求める
 			float faceBossPos = (-D - D3DXVec3Dot(&Nor, &pBoss[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせる
-			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + (Nor * faceBossPos);  // プレイヤーを面に合わせて補正
+			// ボスの位置を面に合わせる
+			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + (Nor * faceBossPos);  // ボスを面に合わせて補正
 
-			// プレイヤーの位置を更新
+			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
 		}
 		// -Zの面から当たった
@@ -2016,13 +2019,13 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			float D = -D3DXVec3Dot(&Nor, &faceposZm);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// ボスの位置 (x, y, z) に対して面上の高さを求める
 			float faceBossPos = (-D - D3DXVec3Dot(&Nor, &pBoss[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせる
-			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + (Nor * faceBossPos);  // プレイヤーを面に合わせて補正
+			// ボスの位置を面に合わせる
+			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + (Nor * faceBossPos);  // ボスを面に合わせて補正
 
-			// プレイヤーの位置を更新
+			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
 		}
 		// +Zの面から当たった
@@ -2033,16 +2036,27 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			float D = -D3DXVec3Dot(&Nor, &faceposZp);
 
-			// プレイヤーの位置 (x, y, z) に対して面上の高さを求める
+			// ボスの位置 (x, y, z) に対して面上の高さを求める
 			float faceBossPos = (-D - D3DXVec3Dot(&Nor, &pBoss[nIdx].pos)) / D3DXVec3Dot(&Nor, &Nor);
 
-			// プレイヤーの位置を面に合わせる
-			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + (Nor * faceBossPos);  // プレイヤーを面に合わせて補正
+			// ボスの位置を面に合わせる
+			D3DXVECTOR3 NewBossPos = pBoss[nIdx].pos + (Nor * faceBossPos);  // ボスを面に合わせて補正
 
-			// プレイヤーの位置を更新
+			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
 		}
 	}
 
 	return bLanding;
+}
+//===========================================================================
+// 影の大きさ計算
+//===========================================================================
+float ShadowSize(D3DXVECTOR3 Size)
+{
+	// 大きさを求める
+	float SizeOut = 40.0f / 40.0f * (Size.x + Size.z);
+
+	// 大きさを返す
+	return SizeOut;
 }

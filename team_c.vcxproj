@@ -203,7 +203,9 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gameui.h" />
     <ClInclude Include="icon.h" />
+    <ClInclude Include="light.h" />
     <ClInclude Include="polygon.h" />
+    <ClInclude Include="sound.h" />
     <ClInclude Include="spgauge.h" />
     <ClInclude Include="HPGauge.h" />
     <ClInclude Include="input.h" />

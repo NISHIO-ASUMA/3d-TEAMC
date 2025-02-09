@@ -168,7 +168,7 @@ void DrawShadow(void)
 //=================================================================================================================================
 // 設置処理色々 ( 左から 場所、向き、大きさ )
 //=================================================================================================================================
-int SetShadow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fSize)
+int SetShadow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fSize, float fAlv)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -190,7 +190,7 @@ int SetShadow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fSize)
 		{
 			g_aShadow[nCntShadow].pos = pos;
 			g_aShadow[nCntShadow].fSize = fSize;
-			g_aShadow[nCntShadow].fALv = 1.0f;
+			g_aShadow[nCntShadow].fALv = fAlv;
 			g_aShadow[nCntShadow].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_aShadow[nCntShadow].fALv);
 			g_aShadow[nCntShadow].rot = rot;
 			g_aShadow[nCntShadow].bUse = true;
@@ -200,6 +200,12 @@ int SetShadow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fSize)
 			pVtx[1].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x + fSize, 1.0f, g_aShadow[nCntShadow].pos.z + fSize);
 			pVtx[2].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x - fSize, 1.0f, g_aShadow[nCntShadow].pos.z - fSize);
 			pVtx[3].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x + fSize, 1.0f, g_aShadow[nCntShadow].pos.z - fSize);
+
+			// 頂点カラーの設定
+			pVtx[0].col = g_aShadow[nCntShadow].col;
+			pVtx[1].col = g_aShadow[nCntShadow].col;
+			pVtx[2].col = g_aShadow[nCntShadow].col;
+			pVtx[3].col = g_aShadow[nCntShadow].col;
 
 			break;
 		}

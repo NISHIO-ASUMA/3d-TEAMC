@@ -52,6 +52,9 @@ void InitTitle3d(void)
 	// ゲームUIの初期化処理
 	InitGameUI();
 
+	// 影の初期化処理
+	InitShadow();
+
 	// ブロックの初期化処理
 	InitBlock();
 	
@@ -101,6 +104,9 @@ void UninitTitle3d(void)
 	// ゲームUIの終了処理
 	UninitGameUI();
 
+	// 影の終了処理
+	UninitShadow();
+
 	// ブロックの終了処理
 	UninitBlock();
 
@@ -129,6 +135,10 @@ void UpdateTitle3d(void)
 
 	// ゲームUIの更新処理
 	UpdateGameUI();
+
+	// 影の更新処理
+	UpdateShadow();
+
 }
 //==============================================================================================================
 //タイトル3dの描画処理
@@ -138,11 +148,11 @@ void DrawTitle3d(void)
 	// ブロックの描画処理
 	DrawBlock();
 
-	// 影の描画処理
-	DrawShadow();
-
 	// メッシュフィールドの描画処理
 	DrawMeshField();
+
+	// 影の描画処理
+	DrawShadow();
 
 	// タイトルの描画処理
 	DrawTitle();

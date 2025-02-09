@@ -243,6 +243,12 @@ void UpdateBoss(void)
 			break;
 		}
 
+		// アイテムが当たったか
+		if (HitThrowItem(&g_Boss[nCnt].pos, 10.0f, 50.0f) && g_Boss[nCnt].state != BOSSSTATE_DAMAGE)
+		{
+			HitBoss(nCnt, (float)pPlayer->nDamage * 1.5f);
+		}
+
 		// 影の位置の更新
 		SetPositionShadow(g_Boss[nCnt].nIdxShadow, g_Boss[nCnt].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss[nCnt].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss[nCnt].pos.y / 30.0f));
 
@@ -302,7 +308,7 @@ void UpdateBoss(void)
 		g_Boss[nCnt].pos += g_Boss[nCnt].move;
 
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
-		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20000.0f) && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION)
+		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 2000.0f) && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION)
 		{
 			// モデル情報を代入
 			D3DXVECTOR3 HootR(g_Boss[nCnt].Motion.aModel[11].mtxWorld._41, g_Boss[nCnt].Motion.aModel[11].mtxWorld._42, g_Boss[nCnt].Motion.aModel[11].mtxWorld._43);
@@ -516,7 +522,7 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].nLife = nLife; // 体力を挿入
 			g_Boss[nCnt].bUse = true;   // 使用状態にする
 
-			g_Boss[nCnt].nIdxShadow = SetShadow(g_Boss[nCnt].pos, g_Boss[nCnt].rot, 40.0f);
+			g_Boss[nCnt].nIdxShadow = SetShadow(g_Boss[nCnt].pos, g_Boss[nCnt].rot, 40.0f,1.0f);
 
 			break;
 		}
