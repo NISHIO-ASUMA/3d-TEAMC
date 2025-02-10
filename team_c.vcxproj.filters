@@ -133,6 +133,9 @@
     <ClCompile Include="meshfan.cpp">
       <Filter>ソースファイル\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="billboard.cpp">
+      <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -266,6 +269,9 @@
     </ClInclude>
     <ClInclude Include="meshfan.h">
       <Filter>ヘッダーファイル\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="billboard.h">
+      <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
