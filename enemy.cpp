@@ -307,6 +307,10 @@ void UpdateEnemy(void)
 		// 位置の更新
 		g_Enemy[nCntEnemy].pos += g_Enemy[nCntEnemy].move;
 
+		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
+		{
+			g_Enemy[nCntEnemy].pos.y = 100.0f;
+		}
 		//// ブロックの当たり判定
 		//if (CollisionBlock(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, &g_Enemy[nCntEnemy].Size))
 		//{
@@ -383,8 +387,21 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
 
-		//モーションの更新
-		UpdateMotion(&g_Enemy[nCntEnemy].Motion);
+		// 7番目の敵以外
+		if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX)
+		{
+			//モーションの更新
+			UpdateMotion(&g_Enemy[nCntEnemy].Motion);
+		}
+
+		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
+		{
+			AgentEnemy(nCntEnemy);
+
+			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+
+			g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
+		}
 
 		//敵の角度の正規化
 		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
@@ -415,12 +432,12 @@ void DrawEnemy(void)
 	
 	D3DXMATERIAL* pMat;  // マテリアルデータへのポインタ
 
-	int nNumEnemy = 0; // ローカル変数
-
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		if (g_Enemy[nCntEnemy].bUse == true)
 		{
+			int nType = g_Enemy[nCntEnemy].nType;
+
 			// ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&g_Enemy[nCntEnemy].mtxWorldEnemy);
 
@@ -476,9 +493,9 @@ void DrawEnemy(void)
 					&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld);
 
 				// マテリアルのデータへのポインタを取得
-				pMat = (D3DXMATERIAL*)g_Enemy[nCntEnemy].EnemyModel[nNumEnemy].pBuffMatEnemy->GetBufferPointer();
+				pMat = (D3DXMATERIAL*)g_Enemy[nCntEnemy].EnemyModel[nCntModel].pBuffMatEnemy->GetBufferPointer();
 
-				for (int nCntMat = 0; nCntMat < (int)g_Enemy[nCntEnemy].EnemyModel[nNumEnemy].dwNumMatEnemy; nCntMat++)
+				for (int nCntMat = 0; nCntMat < (int)g_Enemy[nCntEnemy].EnemyModel[nCntModel].dwNumMatEnemy; nCntMat++)
 				{
 					// カラー変更用の変数
 					D3DXMATERIAL color;
@@ -504,17 +521,13 @@ void DrawEnemy(void)
 					}
 
 					// テクスチャの設定
-					pDevice->SetTexture(0, g_Enemy[nCntEnemy].EnemyModel[nNumEnemy].pTextureEnemy[nCntMat]);
+					pDevice->SetTexture(0, g_Enemy[nCntEnemy].EnemyModel[nCntModel].pTextureEnemy[nCntMat]);
 
 					// ブロック(パーツ)の描画
-					g_Enemy[nCntEnemy].EnemyModel[nNumEnemy].pMeshEnemy->DrawSubset(nCntMat);
+					g_Enemy[nCntEnemy].EnemyModel[nCntModel].pMeshEnemy->DrawSubset(nCntMat);
 				}
-				// インクリメント
-				nNumEnemy++;
 			}
 		}
-		// 初期化
-		nNumEnemy = 0;
 	}
 }
 //=========================================================================================================
@@ -751,6 +764,22 @@ void LoadEnemy(int nType)
 		break;
 	case 4:
 		pFile = fopen("data/MOTION/motionEnemy05.txt", "r");
+		break;
+	case 5:
+		pFile = NULL; //NULLにする
+		g_LoadEnemy[nType].Motion.nNumModel = 1;
+		g_LoadEnemy[nType].Motion.aModel[0].nIdxModelParent = -1;
+
+
+		//Xファイルの読み込み
+		D3DXLoadMeshFromX("data\\MODEL\\enemy600\\subenemy000_drone.x",
+			D3DXMESH_SYSTEMMEM,
+			pDevice,
+			NULL,
+			&g_LoadEnemy[nType].EnemyModel[0].pBuffMatEnemy,
+			NULL,
+			&g_LoadEnemy[nType].EnemyModel[0].dwNumMatEnemy,
+			&g_LoadEnemy[nType].EnemyModel[0].pMeshEnemy);
 		break;
 	default:
 		pFile = NULL; //NULLにする
@@ -1047,8 +1076,11 @@ void LoadEnemy(int nType)
 	}
 	else
 	{
-		//メッセージボックス
-		MessageBox(NULL, "ファイルが開けません。", "エラー(enemy.cpp)", MB_OK);
+		if (nType != ENEMYTYPE_SIX)
+		{
+			//メッセージボックス
+			MessageBox(NULL, "ファイルが開けません。", "エラー(enemy.cpp)", MB_OK);
+		}
 		return;
     }
 	// ファイルを閉じる

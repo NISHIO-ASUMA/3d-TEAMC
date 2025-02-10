@@ -106,5 +106,285 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
-BLOCK_COUNT = 13    # [ ブロックの配置数 ]
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 21			# [ アイテムの種類 ]
+   POS = 144.1 0.0 -1460.7			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 21			# [ アイテムの種類 ]
+   POS = 139.1 0.0 -1310.8			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 21			# [ アイテムの種類 ]
+   POS = 134.1 0.0 -1160.9			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 21			# [ アイテムの種類 ]
+   POS = 137.9 0.0 -930.6			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 21			# [ アイテムの種類 ]
+   POS = 141.0 0.0 -751.1			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 21			# [ アイテムの種類 ]
+   POS = 143.0 0.0 -552.1			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 21			# [ アイテムの種類 ]
+   POS = 144.0 0.0 -320.6			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 18			# [ アイテムの種類 ]
+   POS = 453.8 0.0 -871.3			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 19			# [ アイテムの種類 ]
+   POS = 423.1 0.0 -947.8			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 0			# [ アイテムの種類 ]
+   POS = 764.6 0.0 -1179.0			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 1			# [ アイテムの種類 ]
+   POS = 694.9 0.0 -1179.9			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 2			# [ アイテムの種類 ]
+   POS = 624.9 0.0 -1180.8			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 3			# [ アイテムの種類 ]
+   POS = 554.9 0.0 -1181.7			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 4			# [ アイテムの種類 ]
+   POS = 484.9 0.0 -1182.6			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 5			# [ アイテムの種類 ]
+   POS = 424.9 0.0 -1183.3			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 6			# [ アイテムの種類 ]
+   POS = 354.9 0.0 -1184.2			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 7			# [ アイテムの種類 ]
+   POS = 305.0 0.0 -1184.9			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 8			# [ アイテムの種類 ]
+   POS = 304.3 0.0 -1134.9			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 9			# [ アイテムの種類 ]
+   POS = 364.3 0.0 -1134.1			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 10			# [ アイテムの種類 ]
+   POS = 424.3 0.0 -1133.3			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 11			# [ アイテムの種類 ]
+   POS = 513.4 0.0 -1062.2			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 11			# [ アイテムの種類 ]
+   POS = 612.5 0.0 -1002.2			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 12			# [ アイテムの種類 ]
+   POS = 700.9 0.0 -871.1			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 13			# [ アイテムの種類 ]
+   POS = 770.8 0.0 -870.2			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 13			# [ アイテムの種類 ]
+   POS = 872.1 0.0 -968.9			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 14			# [ アイテムの種類 ]
+   POS = 1050.9 0.0 -889.1			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 16			# [ アイテムの種類 ]
+   POS = 1058.5 0.0 -712.9			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 17			# [ アイテムの種類 ]
+   POS = 1088.4 0.0 -568.3			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 18			# [ アイテムの種類 ]
+   POS = 1089.4 0.0 -412.5			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 19			# [ アイテムの種類 ]
+   POS = 1079.5 0.0 -272.9			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 20			# [ アイテムの種類 ]
+   POS = 1169.2 0.0 -266.4			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 21			# [ アイテムの種類 ]
+   POS = 1278.9 0.0 -258.5			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 22			# [ アイテムの種類 ]
+   POS = 1271.8 0.0 -158.8			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 23			# [ アイテムの種類 ]
+   POS = 1332.9 0.0 -34.1			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 24			# [ アイテムの種類 ]
+   POS = 1437.7 0.0 -96.7			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 26			# [ アイテムの種類 ]
+   POS = 1543.9 0.0 -179.3			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 27			# [ アイテムの種類 ]
+   POS = 1678.5 0.0 -239.8			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 28			# [ アイテムの種類 ]
+   POS = 1773.3 0.0 -303.1			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 29			# [ アイテムの種類 ]
+   POS = 1860.3 0.0 -397.1			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 29			# [ アイテムの種類 ]
+   POS = 1722.2 0.0 -567.5			# [ 位置 ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_ITEMSET
+
+BLOCK_COUNT = 53    # [ ブロックの配置数 ]
 END_SCRIPT          # この行は消さないでください
