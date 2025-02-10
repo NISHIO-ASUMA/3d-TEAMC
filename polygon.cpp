@@ -22,7 +22,7 @@
 //グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPolygon = NULL; //頂点バッファへのポインタ
-LPDIRECT3DTEXTURE9 g_pTextureOrigin[POLYGON_TYPE_MAX] = {};//テクスチャへのポインタ保存用
+LPDIRECT3DTEXTURE9 g_pTexturePolygon[POLYGON_TYPE_MAX] = {};//テクスチャへのポインタ保存用
 Polygon_Info g_Polygon[MAX_POLYGON];//ポリゴンの構造体
 
 //===============================================================================================================
@@ -39,7 +39,7 @@ void InitPolygon(void)
 		//テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,
 			POLYGON_TYPE[nCntPolygon],
-			&g_pTextureOrigin[nCntPolygon]);
+			&g_pTexturePolygon[nCntPolygon]);
 	}
 
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_POLYGON,
@@ -101,21 +101,12 @@ void InitPolygon(void)
 //===============================================================================================================
 void UninitPolygon(void)
 {
-
-	for (int nCntPolygon = 0; nCntPolygon < MAX_POLYGON; nCntPolygon++)
-	{
-		if (g_Polygon[nCntPolygon].g_pTexturePolygon != NULL)
-		{
-			g_Polygon[nCntPolygon].g_pTexturePolygon = NULL;
-		}
-	}
-
 	for (int nCntPolygon = 0; nCntPolygon < POLYGON_TYPE_MAX; nCntPolygon++)
 	{
-		if (g_pTextureOrigin[nCntPolygon] != NULL)
+		if (g_pTexturePolygon[nCntPolygon] != NULL)
 		{
-			g_pTextureOrigin[nCntPolygon]->Release();
-			g_pTextureOrigin[nCntPolygon] = NULL;
+			g_pTexturePolygon[nCntPolygon]->Release();
+			g_pTexturePolygon[nCntPolygon] = NULL;
 		}
 	}
 
@@ -154,6 +145,8 @@ void DrawPolygon(void)
 			continue;
 		}
 
+		int nType = g_Polygon[nCntPolygon].nType;
+
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_Polygon[nCntPolygon].mtxWorld);
 
@@ -175,7 +168,7 @@ void DrawPolygon(void)
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
 		//テクスチャの設定
-		pDevice->SetTexture(0, g_Polygon[nCntPolygon].g_pTexturePolygon);
+		pDevice->SetTexture(0, g_pTexturePolygon[nType]);
 
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPolygon * 4, 2);
@@ -195,7 +188,6 @@ void SetPolygon(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight, i
 	{
 		if (!g_Polygon[nCnt].bUse)
 		{
-			g_Polygon[nCnt].g_pTexturePolygon = g_pTextureOrigin[nType]; // テクスチャ情報を代入
 			g_Polygon[nCnt].pos = pos;
 			g_Polygon[nCnt].rot = rot;
 			g_Polygon[nCnt].fWidth = fWidth;
@@ -204,10 +196,10 @@ void SetPolygon(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight, i
 			g_Polygon[nCnt].bUse = true;
 
 			//頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth,0.0f, pos.z + fHeight);
-			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, 0.0f, pos.z + fHeight);
-			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, 0.0f, pos.z - fHeight);
-			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, 0.0f, pos.z - fHeight);
+			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth,1.0f, pos.z + fHeight);
+			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, 1.0f, pos.z + fHeight);
+			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, 1.0f, pos.z - fHeight);
+			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, 1.0f, pos.z - fHeight);
 			
 			break;
 		}

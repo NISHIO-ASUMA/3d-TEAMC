@@ -19,6 +19,7 @@ LPDIRECT3DINDEXBUFFER9 g_pIdxBuffmeshwall = NULL; //インデックスバッファへのポイ
 D3DXVECTOR3 g_posmeshwall; //メッシュドームの位置
 D3DXVECTOR3 g_rotmeshwall; //メッシュフドームの向き
 D3DXMATRIX g_mtxWorldmeshwall; //メッシュドームのワールドマトリックス
+float  aPosTex;
 
 //======================================
 // メッシュドーム初期化処理
@@ -30,7 +31,7 @@ void InitmeshFan(void)
 
     // テクスチャの読み込み
     D3DXCreateTextureFromFile(pDevice,
-        "data\\TEXTURE\\feild.png",
+        "data\\TEXTURE\\sky.jpg",
         &g_pTexturemeshwall);
 
     // 頂点バッファの生成
@@ -43,7 +44,8 @@ void InitmeshFan(void)
 
 	// 頂点バッファのポインタ
     VERTEX_3D* pVtx = NULL;
-	
+    aPosTex = 1.0f;
+
 	// 頂点バッファをロック
     g_pVtxBuffmeshwall->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -162,8 +164,29 @@ void UninitmeshFan(void)
 // メッシュドーム更新処理
 //===========================================
 void UpdatemeshFan(void)
-{
-    //必要に応じて追加
+{  
+    // 頂点バッファのポインタ
+    VERTEX_3D* pVtx = NULL;
+
+    // 頂点バッファをロック
+    g_pVtxBuffmeshwall->Lock(0, 0, (void**)&pVtx, 0);
+
+    aPosTex += 0.0001f;
+
+    for (int nCntV = 0; nCntV <= meshwall_Z_BLOCK; nCntV++)
+    {
+        for (int nCntH = 0; nCntH <= meshwall_X_BLOCK; nCntH++)
+        {
+            // テクスチャ座標を設定（球面に沿って展開）
+            pVtx[nCntV * (meshwall_X_BLOCK + 1) + nCntH].tex = D3DXVECTOR2(
+                aPosTex + nCntH / (float)meshwall_X_BLOCK,                           // U座標（円周方向）
+                1.0f - (float)nCntV / meshwall_Z_BLOCK                     // V座標（高さ方向）
+            );
+        }
+    }
+
+    // 頂点バッファをアンロック
+    g_pVtxBuffmeshwall->Unlock();
 }
 //==========================================
 // メッシュドーム描画処理

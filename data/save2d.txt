@@ -3,36 +3,460 @@
 +==========================================+
 
 POLYGONSET
-   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
-   POS = -0.5 1.0 80.0				# [ 位置 ]
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = -4.3 1.0 -10.8				# [ 位置 ]
    ROT = 0.0 0.0 0.0				# [ 向き ]
-   WIDTH = 100.0						# [ 横幅 ]
-   HEIGHT = 100.0					# [ 高さ ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
 END_POLYGONSET
 
 POLYGONSET
    TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
-   POS = 109.5 1.0 80.7				# [ 位置 ]
+   POS = -4.2 1.0 155.6				# [ 位置 ]
    ROT = 0.0 0.0 0.0				# [ 向き ]
-   WIDTH = 100.0						# [ 横幅 ]
-   HEIGHT = 100.0					# [ 高さ ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
 END_POLYGONSET
 
 POLYGONSET
    TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
-   POS = 110.3 1.0 -49.2				# [ 位置 ]
+   POS = -4.2 1.0 322.4				# [ 位置 ]
    ROT = 0.0 0.0 0.0				# [ 向き ]
-   WIDTH = 100.0						# [ 横幅 ]
-   HEIGHT = 100.0					# [ 高さ ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -4.2 1.0 488.2				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -4.1 1.0 653.2				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = -4.3 1.0 819.5				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -4.2 1.0 -176.9				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -3.9 1.0 -341.8				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -4.0 1.0 -507.8				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -4.2 1.0 -673.5				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = -4.5 1.0 -840.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
 END_POLYGONSET
 
 POLYGONSET
    TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
-   POS = -19.7 1.0 -50.1				# [ 位置 ]
+   POS = -144.3 1.0 -840.4				# [ 位置 ]
    ROT = 0.0 0.0 0.0				# [ 向き ]
-   WIDTH = 100.0						# [ 横幅 ]
-   HEIGHT = 100.0					# [ 高さ ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
 END_POLYGONSET
 
-OBJ_COUNT = 4    # [ 2dオブジェクトの配置数 ]
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -283.5 1.0 -840.1				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -422.9 1.0 -840.1				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -562.7 1.0 -840.0				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = -702.6 1.0 -839.8				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -702.2 1.0 -672.8				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -702.0 1.0 -507.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -701.5 1.0 -342.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -700.9 1.0 -177.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = -700.4 1.0 -11.8				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -699.8 1.0 151.0				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -700.0 1.0 316.8				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -700.0 1.0 482.7				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = -699.8 1.0 649.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = -700.0 1.0 816.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -560.5 1.0 817.0				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -421.0 1.0 817.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -281.4 1.0 817.5				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -141.9 1.0 817.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 134.7 1.0 819.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 270.8 1.0 819.1				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 409.9 1.0 818.9				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 549.0 1.0 818.6				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = 688.1 1.0 818.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 687.8 1.0 653.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 687.5 1.0 490.8				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 687.5 1.0 324.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 687.4 1.0 159.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = 687.2 1.0 -6.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 687.1 1.0 -172.7				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 687.0 1.0 -339.1				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 686.9 1.0 -505.5				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 686.7 1.0 -671.1				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 2					# [ 2dオブジェクトの種類 ]
+   POS = 686.6 1.0 -837.5				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 549.0 1.0 -837.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 412.2 1.0 -837.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 276.2 1.0 -837.2				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 140.0						# [ 横幅 ]
+   HEIGHT = 167.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 137.0 1.0 -836.9				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 143.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -559.7 1.0 -14.2				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 143.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -417.4 1.0 -14.5				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 143.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -274.8 1.0 -14.6				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 143.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -139.0 1.0 -15.0				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 130.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 130.5 1.0 -10.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 130.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 258.6 1.0 -10.5				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 130.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 393.8 1.0 -10.3				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 142.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = 541.3 1.0 -10.4				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 154.0						# [ 横幅 ]
+   HEIGHT = 166.0					# [ 高さ ]
+END_POLYGONSET
+
+OBJ_COUNT = 57    # [ 2dオブジェクトの配置数 ]
 END_SCRIPT          # この行は消さないでください

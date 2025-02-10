@@ -196,10 +196,10 @@ int SetShadow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fSize, float fAlv)
 			g_aShadow[nCntShadow].bUse = true;
 
 			// Sizeは半径な事に注意
-			pVtx[0].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x - fSize, 1.0f, g_aShadow[nCntShadow].pos.z + fSize);
-			pVtx[1].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x + fSize, 1.0f, g_aShadow[nCntShadow].pos.z + fSize);
-			pVtx[2].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x - fSize, 1.0f, g_aShadow[nCntShadow].pos.z - fSize);
-			pVtx[3].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x + fSize, 1.0f, g_aShadow[nCntShadow].pos.z - fSize);
+			pVtx[0].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x - fSize, 2.0f, g_aShadow[nCntShadow].pos.z + fSize);
+			pVtx[1].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x + fSize, 2.0f, g_aShadow[nCntShadow].pos.z + fSize);
+			pVtx[2].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x - fSize, 2.0f, g_aShadow[nCntShadow].pos.z - fSize);
+			pVtx[3].pos = D3DXVECTOR3(g_aShadow[nCntShadow].pos.x + fSize, 2.0f, g_aShadow[nCntShadow].pos.z - fSize);
 
 			// 頂点カラーの設定
 			pVtx[0].col = g_aShadow[nCntShadow].col;
@@ -239,10 +239,10 @@ void SetPositionShadow(int nIdxShadow, D3DXVECTOR3 pos, float fSize, float fAlv)
 	pVtx += 4 * nIdxShadow;
 
 	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(g_aShadow[nIdxShadow].pos.x - g_aShadow[nIdxShadow].fSize, 1.0f, g_aShadow[nIdxShadow].pos.z + g_aShadow[nIdxShadow].fSize);
-	pVtx[1].pos = D3DXVECTOR3(g_aShadow[nIdxShadow].pos.x + g_aShadow[nIdxShadow].fSize, 1.0f, g_aShadow[nIdxShadow].pos.z + g_aShadow[nIdxShadow].fSize);
-	pVtx[2].pos = D3DXVECTOR3(g_aShadow[nIdxShadow].pos.x - g_aShadow[nIdxShadow].fSize, 1.0f, g_aShadow[nIdxShadow].pos.z - g_aShadow[nIdxShadow].fSize);
-	pVtx[3].pos = D3DXVECTOR3(g_aShadow[nIdxShadow].pos.x + g_aShadow[nIdxShadow].fSize, 1.0f, g_aShadow[nIdxShadow].pos.z - g_aShadow[nIdxShadow].fSize);
+	pVtx[0].pos = D3DXVECTOR3(g_aShadow[nIdxShadow].pos.x - g_aShadow[nIdxShadow].fSize, 2.0f, g_aShadow[nIdxShadow].pos.z + g_aShadow[nIdxShadow].fSize);
+	pVtx[1].pos = D3DXVECTOR3(g_aShadow[nIdxShadow].pos.x + g_aShadow[nIdxShadow].fSize, 2.0f, g_aShadow[nIdxShadow].pos.z + g_aShadow[nIdxShadow].fSize);
+	pVtx[2].pos = D3DXVECTOR3(g_aShadow[nIdxShadow].pos.x - g_aShadow[nIdxShadow].fSize, 2.0f, g_aShadow[nIdxShadow].pos.z - g_aShadow[nIdxShadow].fSize);
+	pVtx[3].pos = D3DXVECTOR3(g_aShadow[nIdxShadow].pos.x + g_aShadow[nIdxShadow].fSize, 2.0f, g_aShadow[nIdxShadow].pos.z - g_aShadow[nIdxShadow].fSize);
 
 	// 頂点カラーの設定
 	pVtx[0].col = g_aShadow[nIdxShadow].col;

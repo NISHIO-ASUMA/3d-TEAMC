@@ -135,9 +135,10 @@ void InitGame(void)
 	//エディットの初期化処理
 	InitEdit();
 
+
 	//エディットのロード処理
 	LoadEdit();
-	//LoadEdit2d();
+	LoadEdit2d();
 
 	WaveEnemy(0); // 敵を出す処理
 	WaveEnemy(1); // 敵を出す処理
@@ -298,7 +299,6 @@ void UpdateGame(void)
 			}
 		}
 	}
-
 	// 敵が出てくるまでの時間
 	if (g_EnemyWaveTime >= 900 || nNumEnemy <= 0)
 	{// カウントが900 or 場に出ている敵が0体以下の時
@@ -451,6 +451,8 @@ void UpdateGame(void)
 			// ポリゴンの更新処理
 			UpdatePolygon();
 
+			// メッシュドームの更新処理
+			UpdatemeshFan();
 		}
 		else if (g_bEditMode)
 		{

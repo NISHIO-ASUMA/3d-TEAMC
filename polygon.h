@@ -20,6 +20,9 @@ typedef enum
 {
 	POLYGON_TYPE_ONE = 0,
 	POLYGON_TYPE_TWO,
+	POLYGON_TYPE_THREE,
+	POLYGON_TYPE_FOUR,
+
 	POLYGON_TYPE_MAX
 }POLYGONTYPE;
 
@@ -30,6 +33,8 @@ static const char* POLYGON_TYPE[POLYGON_TYPE_MAX] =
 {
 	"data\\TEXTURE\\Roardtexture.png",
 	"data\\TEXTURE\\Roardtexture2.png",
+	"data\\TEXTURE\\load3.png",
+	"data\\TEXTURE\\grass.png"
 };
 
 //**************************************************************************************************************

@@ -234,6 +234,7 @@ void UpdateEdit(void)
 			g_Edit[g_EditCount + 1].Scal = g_Edit[g_EditCount].Scal;						// 次のオブジェクトにスケールを代入する
 			g_Edit[g_EditCount + 1].EditCategory = g_Edit[g_EditCount].EditCategory;        // 今のカテゴリーを代入
 			g_Edit[g_EditCount + 1].nType = g_Edit[g_EditCount].nType;						// 今のタイプを代入
+			g_Edit[g_EditCount + 1].rot = g_Edit[g_EditCount].rot;							// 今の角度を代入
 
 			int Category = g_Edit[g_EditCount].EditCategory; // 変数に代入
 			int nType = g_Edit[g_EditCount].nType;           // 変数に代入
@@ -345,27 +346,27 @@ void UpdateEdit(void)
 		// 向きの変更
 		if (GetKeyboardPress(DIK_1))
 		{
-			g_Edit[g_EditCount].rot.x += 0.01f;
+			g_Edit[g_EditCount].rot.x += D3DXToRadian(1);
 		}
 		else if (GetKeyboardPress(DIK_2))
 		{
-			g_Edit[g_EditCount].rot.y += 0.01f;
+			g_Edit[g_EditCount].rot.y += D3DXToRadian(1);
 		}
 		else if (GetKeyboardPress(DIK_3))
 		{
-			g_Edit[g_EditCount].rot.z += 0.01f;
+			g_Edit[g_EditCount].rot.z += D3DXToRadian(1);
 		}
 		else if (GetKeyboardPress(DIK_4))
 		{
-			g_Edit[g_EditCount].rot.x -= 0.01f;
+			g_Edit[g_EditCount].rot.x -= D3DXToRadian(1);
 		}
 		else if (GetKeyboardPress(DIK_5))
 		{
-			g_Edit[g_EditCount].rot.y -= 0.01f;
+			g_Edit[g_EditCount].rot.y -= D3DXToRadian(1);
 		}
 		else if (GetKeyboardPress(DIK_6))
 		{
-			g_Edit[g_EditCount].rot.z -= 0.01f;
+			g_Edit[g_EditCount].rot.z -= D3DXToRadian(1);
 		}
 
 		// 向きの正規化
@@ -549,7 +550,7 @@ void SaveEdit(void)
 
 				fprintf(pFile, "   POS = %.1f %.1f %.1f			# [ 位置 ]\n", g_Edit[nCnt].pos.x, g_Edit[nCnt].pos.y, g_Edit[nCnt].pos.z);
 
-				fprintf(pFile, "   ROT = %.1f %.1f %.1f			# [ 向き ]\n", g_Edit[nCnt].rot.x, g_Edit[nCnt].rot.y, g_Edit[nCnt].rot.z);
+				fprintf(pFile, "   ROT = %.3f %.3f %.3f			# [ 向き ]\n", g_Edit[nCnt].rot.x, g_Edit[nCnt].rot.y, g_Edit[nCnt].rot.z);
 
 				fprintf(pFile, "   SIZE = %.1f %.1f %.1f		# [ 大きさ ]\n", g_Edit[nCnt].Scal.x, g_Edit[nCnt].Scal.y, g_Edit[nCnt].Scal.z);
 

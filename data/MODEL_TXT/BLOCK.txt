@@ -2,7 +2,7 @@
 +   ブロックの読み込み処理(種類追加したら一応報告お願いします)   +
 +----------------------------------------------------------------+
 
-MAX_TYPE = 33 # 読み込むモデル数
+MAX_TYPE = 38 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -11,20 +11,20 @@ MODEL_FILENAME = data/MODEL/OBJ/apartment.x				# [0]アパート
 MODEL_FILENAME = data/MODEL/OBJ/bill000.x				# [1]ビル
 MODEL_FILENAME = data/MODEL/OBJ/bill001.x				# [2]円柱ビル
 MODEL_FILENAME = data/MODEL/OBJ/bill002.x				# [3]横長方形のビル
-MODEL_FILENAME = data/MODEL/OBJ/bannerflag.x			# [4]バーナー
-MODEL_FILENAME = data/MODEL/OBJ/busstop.x				# [5]バス停
+MODEL_FILENAME = data/MODEL/OBJ/banner_flag.x			# [4]バーナー
+MODEL_FILENAME = data/MODEL/OBJ/bus_stop.x				# [5]バス停
 MODEL_FILENAME = data/MODEL/OBJ/dumpster.x				# [6]でかいゴミ箱
 MODEL_FILENAME = data/MODEL/OBJ/Hydrant.x				# [7]消火栓
 MODEL_FILENAME = data/MODEL/OBJ/orvis.x					# [8]オービス
-MODEL_FILENAME = data/MODEL/OBJ/phonebooth.x			# [9]電話ボックス
-MODEL_FILENAME = data/MODEL/OBJ/publictoilet.x			# [10]公衆トイレ
+MODEL_FILENAME = data/MODEL/OBJ/phon_booth.x			# [9]電話ボックス
+MODEL_FILENAME = data/MODEL/OBJ/public_toilet2.x			# [10]公衆トイレ
 MODEL_FILENAME = data/MODEL/OBJ/pylon000.x				# [11]赤いパイロン
 MODEL_FILENAME = data/MODEL/OBJ/pylon001.x				# [12]白いパイロン
 MODEL_FILENAME = data/MODEL/OBJ/pylonbar000.x			# [13]赤いパイロンガードバー付き
 MODEL_FILENAME = data/MODEL/OBJ/pylonbar001.x			# [14]白いパイロンガードバー付き
-MODEL_FILENAME = data/MODEL/OBJ/vendingmachine000.x		# [15]赤い自動販売機
-MODEL_FILENAME = data/MODEL/OBJ/vendingmachine001.x		# [16]青い自動販売機
-MODEL_FILENAME = data/MODEL/OBJ/vendingmachine002.x		# [17]白い自動販売機
+MODEL_FILENAME = data/MODEL/OBJ/vending_machine000.x		# [15]赤い自動販売機
+MODEL_FILENAME = data/MODEL/OBJ/vending_machine001.x		# [16]青い自動販売機
+MODEL_FILENAME = data/MODEL/OBJ/vending_machine002.x		# [17]白い自動販売機
 MODEL_FILENAME = data/MODEL/OBJ/bill003.x				# [18]センチュリーロイヤルホテル
 MODEL_FILENAME = data/MODEL/OBJ/tutorial000.x			# [18]チュートリアルの看板1枚目
 MODEL_FILENAME = data/MODEL/OBJ/tutorial100.x			# [19]チュートリアルの看板2枚目
@@ -40,6 +40,11 @@ MODEL_FILENAME = data/MODEL/OBJ/hydraulic_excavator.x	# [29]油圧ショベル
 MODEL_FILENAME = data/MODEL/OBJ/workbench.x				# [30]作業台
 MODEL_FILENAME = data/MODEL/OBJ/manhole.x				# [31]マンホール
 MODEL_FILENAME = data/MODEL/OBJ/container.x				# [32]コンテナ(青)
+MODEL_FILENAME = data/MODEL/OBJ/wood.x					# [33]木
+MODEL_FILENAME = data/MODEL/OBJ/enemy_spawn000.x		# [34]敵の発生位置0
+MODEL_FILENAME = data/MODEL/OBJ/enemy_spawn001.x		# [35]敵の発生位置1
+MODEL_FILENAME = data/MODEL/OBJ/enemy_spawn002.x		# [36]敵の発生位置2
+MODEL_FILENAME = data/MODEL/OBJ/guardrail.x				# [37]ガードレール
 
 # もしやり方わかるならBLOCK.hの列挙型追加頼む
 

@@ -19,6 +19,13 @@
 #define MAX_EDIT (256)
 
 //**************************************************************************************************************
+//プロトタイプ宣言
+//**************************************************************************************************************
+//float TexSizeX(float fWidth); // テクスチャXのサイズを計算する関数
+//float TexSizeY(float fHeight); // テクスチャYのサイズを計算する関数
+
+
+//**************************************************************************************************************
 //グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEdit2d = NULL; //頂点バッファへのポインタ
@@ -212,11 +219,11 @@ void UpdateEdit2d(void)
 		// 回転Y
 		if (GetKeyboardPress(DIK_Z))
 		{
-			g_Edit2d[g_EditCnt].rot.y -= 0.001f;
+			g_Edit2d[g_EditCnt].rot.y -= 0.01f;
 		}
 		if (GetKeyboardPress(DIK_C))
 		{
-			g_Edit2d[g_EditCnt].rot.y += 0.001f;
+			g_Edit2d[g_EditCnt].rot.y += 0.01f;
 		}
 
 		// 回転X
@@ -278,6 +285,9 @@ void UpdateEdit2d(void)
 		pVtx[1].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z + g_Edit2d[g_EditCnt].fHeight);
 		pVtx[2].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z - g_Edit2d[g_EditCnt].fHeight);
 		pVtx[3].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z - g_Edit2d[g_EditCnt].fHeight);
+
+		//float ftexSizeX = TexSizeX(g_Edit2d[g_EditCnt].fWidth);
+		//float ftexSizeY = TexSizeY(g_Edit2d[g_EditCnt].fHeight);
 
 		//テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -557,16 +567,39 @@ void ReLoadEdit2d(void)
 	}
 	fclose(pFile);
 
+	VERTEX_3D* pVtx;
+
+	//頂点バッファをロック
+	g_pVtxBuffEdit2d->Lock(0, 0, (void**)&pVtx, 0);
+
 	for (int nCnt = 0; nCnt < g_ObjCount; nCnt++)
 	{
+		g_Edit2d[g_EditCnt] = g_Edit2d[nCnt];
 		g_Edit2d[g_EditCnt].bUse = true;
 
-		if (nCnt != g_ObjCount - 1)
-		{
-			g_EditCnt++;
-		}
+		//頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z + g_Edit2d[g_EditCnt].fHeight);
+		pVtx[1].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z + g_Edit2d[g_EditCnt].fHeight);
+		pVtx[2].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z - g_Edit2d[g_EditCnt].fHeight);
+		pVtx[3].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z - g_Edit2d[g_EditCnt].fHeight);
+
+		g_EditCnt++;
+		
+		pVtx += 4;
 	}
+
+	if (g_EditCnt > 0)
+	{
+		g_Edit2d[g_EditCnt] = g_Edit2d[g_EditCnt - 1];
+	}
+	//頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z + g_Edit2d[g_EditCnt].fHeight);
+	pVtx[1].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z + g_Edit2d[g_EditCnt].fHeight);
+	pVtx[2].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x - g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z - g_Edit2d[g_EditCnt].fHeight);
+	pVtx[3].pos = D3DXVECTOR3(g_Edit2d[g_EditCnt].pos.x + g_Edit2d[g_EditCnt].fWidth, 0.0f, g_Edit2d[g_EditCnt].pos.z - g_Edit2d[g_EditCnt].fHeight);
+
 	g_Edit2d[g_EditCnt].bUse = true;
+	g_pVtxBuffEdit2d->Unlock();
 }
 //======================================================================================================================
 // エディット2dの取得処理
@@ -582,4 +615,19 @@ int GetNum2d(void)
 {
 	return g_EditCnt;
 }
-
+////======================================================================================================================
+//// テクスチャXのサイズを計算する関数
+////======================================================================================================================
+//float TexSizeX(float fWidth)
+//{
+//	float OutSizeX = 1.0f - 1.0f / fWidth;
+//	return OutSizeX;
+//}
+////======================================================================================================================
+//// テクスチャYのサイズを計算する関数
+////======================================================================================================================
+//float TexSizeY(float fHeight)
+//{
+//	float OutSizeY = 1.0f + fHeight;
+//	return OutSizeY;
+//}
