@@ -28,7 +28,7 @@ typedef enum
 //**************************************************************************************************************
 static const char* POLYGON_TYPE[POLYGON_TYPE_MAX] =
 {
-	"data\\TEXTURE\\Roardtexture.jpg",
+	"data\\TEXTURE\\Roardtexture.png",
 	"data\\TEXTURE\\Roardtexture2.png",
 };
 

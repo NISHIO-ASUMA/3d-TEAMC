@@ -22,7 +22,7 @@
 //グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEdit2d = NULL; //頂点バッファへのポインタ
-LPDIRECT3DTEXTURE9 g_pTextureEditOrigin2d[POLYGON_TYPE_MAX] = {};//テクスチャへのポインタ保存用
+LPDIRECT3DTEXTURE9 g_pTextureEdit2d[POLYGON_TYPE_MAX] = {};//テクスチャへのポインタ保存用
 EDIT_INFO_2D g_Edit2d[MAX_EDIT];//影の構造体
 int g_EditCnt;
 int g_ObjCount;
@@ -41,7 +41,7 @@ void InitEdit2d(void)
 		//テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,
 			POLYGON_TYPE[nCntEdit2d],
-			&g_pTextureEditOrigin2d[nCntEdit2d]);
+			&g_pTextureEdit2d[nCntEdit2d]);
 	}
 
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_EDIT,
@@ -63,8 +63,8 @@ void InitEdit2d(void)
 		g_Edit2d[nCntEdit2d].bUse = false;
 		g_Edit2d[nCntEdit2d].fMove = 10.0f;
 	}
+
 	g_Edit2d[0].bUse = true;
-	g_Edit2d[0].g_pTextureEdit2d[0] = g_pTextureEditOrigin2d[0];
 	g_EditCnt = 0;
 	g_ObjCount = 0;
 
@@ -107,22 +107,12 @@ void InitEdit2d(void)
 //===============================================================================================================
 void UninitEdit2d(void)
 {
-
-	for (int nCntEdit2d = 0; nCntEdit2d < MAX_EDIT; nCntEdit2d++)
-	{
-		int nType = g_Edit2d[nCntEdit2d].nType;
-		if (g_Edit2d[nCntEdit2d].g_pTextureEdit2d[nType] != NULL)
-		{
-			g_Edit2d[nCntEdit2d].g_pTextureEdit2d[nType] = NULL;
-		}
-	}
-
 	for (int nCntEdit2d = 0; nCntEdit2d < POLYGON_TYPE_MAX; nCntEdit2d++)
 	{
-		if (g_pTextureEditOrigin2d[nCntEdit2d] != NULL)
+		if (g_pTextureEdit2d[nCntEdit2d] != NULL)
 		{
-			g_pTextureEditOrigin2d[nCntEdit2d]->Release();
-			g_pTextureEditOrigin2d[nCntEdit2d] = NULL;
+			g_pTextureEdit2d[nCntEdit2d]->Release();
+			g_pTextureEdit2d[nCntEdit2d] = NULL;
 		}
 	}
 
@@ -140,7 +130,7 @@ void UpdateEdit2d(void)
 {
 	Camera* pCamera = GetCamera();
 
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx;
 
 	//頂点バッファをロック
 	g_pVtxBuffEdit2d->Lock(0, 0, (void**)&pVtx, 0);
@@ -195,7 +185,6 @@ void UpdateEdit2d(void)
 		{
 			g_Edit2d[g_EditCnt + 1].pos = g_Edit2d[g_EditCnt].pos;
 			g_Edit2d[g_EditCnt + 1].bUse = true;
-			g_Edit2d[g_EditCnt + 1].g_pTextureEdit2d[0] = g_pTextureEditOrigin2d[g_Edit2d[g_EditCnt].nType];
 			g_Edit2d[g_EditCnt + 1].fHeight = g_Edit2d[g_EditCnt].fHeight;
 			g_Edit2d[g_EditCnt + 1].fWidth = g_Edit2d[g_EditCnt].fWidth;
 			g_Edit2d[g_EditCnt + 1].fMove = g_Edit2d[g_EditCnt].fMove;
@@ -277,15 +266,13 @@ void UpdateEdit2d(void)
 			g_Edit2d[g_EditCnt].fMove -= 0.1f; // 移動量変更
 		}
 
-		if (KeyboardTrigger(DIK_1))
+		if (KeyboardTrigger(DIK_1)&& g_Edit2d[g_EditCnt].nType < POLYGON_TYPE_MAX - 1)
 		{
 			g_Edit2d[g_EditCnt].nType++;
-			g_Edit2d[g_EditCnt].g_pTextureEdit2d[1] = g_pTextureEditOrigin2d[1];
 		}
 		else if (KeyboardTrigger(DIK_2) && g_Edit2d[g_EditCnt].nType > 0)
 		{
 			g_Edit2d[g_EditCnt].nType--;
-			g_Edit2d[g_EditCnt].g_pTextureEdit2d[1] = g_pTextureEditOrigin2d[0];
 		}
 
 		pVtx += 4 * g_EditCnt;
@@ -323,6 +310,8 @@ void DrawEdit2d(void)
 		{
 			continue;
 		}
+
+		// 種類を代入
 		int nType = g_Edit2d[nCntEdit2d].nType;
 
 		//ワールドマトリックスの初期化
@@ -345,17 +334,9 @@ void DrawEdit2d(void)
 		//テクスチャフォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		if (g_Edit2d[nCntEdit2d].nType == 0)
-		{
-			//テクスチャの設定
-			pDevice->SetTexture(0, g_Edit2d[nCntEdit2d].g_pTextureEdit2d[0]);
-		}
-		if (g_Edit2d[nCntEdit2d].g_pTextureEdit2d[1] != NULL)
-		{
-			//テクスチャの設定
-			pDevice->SetTexture(0, g_Edit2d[nCntEdit2d].g_pTextureEdit2d[1]);
-		}
-
+		//テクスチャの設定
+		pDevice->SetTexture(0, g_pTextureEdit2d[nType]);
+		
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntEdit2d * 4, 2);
 	}
@@ -583,7 +564,6 @@ void ReLoadEdit2d(void)
 	for (int nCnt = 0; nCnt < g_ObjCount; nCnt++)
 	{
 		g_Edit2d[g_EditCnt].bUse = true;
-		g_Edit2d[g_EditCnt].g_pTextureEdit2d[g_Edit2d[g_EditCnt].nType] = g_pTextureEditOrigin2d[g_Edit2d[g_EditCnt].nType];
 
 		if (nCnt != g_ObjCount - 1)
 		{
@@ -591,7 +571,6 @@ void ReLoadEdit2d(void)
 		}
 	}
 	g_Edit2d[g_EditCnt].bUse = true;
-	g_Edit2d[g_EditCnt].g_pTextureEdit2d[g_Edit2d[g_EditCnt].nType] = g_pTextureEditOrigin2d[g_Edit2d[g_EditCnt].nType];
 }
 //======================================================================================================================
 // エディット2dの取得処理

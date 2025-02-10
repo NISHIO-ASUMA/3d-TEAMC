@@ -117,6 +117,7 @@ void InitPlayer(void)
 		LoadMotion(6);
 		LoadMotion(7);
 		LoadMotion(8);
+		LoadMotion(9);
 
 		// 切り替わるモーションの数だけ
 		for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
@@ -869,14 +870,19 @@ void UpdatePlayer(void)
 				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
-			case MOTION_ONE_HAND:
-				g_player.SwordOffpos.y = 250.0f;
-				MotionChange(MOTION_ONEHANDBLOW, 0);
-				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
-				break;
 			case MOTION_BIGWEPON:
 				g_player.SwordOffpos.y = 100.0f;
 				MotionChange(MOTION_SPHAMMER, 0);
+				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
+				break;
+			case MOTION_DBHAND:
+				g_player.SwordOffpos.y = 250.0f;
+				MotionChange(MOTION_SPDOUBLE, 0);
+				PlayerComb(MOTIONTYPE_ACTION, 240, 120, COMBO_ATTACK1); // コンボ1
+				break;
+			case MOTION_ONE_HAND:
+				g_player.SwordOffpos.y = 250.0f;
+				MotionChange(MOTION_ONEHANDBLOW, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_PIERCING:
@@ -1300,8 +1306,25 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			fRadius = (fRadius * fRadius); // 半径を求める
 
 			// 範囲内にいたら
-			if (fDistance <= fRadius &&g_player.WeponMotion != MOTION_SPPIERCING &&
+			if (fDistance <= fRadius &&g_player.WeponMotion != MOTION_SPPIERCING && g_player.WeponMotion != MOTION_SPDOUBLE&&
 				pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 3)
+			{
+				// 敵にダメージを与える
+				HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
+				break;
+			}
+			// 範囲内にいたら
+			if (sphererange(&g_player.pos, &pEnemy->pos, 200.0f, 50.0f) && g_player.WeponMotion == MOTION_SPPIERCING &&
+				pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 19)
+			{
+				// 敵にダメージを与える
+				HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
+				break;
+			}
+
+			// 範囲内にいたら
+			if (sphererange(&g_player.pos, &pEnemy->pos, 200.0f, 50.0f) && g_player.WeponMotion == MOTION_SPDOUBLE &&
+				pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 6)
 			{
 				// 敵にダメージを与える
 				HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
@@ -1309,13 +1332,6 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 			}
 		}
 
-		// 範囲内にいたら
-		if (sphererange(&g_player.pos, &pEnemy->pos, 200.0f, 50.0f) && g_player.WeponMotion == MOTION_SPPIERCING &&
-			pEnemy->state != ENEMYSTATE_DAMAGE && g_player.Combostate != COMBO_NO && g_player.Motion.nKey >= 19)
-		{
-			// 敵にダメージを与える
-			HitEnemy(nCntEnemy, (pPlayer->nDamage * 50));
-		}
 	}
 }
 //================================
@@ -1845,6 +1861,9 @@ void LoadMotion(int Weponmotion)
 		break;
 	case MOTION_SPPIERCING:
 		pFile = fopen("data\\MOTION_CHANGE\\sppiercing.txt", "r");
+		break;
+	case MOTION_SPDOUBLE:
+		pFile = fopen("data\\MOTION_CHANGE\\doublehand.txt", "r");
 		break;
 	default:
 		pFile = NULL;

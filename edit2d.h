@@ -19,7 +19,6 @@
 //**************************************************************************************************************
 typedef struct
 {
-	LPDIRECT3DTEXTURE9 g_pTextureEdit2d[POLYGON_TYPE_MAX];  //テクスチャへのポインタ
 	D3DXVECTOR3 pos;					  // 位置
 	D3DXVECTOR3 rot;					  // 回転
 	D3DXVECTOR3 move;					  // 移動量
