@@ -309,7 +309,7 @@ void UpdateEnemy(void)
 
 		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
 		{
-			g_Enemy[nCntEnemy].pos.y = 100.0f;
+			g_Enemy[nCntEnemy].pos.y = 200.0f;
 		}
 		//// ƒuƒƒbƒN‚Ì“–‚½‚è”»’è
 		//if (CollisionBlock(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, &g_Enemy[nCntEnemy].Size))

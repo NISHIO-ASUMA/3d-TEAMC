@@ -1384,6 +1384,12 @@ void ThrowItem(void)
 					nIdxEnemy = nCnt; // 近い敵のインデックスを保存
 				}
 			}
+
+			if (sphererange(&g_player.pos, &pEnemy[nCnt].pos, 50.0f, 300.0f) && pEnemy[nCnt].nType == ENEMYTYPE_SIX)
+			{
+				nIdxEnemy = nCnt;
+				break;
+			}
 		}
 	}
 
@@ -1392,56 +1398,8 @@ void ThrowItem(void)
 	// 全ボス分回す
 	for (int nCntBoss = 0; nCntBoss < MAX_BOSS; nCntBoss++)
 	{
-		// 飛んでる敵が範囲内にいなかったら
-		if (pEnemy[nIdxEnemy].nType != ENEMYTYPE_SIX && !sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 50.0f, 300.0f) && pEnemy[nIdxEnemy].pos)
+		if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos,50.0f, 300.0f) && pEnemy[nIdxEnemy].nType == ENEMYTYPE_SIX)
 		{
-			// ボスが範囲内にいたら
-			if (sphererange(&g_player.pos, &pBoss[nCntBoss].pos, 50.0f, 150.0f) && pBoss[nCntBoss].bUse)
-			{
-				D3DXVECTOR3 dest = pBoss[nCntBoss].pos - g_player.pos; // 近いボスの方向を求める
-				D3DXVec3Normalize(&dest, &dest); // 正規化する
-
-				// 飛ばす方向を設定
-				pItem[nIdx].move.x = dest.x * 10.0f;
-				pItem[nIdx].move.z = dest.z * 10.0f;
-				pItem[nIdx].bUse = true; // 使用状態をtrueにする
-
-					// プレイヤーの向きを一番近いボスの場所にする
-				float fAngle = atan2f(pBoss[nCntBoss].pos.x - g_player.pos.x, pBoss[nCntBoss].pos.z - g_player.pos.z);
-				g_player.rotDestPlayer.y = fAngle + D3DX_PI;
-
-				break;
-			}
-			// 敵が範囲内にいたら
-			else if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 50.0f, 300.0f) && pEnemy[nIdxEnemy].pos)
-			{
-				D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - g_player.pos; // 近い敵の方向を求める
-				D3DXVec3Normalize(&dest, &dest); // 正規化する
-
-				// 飛ばす方向を設定
-				pItem[nIdx].move.x = dest.x * 10.0f;
-				pItem[nIdx].move.z = dest.z * 10.0f;
-				pItem[nIdx].bUse = true; // 使用状態をtrueにする
-
-					// プレイヤーの向きを一番近い敵の場所にする
-				float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
-				g_player.rotDestPlayer.y = fAngle + D3DX_PI;
-				break;
-
-			}
-			// 範囲内に誰もいなかったら
-			else
-			{
-				// 飛ばす方向を設定
-				pItem[nIdx].move.x = sinf(g_player.rot.y + D3DX_PI) * 10.0f;
-				pItem[nIdx].move.z = cosf(g_player.rot.y + D3DX_PI) * 10.0f;
-				pItem[nIdx].bUse = true; // 使用状態をtrueにする
-			}
-		}
-		// 近い敵が飛んでる敵だったら
-		else if (pEnemy[nIdxEnemy].nType == ENEMYTYPE_SIX && sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 50.0f, 300.0f) && pEnemy[nIdxEnemy].pos)
-		{
-			
 			D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - g_player.pos; // 近い敵の方向を求める
 			D3DXVec3Normalize(&dest, &dest); // 正規化する
 
@@ -1456,6 +1414,50 @@ void ThrowItem(void)
 			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
 			break;
 		}
+		// ボスが範囲内にいたら
+		else if (sphererange(&g_player.pos, &pBoss[nCntBoss].pos, 50.0f, 150.0f) && pBoss[nCntBoss].bUse)
+		{
+			D3DXVECTOR3 dest = pBoss[nCntBoss].pos - g_player.pos; // 近いボスの方向を求める
+			D3DXVec3Normalize(&dest, &dest); // 正規化する
+
+			// 飛ばす方向を設定
+			pItem[nIdx].move.x = dest.x * 10.0f;
+			pItem[nIdx].move.z = dest.z * 10.0f;
+			pItem[nIdx].bUse = true; // 使用状態をtrueにする
+
+				// プレイヤーの向きを一番近いボスの場所にする
+			float fAngle = atan2f(pBoss[nCntBoss].pos.x - g_player.pos.x, pBoss[nCntBoss].pos.z - g_player.pos.z);
+			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+
+			break;
+		}
+		// 敵が範囲内にいたら
+		else if (sphererange(&g_player.pos, &pEnemy[nIdxEnemy].pos, 50.0f, 300.0f))
+		{
+			D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - g_player.pos; // 近い敵の方向を求める
+			D3DXVec3Normalize(&dest, &dest); // 正規化する
+
+			// 飛ばす方向を設定
+			pItem[nIdx].move.x = dest.x * 10.0f;
+			pItem[nIdx].move.z = dest.z * 10.0f;
+			pItem[nIdx].bUse = true; // 使用状態をtrueにする
+
+				// プレイヤーの向きを一番近い敵の場所にする
+			float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
+			g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+			break;
+
+		}
+		// 範囲内に誰もいなかったら
+		else
+		{
+			// 飛ばす方向を設定
+			pItem[nIdx].move.x = sinf(g_player.rot.y + D3DX_PI) * 10.0f;
+			pItem[nIdx].move.z = cosf(g_player.rot.y + D3DX_PI) * 10.0f;
+			pItem[nIdx].bUse = true; // 使用状態をtrueにする
+		}
+		
+		
 	}
 
 	// 素手の時のモーション情報を代入
