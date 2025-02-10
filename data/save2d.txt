@@ -4,11 +4,35 @@
 
 POLYGONSET
    TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
-   POS = -116.3 1.0 -70.6				# [ 位置 ]
+   POS = -0.5 1.0 80.0				# [ 位置 ]
    ROT = 0.0 0.0 0.0				# [ 向き ]
    WIDTH = 100.0						# [ 横幅 ]
    HEIGHT = 100.0					# [ 高さ ]
 END_POLYGONSET
 
-OBJ_COUNT = 1    # [ 2dオブジェクトの配置数 ]
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 109.5 1.0 80.7				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 100.0						# [ 横幅 ]
+   HEIGHT = 100.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 1					# [ 2dオブジェクトの種類 ]
+   POS = 110.3 1.0 -49.2				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 100.0						# [ 横幅 ]
+   HEIGHT = 100.0					# [ 高さ ]
+END_POLYGONSET
+
+POLYGONSET
+   TEX_TYPE = 0					# [ 2dオブジェクトの種類 ]
+   POS = -19.7 1.0 -50.1				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 100.0						# [ 横幅 ]
+   HEIGHT = 100.0					# [ 高さ ]
+END_POLYGONSET
+
+OBJ_COUNT = 4    # [ 2dオブジェクトの配置数 ]
 END_SCRIPT          # この行は消さないでください

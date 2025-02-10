@@ -183,12 +183,8 @@ void UpdateEdit2d(void)
 
 		if (KeyboardTrigger(DIK_RETURN))
 		{
-			g_Edit2d[g_EditCnt + 1].pos = g_Edit2d[g_EditCnt].pos;
+			g_Edit2d[g_EditCnt + 1] = g_Edit2d[g_EditCnt];
 			g_Edit2d[g_EditCnt + 1].bUse = true;
-			g_Edit2d[g_EditCnt + 1].fHeight = g_Edit2d[g_EditCnt].fHeight;
-			g_Edit2d[g_EditCnt + 1].fWidth = g_Edit2d[g_EditCnt].fWidth;
-			g_Edit2d[g_EditCnt + 1].fMove = g_Edit2d[g_EditCnt].fMove;
-			g_Edit2d[g_EditCnt + 1].rot = g_Edit2d[g_EditCnt].rot;
 
 			g_EditCnt++;
 		}
