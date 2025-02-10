@@ -42,6 +42,7 @@
 #include "polygon.h"
 #include "edit2d.h"
 #include "meshfan.h"
+#include "billboard.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -135,6 +136,8 @@ void InitGame(void)
 	//エディットの初期化処理
 	InitEdit();
 
+	// ビルボードの初期化処理
+	InitBillboard();
 
 	//エディットのロード処理
 	LoadEdit();
@@ -149,6 +152,9 @@ void InitGame(void)
 	SetGameUI(D3DXVECTOR3(80.0f,550.0f,0.0f),UITYPE_ICONFRAME,80.0f,80.0f,0);
 
 	SetIcon(D3DXVECTOR3(80.0f, 550.0f, 0.0f), 80.0f, 80.0f, 0);
+
+	// テスト用 : 　ビルボードのセット
+	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);
 
 	SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
@@ -253,6 +259,9 @@ void UninitGame(void)
 
 	//エディットの終了処理
 	UninitEdit();
+
+	// ビルボードの終了処理
+	UninitBillboard();
 }
 //=========================================================================================================
 //ゲーム画面の更新処理
@@ -493,6 +502,9 @@ void DrawGame(void)
 
 	if (!g_bEditMode)
 	{
+		// ビルボードの描画処理
+		DrawBillboard();
+
 		//ブロックの描画処理
 		DrawBlock();
 
