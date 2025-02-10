@@ -246,6 +246,7 @@ void DrawEffect(void)
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
 		}
 	}
+
 	// アルファテストを無効
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 

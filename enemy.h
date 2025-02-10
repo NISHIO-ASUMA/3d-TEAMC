@@ -17,7 +17,7 @@
 //**************************************************************************************************************
 //É}ÉNÉçíËã`
 //**************************************************************************************************************
-#define MAX_ENEMY (64)
+#define MAX_ENEMY (256)
 #define ENEMYFILE001 ("data\\enemy.txt")
 #define ENEMYFILE002 ("data\\enemy2.txt")
 #define ENEMYFILE003 ("data\\enemy3.txt")
@@ -55,7 +55,7 @@ typedef enum
 	ENEMYTYPE_THREE,
 	ENEMYTYPE_FOUR,
 	ENEMYTYPE_FIVE,
-	//ENEMYTYPE_SEVEN,
+	ENEMYTYPE_SIX,
 	//ENEMYTYPE_ATE,
 	ENEMYTYPE_MAX
 }ENEMYTYPE;

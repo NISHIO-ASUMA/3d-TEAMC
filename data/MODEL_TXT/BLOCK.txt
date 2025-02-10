@@ -2,7 +2,7 @@
 +   ブロックの読み込み処理(種類追加したら一応報告お願いします)   +
 +----------------------------------------------------------------+
 
-MAX_TYPE = 38 # 読み込むモデル数
+MAX_TYPE = 39 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -45,7 +45,7 @@ MODEL_FILENAME = data/MODEL/OBJ/enemy_spawn000.x		# [34]敵の発生位置0
 MODEL_FILENAME = data/MODEL/OBJ/enemy_spawn001.x		# [35]敵の発生位置1
 MODEL_FILENAME = data/MODEL/OBJ/enemy_spawn002.x		# [36]敵の発生位置2
 MODEL_FILENAME = data/MODEL/OBJ/guardrail.x				# [37]ガードレール
-
+MODEL_FILENAME = data/MODEL/OBJ/trashbox_set.x			# [38]ゴミ箱
 # もしやり方わかるならBLOCK.hの列挙型追加頼む
 
 END_SCRIPT #この行は消さないでください
