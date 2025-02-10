@@ -41,6 +41,7 @@
 #include "icon.h"
 #include "polygon.h"
 #include "edit2d.h"
+#include "meshfan.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -76,6 +77,9 @@ void InitGame(void)
 
 	//メッシュフィールドの初期化処理
 	InitMeshField();
+
+	// メッシュドームの初期化処理
+	InitmeshFan();
 
 	// 煙の初期化処理
 	InitExplosion();
@@ -191,6 +195,9 @@ void UninitGame(void)
 
 	//メッシュフィールドの終了処理
 	UninitMeshField();
+
+	// メッシュドームの終了処理
+	UninitmeshFan();
 
 	// 軌跡の終了処理
 	UninitMeshSword();
@@ -472,6 +479,9 @@ void DrawGame(void)
 {
 	//メッシュフィールドの描画処理
 	DrawMeshField();
+
+	// メッシュドームの描画処理
+	DrawmeshFan();
 
 	//プレイヤーの描画処理
 	DrawPlayer();

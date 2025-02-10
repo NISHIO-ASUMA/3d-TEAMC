@@ -130,6 +130,7 @@
     <ClCompile Include="polygon.cpp">
       <Filter>ソースファイル\obj</Filter>
     </ClCompile>
+    <ClCompile Include="meshfan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -261,6 +262,7 @@
     <ClInclude Include="light.h">
       <Filter>ヘッダーファイル\os</Filter>
     </ClInclude>
+    <ClInclude Include="meshfan.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ソースファイル">
