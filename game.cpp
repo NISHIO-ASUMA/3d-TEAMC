@@ -436,9 +436,6 @@ void UpdateGame(void)
 				//敵の更新処理
 				UpdateEnemy();
 
-				//アイテムの更新処理
-				UpdateItem();
-
 				//HPゲージの更新処理
 				UpdateGauge();
 
@@ -472,6 +469,9 @@ void UpdateGame(void)
 
 			//ブロックの更新処理
 			UpdateBlock();
+
+			//アイテムの更新処理
+			UpdateItem();
 		}
 		else if (g_bEditMode)
 		{

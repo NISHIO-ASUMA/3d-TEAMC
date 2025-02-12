@@ -255,6 +255,9 @@ void UpdateBlock(void)
 		collisionObbBoss(nCntBlock); // ボス用の判定(分けないとうまくいかなかった)
 
 		CraftRange(&g_Block[nCntBlock]);
+
+		CraftItemRange(&g_Block[nCntBlock]);
+
 #ifdef _DEBUG
 
 		if (GetKeyboardPress(DIK_L))
@@ -1643,7 +1646,6 @@ bool PushPlayer(int nCntBlock)
 
 		// プレイヤーの位置を更新
 		pPlayer->pos = NewPlayerPos;
-		
 	}
 	// +Xの面から当たった
 	else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)

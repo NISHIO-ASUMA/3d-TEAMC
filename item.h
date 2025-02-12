@@ -120,6 +120,8 @@ typedef struct
 	D3DXMATRIX mtxParent;
 	int durability; // 耐久力
 	int nIdxShadow; // 影のインデックス
+	bool EnableCraft; // クラフトが有効なアイテムか否か
+
 }Item;
 
 //***************************

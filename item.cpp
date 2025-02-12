@@ -29,6 +29,7 @@
 //プロトタイプ宣言
 //**************************************************************************************************************
 void LoadItemModel(void); // アイテムのロード処理
+void CraftItem(int nCntItem);
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -59,6 +60,7 @@ void InitItem(void)
 		g_Item[nCntItem].fRadius = 100.0f;					   // 半径
 		g_Item[nCntItem].nLife = 180;						   // 体力
 		g_Item[nCntItem].durability = MAX_DURABILITY;		   // 耐久力
+		g_Item[nCntItem].EnableCraft = false;				   // クラフトできるか否か
 	}
 
 	LoadItemModel(); // アイテムのロード処理
@@ -306,6 +308,12 @@ void UpdateItem(void)
 		CollisionItem(nCntItem,// アイテムのインデックスを渡す
 			20.0f,  // アイテムの半径
 			20.0f); // プレイヤーの半径
+
+		// プレイヤーがクラフト状態だったら
+		if (pPlayer->bCraft)
+		{
+			CraftItem(nCntItem);
+		}
 
 		// 状態を投げるにする
 		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
@@ -555,7 +563,24 @@ void LoadItemModel(void)
 	// ファイルを閉じる
 	fclose(pFile);
 }
+//==============================================================================================================
+// アイテムのクラフト
+//==============================================================================================================
+void CraftItem(int nCntItem)
+{
+	Player* pPlayer = GetPlayer();
 
+	if (g_Item[nCntItem].bUse && g_Item[nCntItem].EnableCraft)
+	{
+		if (KeyboardTrigger(DIK_V))
+		{
+			if (g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT)
+			{
+				SetItem(pPlayer->pos, ITEMTYPE_STONEBAT, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+			}
+		}
+	}
+}
 //==============================================================================================================
 // アイテムの属性変更処理
 //==============================================================================================================
@@ -681,5 +706,32 @@ void ElementChange(int nTypeItem)
 	else if (g_TexItem[nTypeItem].nType == 29) // 看板の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
+	}
+}
+//==============================================================================================================
+// アイテムのクラフト
+//==============================================================================================================
+void CraftItemRange(BLOCK* pBlock)
+{
+	Player* pPlayer = GetPlayer();
+
+	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
+	{
+		if (!pBlock->bUse && pBlock->nType != BLOCKTYPE_WORKBENCH)
+		{
+			continue;
+		}
+
+		// クラフト範囲内に入った
+		if (sphererange(&pBlock->pos, &g_Item[nCnt].pos, 100.0f, 50.0f))
+		{
+			// クラフト可能なアイテム
+			g_Item[nCnt].EnableCraft = true;
+		}
+		else
+		{
+			// クラフトできないアイテム
+			g_Item[nCnt].EnableCraft = false;
+		}
 	}
 }
