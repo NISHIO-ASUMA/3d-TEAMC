@@ -23,6 +23,7 @@
 #include "Score.h"
 #include "time.h"
 #include "sound.h"
+#include "game.h"
 
 //**************************************************************************************************************
 // É}ÉNÉçíËã`
@@ -548,8 +549,7 @@ void HitBoss(int nCntBoss,int nDamage)
 		20,			// éıñΩ
 		false);
 
-	int nMin = GetTimeMinute();
-	int nSec = GetTimeSecond();
+	GAMESTATE gamestate = GetGameState();
 
 	if (g_Boss[nCntBoss].nLife <= 0)
 	{
@@ -568,7 +568,7 @@ void HitBoss(int nCntBoss,int nDamage)
 		// âeÇ©ÇÁè¡Ç∑
 		KillShadow(g_Boss[nCntBoss].nIdxShadow);
 
-		if (nMin <= 0 && nSec <= 0)
+		if (gamestate != GAMESTATE_END)
 		{
 			if (pPlayer->FeverMode)
 			{
