@@ -746,29 +746,41 @@ void CraftItem(int nCntItem)
 		// キーを押したら
 		if (KeyboardTrigger(DIK_V))
 		{
-			// 
+			// ストーンバットの材料がそろった
 			if ((g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT &&
 				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
 				(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT) &&
 				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
 			{
+				// 持っているアイテムを変更
 				Itemchange(ITEMTYPE_STONEBAT);
+
+				// モーションの変更
 				MotionChange(MOTION_DBHAND, 0);
+
+				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+
+				// クラフトに使ったアイテムを消す
 				g_Item[nCntItem].bUse = false;
+
+				// 手に持ってるアイテムの種類を石破っと
 				g_Item[pPlayer->ItemIdx].nType = ITEMTYPE_STONEBAT;
 			}
 		}
 
+		// 石バットの素材が範囲内にある時
 		if ((g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT &&
 			g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
 			(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT) &&
 			g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
 		{
+			// アイコンを表示する
 			g_Item[nCntItem].bMixItem[ITEMTYPE_STONEBAT] = true;
 		}
 		else
 		{
+			// アイコンを消す
 			g_Item[nCntItem].bMixItem[ITEMTYPE_STONEBAT] = false;
 		}
 	}
