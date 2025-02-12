@@ -29,6 +29,7 @@
 #include "meshsword.h"
 #include "spgauge.h"
 #include "boss.h"
+#include "Bullet.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -478,7 +479,6 @@ void UpdatePlayer(void)
 		break;
 	case PLAYERSTATE_JUMP:
 		g_nCounterState--;
-
 		if (g_nCounterState < 0)
 		{
 			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
