@@ -136,6 +136,9 @@
     <ClCompile Include="billboard.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="craftui.cpp">
+      <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -271,6 +274,9 @@
       <Filter>ヘッダーファイル\mesh</Filter>
     </ClInclude>
     <ClInclude Include="billboard.h">
+      <Filter>ヘッダーファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="craftui.h">
       <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>

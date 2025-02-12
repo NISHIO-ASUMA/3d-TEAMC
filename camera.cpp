@@ -23,6 +23,7 @@
 #define MAX_VIEWDOWN (0.1f) // カメラの制限
 #define MAIN (0) // プレイヤーを見るカメラのインデックス
 #define MAP (1) // ミニマップのカメラのインデックス
+#define CRAFT (2) // クラフト画面
 
 //***************************************************************************************************************
 // プロトタイプ宣言
@@ -77,6 +78,13 @@ void InitCamera(void)
 	g_camera[MAP].viewport.MinZ = 0.0f;
 	g_camera[MAP].viewport.MaxZ = 1.0f;
 	
+	g_camera[CRAFT].viewport.X = 300; // 2DX座標
+	g_camera[CRAFT].viewport.Y = 200; // 2DY座標
+	g_camera[CRAFT].viewport.Width = 650; // 幅
+	g_camera[CRAFT].viewport.Height = 400; // 高さ
+	g_camera[CRAFT].viewport.MinZ = 0.0f;
+	g_camera[CRAFT].viewport.MaxZ = 1.0f;
+
 }
 //===========================================================================================================
 // カメラの終了処理

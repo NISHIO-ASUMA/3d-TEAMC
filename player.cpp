@@ -46,9 +46,7 @@
 //**************************************************************************************************************
 void PlayerComb(MOTIONTYPE motiontype, int AttackState,int nCounterState, COMBOSTATE Combstate); // プレイヤーのコンボ処理
 void LoadMotion(int Weponmotion);																 // モーションのロード処理
-void MotionChange(int itemtype,int LoadPlayer);													 // モーション変更
 void StickPad(void);																			 // パッドの移動処理
-void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage);							 // プレイヤーのステータス変更
 
 void LoadPlayer(int nType);                                                                      // プレイヤーのロード処理
 int LoadFilename(FILE* pFile, int nNumModel, char* aString, int nType);							 // プレイヤーのモデルのロード処理
@@ -752,11 +750,9 @@ void UpdatePlayer(void)
 		// プレイヤーの状態を何も持っていない状態にする
 		g_player.HandState = PLAYERHOLD_NO;
 
-		// プレイヤーの位置を代入
-		pItem[g_player.ItemIdx].pos = g_player.pos;
+		SetItem(g_player.pos, pItem[g_player.ItemIdx].nType, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 
-		// アイテムを使用状態にする
-		pItem[g_player.ItemIdx].bUse = true;
+		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
 	}	
 
 	// 大型武器モーションの時
