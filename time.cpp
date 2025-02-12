@@ -11,6 +11,7 @@
 #include"time.h"
 #include "boss.h"
 #include "game.h"
+#include "sound.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -289,6 +290,13 @@ void UpdateTime(void)
 
 				// 分を一つ減らす
 				g_nTimerMinute--;
+			}
+
+			// 残り10秒以下なら
+			if (g_nTimerMinute <= 0 && g_nTimerSecond <= 10)
+			{
+				// 音楽再生(仮)
+				PlaySound(SOUND_LABEL_SELECT_SE);
 			}
 		}
 
