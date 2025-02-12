@@ -8,6 +8,7 @@
 // インクルードファイル
 #include "player.h"
 #include "HPGauge.h"
+#include "sound.h"
 
 // グローバル変数宣言
 LPDIRECT3DTEXTURE9 g_pTexture_Gauge = NULL;
@@ -206,6 +207,7 @@ void UpdateGauge(void)
 	if (g_fFeverCharge >= 100.0f && pPlayer->FeverMode == false)
 	{
 		g_fFeverCharge = 100.0f;
+		PlaySound(SOUND_LABEL_FEVER);
 		pPlayer->FeverMode = true;
 	}
 	else if (pPlayer->FeverMode == true)
