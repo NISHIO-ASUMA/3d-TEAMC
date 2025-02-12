@@ -612,7 +612,7 @@ void UpdatePlayer(void)
 		// 音楽再生
 		PlaySound(SOUND_LABEL_JUMP_SE);
 
-		if (g_player.bJump == true)
+		if (g_player.bJump == true && g_player.Motion.motionType != MOTIONTYPE_LANDING)
 		{
 			g_player.bJump = false;						 // ジャンプをできなくする
 			g_player.Motion.nKey = 0;					 // キーを0から始める
@@ -1118,387 +1118,6 @@ void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage)
 
 }
 //===============================================================================================================
-// プレイヤーのロード処理
-//===============================================================================================================
-void LoadPlayer(int nType)
-{
-	FILE* pFile;
-	char aStr[MAX_WORD] = {};
-	char Skip[3] = {};
-
-	int nNumModel = 0;
-	int nLoadCnt = 0;
-	int nNumParts = 0;
-
-	switch (nType)
-	{
-	case 0:
-		// ファイルを開く
-		pFile = fopen("data/MOTION/motionSamurai.txt", "r");
-		break;
-	case 1:
-		pFile = fopen("data/MOTION_CHANGE/motionSamurai_Shot.txt", "r");
-		break;
-	default:
-		pFile = NULL; //NULLにする
-		break;
-	}
-
-	if (pFile != NULL)
-	{
-		while (1)
-		{
-			// 文字列を読み込む
-			fscanf(pFile, "%s", &aStr[0]);
-
-			if (strcmp(&aStr[0], "#") == 0)
-			{//コメントが来たら
-				//処理を読み飛ばす
-				continue;
-			}
-
-			// NUM_MODELを読み取ったら
-			if (strcmp(&aStr[0], "NUM_MODEL") == 0)
-			{
-				fscanf(pFile, "%s", &Skip[0]);						// [=]を読み飛ばす
-				fscanf(pFile, "%d", &nNumModel);					// モデルの最大数を代入
-				g_LoadPlayer[nType].Motion.nNumModel = nNumModel;	// モデルの最大数を代入
-			}
-
-			// モデルの読み込みがまだ終わっていなかったら
-			if (nLoadCnt < nNumModel)
-			{
-				// モデルの読み込んだ数を返す
-				nLoadCnt = LoadFilename(pFile, nNumModel, &aStr[0], nType);
-			}
-
-			// CHARACTERSETを読み取ったら
-			if (strcmp(&aStr[0], "CHARACTERSET") == 0)
-			{
-				// パーツの設定処理
-				LoadCharacterSet(pFile, &aStr[0], nNumParts, nType);
-			}
-
-			// MOTIONSETを読み取ったら
-			if (strcmp(&aStr[0], "MOTIONSET") == 0)
-			{
-				// モーションの設定処理
-				LoadMotionSet(pFile, &aStr[0], nNumModel, nType);
-			}
-
-			// END_SCRIPTを読み取ったら
-			if (strcmp(&aStr[0], "END_SCRIPT") == 0)
-			{
-				nCntMotion = 0; // モーションのカウントをリセットする
-				break;          // While文を抜ける
-			}
-		}
-	}
-	else
-	{
-		// ファイルが開けなかったら
-		MessageBox(NULL, "ファイルが開けません。", "エラー(LoadPlayer)", MB_OK);
-		return;
-	}
-
-	// ファイルを閉じる
-	fclose(pFile);
-
-}
-//===============================================================================================================
-// プレイヤーのモデルロード
-//===============================================================================================================
-int LoadFilename(FILE* pFile, int nNumModel, char* aString, int nType)
-{
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-
-	D3DXMATERIAL* pMat;//マテリアルへのポインタ
-
-	//頂点座標の取得
-	int nNumVtx;	//頂点数
-	DWORD sizeFVF;	//頂点フォーマットのサイズ
-	BYTE* pVtxBuff;	//頂点バッファへのポインタ
-
-	char Skip[3] = {}; // [=]読み飛ばしよう変数
-
-	int nCntLoadModel = 0; // モデルのロードのカウンター
-
-	// カウントがモデル数より下だったら
-	while (nCntLoadModel < nNumModel)
-	{
-		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
-
-		// MODEL_FILENAMEを読み取ったら
-		if (strcmp(aString, "MODEL_FILENAME") == 0)
-		{
-			fscanf(pFile, "%s", &Skip[0]); // [=]を読み飛ばす
-			fscanf(pFile, "%s", aString);  // ファイル名を読み取る
-
-			const char* FILE_NAME = {};    // ファイル名代入用変数
-
-			FILE_NAME = aString;           // ファイル名を代入
-
-			//Xファイルの読み込み
-			D3DXLoadMeshFromX(FILE_NAME,
-				D3DXMESH_SYSTEMMEM,
-				pDevice,
-				NULL,
-				&g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pBuffMat,
-				NULL,
-				&g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].dwNumMat,
-				&g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh);
-
-			//マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pBuffMat->GetBufferPointer();
-
-			for (int nCntMat = 0; nCntMat < (int)g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].dwNumMat; nCntMat++)
-			{
-				if (pMat[nCntMat].pTextureFilename != NULL)
-				{
-					//このファイル名を使用してテクスチャを読み込む
-						//テクスチャの読み込み
-					D3DXCreateTextureFromFile(pDevice,
-						pMat[nCntMat].pTextureFilename,
-						&g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pTexture[nCntMat]);
-				}
-			}
-
-			//頂点数の取得
-			nNumVtx = g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh->GetNumVertices();
-
-			//頂点フォーマットのサイズ取得
-			sizeFVF = D3DXGetFVFVertexSize(g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh->GetFVF());
-
-			//頂点バッファのロック
-			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
-
-			for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
-			{
-				//頂点座標の代入
-				D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
-
-				//頂点座標を比較してブロックの最小値,最大値を取得
-				if (vtx.x < g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.x)
-				{
-					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.x = vtx.x;
-				}
-				else if (vtx.y < g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.y)
-				{
-					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.y = vtx.y;
-				}
-				else if (vtx.z < g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.z)
-				{
-					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.z = vtx.z;
-				}
-
-				else if (vtx.x > g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.x)
-				{
-					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.x = vtx.x;
-				}
-
-				else if (vtx.y > g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.y)
-				{
-					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.y = vtx.y;
-				}
-
-				else if (vtx.z > g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.z)
-				{
-					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.z = vtx.z;
-				}
-
-				//頂点フォーマットのサイズ分ポインタを進める
-				pVtxBuff += sizeFVF;
-			}
-
-			////サイズを代入
-			//g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
-			//g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
-			//g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
-
-			//各モデルごとのサイズを代入
-			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].Size.x = g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.x - g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.x;
-			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].Size.y = g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.y - g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.y;
-			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].Size.z = g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.z - g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.z;
-
-			//頂点バッファのアンロック
-			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh->UnlockVertexBuffer();
-
-			nCntLoadModel++; // モデルのカウントを増やす
-		}
-	}
-	return nCntLoadModel; // モデルのカウントを返す
-
-}
-//===============================================================================================================
-// プレイヤーのキャラクターセット
-//===============================================================================================================
-void LoadCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType)
-{
-	int nIdx = 0; // インデックス格納変数
-	char Skip[3] = {}; // [=]読み飛ばし変数
-
-	// END_CHARACTERSETを読み取ってなかったら
-	while (strcmp(aString, "END_CHARACTERSET") != 0)
-	{
-		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
-
-		// INDEXを読み取ったら
-		if (strcmp(aString, "INDEX") == 0)
-		{
-			fscanf(pFile, "%s", &Skip[0]); // [=]読み飛ばす
-			fscanf(pFile, "%d", &nIdx);    // インデックスを代入
-		}
-		// PARENTを読み取ったら
-		else if (strcmp(aString, "PARENT") == 0)
-		{
-			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
-
-			// 親のインデックスを保存
-			fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aModel[nIdx].nIdxModelParent); 
-		}
-		// POSを読み取ったら
-		else if (strcmp(aString, "POS") == 0)
-		{
-			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]); 
-
-			// モデルのオフセットを代入
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.x);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.y);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.z);
-		}
-		// ROTを読み取ったら
-		else if (strcmp(aString, "ROT") == 0)
-		{
-			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
-
-			// モデルのオフセットを代入
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offrot.x);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offrot.y);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offrot.z);
-		}
-	}
-}
-//===============================================================================================================
-// プレイヤーのモーションセット
-//===============================================================================================================
-void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType)
-{
-	char Skip[3] = {}; // [=]読み飛ばし変数
-
-	while (1) 
-	{
-		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
-
-		if (strcmp(aString, "#") == 0 || strcmp(aString, "<<") == 0)
-		{// コメントが来たら
-			// コメントを読み飛ばす
-			continue;
-		}
-
-		// LOOPを読み通ったら
-		if (strcmp(aString, "LOOP") == 0)
-		{
-			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
-
-			// ループするかしないか
-			fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].bLoop);
-		}
-		// NUM_KEYを読み通ったら
-		else if (strcmp(aString, "NUM_KEY") == 0)
-		{
-			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
-
-			// キーの最大数を代入
-			fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].nNumkey);
-		}
-		// KEYSETを読み通ったら
-		if (strcmp(aString, "KEYSET") == 0)
-		{
-			// キーの設定処理
-			LoadKeySet(pFile, aString, nType, nCntMotion);
-		}
-		// END_MOTIONSETを読み通ったら
-		if (strcmp(aString, "END_MOTIONSET") == 0)
-		{
-			nCntMotion++; // モーションのカウントをリセット
-			nKey = 0;     // キーをリセット
-			break;
-		}
-	}
-}
-//===============================================================================================================
-// プレイヤーのモーションのキーセット
-//===============================================================================================================
-void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
-{
-	char Skip[3] = {}; // [=]読み飛ばし変数
-	int nCntPos = 0;   // 位置のカウント
-	int nCntRot = 0;   // 角度のカウント
-
-	while (1)
-	{
-		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
-
-		if (strcmp(aString, "#") == 0)
-		{// コメントが来たら
-			// コメントを読み飛ばす
-			continue;
-		}
-
-		// FRAMEを読み通ったら
-		if (strcmp(aString, "FRAME") == 0)
-		{
-			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
-
-			// フレームを読み込む
-			fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].nFrame);
-		}
-
-		// POSを読み通ったら
-		if (strcmp(aString, "POS") == 0)
-		{
-			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
-
-			// 位置を読み込む
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosX);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosY);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosZ);
-			nCntPos++;
-		}
-		// ROTを読み通ったら
-		else if (strcmp(aString, "ROT") == 0)
-		{
-			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
-
-			// 角度を読み込む
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotX);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotY);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotZ);
-			nCntRot++;
-		}
-		// END_KEYSETを読み通ったら
-		else if (strcmp(aString, "END_KEYSET") == 0)
-		{
-			nKey++;		 // キーを増やす
-			nCntPos = 0; // 位置のカウントをリセット
-			nCntRot = 0; // 角度のカウントをリセット
-			break;
-		}
-	}
-}
-//===============================================================================================================
 // プレイヤーの剣と敵の当たり判定
 //===============================================================================================================
 void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
@@ -1957,6 +1576,10 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				MotionChange(MOTION_KATANA, 0);
 				StatusChange(2.9f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 100);
 				break;
+			case ITEMTYPE_BAR:
+				MotionChange(MOTION_DBHAND, 0);
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 90);
+				break;
 			case ITEMTYPE_HEADSTATUE:
 				MotionChange(MOTION_BIGWEPON, 1);
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
@@ -2358,337 +1981,384 @@ void LoadMotion(int Weponmotion)
     }
 	fclose(pFile);
 }
+//===============================================================================================================
+// プレイヤーのロード処理
+//===============================================================================================================
+void LoadPlayer(int nType)
+{
+	FILE* pFile;
+	char aStr[MAX_WORD] = {};
+	char Skip[3] = {};
 
+	int nNumModel = 0;
+	int nLoadCnt = 0;
+	int nNumParts = 0;
+
+	switch (nType)
+	{
+	case 0:
+		// ファイルを開く
+		pFile = fopen("data/MOTION/motionSamurai.txt", "r");
+		break;
+	case 1:
+		pFile = fopen("data/MOTION_CHANGE/motionSamurai_Shot.txt", "r");
+		break;
+	default:
+		pFile = NULL; //NULLにする
+		break;
+	}
+
+	if (pFile != NULL)
+	{
+		while (1)
+		{
+			// 文字列を読み込む
+			fscanf(pFile, "%s", &aStr[0]);
+
+			if (strcmp(&aStr[0], "#") == 0)
+			{//コメントが来たら
+				//処理を読み飛ばす
+				continue;
+			}
+
+			// NUM_MODELを読み取ったら
+			if (strcmp(&aStr[0], "NUM_MODEL") == 0)
+			{
+				fscanf(pFile, "%s", &Skip[0]);						// [=]を読み飛ばす
+				fscanf(pFile, "%d", &nNumModel);					// モデルの最大数を代入
+				g_LoadPlayer[nType].Motion.nNumModel = nNumModel;	// モデルの最大数を代入
+			}
+
+			// モデルの読み込みがまだ終わっていなかったら
+			if (nLoadCnt < nNumModel)
+			{
+				// モデルの読み込んだ数を返す
+				nLoadCnt = LoadFilename(pFile, nNumModel, &aStr[0], nType);
+			}
+
+			// CHARACTERSETを読み取ったら
+			if (strcmp(&aStr[0], "CHARACTERSET") == 0)
+			{
+				// パーツの設定処理
+				LoadCharacterSet(pFile, &aStr[0], nNumParts, nType);
+			}
+
+			// MOTIONSETを読み取ったら
+			if (strcmp(&aStr[0], "MOTIONSET") == 0)
+			{
+				// モーションの設定処理
+				LoadMotionSet(pFile, &aStr[0], nNumModel, nType);
+			}
+
+			// END_SCRIPTを読み取ったら
+			if (strcmp(&aStr[0], "END_SCRIPT") == 0)
+			{
+				nCntMotion = 0; // モーションのカウントをリセットする
+				break;          // While文を抜ける
+			}
+		}
+	}
+	else
+	{
+		// ファイルが開けなかったら
+		MessageBox(NULL, "ファイルが開けません。", "エラー(LoadPlayer)", MB_OK);
+		return;
+	}
+
+	// ファイルを閉じる
+	fclose(pFile);
+
+}
 //===============================================================================================================
-// プレイヤーのロード処理(バグった時用に残しておいて)
+// プレイヤーのモデルロード
 //===============================================================================================================
-//void LoadModel(int nType)
-//{
-//	// デバイスポインタを宣言
-//	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-//
-//	// ローカル変数
-//	int nModel = 0;					// モデル数
-//	int nIdx = 0;					// インデックス
-//	int NumKey = 0;					// キー数
-//	int nCnt = 0;					// モデルカウント用
-//	int nNumParts = 0;				// パーツ数格納用
-//	int nCntMotion = 0;				// モーションカウント用
-//	int nCntKey = 0;				// キーカウント用
-//	int nCntPosKey = 0;				// posカウント
-//	int nCntRotkey = 0;				// rotカウント
-//
-//	// ファイルポインタを宣言
-//	FILE* pFile;
-//
-//	switch (nType)
-//	{
-//	case 0:
-//		// ファイルを開く
-//		pFile = fopen("data/MOTION/motionSamurai.txt", "r");
-//		break;
-//	case 1:
-//		pFile = fopen("data/MOTION_CHANGE/motionSamurai_Shot.txt", "r");
-//		break;
-//	default:
-//		pFile = NULL; //NULLにする
-//		break;
-//	}
-//
-//	if (pFile != NULL)
-//	{//　NULL じゃない
-//		char aString[MAX_WORD];
-//
-//		while (1)
-//		{
-//			// 読み飛ばし
-//			fscanf(pFile, "%s", &aString[0]);
-//
-//			if (strcmp(&aString[0], "SCRIPT") == 0)
-//			{// SCRIPTを読み取ったら
-//				while (1)
-//				{
-//					// 読み飛ばし
-//					fscanf(pFile, "%s", &aString[0]);
-//
-//					if (strcmp(&aString[0], "NUM_MODEL") == 0)
-//					{// NUM_MODELを読み取ったら
-//						fscanf(pFile, "%s", &aString[0]);
-//
-//						if (strcmp(&aString[0], "=") == 0)
-//						{// 値を代入
-//							fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.nNumModel);
-//						}
-//					}
-//
-//					else if (strcmp(&aString[0], "MODEL_FILENAME") == 0)
-//					{
-//						// MODEL_FILENAMEを読み取ったら
-//						fscanf(pFile, "%s", &aString[0]);
-//
-//						if (strcmp(&aString[0], "=") == 0)
-//						{// 代入
-//							// 文字列を読み込む
-//							fscanf(pFile, "%s", &aString[0]);
-//
-//							const char* MODEL_FILE = {};	// モデルファイル名格納用の変数
-//
-//							// 読み込んだ文字列を保存する
-//							MODEL_FILE = aString;
-//
-//							//Xファイルの読み込み
-//							D3DXLoadMeshFromX(MODEL_FILE,
-//								D3DXMESH_SYSTEMMEM,
-//								pDevice,
-//								NULL,
-//								&g_LoadPlayer[nType].Motion.aModel[nCnt].pBuffMat,
-//								NULL,
-//								&g_LoadPlayer[nType].Motion.aModel[nCnt].dwNumMat,
-//								&g_LoadPlayer[nType].Motion.aModel[nCnt].pMesh);
-//
-//							nCnt++; // nCntをインクリメント
-//						}
-//					}
-//					else if (strcmp(&aString[0], "CHARACTERSET") == 0)
-//					{
-//						while (1)
-//						{
-//							// 文字列を読み飛ばす
-//							fscanf(pFile, "%s", &aString[0]);
-//
-//							if (strcmp(&aString[0], "NUM_PARTS") == 0)
-//							{// NUM_PARTSを読み取ったら
-//
-//								fscanf(pFile, "%s", &aString[0]);
-//
-//								if (strcmp(&aString[0], "=") == 0)
-//								{// 値を代入
-//									fscanf(pFile, "%d", &nNumParts);
-//								}
-//							}
-//
-//							else if (strcmp(&aString[0], "PARTSSET") == 0)
-//							{
-//								while (1)
-//								{
-//									// 文字列を読み飛ばす
-//									fscanf(pFile, "%s", &aString[0]);
-//
-//									if (strcmp(&aString[0], "INDEX") == 0)
-//									{// INDEXを読み取ったら
-//
-//										fscanf(pFile, "%s", &aString[0]);
-//
-//										if (strcmp(&aString[0], "=") == 0)
-//										{// 代入
-//											fscanf(pFile, "%d", &nIdx);
-//										}
-//									}
-//
-//									if (strcmp(&aString[0], "PARENT") == 0)
-//									{// PARENTを読み取ったら
-//
-//										fscanf(pFile, "%s", &aString[0]);
-//
-//										if (strcmp(&aString[0], "=") == 0)
-//										{// 代入
-//											// ペアネント
-//											fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aModel[nIdx].nIdxModelParent);
-//										}
-//									}
-//
-//
-//									if (strcmp(&aString[0], "POS") == 0)
-//									{// INDEXを読み取ったら
-//
-//										fscanf(pFile, "%s", &aString[0]);
-//
-//										if (strcmp(&aString[0], "=") == 0)
-//										{// 座標を代入
-//											fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.x);
-//											fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.y);
-//											fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.z);
-//										}
-//									}
-//
-//									if (strcmp(&aString[0], "ROT") == 0)
-//									{// INDEXを読み取ったら
-//
-//										fscanf(pFile, "%s", &aString[0]);
-//
-//										if (strcmp(&aString[0], "=") == 0)
-//										{// 角度を代入
-//											fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].rot.x);
-//											fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].rot.y);
-//											fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].rot.z);
-//										}
-//									}
-//
-//									if (strcmp(&aString[0], "END_PARTSSET") == 0)
-//									{// END_PARTSSETを読み取ったら
-//										// whileを抜ける
-//										break;
-//									}
-//
-//								}// while文末
-//							}
-//							else if (strcmp(&aString[0], "END_CHARACTERSET") == 0)
-//							{
-//								break;
-//							}
-//						}
-//					}
-//					else if (strcmp(&aString[0], "MOTIONSET") == 0)
-//					{// MOTIONSETを読み取ったら
-//
-//
-//						while (1)
-//						{
-//							// 文字を読み飛ばす
-//							fscanf(pFile, "%s", &aString[0]);
-//
-//							if (strcmp(aString, "LOOP") == 0)
-//							{// LOOP を読み取ったら
-//								// 文字を読み飛ばす
-//								fscanf(pFile, "%s", &aString[0]);
-//
-//								if (strcmp(&aString[0], "=") == 0)
-//								{// = を読み取ったら
-//									// 値を代入
-//									fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].bLoop);
-//								}
-//							}
-//
-//							else if (strcmp(aString, "NUM_KEY") == 0)
-//							{// NUM_KEYを読み取ったら
-//								// 文字を読み飛ばす
-//								fscanf(pFile, "%s", &aString[0]);
-//
-//								if (strcmp(&aString[0], "=") == 0)
-//								{// = を読み取ったら
-//									// 値を代入
-//									fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].nNumkey);
-//								}
-//
-//								while (nCntKey < g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].nNumkey)
-//								{
-//									// 文字を読み飛ばす
-//									fscanf(pFile, "%s", &aString[0]);
-//
-//									if (strcmp(aString, "KEYSET") == 0)
-//									{// KEYSETを読み取ったら
-//
-//
-//										while (1)
-//										{
-//											// 文字を読み飛ばす
-//											fscanf(pFile, "%s", &aString[0]);
-//
-//
-//											if (strcmp(&aString[0], "FRAME") == 0)
-//											{// FRAMEを読み取ったら
-//												// 文字を読み飛ばす
-//												fscanf(pFile, "%s", &aString[0]);
-//
-//												if (strcmp(&aString[0], "=") == 0)
-//												{// 値を代入
-//													fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].nFrame);
-//													break;
-//												}
-//											}
-//
-//										}
-//
-//										while (1)
-//										{
-//											// 文字を読み飛ばす
-//											fscanf(pFile, "%s", &aString[0]);
-//											if (strcmp(&aString[0], "KEY") == 0)
-//											{// KEYを読みとったら
-//												while (1)
-//												{
-//													// 文字を読み飛ばす
-//													fscanf(pFile, "%s", &aString[0]);
-//
-//													if (strcmp(&aString[0], "POS") == 0)
-//													{// POSを読み取ったら
-//														// 文字を読み飛ばす
-//														fscanf(pFile, "%s", &aString[0]);
-//
-//														if (strcmp(&aString[0], "=") == 0)
-//														{// 値を代入
-//															fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosX);
-//															fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosY);
-//															fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosZ);
-//															nCntPosKey++;		// インクリメント
-//														}
-//													}
-//
-//													else if (strcmp(&aString[0], "ROT") == 0)
-//													{// ROTを読み取ったら
-//														// 文字を読み飛ばす
-//														fscanf(pFile, "%s", &aString[0]);
-//
-//														if (strcmp(&aString[0], "=") == 0)
-//														{// 値を代入
-//															fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotX);
-//															fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotY);
-//															fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotZ);
-//															nCntRotkey++;		// インクリメント
-//														}
-//													}
-//
-//													else if (strcmp(&aString[0], "END_KEY") == 0)
-//													{// END_KEYを読み取ったら
-//														break;
-//													}
-//												}
-//											}
-//											else if (strcmp(&aString[0], "END_KEYSET") == 0)
-//											{// END_KEYSETを読み取ったら
-//												nCntRotkey = 0;
-//												nCntPosKey = 0;
-//												nCntKey++;			// インクリメント
-//												break;
-//											}
-//
-//
-//										}
-//
-//									}
-//
-//								}
-//							}
-//
-//							if (strcmp(&aString[0], "END_MOTIONSET") == 0)
-//							{// END_MOTIONSETを読み取ったら
-//								nCntMotion++;		// モーションの更新
-//								nCntKey = 0;		// 0から始める
-//								break;
-//							}
-//						}
-//					}
-//
-//					else if (strcmp(&aString[0], "END_SCRIPT") == 0)
-//					{
-//						break;
-//					}
-//					else
-//					{
-//						continue;
-//					}
-//				}// while文末
-//
-//				break;
-//			}
-//		}// while文末
-//	}
-//	else
-//	{
-//		//メッセージボックス
-//		MessageBox(NULL, "ファイルが開けません。", "エラー(Player.cpp)", MB_OK);
-//		return;
-//    }
-//	// ファイルを閉じる
-//	fclose(pFile);
-//}
+int LoadFilename(FILE* pFile, int nNumModel, char* aString, int nType)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	D3DXMATERIAL* pMat;//マテリアルへのポインタ
+
+	//頂点座標の取得
+	int nNumVtx;	//頂点数
+	DWORD sizeFVF;	//頂点フォーマットのサイズ
+	BYTE* pVtxBuff;	//頂点バッファへのポインタ
+
+	char Skip[3] = {}; // [=]読み飛ばしよう変数
+
+	int nCntLoadModel = 0; // モデルのロードのカウンター
+
+	// カウントがモデル数より下だったら
+	while (nCntLoadModel < nNumModel)
+	{
+		// 文字を読み取る
+		fscanf(pFile, "%s", aString);
+
+		// MODEL_FILENAMEを読み取ったら
+		if (strcmp(aString, "MODEL_FILENAME") == 0)
+		{
+			fscanf(pFile, "%s", &Skip[0]); // [=]を読み飛ばす
+			fscanf(pFile, "%s", aString);  // ファイル名を読み取る
+
+			const char* FILE_NAME = {};    // ファイル名代入用変数
+
+			FILE_NAME = aString;           // ファイル名を代入
+
+			//Xファイルの読み込み
+			D3DXLoadMeshFromX(FILE_NAME,
+				D3DXMESH_SYSTEMMEM,
+				pDevice,
+				NULL,
+				&g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pBuffMat,
+				NULL,
+				&g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].dwNumMat,
+				&g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh);
+
+			//マテリアルのデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pBuffMat->GetBufferPointer();
+
+			for (int nCntMat = 0; nCntMat < (int)g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].dwNumMat; nCntMat++)
+			{
+				if (pMat[nCntMat].pTextureFilename != NULL)
+				{
+					//このファイル名を使用してテクスチャを読み込む
+						//テクスチャの読み込み
+					D3DXCreateTextureFromFile(pDevice,
+						pMat[nCntMat].pTextureFilename,
+						&g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pTexture[nCntMat]);
+				}
+			}
+
+			//頂点数の取得
+			nNumVtx = g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh->GetNumVertices();
+
+			//頂点フォーマットのサイズ取得
+			sizeFVF = D3DXGetFVFVertexSize(g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh->GetFVF());
+
+			//頂点バッファのロック
+			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+
+			for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
+			{
+				//頂点座標の代入
+				D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
+
+				//頂点座標を比較してブロックの最小値,最大値を取得
+				if (vtx.x < g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.x)
+				{
+					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.x = vtx.x;
+				}
+				else if (vtx.y < g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.y)
+				{
+					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.y = vtx.y;
+				}
+				else if (vtx.z < g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.z)
+				{
+					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.z = vtx.z;
+				}
+
+				else if (vtx.x > g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.x)
+				{
+					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.x = vtx.x;
+				}
+
+				else if (vtx.y > g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.y)
+				{
+					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.y = vtx.y;
+				}
+
+				else if (vtx.z > g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.z)
+				{
+					g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.z = vtx.z;
+				}
+
+				//頂点フォーマットのサイズ分ポインタを進める
+				pVtxBuff += sizeFVF;
+			}
+
+			////サイズを代入
+			//g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
+			//g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
+			//g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
+
+			//各モデルごとのサイズを代入
+			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].Size.x = g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.x - g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.x;
+			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].Size.y = g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.y - g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.y;
+			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].Size.z = g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMax.z - g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].vtxMin.z;
+
+			//頂点バッファのアンロック
+			g_LoadPlayer[nType].Motion.aModel[nCntLoadModel].pMesh->UnlockVertexBuffer();
+
+			nCntLoadModel++; // モデルのカウントを増やす
+		}
+	}
+	return nCntLoadModel; // モデルのカウントを返す
+
+}
+//===============================================================================================================
+// プレイヤーのキャラクターセット
+//===============================================================================================================
+void LoadCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType)
+{
+	int nIdx = 0; // インデックス格納変数
+	char Skip[3] = {}; // [=]読み飛ばし変数
+
+	// END_CHARACTERSETを読み取ってなかったら
+	while (strcmp(aString, "END_CHARACTERSET") != 0)
+	{
+		// 文字を読み取る
+		fscanf(pFile, "%s", aString);
+
+		// INDEXを読み取ったら
+		if (strcmp(aString, "INDEX") == 0)
+		{
+			fscanf(pFile, "%s", &Skip[0]); // [=]読み飛ばす
+			fscanf(pFile, "%d", &nIdx);    // インデックスを代入
+		}
+		// PARENTを読み取ったら
+		else if (strcmp(aString, "PARENT") == 0)
+		{
+			// [=]読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// 親のインデックスを保存
+			fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aModel[nIdx].nIdxModelParent);
+		}
+		// POSを読み取ったら
+		else if (strcmp(aString, "POS") == 0)
+		{
+			// [=]読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// モデルのオフセットを代入
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.x);
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.y);
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offpos.z);
+		}
+		// ROTを読み取ったら
+		else if (strcmp(aString, "ROT") == 0)
+		{
+			// [=]読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// モデルのオフセットを代入
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offrot.x);
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offrot.y);
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aModel[nIdx].offrot.z);
+		}
+	}
+}
+//===============================================================================================================
+// プレイヤーのモーションセット
+//===============================================================================================================
+void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType)
+{
+	char Skip[3] = {}; // [=]読み飛ばし変数
+
+	while (1)
+	{
+		// 文字を読み取る
+		fscanf(pFile, "%s", aString);
+
+		if (strcmp(aString, "#") == 0 || strcmp(aString, "<<") == 0)
+		{// コメントが来たら
+			// コメントを読み飛ばす
+			continue;
+		}
+
+		// LOOPを読み通ったら
+		if (strcmp(aString, "LOOP") == 0)
+		{
+			// [=]読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// ループするかしないか
+			fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].bLoop);
+		}
+		// NUM_KEYを読み通ったら
+		else if (strcmp(aString, "NUM_KEY") == 0)
+		{
+			// [=]読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// キーの最大数を代入
+			fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].nNumkey);
+		}
+		// KEYSETを読み通ったら
+		if (strcmp(aString, "KEYSET") == 0)
+		{
+			// キーの設定処理
+			LoadKeySet(pFile, aString, nType, nCntMotion);
+		}
+		// END_MOTIONSETを読み通ったら
+		if (strcmp(aString, "END_MOTIONSET") == 0)
+		{
+			nCntMotion++; // モーションのカウントをリセット
+			nKey = 0;     // キーをリセット
+			break;
+		}
+	}
+}
+//===============================================================================================================
+// プレイヤーのモーションのキーセット
+//===============================================================================================================
+void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
+{
+	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nCntPos = 0;   // 位置のカウント
+	int nCntRot = 0;   // 角度のカウント
+
+	while (1)
+	{
+		// 文字を読み取る
+		fscanf(pFile, "%s", aString);
+
+		if (strcmp(aString, "#") == 0)
+		{// コメントが来たら
+			// コメントを読み飛ばす
+			continue;
+		}
+
+		// FRAMEを読み通ったら
+		if (strcmp(aString, "FRAME") == 0)
+		{
+			// [=]読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// フレームを読み込む
+			fscanf(pFile, "%d", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].nFrame);
+		}
+
+		// POSを読み通ったら
+		if (strcmp(aString, "POS") == 0)
+		{
+			// [=]読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// 位置を読み込む
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosX);
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosY);
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosZ);
+			nCntPos++;
+		}
+		// ROTを読み通ったら
+		else if (strcmp(aString, "ROT") == 0)
+		{
+			// [=]読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// 角度を読み込む
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotX);
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotY);
+			fscanf(pFile, "%f", &g_LoadPlayer[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotZ);
+			nCntRot++;
+		}
+		// END_KEYSETを読み通ったら
+		else if (strcmp(aString, "END_KEYSET") == 0)
+		{
+			nKey++;		 // キーを増やす
+			nCntPos = 0; // 位置のカウントをリセット
+			nCntRot = 0; // 角度のカウントをリセット
+			break;
+		}
+	}
+}
