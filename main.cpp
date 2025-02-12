@@ -27,6 +27,7 @@
 #include "sound.h"
 #include "player.h"
 #include "edit2d.h"
+#include "craftui.h"
 
 //***************************************************************************************************************
 // プロトタイプ宣言
@@ -395,6 +396,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	// フェードの初期化
 	InitFade(g_mode);
 
+	// クラフトUIの初期化
+	InitCraftUI();
+
 	// モードの設定
 	SetMode(g_mode);
 
@@ -420,6 +424,9 @@ void Uninit(void)
 
 	// サウンドの終了
 	UninitSound();
+
+	// クラフトの終了処理
+	UninitCraftUI();
 
 	// フェードの終了
 	UninitFade();
@@ -500,6 +507,9 @@ void Update(void)
 
 #endif // !_DEBUG
 
+	// クラフトの更新処理
+	UpdateCraftUI();
+
 	// フェードの更新
 	UpdateFade();
 
@@ -511,11 +521,17 @@ void Draw(void)
 {
 	// カメラを取得
 	Camera* pCamera = GetCamera();
+	Player* pPlayer = GetPlayer();
 
 	for (int nCnt = 0; nCnt < CAMERATYPE_MAX; nCnt++)
 	{
+		if (!pPlayer->bCraft && nCnt == 2)
+		{
+			break;
+		}
+
 		g_pD3DDevice->SetViewport(&pCamera[nCnt].viewport); // ビューポートの設定
-		
+
 		//画面クリア(バックバッファ&Zバッファのクリア)
 		g_pD3DDevice->Clear(0,
 			NULL,
@@ -583,6 +599,10 @@ void Draw(void)
 			//DrawDebugPlayerPos();
 
 #endif
+			if (nCnt == 2)
+			{
+				DrawCraftUI();
+			}
 
 			// フェードの描画
 			DrawFade();

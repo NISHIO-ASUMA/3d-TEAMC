@@ -18,6 +18,8 @@
 #include "HPGauge.h"
 #include "Shadow.h"
 #include "Particle.h"
+#include "icon.h"
+#include "craftui.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -61,6 +63,11 @@ void InitItem(void)
 		g_Item[nCntItem].nLife = 180;						   // 体力
 		g_Item[nCntItem].durability = MAX_DURABILITY;		   // 耐久力
 		g_Item[nCntItem].EnableCraft = false;				   // クラフトできるか否か
+
+		for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
+		{
+			g_Item[nCntItem].bMixItem[nCntNum] = false;				   // クラフト後のアイテム表示用フラグ
+		}
 	}
 
 	LoadItemModel(); // アイテムのロード処理
@@ -77,6 +84,7 @@ void InitItem(void)
 		g_TexItem[nCntNum].nType = nCntNum;			            // 番号
 		g_TexItem[nCntNum].nElement = ITEMELEMENT_STANDARD;     // 初期化
 		ElementChange(nCntNum);
+		g_TexItem[nCntNum].bMixItem[nCntNum] = false;           // クラフト後のアイテム表示用フラグ
 
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
@@ -565,28 +573,7 @@ void LoadItemModel(void)
 	// ファイルを閉じる
 	fclose(pFile);
 }
-//==============================================================================================================
-// アイテムのクラフト
-//==============================================================================================================
-void CraftItem(int nCntItem)
-{
-	Player* pPlayer = GetPlayer();
 
-	// アイテムが使われているかつ
-	if (g_Item[nCntItem].bUse && g_Item[nCntItem].EnableCraft)
-	{
-		// キーを押したら
-		if (KeyboardTrigger(DIK_V))
-		{
-			// 
-			if ((g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT) ||
-				(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT))
-			{
-				SetItem(pPlayer->pos, ITEMTYPE_STONEBAT, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
-			}
-		}
-	}
-}
 //==============================================================================================================
 // アイテムの属性変更処理
 //==============================================================================================================
@@ -742,6 +729,47 @@ void CraftItemRange(BLOCK* pBlock)
 		{
 			// クラフトできないアイテム
 			g_Item[nCnt].EnableCraft = false;
+		}
+	}
+}
+//==============================================================================================================
+// アイテムのクラフト
+//==============================================================================================================
+void CraftItem(int nCntItem)
+{
+	Player* pPlayer = GetPlayer();
+	Craftui* pMix = GetMixUI();
+
+	// アイテムが使われているかつ
+	if (g_Item[nCntItem].bUse && g_Item[nCntItem].EnableCraft)
+	{
+		// キーを押したら
+		if (KeyboardTrigger(DIK_V))
+		{
+			// 
+			if ((g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT &&
+				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
+				(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT) &&
+				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+			{
+				Itemchange(ITEMTYPE_STONEBAT);
+				MotionChange(MOTION_DBHAND, 0);
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+				g_Item[nCntItem].bUse = false;
+				g_Item[pPlayer->ItemIdx].nType = ITEMTYPE_STONEBAT;
+			}
+		}
+
+		if ((g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT &&
+			g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
+			(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT) &&
+			g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+		{
+			g_Item[nCntItem].bMixItem[ITEMTYPE_STONEBAT] = true;
+		}
+		else
+		{
+			g_Item[nCntItem].bMixItem[ITEMTYPE_STONEBAT] = false;
 		}
 	}
 }
