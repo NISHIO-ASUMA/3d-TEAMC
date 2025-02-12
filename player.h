@@ -111,6 +111,7 @@ typedef enum
 	PLAYERSTATE_FALL,
 	PLAYERSTATE_INVISIBLE,
 	PLAYERSTATE_NO_WEPON,
+	PLAYERSTATE_CRAFT,
 	PLAYERSTATE_MAX
 }PLAYERSTATE;
 
@@ -196,7 +197,7 @@ typedef struct
 	bool SpMode;
 	bool AttackSp;
 	bool bLandingOBB; // OBBの上に着地下かどうか
-
+	bool bCraft;      // クラフト中かどうか
 }Player;
 
 //**************************

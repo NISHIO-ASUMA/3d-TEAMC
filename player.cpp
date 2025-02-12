@@ -112,6 +112,7 @@ void InitPlayer(void)
 	g_player.bLandingOBB = false;
 	nCntMotion = 0;
 	nKey = 0;
+	g_player.bCraft = false;
 
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)
@@ -168,6 +169,7 @@ void InitPlayer(void)
 			g_LoadPlayer[nCntPlayer].SpMode = false;
 			g_LoadPlayer[nCntPlayer].AttackSp = false;
 			g_LoadPlayer[nCntPlayer].bLandingOBB = false;
+			g_LoadPlayer[nCntPlayer].bCraft = false;
 
 			// アイテム分回す
 			for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)

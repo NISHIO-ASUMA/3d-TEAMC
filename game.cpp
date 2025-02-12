@@ -52,6 +52,7 @@ int g_nCounterGameState = 0;//状態管理カウンター
 bool g_bPause = false;//ポーズ中かどうか
 bool g_bEditMode = false; // エディットモードかどうか
 int g_EnemyWaveTime;
+bool g_bCraft = false;
 
 //=========================================================================================================
 //ゲーム画面の初期化処理
@@ -103,6 +104,9 @@ void InitGame(void)
 	//敵の初期化処理
 	InitEnemy();
 
+	// ビルボードの初期化処理
+	InitBillboard();
+
 	//ブロックの初期化処理
 	InitBlock();
 
@@ -136,9 +140,6 @@ void InitGame(void)
 	//エディットの初期化処理
 	InitEdit();
 
-	// ビルボードの初期化処理
-	InitBillboard();
-
 	//エディットのロード処理
 	LoadEdit();
 	LoadEdit2d();
@@ -168,6 +169,7 @@ void InitGame(void)
 	g_bPause = false; // ポーズ解除
 	g_bEditMode = false;// エディットモード解除
 	g_EnemyWaveTime = 0; // 敵が出てくる時間
+	g_bCraft = false;
 
 	// 音楽を再生
 	PlaySound(SOUND_LABEL_GAME_BGM);
@@ -266,8 +268,11 @@ void UninitGame(void)
 //=========================================================================================================
 void UpdateGame(void)
 {
-	// 敵の出現時間を加算する
-	g_EnemyWaveTime++;
+	if (!g_bCraft)
+	{
+		// 敵の出現時間を加算する
+		g_EnemyWaveTime++;
+	}
 
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
@@ -392,74 +397,81 @@ void UpdateGame(void)
 
 		if (!g_bEditMode)
 		{// 編集モードじゃなかったら
-			//カメラの更新処理
-			UpdateCamera();
 
-			//ライトの更新処理
-			UpdateLight();
+			if (!g_bCraft)
+			{
+				//カメラの更新処理
+				UpdateCamera();
 
-			//影の更新処理
-			UpdateShadow();
+				//ライトの更新処理
+				UpdateLight();
 
-			// 煙の更新処理
-			UpdateExplosion();
+				//影の更新処理
+				UpdateShadow();
 
-			if (pPlayer->bDisp)
-			{// bDispがtrue
-				//プレイヤーの更新処理
-				UpdatePlayer();
+				// 煙の更新処理
+				UpdateExplosion();
+
+				if (pPlayer->bDisp)
+				{// bDispがtrue
+					//プレイヤーの更新処理
+					UpdatePlayer();
+				}
+
+				// ダメージの更新処理
+				UpdateDamege();
+
+				// エフェクトの更新処理
+				UpdateEffect();
+
+				// パーティクルの更新処理
+				UpdateParticle();
+
+				// ゲームのUIの更新処理
+				UpdateGameUI();
+
+				// スコアの更新処理
+				UpdateScore();
+
+				//敵の更新処理
+				UpdateEnemy();
+
+				//アイテムの更新処理
+				UpdateItem();
+
+				//HPゲージの更新処理
+				UpdateGauge();
+
+				// タイマーの更新処理
+				UpdateTime();
+
+				//壁の更新処理
+				UpdateWall();
+
+				// 軌跡の更新処理
+				UpdateMeshSword();
+
+				// SPゲージの更新処理
+				UpdateSPgauge();
+
+				// ボスの更新処理
+				UpdateBoss();
+
+				// アイコンの更新処理
+				UpdateIcon();
+
+				// ポリゴンの更新処理
+				UpdatePolygon();
+
+				// メッシュドームの更新処理
+				UpdatemeshFan();
 			}
 
-			// ダメージの更新処理
-			UpdateDamege();
-
-			// エフェクトの更新処理
-			UpdateEffect();
-
-			// パーティクルの更新処理
-			UpdateParticle();
-
-			// ゲームのUIの更新処理
-			UpdateGameUI();
-
-			// スコアの更新処理
-			UpdateScore();
-
-			//敵の更新処理
-			UpdateEnemy();
+			// ビルボードの更新処理
+			UpdateBillboard();
 
 			//ブロックの更新処理
 			UpdateBlock();
-
-			//アイテムの更新処理
-			UpdateItem();
-
-			//HPゲージの更新処理
-			UpdateGauge();
-
-			// タイマーの更新処理
-			UpdateTime();
-
-			//壁の更新処理
-			UpdateWall();
-
-			// 軌跡の更新処理
-			UpdateMeshSword();
-
-			// SPゲージの更新処理
-			UpdateSPgauge();
-
-			// ボスの更新処理
-			UpdateBoss();
-
-			// アイコンの更新処理
-			UpdateIcon();
-
-			// ポリゴンの更新処理
-			UpdatePolygon();
-
-			// メッシュドームの更新処理
-			UpdatemeshFan();
 		}
 		else if (g_bEditMode)
 		{
@@ -468,7 +480,7 @@ void UpdateGame(void)
 
 			// カメラの更新処理
 			UpdateCamera();
-		}	
+		}
 	}
 
 #ifdef _DEBUG
@@ -597,4 +609,12 @@ void SetEnablePause(bool bPause)
 bool GetEditState(void)
 {
 	return g_bEditMode;
+}
+//==========================================================================================================
+// クラフト状態の設定処理
+//=======================================================================================================
+bool EnableCraft(bool bCraft)
+{
+	g_bCraft = bCraft;
+	return g_bCraft;
 }

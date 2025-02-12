@@ -22,6 +22,16 @@
 //*****************************
 typedef enum
 {
+	BILLBOARDSTATE_NOSET = 0,
+	BILLBOARDSTATE_SET,
+	BILLBOARDSTATE_MAX
+}BILLBOARDSTATE;
+
+//*****************************
+// ビルボードの種類の列挙型宣言
+//*****************************
+typedef enum
+{
 	BILLBOARDTYPE_FIRST = 0,
 	BILLBOARDTYPE_MAX
 }BILLBOARDTYPE;
@@ -47,6 +57,7 @@ typedef struct
 	int nType;		     // 種類
 	float fWidth;		 // 横幅
 	float fHeight;		 // 高さ
+	int state;           // ビルボードの状態
 }Billboard;
 
 //**********************
@@ -56,6 +67,6 @@ void InitBillboard(void);		// ビルボード初期化処理
 void UninitBillboard(void);		// ビルボード終了処理
 void UpdateBillboard(void);		// ビルボード更新処理
 void DrawBillboard(void);		// ビルボード描画処理
-void SetBillboard(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nType, float fWidth, float fHeight); // ビルボード設定処理
+void SetBillboard(D3DXVECTOR3 pos,int nType, float fWidth, float fHeight, int state); // ビルボードの設定処理
 #endif 
 

@@ -9,6 +9,9 @@
 // インクルードファイル宣言
 //***************************
 #include "billboard.h"
+#include "block.h"
+#include "game.h"
+#include "input.h"
 
 //*****************************
 // グローバル変数宣言
@@ -42,12 +45,14 @@ void InitBillboard(void)
 		g_Billboard[nCnt].nType = 0;			                // 種類
 		g_Billboard[nCnt].fHeight = 0.0f;						// 高さ
 		g_Billboard[nCnt].fWidth = 0.0f;						// 横幅
+		g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
 		g_Billboard[nCnt].bUse = false;							// 使用判定
 	}
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_BILLBOARD,
-		D3DUSAGE_WRITEONLY, FVF_VERTEX_3D,
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffBillboard,
 		NULL);
@@ -120,7 +125,39 @@ void UninitBillboard(void)
 //=========================
 void UpdateBillboard(void)
 {
-	// TODO : ここに範囲内に入ったら描画する処理を追加
+	// 頂点情報のポインタ
+	VERTEX_3D* pVtx;
+
+	// 頂点バッファをロックし,頂点情報へのポインタを取得
+	g_pVtxBuffBillboard->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
+	{
+		if (!g_Billboard[nCnt].bUse)
+		{// falseだったら
+			continue;
+		}
+
+		switch (g_Billboard[nCnt].nType)
+		{
+		case BILLBOARDTYPE_FIRST:
+
+			break;
+		default:
+			break;
+		}
+
+		// 頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(-g_Billboard[nCnt].fWidth, g_Billboard[nCnt].fHeight, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(g_Billboard[nCnt].fWidth, g_Billboard[nCnt].fHeight, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(-g_Billboard[nCnt].fWidth, -g_Billboard[nCnt].fHeight, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(g_Billboard[nCnt].fWidth, -g_Billboard[nCnt].fHeight, 0.0f);
+
+		pVtx += 4;
+	}
+
+	// アンロック
+	g_pVtxBuffBillboard->Unlock();
 }
 //=========================
 //　ビルボード描画処理
@@ -136,9 +173,9 @@ void DrawBillboard(void)
 	// ライトを無効にする
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-	// Zテスト
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	//// Zテスト
+	//pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+	//pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	for (int nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
 	{
@@ -181,17 +218,19 @@ void DrawBillboard(void)
 		// 頂点フォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_apTextureBillboard[g_Billboard[nCnt].nType]);
+		if (g_Billboard[nCnt].state != BILLBOARDSTATE_NOSET)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_apTextureBillboard[g_Billboard[nCnt].nType]);
 
-		// ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
-		
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+		}
 	}
 
-	// Zテスト
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	//// Zテスト
+	//pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+	//pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	// ライトを有効にする
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
@@ -199,10 +238,10 @@ void DrawBillboard(void)
 //=========================
 //　ビルボード設定処理
 //=========================
-void SetBillboard(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nType,float fWidth,float fHeight) 
+void SetBillboard(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight,int state)
 {
 	// 頂点情報のポインタ
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx;
 
 	// 頂点バッファをロックし,頂点情報へのポインタを取得
 	g_pVtxBuffBillboard->Lock(0, 0, (void**)&pVtx, 0);
@@ -213,17 +252,17 @@ void SetBillboard(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nType,float fWidth,float
 		{// falseだったら
 
 			g_Billboard[nCnt].pos = pos;	// 座標
-			g_Billboard[nCnt].rot = rot;	// 角度
 			g_Billboard[nCnt].nType = nType;// 種類
+			g_Billboard[nCnt].state = state;// 状態
 			g_Billboard[nCnt].fWidth = fWidth; // 横幅
 			g_Billboard[nCnt].fHeight = fHeight; // 高さ
 			g_Billboard[nCnt].bUse = true;	// 使用判定
 
 			// 頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(-fWidth, fHeight, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(fWidth,  fHeight, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(-fWidth,  -fHeight, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(fWidth,  -fHeight, 0.0f);
 
 			break;
 		}
@@ -235,4 +274,110 @@ void SetBillboard(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nType,float fWidth,float
 	// アンロック
 	g_pVtxBuffBillboard->Unlock();
 
+}
+//=========================================
+//　ビルボードの表示
+//=========================================
+void CraftRange(BLOCK* pBlock)
+{
+	Player* pPlayer = GetPlayer();
+
+	// ビルボード分回す
+	for (int nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
+	{
+		// 使用状態じゃなかったらかつ種類が
+		if (!g_Billboard[nCnt].bUse && g_Billboard[nCnt].nType != BILLBOARDTYPE_FIRST)
+		{
+			continue;
+		}
+
+		// 表示範囲内に入った
+		if (sphererange(&pBlock->pos, &pPlayer->pos, 100.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
+		{
+			// 見えるようにする
+			g_Billboard[nCnt].state = BILLBOARDSTATE_SET;
+
+			// 横幅が30以上かつ縦幅が20.0f以上になったら
+			if (g_Billboard[nCnt].fWidth >= 30.0f && g_Billboard[nCnt].fHeight >= 20.0f)
+			{
+				// 横幅の拡大を止める
+				g_Billboard[nCnt].fWidth = 30.0f;
+			}
+			// 横幅が30以下かつ縦幅が20.0f以上になったら
+			else if (g_Billboard[nCnt].fWidth <= 30.0f && g_Billboard[nCnt].fHeight >= 20.0f)
+			{
+				// 横幅を拡大
+				g_Billboard[nCnt].fWidth += 1.0f;
+			}
+
+			// 大きさが20.0f以上になったら
+			if (g_Billboard[nCnt].fHeight >= 20.0f)
+			{
+				// 高さの拡大を止める
+				g_Billboard[nCnt].fHeight = 20.0f;
+			}
+			else
+			{
+				// 高さを拡大する
+				g_Billboard[nCnt].fHeight += 1.0f;
+			}
+			
+		}
+		// 表示範囲から出た
+		else if (!sphererange(&pBlock->pos, &pPlayer->pos, 100.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
+		{
+			// 横幅が5.0fいかになったら
+			if (g_Billboard[nCnt].fWidth <= 5.0f)
+			{
+				// 横幅を固定
+				g_Billboard[nCnt].fWidth = 5.0f;
+			}
+			else
+			{
+				// 横幅を縮小
+				g_Billboard[nCnt].fWidth -= 1.0f;
+			}
+
+			// 高さが0.0f以下かつ横幅が5.0fいかになったら
+			if (g_Billboard[nCnt].fHeight <= 0.0f && g_Billboard[nCnt].fWidth <= 5.0f)
+			{
+				// 高さを固定
+				g_Billboard[nCnt].fHeight = 0.0f;
+
+				// 見えなくする
+				g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
+			}
+			// 高さが0.0f以上かつ横幅が5.0f以下だったら
+			else if(g_Billboard[nCnt].fHeight >= 0.0f && g_Billboard[nCnt].fWidth <= 5.0f)
+			{
+				// 高さを縮小する
+				g_Billboard[nCnt].fHeight -= 1.0f;
+			}
+		}
+
+		// 拾える範囲に入った
+		if (sphererange(&pBlock->pos, &pPlayer->pos, 20.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
+		{
+			// クラフト状態じゃなかったら
+			if (KeyboardTrigger(DIK_Q) && !pPlayer->bCraft)
+			{
+				// クラフト状態
+				pPlayer->bCraft = true;
+
+				// クラフト状態にする
+				EnableCraft(true);
+				break;
+			}
+			// クラフト状態だったら
+			else if (KeyboardTrigger(DIK_Q) && pPlayer->bCraft)
+			{
+				// クラフト状態
+				pPlayer->bCraft = false;
+
+				// クラフト状態にしない
+				EnableCraft(false);
+				break;
+			}
+		}
+	}
 }
