@@ -143,9 +143,9 @@ void UpdateCamera(void)
 //**************************************************************************************************************************
 //      プレイヤー追従(MAPカメラ)
 //**************************************************************************************************************************
-		g_camera[MAP].posRDest.x = pPlayer->pos.x + sinf(pPlayer->rotDestPlayer.y) * 1.0f;
-		g_camera[MAP].posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
-		g_camera[MAP].posRDest.z = pPlayer->pos.z + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
+		g_camera[MAP].posRDest.x = pPlayer->pos.x + sinf(g_camera[MAIN].rot.y) * 1.0f;
+		g_camera[MAP].posRDest.y = pPlayer->pos.y + cosf(g_camera[MAIN].rot.y) * 1.0f;
+		g_camera[MAP].posRDest.z = pPlayer->pos.z + cosf(g_camera[MAIN].rot.y) * 1.0f;
 
 		g_camera[MAP].posVDest.x = pPlayer->pos.x - sinf(g_camera[MAP].rot.y);
 		g_camera[MAP].posVDest.y = pPlayer->pos.y - cosf(g_camera[MAP].rot.y) * g_camera[MAP].fDistance;
@@ -504,6 +504,16 @@ void MouseView(void)
 		{
 			g_camera[MAIN].rot.x -= Y;
 		}
+
+		if (g_camera[MAP].rot.y < -D3DX_PI)
+		{
+			g_camera[MAP].rot.y += D3DX_PI * 2.0f;
+		}
+		else if (g_camera[MAP].rot.y > D3DX_PI)
+		{
+			g_camera[MAP].rot.y += -D3DX_PI * 2.0f;
+		}
+
 		SetCursorPos((long)SCREEN_WIDTH / (long)1.5f, (long)SCREEN_HEIGHT / (long)1.5f);
 
 		prevCursorPos.x = (long)SCREEN_WIDTH / (long)1.5f;

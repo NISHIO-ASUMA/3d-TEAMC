@@ -572,11 +572,15 @@ void CraftItem(int nCntItem)
 {
 	Player* pPlayer = GetPlayer();
 
+	// アイテムが使われているかつ
 	if (g_Item[nCntItem].bUse && g_Item[nCntItem].EnableCraft)
 	{
+		// キーを押したら
 		if (KeyboardTrigger(DIK_V))
 		{
-			if (g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT)
+			// 
+			if ((g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT) ||
+				(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT))
 			{
 				SetItem(pPlayer->pos, ITEMTYPE_STONEBAT, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 			}
