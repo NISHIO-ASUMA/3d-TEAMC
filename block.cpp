@@ -15,6 +15,7 @@
 #include "Effect.h"
 #include "boss.h"
 #include "Shadow.h"
+#include "billboard.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -66,6 +67,8 @@ void InitBlock(void)
 
 	LoadBlockModel(); // ブロックのロード
 
+	//SetBillboard():
+	
 	//bLanding = false;
 	//グローバル変数の初期化
 	g_NumBlock = 0;		   // ブロックの数
@@ -251,6 +254,7 @@ void UpdateBlock(void)
 		collisionObbEnemy(nCntBlock); // 敵用の判定(分けないとうまくいかなかった)
 		collisionObbBoss(nCntBlock); // ボス用の判定(分けないとうまくいかなかった)
 
+		CraftRange(&g_Block[nCntBlock]);
 #ifdef _DEBUG
 
 		if (GetKeyboardPress(DIK_L))
@@ -344,6 +348,8 @@ void DrawBlock(void)
 //=======================
 void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
 {
+	MODE mode = GetMode();
+
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
 		if (!g_Block[nCntBlock].bUse)
@@ -356,7 +362,19 @@ void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
 			g_Block[nCntBlock].nType = nType; // 種類
 			g_Block[nCntBlock].bUse = true;   // 使用状態
 
+			// 影をセット
 			g_Block[nCntBlock].nIdxShadow = SetShadow(D3DXVECTOR3(g_Block[nCntBlock].pos.x,1.0f, g_Block[nCntBlock].pos.z),D3DXVECTOR3(0.0f, 0.0f, 0.0f), ShadowSize(g_Block[nCntBlock].Size), 0.3f);
+
+			// ブロックの種類がクラフトベンチだったら
+			if (g_Block[nCntBlock].nType == BLOCKTYPE_WORKBENCH && mode == MODE_GAME)
+			{
+				// ビルボードを設定
+				SetBillboard(D3DXVECTOR3(g_Block[nCntBlock].pos.x,g_Block[nCntBlock].pos.y + 80.0f,g_Block[nCntBlock].pos.z),
+					BILLBOARDTYPE_FIRST,
+					5.0f, 0.0f,
+					BILLBOARDSTATE_NOSET);
+			}
+
 			g_NumBlock++; // インクリメント
 			break;
 		}

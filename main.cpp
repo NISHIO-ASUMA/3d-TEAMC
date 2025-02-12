@@ -954,30 +954,8 @@ void DrawPlayerInfo(void)
 
 	sprintf(&aStrPos[0], "プレイヤーの位置X:[ %3.2f ] Y:[ %3.2f ] Z:[ %3.2f ]\n", pPlayer->pos.x,pPlayer->pos.y,pPlayer->pos.z);
 
-	switch (pPlayer->state)
-	{
-	case PLAYERSTATE_NORMAL:
-		wsprintf(&aStrState[0], "プレイヤーの状態:[ ノーマル ]\n");
-		break;
-	case PLAYERSTATE_MOVE:
-		wsprintf(&aStrState[0], "プレイヤーの状態:[ 移動 ]\n");
-		break;
-	case PLAYERSTATE_ATTACK:
-		wsprintf(&aStrState[0], "プレイヤーの状態:[ 攻撃 ]\n");
-		break;
-	case PLAYERSTATE_JUMP:
-		wsprintf(&aStrState[0], "プレイヤーの状態:[ ジャンプ ]\n");
-		break;
-	case PLAYERSTATE_LANDING:
-		wsprintf(&aStrState[0], "プレイヤーの状態:[ 着地 ]\n");
-		break;
-	case PLAYERSTATE_DAMAGE:
-		wsprintf(&aStrState[0], "プレイヤーの状態:[ ダメージ ]\n");
-		break;
-	default:
-		break;
-	}
-
+	wsprintf(&aStrState[0], "プレイヤーの状態[%d]", pPlayer->state);
+	
 	g_pFont->DrawText(NULL, &aStrPos[0], -1, &rectPos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrState[0], -1, &rectState, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 

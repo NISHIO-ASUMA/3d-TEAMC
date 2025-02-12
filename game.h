@@ -34,4 +34,5 @@ void SetGameState(GAMESTATE state); // ゲーム画面の状態の設定処理
 GAMESTATE GetGameState(void);		// ゲーム画面の取得処理
 void SetEnablePause(bool bPause);	// ポーズの有効無効処理
 bool GetEditState(void);			// エディットモードの取得
+bool EnableCraft(bool bCraft);      // クラフトの状態の設定
 #endif
