@@ -752,6 +752,24 @@ void CraftItem(int nCntItem)
 				(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT) &&
 				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
 			{
+				// 火花っぽいエフェクト
+				SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
+					D3DXVECTOR3(0.0f,0.0f,0.0f),
+					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
+					2.0f, 2, 40, 40, 5.0f, 2.0f, false,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+					3.0f, 2, 40, 40, 3.0f, 2.0f, false,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+				SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+
 				// 持っているアイテムを変更
 				Itemchange(ITEMTYPE_STONEBAT);
 
