@@ -245,6 +245,9 @@ void UpdateCraftUI(void)
 			case WEPONTYPE_STONEBAT:
 				g_MixUI[nCnt].bUse = false;
 				break;
+			case WEPONTYPE_ICEBLOCKSOWRD:
+				g_MixUI[nCnt].bUse = false;
+				break;
 			default:
 				break;
 			}
@@ -292,6 +295,8 @@ void DrawCraftUI(void)
 
 	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffItemIcon, 0, sizeof(VERTEX_2D));
+
+	//D3DXMatrixShadow()
 
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
@@ -394,14 +399,13 @@ void SetMixItemUI(int nCnt)
 	// アイテムの最大数分回す
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && SetCounter == 0)
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && !g_MixUI[nCnt].bUse)
 		{
 			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
-			SetCounter = 1;
 		}
-		else
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_ICEBLOCKSOWRD] && !g_MixUI[nCnt].bUse)
 		{
-			SetCounter = 0;
+			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_ICEBLOCKSOWRD, 80.0f, 80.0f, 0);
 		}
 	}
 }
