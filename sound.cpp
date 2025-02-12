@@ -46,7 +46,9 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/actionhammerSe.wav", 0},// 大型武器系統SE
 	{"data/SE/itemSe.wav", 0},		  // アイテム取得SE
 	{"data/SE/damageSe.wav", 0},	  // ダメージ音
-	{"data/SE/special_attack.wav",0}  // SP攻撃音
+	{"data/SE/special_attack.wav",0},  // SP攻撃音
+	{"data/SE/craft.wav",0},  // 武器作成SE
+	{"data/SE/powerup.wav",0}  // フィーバー開始SE
 };
 //=============================================================================
 // 初期化処理
