@@ -153,6 +153,8 @@ void InitItem(void)
 		// 頂点バッファのアンロック
 		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->UnlockVertexBuffer();
 	}
+
+	Player* pPlayer = GetPlayer();
 }
 //===============================================================================================================
 //ブロックの終了処理
@@ -681,5 +683,9 @@ void ElementChange(int nTypeItem)
 	else if (g_TexItem[nTypeItem].nType == 29) // 看板の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
+	}
+	else if (g_TexItem[nTypeItem].nType == 30) // 初期刀の属性
+	{
+		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
 }

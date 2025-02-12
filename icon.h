@@ -49,6 +49,7 @@ typedef enum
 	WEPONTYPE_HEXMANDOLIN,	 // ハープ (呪物の合成武器)
 	WEPONTYPE_SURFBOARDFISH, // 魚とサーフボードの合成
 	WEPONTYPE_TUTORIAL,		 // チュートリアル看板
+	WEPONTYPE_KATANA,		 // 初期装備刀
 	WEPONTYPE_MAX
 }WEPON_TYPE;
 
@@ -89,6 +90,7 @@ static const char* ICON_TEXTURE[WEPONTYPE_MAX] =
 	"data\\TEXTURE\\hexmandolin.png",	// ハープ
 	"data\\TEXTURE\\surfboardfish.png", // サーフボードの合成武器
 	"data\\TEXTURE\\tutorial.png",		// チュートリアルの看板
+	"data\\TEXTURE\\katana.png",		// 初期装備刀
 };
 
 //**************************************************************************************************************

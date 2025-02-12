@@ -180,6 +180,9 @@ void InitPlayer(void)
 		//最初に描画したいプレイヤーの情報を代入
 		g_player = g_LoadPlayer[0];
 	}
+	/*Itemchange(30);
+	MotionChange(MOTION_KATANA, 0);
+	StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);*/
 }
 //===============================================================================================================
 //プレイヤーの終了処理
@@ -1631,6 +1634,10 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			case ITEMTYPE_TUTORIAL:
 				MotionChange(MOTION_DBHAND, 1);
 				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
+				break;
+			case ITEMTYPE_KATANA:
+				MotionChange(MOTION_KATANA, 0);
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
 				break;
 			default:
 				break;
