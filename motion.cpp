@@ -41,6 +41,7 @@ void UpdateMotion(MOTION *pMotion)
 		DiffRotY = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotY - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY;
 		DiffRotZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotZ - pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ;
 
+		// Šp“x‚Ì³‹K‰»
 		if (DiffRotX > D3DX_PI)
 		{
 			DiffRotX += -D3DX_PI * 2.0f;

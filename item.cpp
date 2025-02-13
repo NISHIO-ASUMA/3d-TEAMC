@@ -767,7 +767,7 @@ void CraftItem(int nCntItem)
 	if (g_Item[nCntItem].bUse && g_Item[nCntItem].EnableCraft)
 	{
 		// キーを押したら
-		if (KeyboardTrigger(DIK_V))
+		if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_A))
 		{
 			// ストーンバットの材料がそろった
 			if ((g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT &&

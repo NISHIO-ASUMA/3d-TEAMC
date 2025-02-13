@@ -19,6 +19,7 @@
 typedef enum
 {
 	CRAFTUITYPE_ONE = 0,
+	CRAFTUITYPE_TWO,
 	CRAFTUITYPE_MAX
 }CRAFTUITYPE;
 
@@ -28,6 +29,7 @@ typedef enum
 static const char* CRAFTUITYPE_INFO[CRAFTUITYPE_MAX] =
 {
 	"data\\TEXTURE\\createwepon_back.png",
+	"data\\TEXTURE\\UI_craft.png",
 };
 
 //**************************************************************************************************************
