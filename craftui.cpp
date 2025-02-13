@@ -398,6 +398,7 @@ void SetMixItemUI(int nCnt)
 	// アイテムの最大数分回す
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
+		// 作れるアイテムが
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && g_MixUI[nCnt].bUse == false)
 		{
 			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
