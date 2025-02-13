@@ -112,6 +112,8 @@ void InitPlayer(void)
 	nCntMotion = 0;
 	nKey = 0;
 	g_player.bCraft = false;
+	// TODO : ここの処理考える
+	// g_player.nIdxCameraTex = SetTexCamera(D3DXVECTOR3(1000.0f,200.0f,0.0f), g_player.rot, 0, 150.0f, 150.0f); // カメラテクスチャ
 
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)

@@ -76,6 +76,7 @@ void InitEnemy(void)
 		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;					// 状態
 		g_Enemy[nCntEnemy].Speed = 0.0f;							    // 足の速さ
 		g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;                // 敵が攻撃状態か
+		g_Enemy[nCntEnemy].nCountAction = 0;                // 攻撃のインターバル値
 	}
 
 	//グローバル変数の初期化
@@ -266,6 +267,7 @@ void UpdateEnemy(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
+		g_Enemy[nCntEnemy].nCountAction++;
 		if (!g_Enemy[nCntEnemy].bUse)
 		{// 未使用状態だったら
 			// とばしてカウントを進める
@@ -400,10 +402,18 @@ void UpdateEnemy(void)
 			AgentEnemy(nCntEnemy);
 
 			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+			D3DXVECTOR3 dest = pPlayer->pos - g_Enemy[nCntEnemy].pos; // プレイヤーのベクトルを求める
+			D3DXVec3Normalize(&dest, &dest); // 正規化する
 
 			g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
 
-			//SetBullet(g_Enemy[nCntEnemy].pos, g_Enemy[nCntEnemy].rot, 40, 10.0f, 2.0f, true);
+			// 弾を発射する処理
+			if (g_Enemy[nCntEnemy].nCountAction >= 60)
+			{
+				// 左から場所、ベクトル、方向、寿命、威力、大きさ、速度
+				SetBullet(g_Enemy[nCntEnemy].pos, dest, D3DXVECTOR3(0.0f, fAngle, 0.0f), 40, 10, 10.0f, 3.0f, true);
+				g_Enemy[nCntEnemy].nCountAction = 0;
+			}
 		}
 
 		//敵の角度の正規化
@@ -678,6 +688,7 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 			g_Enemy[nCntEnemy].nType = nType; // 種類
 			g_Enemy[nCntEnemy].nLife = nLife; // 体力
 			g_Enemy[nCntEnemy].Speed = Speed; // 足の速さ
+			g_Enemy[nCntEnemy].nCountAction = 0;
 			g_Enemy[nCntEnemy].bUse = true;   // 使用状態
 
 			// 影を設定
