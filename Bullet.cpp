@@ -31,11 +31,14 @@ void InitBullet(void)
 		g_Bullet[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_Bullet[nCnt].bUse = false;
 		g_Bullet[nCnt].nLife = 0;
+		g_Bullet[nCnt].fSize = 2.0f;
+		g_Bullet[nCnt].fSpeed = 1.0f;
+		g_Bullet[nCnt].bEnemy = true;
 
-		pVtx[0].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x - 10.0f, g_Bullet[nCnt].pos.y + 10.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x + 10.0f, g_Bullet[nCnt].pos.y + 10.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x - 10.0f, g_Bullet[nCnt].pos.y - 10.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x + 10.0f, g_Bullet[nCnt].pos.y - 10.0f, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x - g_Bullet[nCnt].fSize, g_Bullet[nCnt].pos.y + g_Bullet[nCnt].fSize, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x + g_Bullet[nCnt].fSize, g_Bullet[nCnt].pos.y + g_Bullet[nCnt].fSize, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x - g_Bullet[nCnt].fSize, g_Bullet[nCnt].pos.y - g_Bullet[nCnt].fSize, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x + g_Bullet[nCnt].fSize, g_Bullet[nCnt].pos.y - g_Bullet[nCnt].fSize, 0.0f);
 
 		pVtx[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 		pVtx[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
@@ -81,12 +84,18 @@ void UpdateBullet(void)
 		if (g_Bullet[nCnt].bUse == true)
 		{
 			g_Bullet[nCnt].posDest = g_Bullet[nCnt].pos;
-			g_Bullet[nCnt].pos.x += g_Bullet[nCnt].move.x;
-			g_Bullet[nCnt].pos.y += g_Bullet[nCnt].move.y;
-			g_Bullet[nCnt].pos.z += g_Bullet[nCnt].move.z;
+			g_Bullet[nCnt].pos += g_Bullet[nCnt].move;
 			g_Bullet[nCnt].nLife--;
 			SetPositionShadow(g_Bullet[nCnt].nIdxShadow, g_Bullet[nCnt].pos, 2.0f + 2.0f * g_Bullet[nCnt].pos.y / 200.0f, 1.0f / (1.0f + g_Bullet[nCnt].pos.y / 30.0f));
-			SetEffect(g_Bullet[nCnt].pos, g_Bullet[nCnt].dir, 1, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 0.0f, 10.0f);
+			
+			if (g_Bullet[nCnt].bEnemy == false)
+			{
+				SetEffect(g_Bullet[nCnt].pos, g_Bullet[nCnt].dir, 5, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, 10.0f);
+			}
+			else
+			{
+				SetEffect(g_Bullet[nCnt].pos, g_Bullet[nCnt].dir, 5, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f), 0.0f, 10.0f);
+			}
 
 			if (g_Bullet[nCnt].nLife <= 0)
 			{
@@ -147,7 +156,7 @@ void DrawBullet(void)
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife)
+void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife, float fSize,float fSpeed, bool Enemy)
 {
 	int nCntBullet;
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -161,8 +170,11 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife)
 			g_Bullet[nCntBullet].pos = pos;
 			g_Bullet[nCntBullet].dir = dir;
 			g_Bullet[nCntBullet].nLife = nLife;
+			g_Bullet[nCntBullet].fSpeed = fSpeed;
+			g_Bullet[nCntBullet].fSize = fSize;
+			g_Bullet[nCntBullet].bEnemy = Enemy;
 			g_Bullet[nCntBullet].bUse = true;
-			g_Bullet[nCntBullet].move = D3DXVECTOR3(sinf(g_Bullet[nCntBullet].dir.y) * 20.0f, sinf(g_Bullet[nCntBullet].dir.x) * 20.0f, cosf(g_Bullet[nCntBullet].dir.y) * 20.0f);
+			g_Bullet[nCntBullet].move = D3DXVECTOR3(sinf(g_Bullet[nCntBullet].dir.y) * fSpeed, sinf(g_Bullet[nCntBullet].dir.x) * fSpeed, cosf(g_Bullet[nCntBullet].dir.y) * fSpeed);
 			break;
 		}
 		pVtx += 4;
