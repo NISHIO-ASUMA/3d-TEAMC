@@ -869,6 +869,31 @@ void UpdatePlayer(void)
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}	//モーションの更新
 
+	// アイテムのストック
+	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && KeyboardTrigger(DIK_F))
+	{
+		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
+
+		// モーションを歩きにする(第2引数に1を入れる)
+		MotionChange(MOTION_DBHAND, 1);
+
+		// 素手の時のモーション情報を代入
+		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
+		{
+			g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].Motion.aModel[nCntModel]; // モデルの情報を代入
+		}
+		for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
+		{
+			g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].Motion.aMotionInfo[nCntMotion];
+		}
+
+		// 投げた後に武器を消す
+		g_player.Motion.nNumModel -= 1;
+
+		// プレイヤーの状態を何も持っていない状態にする
+		g_player.HandState = PLAYERHOLD_NO;
+	}
+
 	UpdateMotion(&g_player.Motion);
 
 	//プレイヤーの向きを目的の向きに近づける
