@@ -525,7 +525,7 @@ void Draw(void)
 
 	for (int nCnt = 0; nCnt < CAMERATYPE_MAX; nCnt++)
 	{
-		if (!pPlayer->bCraft && nCnt == 2)
+		if (!pPlayer->bCraft && nCnt == 1)
 		{
 			break;
 		}
@@ -600,7 +600,7 @@ void Draw(void)
 			//DrawDebugPlayerPos();
 
 #endif
-			if (nCnt == 2)
+			if (nCnt == 1)
 			{
 				DrawCraftUI();
 			}

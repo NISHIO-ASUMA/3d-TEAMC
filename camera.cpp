@@ -22,10 +22,9 @@
 #define MAX_VIEWUP (3.00f) // カメラの制限
 #define MAX_VIEWDOWN (0.1f) // カメラの制限
 #define MAIN (0) // プレイヤーを見るカメラのインデックス
-#define MAP (1) // ミニマップのカメラのインデックス
-#define CRAFT (2) // クラフト画面
+#define CRAFT (1) // クラフト画面
 #define MAX_CAMERATEX (256) // テクスチャ最大数
-#define aaa	(20)
+#define SPCOUNT	(20)
 
 //***************************************************************************************************************
 // ミニマップ用テクスチャ列挙型宣言
@@ -83,7 +82,6 @@ void InitCamera(void)
 {
 	// 変数の初期化
 	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 250.0f, -600.0f);			// カメラの位置
-	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 800.0f, 0.0f);			// カメラの位置
 
 	for (int nCnt = 0; nCnt < CAMERATYPE_MAX; nCnt++)
 	{
@@ -108,13 +106,6 @@ void InitCamera(void)
 	g_camera[MAIN].viewport.Height = 720; // 高さ
 	g_camera[MAIN].viewport.MinZ = 0.0f;
 	g_camera[MAIN].viewport.MaxZ = 1.0f;
-
-	g_camera[MAP].viewport.X = 1000; // 2DX座標
-	g_camera[MAP].viewport.Y = 100; // 2DY座標
-	g_camera[MAP].viewport.Width = 200; // 幅
-	g_camera[MAP].viewport.Height = 200; // 高さ
-	g_camera[MAP].viewport.MinZ = 0.0f;
-	g_camera[MAP].viewport.MaxZ = 1.0f;
 	
 	g_camera[CRAFT].viewport.X = 300; // 2DX座標
 	g_camera[CRAFT].viewport.Y = 200; // 2DY座標
@@ -191,23 +182,6 @@ void UpdateCamera(void)
 		g_camera[MAIN].posV.x += ((g_camera[MAIN].posVDest.x - g_camera[MAIN].posV.x) * 0.3f);
 		g_camera[MAIN].posV.z += ((g_camera[MAIN].posVDest.z - g_camera[MAIN].posV.z) * 0.3f);*/
 
-//**************************************************************************************************************************
-//      プレイヤー追従(MAPカメラ)
-//**************************************************************************************************************************
-		g_camera[MAP].posRDest.x = pPlayer->pos.x + sinf(g_camera[MAIN].rot.y) * 1.0f;
-		g_camera[MAP].posRDest.y = pPlayer->pos.y + cosf(g_camera[MAIN].rot.y) * 1.0f;
-		g_camera[MAP].posRDest.z = pPlayer->pos.z + cosf(g_camera[MAIN].rot.y) * 1.0f;
-
-		g_camera[MAP].posVDest.x = pPlayer->pos.x - sinf(g_camera[MAP].rot.y);
-		g_camera[MAP].posVDest.y = pPlayer->pos.y - cosf(g_camera[MAP].rot.y) * g_camera[MAP].fDistance;
-		g_camera[MAP].posVDest.z = pPlayer->pos.z - cosf(g_camera[MAP].rot.y);
-
-		g_camera[MAP].posR.x += ((g_camera[MAP].posRDest.x - g_camera[MAP].posR.x) * 0.3f);
-		g_camera[MAP].posR.y += ((g_camera[MAP].posRDest.y - g_camera[MAP].posR.y) * 0.3f);
-		g_camera[MAP].posR.z += ((g_camera[MAP].posRDest.z - g_camera[MAP].posR.z) * 0.3f);
-
-		g_camera[MAP].posV.x += ((g_camera[MAP].posVDest.x - g_camera[MAP].posV.x) * 0.3f);
-		g_camera[MAP].posV.z += ((g_camera[MAP].posVDest.z - g_camera[MAP].posV.z) * 0.3f);
 	}
 	
 	// スペシャルモーションを発動したとき
@@ -235,7 +209,7 @@ void UpdateCamera(void)
 		//	nCounter = 0; // 初期化
 		//}
 
-		int n = rand() % aaa + 1 - aaa / 2;
+		int n = rand() % SPCOUNT + 1 - SPCOUNT / 2;
 
 		// カメラを移動させる
 		g_camera[MAIN].posV.z -= sinf(g_camera[MAIN].rot.y)+ n;
@@ -399,11 +373,11 @@ void SetCamera(int nCnt)
 	// プロジェクションマトリックスの設定
 	pDevice->SetTransform(D3DTS_PROJECTION, &g_camera[nCnt].mtxProjection);
 
-	if (nCnt == MAP)
-	{
-		// テクスチャ描画
-		DrawCameraTex();
-	}
+	//if (nCnt == MAP)
+	//{
+	//	// テクスチャ描画
+	//	DrawCameraTex();
+	//}
 	
 }
 //===========================================================================================================
@@ -564,15 +538,6 @@ void MouseView(void)
 		else if (g_camera[MAIN].rot.x < MAX_VIEWDOWN)
 		{
 			g_camera[MAIN].rot.x -= Y;
-		}
-
-		if (g_camera[MAP].rot.y < -D3DX_PI)
-		{
-			g_camera[MAP].rot.y += D3DX_PI * 2.0f;
-		}
-		else if (g_camera[MAP].rot.y > D3DX_PI)
-		{
-			g_camera[MAP].rot.y += -D3DX_PI * 2.0f;
 		}
 
 		SetCursorPos((long)SCREEN_WIDTH / (long)1.5f, (long)SCREEN_HEIGHT / (long)1.5f);
