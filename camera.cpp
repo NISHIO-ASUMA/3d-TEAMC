@@ -24,6 +24,39 @@
 #define MAIN (0) // プレイヤーを見るカメラのインデックス
 #define MAP (1) // ミニマップのカメラのインデックス
 #define CRAFT (2) // クラフト画面
+#define MAX_CAMERATEX (256) // テクスチャ最大数
+
+//***************************************************************************************************************
+// ミニマップ用テクスチャ列挙型宣言
+//***************************************************************************************************************
+typedef enum
+{
+	MINIMAPTEX_PLAYER = 0,
+	MINIMAPTEX_ENEMY,
+	MINIMAPTEX_MAX
+}MINIMAPTEX;
+
+//***************************************************************************************************************
+// テクスチャパス宣言
+//***************************************************************************************************************
+static const char* CAMERA_TEX[MINIMAPTEX_MAX] =
+{
+	"data\\TEXTURE\\player_circle.png",
+	"data\\TEXTURE\\enemy_circle.png",
+};
+
+//***************************************************************************************************************
+// ミニマップ用テクスチャ構造体宣言
+//***************************************************************************************************************
+typedef struct
+{
+	D3DXVECTOR3 pos; // 座標
+	D3DXVECTOR3 rot; // 角度
+	int nType;		 // 種類
+	bool bUse;		 // 使用しているかどうか
+	float fWidth;	 //	横幅
+	float fHeight;	 // 高さ
+}CameraTex;
 
 //***************************************************************************************************************
 // プロトタイプ宣言
@@ -31,12 +64,16 @@
 void MouseView(void);       // ゲームの時のマウスの視点移動
 void MouseEditMode(void); // 編集モードの時のマウス移動
 
+
 //***************************************************************************************************************
 // グローバル変数宣言
 //***************************************************************************************************************
 Camera g_camera[CAMERATYPE_MAX];		// カメラ情報
-//Camera g_camera;						// カメラ情報
-D3DXVECTOR3 Zoom;
+D3DXVECTOR3 Zoom;						// ホイールのズーム
+
+CameraTex g_CameraTex[MAX_CAMERATEX]; // テクスチャ用構造体情報
+LPDIRECT3DTEXTURE9 g_pTextureCamera[MINIMAPTEX_MAX] = {}; // テクスチャへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffCamera = NULL;		   // 頂点バッファへのポインタ
 
 //===========================================================================================================
 // カメラの初期化処理
@@ -638,4 +675,183 @@ void MouseWheel(int zDelta)
 		g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
 		g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 	}
+}
+//===========================================================================================================
+// カメラテクスチャの初期化処理
+//===========================================================================================================
+void InitCameraTex()
+{
+	// デバイスのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	for (int nCnt = 0; nCnt < MINIMAPTEX_MAX; nCnt++)
+	{
+		//テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,
+			CAMERA_TEX[nCnt],
+			&g_pTextureCamera[nCnt]);
+	}
+
+	// 頂点バッファの生成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_CAMERATEX,
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_2D,
+		D3DPOOL_MANAGED,
+		&g_pVtxBuffCamera,
+		NULL);
+
+	// 構造体変数の初期化
+	for (int nCnt = 0; nCnt < MAX_CAMERATEX; nCnt++)
+	{
+		g_CameraTex[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 座標
+		g_CameraTex[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 角度
+		g_CameraTex[nCnt].nType = 0; // 種類
+		g_CameraTex[nCnt].fHeight = 0.0f; // 高さ
+		g_CameraTex[nCnt].fWidth = 0.0f; // 横幅
+		g_CameraTex[nCnt].bUse = false; // 未使用判定
+	}
+
+	// 頂点バッファのロック
+	g_pVtxBuffCamera->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点座標関係
+	for (int nCntCamera = 0; nCntCamera < MAX_CAMERATEX; nCntCamera++)
+	{
+		// 頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+		// rhwの設定
+		pVtx[0].rhw = 1.0f;
+		pVtx[1].rhw = 1.0f;
+		pVtx[2].rhw = 1.0f;
+		pVtx[3].rhw = 1.0f;
+
+		// 頂点カラーの設定
+		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+		// テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+		// 頂点情報を進める
+		pVtx += 4;
+	}
+
+	// アンロック
+	g_pVtxBuffCamera->Unlock();
+
+}
+//===========================================================================================================
+// カメラテクスチャの終了処理
+//===========================================================================================================
+void UninitCameraTex()
+{
+	// テクスチャの破棄
+	for (int nCnt = 0; nCnt < MINIMAPTEX_MAX; nCnt++)
+	{
+		if (g_pTextureCamera[nCnt] != NULL)
+		{
+			g_pTextureCamera[nCnt]->Release();
+			g_pTextureCamera[nCnt] = NULL;
+		}
+	}
+
+	// 頂点バッファの破棄
+	if (g_pVtxBuffCamera != NULL)
+	{
+		g_pVtxBuffCamera->Release();
+		g_pVtxBuffCamera = NULL;
+	}
+}
+//===========================================================================================================
+// カメラテクスチャの描画処理
+//===========================================================================================================
+void DrawCameraTex()
+{
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	// 頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffCamera, 0, sizeof(VERTEX_2D));
+
+	// 頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_2D);
+
+	for (int nCnt = 0; nCnt < MAX_CAMERATEX; nCnt++)
+	{
+		// 種類を保存
+		int nType = g_CameraTex[nCnt].nType;
+
+		if (g_CameraTex[nCnt].bUse)
+		{// 使用判定のものだけ
+
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureCamera[nType]);
+
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+		}
+	}
+
+}
+//===========================================================================================================
+// カメラテクスチャの設定処理
+//===========================================================================================================
+int SetTexCamera(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nType, float fWidth, float fHeight)
+{
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	// カウント用の変数
+	int nCnt;
+
+	// 頂点バッファのロック
+	g_pVtxBuffCamera->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (nCnt = 0; nCnt < MAX_CAMERATEX; nCnt++)
+	{
+		if (!g_CameraTex[nCnt].bUse)
+		{// 未使用状態だったら
+			g_CameraTex[nCnt].pos = pos; // 座標
+			g_CameraTex[nCnt].rot = rot; // 角度
+			g_CameraTex[nCnt].nType = nType; // 種類
+			g_CameraTex[nCnt].fWidth = fWidth; // 横幅
+			g_CameraTex[nCnt].fHeight = fHeight; // 高さ
+			g_CameraTex[nCnt].bUse = true; // 使用判定
+
+			// 頂点座標の設定
+			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
+
+			break;
+
+		}
+		pVtx += 4;
+	}
+
+	// 頂点バッファのアンロック
+	g_pVtxBuffCamera->Unlock();
+
+	// カウント番号を返す
+	return nCnt;
+}
+//===========================================================================================================
+// テクスチャの番号を指定して消去する処理
+//===========================================================================================================
+void DeleteTex(int nIdx)
+{
+	g_CameraTex[nIdx].bUse = false;
 }
