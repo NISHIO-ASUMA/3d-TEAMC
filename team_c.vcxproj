@@ -195,6 +195,7 @@
     <ClInclude Include="billboard.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="boss.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="craftui.h" />
     <ClInclude Include="Damagepop.h" />
