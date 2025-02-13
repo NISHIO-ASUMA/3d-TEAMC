@@ -368,7 +368,7 @@ void UpdateGame(void)
 		break;
 	}
 
-	if (KeyboardTrigger(DIK_P) == true || JoypadTrigger(JOYKEY_START) == true)
+	if ((KeyboardTrigger(DIK_P) == true || JoypadTrigger(JOYKEY_START) == true) && g_bCraft == false)
 	{//ポーズキー(Pキー)が押された
 		g_bPause = g_bPause ? false : true;
 	}

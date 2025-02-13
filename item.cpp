@@ -779,7 +779,7 @@ void CraftItem(void)
 				CraftMixItem(nCnt, WEPONTYPE_STONEBAT, MOTION_DBHAND);
 
 				// ステータスの変更
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
 			}
 			// 氷の剣の材料がそろった
 			if ((g_Item[nCnt].nType == WEPONTYPE_ICEBLOCK &&
@@ -790,7 +790,7 @@ void CraftItem(void)
 				CraftMixItem(nCnt, WEPONTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
 
 				// ステータスの変更
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
 			}
 
 		}
@@ -798,23 +798,6 @@ void CraftItem(void)
 		EnableCraftIcon(nCnt, WEPONTYPE_STONE, WEPONTYPE_BAT, WEPONTYPE_STONEBAT);
 		EnableCraftIcon(nCnt, ITEMTYPE_ICEBLOCK, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCKSOWRD);
 	}
-	
-
-
-	
-
-	//// 氷の剣の材料がそろった
-	//if ((g_Item[nCntItem].nType == ITEMTYPE_ICEBLOCK && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA &&
-	//	g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
-	//	(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_ICEBLOCK && g_Item[nCntItem].nType == ITEMTYPE_KATANA) &&
-	//	g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
-	//{
-	//	// アイテムをクラフトした時の処理
-	//	CraftMixItem(nCntItem, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
-
-	//	// ステータスの変更
-	//	StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
-	//}
 }
 //==============================================================================================================
 // クラフト先のアイテム

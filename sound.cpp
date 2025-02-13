@@ -29,6 +29,8 @@ IXAudio2MasteringVoice *g_pMasteringVoice = NULL;			// マスターボイス
 IXAudio2SourceVoice *g_apSourceVoice[SOUND_LABEL_MAX] = {};	// ソースボイス
 BYTE *g_apDataAudio[SOUND_LABEL_MAX] = {};					// オーディオデータ
 DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
+int g_SoundCount = 0;
+int g_SoundInterval = 0;
 
 // サウンドの情報
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
@@ -55,6 +57,9 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 //=============================================================================
 HRESULT InitSound(HWND hWnd)
 {
+	g_SoundCount = 0;
+	g_SoundInterval = 0;
+
 	HRESULT hr;
 
 	// COMライブラリの初期化
@@ -237,30 +242,44 @@ HRESULT PlaySound(SOUND_LABEL label)
 	XAUDIO2_VOICE_STATE xa2state;
 	XAUDIO2_BUFFER buffer;
 
-	// バッファの値設定
-	memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
-	buffer.AudioBytes = g_aSizeAudio[label];
-	buffer.pAudioData = g_apDataAudio[label];
-	buffer.Flags      = XAUDIO2_END_OF_STREAM;
-	buffer.LoopCount  = g_aSoundInfo[label].nCntLoop;
+	if (g_SoundCount <= 15)
+	{
+		// バッファの値設定
+		memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
+		buffer.AudioBytes = g_aSizeAudio[label];
+		buffer.pAudioData = g_apDataAudio[label];
+		buffer.Flags = XAUDIO2_END_OF_STREAM;
+		buffer.LoopCount = g_aSoundInfo[label].nCntLoop;
 
-	// 状態取得
-	g_apSourceVoice[label]->GetState(&xa2state);
-	if(xa2state.BuffersQueued != 0)
-	{// 再生中
-		// 一時停止
-		g_apSourceVoice[label]->Stop(0);
+		// 状態取得
+		g_apSourceVoice[label]->GetState(&xa2state);
+		if (xa2state.BuffersQueued != 0)
+		{// 再生中
+			// 一時停止
+			g_apSourceVoice[label]->Stop(0);
 
-		// オーディオバッファの削除
-		g_apSourceVoice[label]->FlushSourceBuffers();
+			// オーディオバッファの削除
+			g_apSourceVoice[label]->FlushSourceBuffers();
+		}
+
+		// オーディオバッファの登録
+		g_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
+
+		// 再生
+		g_apSourceVoice[label]->Start(0);
+
+		g_SoundCount++;
 	}
+	else
+	{
+		g_SoundInterval++;
 
-	// オーディオバッファの登録
-	g_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
-
-	// 再生
-	g_apSourceVoice[label]->Start(0);
-
+		if (g_SoundInterval >= 120)
+		{
+			g_SoundCount = 0;
+			g_SoundInterval = 0;
+		}
+	}
 	return S_OK;
 }
 

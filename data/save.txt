@@ -499,5 +499,21 @@ EDITCATEGORY = 1			# [ カテゴリー1 ]
    SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
-BLOCK_COUNT = 69    # [ ブロックの配置数 ]
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 39			# [ ブロックの種類 ]
+   POS = 517.1 0.0 549.7			# [ 位置 ]
+   ROT = 0.000 0.000 0.000			# [ 向き ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 38			# [ ブロックの種類 ]
+   POS = -204.2 0.0 491.0			# [ 位置 ]
+   ROT = 0.000 0.000 0.000			# [ 向き ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCK_COUNT = 71    # [ ブロックの配置数 ]
 END_SCRIPT          # この行は消さないでください
