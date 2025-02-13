@@ -2,7 +2,7 @@
 +   アイテムの読み込み処理(種類追加したら一応報告お願いします)   +     
 +----------------------------------------------------------------+
 
-MAX_TYPE = 30 # 読み込むモデル数
+MAX_TYPE = 31 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -37,6 +37,7 @@ MODEL_FILENAME = data/MODEL/ITEM/wepon_hex.x							# [26]呪いの珠
 MODEL_FILENAME = data/MODEL/ITEM/wepon_hexmandolin.x					# [27]ハープ
 MODEL_FILENAME = data/MODEL/ITEM/wepon_surfboardfish.x					# [28]サメの浮き輪
 MODEL_FILENAME = data/MODEL/ITEM/wepon_tutorial.x						# [29]4枚目のチュートリアルの看板
+MODEL_FILENAME = data/MODEL/ITEM/wepon_katana.x							# [30]刀
 
 # もしやり方わかるならITEM.hの列挙型追加頼む
 

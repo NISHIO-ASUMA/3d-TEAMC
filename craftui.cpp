@@ -163,7 +163,8 @@ void InitCraftUI(void)
 	//頂点ロック解除
 	g_pVtxBuffItemIcon->Unlock();
 
-	SetCraftUI(D3DXVECTOR3(625.0f, 400.0f, 0.0f), 0, 325.0f, 200.0f, 0);
+	SetCraftUI(D3DXVECTOR3(625.0f, 400.0f, 0.0f), CRAFTUITYPE_ONE, 325.0f, 200.0f, 0);
+	SetCraftUI(D3DXVECTOR3(625.0f, 450.0f, 0.0f), CRAFTUITYPE_TWO, 100.0f, 50.0f, -1);
 }
 //==============================================================================================================
 // UIの終了処理
@@ -238,11 +239,15 @@ void UpdateCraftUI(void)
 		{
 			continue;
 		}
+
 		if (pPlayer->HandState != PLAYERHOLD_HOLD)
 		{
 			switch (g_MixUI[nCnt].nIconType)
 			{
 			case WEPONTYPE_STONEBAT:
+				g_MixUI[nCnt].bUse = false;
+				break;
+			case WEPONTYPE_ICEBLOCKSOWRD:
 				g_MixUI[nCnt].bUse = false;
 				break;
 			default:
@@ -389,19 +394,17 @@ void SetMixUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUseT
 void SetMixItemUI(int nCnt)
 {
 	Item* pItem = GetItem();
-	static int SetCounter = 0;
 
 	// アイテムの最大数分回す
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && SetCounter == 0)
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && g_MixUI[nCnt].bUse == false)
 		{
 			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
-			SetCounter = 1;
 		}
-		else
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_ICEBLOCKSOWRD] && g_MixUI[nCnt].bUse == false)
 		{
-			SetCounter = 0;
+			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_ICEBLOCKSOWRD, 80.0f, 80.0f, 0);
 		}
 	}
 }

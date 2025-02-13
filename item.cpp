@@ -32,6 +32,8 @@
 //**************************************************************************************************************
 void LoadItemModel(void); // アイテムのロード処理
 void CraftItem(int nCntItem);
+void CraftMixItem(int nCntItem,int MixItem,int motionchange);
+void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem);
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -39,6 +41,7 @@ void CraftItem(int nCntItem);
 Item g_Item[MAX_ITEM];			// 構造体変数
 int g_ItemTypeMax;				// 種類数
 Item g_TexItem[ITEMTYPE_MAX];	// テクスチャ関係
+bool bFIrstCraftItem = false;
 
 //===============================================================================================================
 //ブロックの初期化処理
@@ -71,6 +74,7 @@ void InitItem(void)
 	}
 
 	LoadItemModel(); // アイテムのロード処理
+	bFIrstCraftItem = false;
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
@@ -217,6 +221,25 @@ void UpdateItem(void)
 		{//使用中じゃなかったら
 			// 処理を読み飛ばす
 			continue;
+		}
+
+		// プレイヤーのアイテムを刀にする
+		if (bFIrstCraftItem == false && g_Item[nCntItem].nType == ITEMTYPE_KATANA)
+		{
+			// アイテム変更
+			Itemchange(g_Item[nCntItem].nType);
+
+			// モーションの変更
+			MotionChange(MOTION_KATANA, 0);
+
+			// アイテムのインデックスを保存
+			pPlayer->ItemIdx = nCntItem;
+
+			// ステータス変更
+			StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
+
+			// 最初に切り替えた
+			bFIrstCraftItem = true;
 		}
 
 		// 投げられたアイテムにエフェクト
@@ -752,54 +775,89 @@ void CraftItem(int nCntItem)
 				(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT) &&
 				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
 			{
-				// 火花っぽいエフェクト
-				SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
-					D3DXVECTOR3(0.0f,0.0f,0.0f),
-					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
-					2.0f, 2, 40, 40, 5.0f, 2.0f, false,
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-					3.0f, 2, 40, 40, 3.0f, 2.0f, false,
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-				SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-
-				// 持っているアイテムを変更
-				Itemchange(ITEMTYPE_STONEBAT);
-
-				// モーションの変更
-				MotionChange(MOTION_DBHAND, 0);
+				// アイテムをクラフトした時の処理
+				CraftMixItem(nCntItem, WEPONTYPE_STONEBAT, MOTION_DBHAND);
 
 				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+			}
 
-				// クラフトに使ったアイテムを消す
-				g_Item[nCntItem].bUse = false;
+			// 氷の剣の材料がそろった
+			if ((g_Item[nCntItem].nType == ITEMTYPE_ICEBLOCK && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA &&
+				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
+				(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_ICEBLOCK && g_Item[nCntItem].nType == ITEMTYPE_KATANA) &&
+				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+			{
+				// アイテムをクラフトした時の処理
+				CraftMixItem(nCntItem, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
 
-				// 手に持ってるアイテムの種類を石破っと
-				g_Item[pPlayer->ItemIdx].nType = ITEMTYPE_STONEBAT;
+				// ステータスの変更
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
 			}
 		}
 
-		// 石バットの素材が範囲内にある時
-		if ((g_Item[nCntItem].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT &&
-			g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
-			(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCntItem].nType == ITEMTYPE_BAT) &&
-			g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
-		{
-			// アイコンを表示する
-			g_Item[nCntItem].bMixItem[ITEMTYPE_STONEBAT] = true;
-		}
-		else
-		{
-			// アイコンを消す
-			g_Item[nCntItem].bMixItem[ITEMTYPE_STONEBAT] = false;
-		}
+		// クラフトアイコンを表示するかしないか
+		EnableCraftIcon(nCntItem, WEPONTYPE_STONE, WEPONTYPE_BAT, WEPONTYPE_STONEBAT);
+		EnableCraftIcon(nCntItem, ITEMTYPE_ICEBLOCK, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCKSOWRD);
+
+	}
+}
+//==============================================================================================================
+// クラフト先のアイテム
+//==============================================================================================================
+void CraftMixItem(int nCntItem, int MixItem, int motionchange)
+{
+	Player* pPlayer = GetPlayer();
+
+	// 火花っぽいエフェクト
+	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
+		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+		D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
+		2.0f, 2, 40, 40, 5.0f, 2.0f, false,
+		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
+		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+		D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+		3.0f, 2, 40, 40, 3.0f, 2.0f, false,
+		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+
+	// 持っているアイテムを変更
+	Itemchange(MixItem);
+
+	// モーションの変更
+	MotionChange(motionchange, 0);
+
+	// クラフトに使ったアイテムを消す
+	g_Item[nCntItem].bUse = false;
+
+	// 手に持ってるアイテムの種類を石破っと
+	g_Item[pPlayer->ItemIdx].nType = MixItem;
+}
+//==============================================================================================================
+// クラフト先のアイテムのアイコンの表示
+//==============================================================================================================
+void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
+{
+	Player* pPlayer = GetPlayer();
+
+	// 石バットの素材が範囲内にある時
+	if ((g_Item[nCntItem].nType == Item1 && g_Item[pPlayer->ItemIdx].nType == Item2 &&
+		g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
+		(g_Item[pPlayer->ItemIdx].nType == Item1 && g_Item[nCntItem].nType == Item2) &&
+		g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+	{
+		// アイコンを表示する
+		g_Item[nCntItem].bMixItem[MixItem] = true;
+	}
+	else
+	{
+		// アイコンを消す
+		g_Item[nCntItem].bMixItem[MixItem] = false;
 	}
 }

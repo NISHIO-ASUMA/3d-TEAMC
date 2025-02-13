@@ -65,7 +65,7 @@ MOTION g_LoadMotion[MOTION_MAX];   // モーションの情報を保存しておく変数
 int g_nCounterState,g_AttackState; // 状態カウンター
 bool bNohand; // 投げたか投げてないか
 bool bUsePad;
-bool bFirstChange;
+//bool bFirstChange;
 int nCntMotion,nKey;
 
 //===============================================================================================================
@@ -101,7 +101,7 @@ void InitPlayer(void)
 	g_player.speed = 1.0f;								   // 足の速さ
 	g_player.nDamage = 100;								   // 攻撃力
 	bUsePad = false;
-	bFirstChange = false;
+	//bFirstChange = false;
 	g_player.nStockDamage = 100;
 	g_player.fStockSpeed = 3.5f;
 	g_player.FeverMode = false;
@@ -729,7 +729,7 @@ void UpdatePlayer(void)
 	}
 
 	// 持っているアイテムを置く処理
-	if (bFirstChange && g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)))
+	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)))
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -1505,7 +1505,6 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 			pItem[nIdx].bUse = false;      // 消す
 
-			bFirstChange = true;
 			pItem[nIdx].state = ITEMSTATE_HOLD;
 
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
