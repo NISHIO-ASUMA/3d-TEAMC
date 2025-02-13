@@ -102,6 +102,7 @@ typedef struct
 	EnemyModel EnemyModel[16];
 	bool g_bDamage;
 	float fMove;//ƒ‰ƒ“ƒ_ƒ€
+	int nCountAction;
 	int AttackState;
 	float Speed; // ‘«‚Ì‘¬‚³
 	D3DXVECTOR3 rotDest; // –Ú“I‚ÌŠp“x
