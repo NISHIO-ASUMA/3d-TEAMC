@@ -11,14 +11,17 @@ typedef struct
 	D3DXMATRIX mtxWorld;
 	int nLife;
 	int nIdxShadow;
+	float fSize;
+	float fSpeed;
 	bool bUse;
+	bool bEnemy;
 }Bullet;
 void InitBullet(void);
 void UninitBullet(void);
 void UpdateBullet(void);
 void DrawBullet(void);
 
-void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife);
+void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife, float fSize, float fSpeed,bool Enemy);
 
 Bullet* GetBullet();
 
