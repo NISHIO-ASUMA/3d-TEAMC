@@ -107,6 +107,7 @@ typedef struct
 	float Speed; // 足の速さ
 	D3DXVECTOR3 rotDest; // 目的の角度
 	D3DXVECTOR3 PosDest; // 目的の位置
+	int nIdxMap;
 }ENEMY;
 
 //**************************************************************************************************************

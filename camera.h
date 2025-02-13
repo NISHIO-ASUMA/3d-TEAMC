@@ -63,10 +63,4 @@ Camera* GetCamera();		// カメラの取得
 void StickCamera(void);		// 右スティックのカメラ処理
 void MouseWheel(int zDelta);// マウスホイール
 
-void InitCameraTex();	  // カメラに映すテクスチャの初期化処理
-void UninitCameraTex();	  // カメラに映すテクスチャの終了処理
-void DrawCameraTex();	  // カメラに映すテクスチャの描画処理
-int SetTexCamera(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nType, float fWidth, float fHeight); // 設定
-void DeleteTex(int nIdx);
-
 #endif

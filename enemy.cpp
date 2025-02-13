@@ -26,6 +26,7 @@
 #include "time.h"
 #include "game.h"
 #include "Bullet.h"
+#include "minimap.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -268,6 +269,7 @@ void UpdateEnemy(void)
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		g_Enemy[nCntEnemy].nCountAction++;
+
 		if (!g_Enemy[nCntEnemy].bUse)
 		{// 未使用状態だったら
 			// とばしてカウントを進める
@@ -328,8 +330,11 @@ void UpdateEnemy(void)
 		// 剣と敵の当たり判定
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);
 
+		//SetMiniMapPotision(&g_Enemy[nCntEnemy].pos);
+
 		// 影の計算
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
+		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
 		// ホーミング範囲
 		if (AgentRange(50.0f, 20000.0f, nCntEnemy) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
@@ -601,6 +606,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH; // 敵の状態を死亡状態にする
 		KillShadow(g_Enemy[nCnt].nIdxShadow);   // 敵の影を消す
+		EnableMap(g_Enemy[nCnt].nIdxMap);
 		g_Enemy[nCnt].bUse = false;			    // 未使用判定
 
 		g_nNumEnemy--; // デクリメント
@@ -695,6 +701,8 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 			{
 				g_Enemy[nCntEnemy].nLife = 1;
 			}
+
+			g_Enemy[nCntEnemy].nIdxMap = SetMiniMap(pos,MINIMAPTEX_ENEMY);
 
 			// 影を設定
 			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), g_Enemy[nCntEnemy].rot, 40.0f, 1.0f);

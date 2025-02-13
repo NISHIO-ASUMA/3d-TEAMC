@@ -55,10 +55,11 @@ typedef struct
 //***************************************************************************************************************
 // プロトタイプ宣言
 //***************************************************************************************************************
-void InitMiniMap(); // 初期化処理
-void UninitMinMap();// 終了処理
-void UpdateMiniMap(); // 更新処理
-void DarwMinimap(); // 描画処理
-void SetMiniMap(D3DXVECTOR3* pPos, int nIdx); // 設定処理
-
+void InitMiniMap();									 // 初期化処理
+void UninitMinMap();								 // 終了処理
+void UpdateMiniMap();								 // 更新処理
+void DarwMinimap();									 // 描画処理
+void SetMiniMapPotision(int nIdx,D3DXVECTOR3 *pPos); // 設定処理
+int SetMiniMap(D3DXVECTOR3 pos, int nType);          // ミニマップの位置設定処理
+void EnableMap(int nIdx);							 // ミニマップに描画されてるポリゴンの消去
 #endif // !_MINIMAP_H_

@@ -30,6 +30,7 @@
 #include "spgauge.h"
 #include "boss.h"
 #include "Bullet.h"
+#include "minimap.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -113,7 +114,6 @@ void InitPlayer(void)
 	nKey = 0;
 	g_player.bCraft = false;
 	// TODO : ここの処理考える
-	// g_player.nIdxCameraTex = SetTexCamera(D3DXVECTOR3(1000.0f,200.0f,0.0f), g_player.rot, 0, 150.0f, 150.0f); // カメラテクスチャ
 
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)
@@ -180,9 +180,12 @@ void InitPlayer(void)
 		
 		}
 
+		g_LoadPlayer[0].nIdxMap = SetMiniMap(g_player.pos, MINIMAPTEX_PLAYER);
+
 		//最初に描画したいプレイヤーの情報を代入
 		g_player = g_LoadPlayer[0];
 	}
+
 	/*Itemchange(30);
 	MotionChange(MOTION_KATANA, 0);
 	StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);*/
@@ -600,13 +603,13 @@ void UpdatePlayer(void)
 
 	CollisionWall();
 
-	
 	//プレイヤーの重力
 	g_player.move.y -= 1.0f;
-	
 
 	// 影の計算
 	SetPositionShadow(g_player.nIdxShadow,g_player.pos,30.0f + 30.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
+
+	SetMiniMapPotision(g_player.nIdxMap, &g_player.pos);
 
 	////壁の衝突判定
 	//CollisionWall();

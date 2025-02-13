@@ -198,7 +198,7 @@ typedef struct
 	bool AttackSp;
 	bool bLandingOBB; // OBBの上に着地下かどうか
 	bool bCraft;      // クラフト中かどうか
-	int nIdxCameraTex;
+	int nIdxMap;
 }Player;
 
 //**************************

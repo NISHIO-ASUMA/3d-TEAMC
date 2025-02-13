@@ -22,6 +22,7 @@
 #include "block.h"
 #include "HPGauge.h"
 #include "spgauge.h"
+#include "minimap.h"
 
 //==============================================================================================================
 //タイトル3dの初期化処理
@@ -58,6 +59,9 @@ void InitTitle3d(void)
 	// ブロックの初期化処理
 	InitBlock();
 	
+	// ミニマップの初期化処理
+	InitMiniMap();
+
 	// プレイヤーの初期化処理
 	InitPlayer();
 
@@ -112,6 +116,9 @@ void UninitTitle3d(void)
 
 	// スペシャルゲージの終了処理
 	UninitSPgauge();
+
+	// ミニマップの終了処理
+	UninitMinMap();
 
 	// プレイヤーの終了処理
 	UninitPlayer();

@@ -46,6 +46,7 @@
 #include "craftui.h"
 
 #include "Bullet.h"
+#include "minimap.h"
 //**************************************************************************************************************
 //グローバル変数
 //**************************************************************************************************************
@@ -88,9 +89,11 @@ void InitGame(void)
 	// 煙の初期化処理
 	InitExplosion();
 
+	// ミニマップの初期化処理
+	InitMiniMap();
+
 	//プレイヤーの初期化処理
 	InitPlayer();
-
 
 	// エフェクトの初期化処理
 	InitEffect();
@@ -161,7 +164,7 @@ void InitGame(void)
 	// テスト用 : 　ビルボードのセット
 	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);
 
-	SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), 5, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 5, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
 	//// 壁を設置する
 	//SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
@@ -262,6 +265,9 @@ void UninitGame(void)
 
 	// ポリゴンの終了処理
 	UninitPolygon();
+
+	// ミニマップの終了処理
+	UninitMinMap();
 
 	//エディットの終了処理
 	UninitEdit();
@@ -476,6 +482,9 @@ void UpdateGame(void)
 				//弾の更新処理
 				UpdateBullet();
 
+				// ミニマップの更新処理
+				UpdateMiniMap();
+
 			}
 			// ビルボードの更新処理
 			UpdateBillboard();
@@ -582,6 +591,9 @@ void DrawGame(void)
 
 	//弾の描画処理
 	DrawBullet();
+
+	// ミニマップの描画処理
+	DarwMinimap();
 
 	if (g_bEditMode)
 	{
