@@ -279,6 +279,9 @@
     <ClInclude Include="craftui.h">
       <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>ヘッダーファイル\obj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ソースファイル">
