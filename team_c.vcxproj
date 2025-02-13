@@ -162,6 +162,7 @@
     <ClCompile Include="gameui.cpp" />
     <ClCompile Include="icon.cpp" />
     <ClCompile Include="meshfan.cpp" />
+    <ClCompile Include="minimap.cpp" />
     <ClCompile Include="polygon.cpp" />
     <ClCompile Include="spgauge.cpp" />
     <ClCompile Include="HPGauge.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="icon.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="meshfan.h" />
+    <ClInclude Include="minimap.h" />
     <ClInclude Include="polygon.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="spgauge.h" />

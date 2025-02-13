@@ -142,6 +142,9 @@
     <ClCompile Include="Bullet.cpp">
       <Filter>ソースファイル\base</Filter>
     </ClCompile>
+    <ClCompile Include="minimap.cpp">
+      <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -284,6 +287,9 @@
     </ClInclude>
     <ClInclude Include="Bullet.h">
       <Filter>ヘッダーファイル\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="minimap.h">
+      <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
