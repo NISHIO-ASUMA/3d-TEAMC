@@ -560,6 +560,7 @@ void Draw(void)
 
 			case MODE_GAME:	   // ゲーム画面
 				DrawGame();
+				DrawCameraPos();
 				break;
 			case MODE_RESULT:  // リザルト画面
 				DrawResult();
@@ -687,8 +688,8 @@ void DrawDebugPlayerPos(void)
 void DrawCameraPos(void)
 {
 	// ローカル変数
-	RECT rect = { 0,40,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect1 = { 0,60,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rect = { 0,240,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rect1 = { 0,260,SCREEN_WIDTH,SCREEN_HEIGHT };
 
 	char aString[256];
 	char aString1[256];
@@ -697,8 +698,8 @@ void DrawCameraPos(void)
 	Camera* pCamera = GetCamera();
 
 	// 文字列に代入
-	sprintf(&aString[0], "カメラのrot.y:%.2f\n", pCamera->rot.y);
-	sprintf(&aString1[0], "カメラのrot.x:%.2f\n", pCamera->rot.x);
+	sprintf(&aString[0], "%f %f %f\n", pCamera->posV.x, pCamera->posV.y, pCamera->posV.z);
+	sprintf(&aString1[0], "%f %f %f\n", pCamera->posR.x, pCamera->posR.y, pCamera->posR.z);
 
 	// テキスト描画
 	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));

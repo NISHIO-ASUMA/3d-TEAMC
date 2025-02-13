@@ -25,6 +25,7 @@
 #define MAP (1) // ミニマップのカメラのインデックス
 #define CRAFT (2) // クラフト画面
 #define MAX_CAMERATEX (256) // テクスチャ最大数
+#define aaa	(20)
 
 //***************************************************************************************************************
 // ミニマップ用テクスチャ列挙型宣言
@@ -81,7 +82,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffCamera = NULL;		   // 頂点バッファへのポインタ
 void InitCamera(void)
 {
 	// 変数の初期化
-	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 200.0f, -250.0f);			// カメラの位置
+	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 250.0f, -600.0f);			// カメラの位置
 	g_camera[MAP].posV = D3DXVECTOR3(0.0f, 800.0f, 0.0f);			// カメラの位置
 
 	for (int nCnt = 0; nCnt < CAMERATYPE_MAX; nCnt++)
@@ -177,16 +178,18 @@ void UpdateCamera(void)
 		g_camera[MAIN].posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
 		g_camera[MAIN].posRDest.z = pPlayer->pos.z + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
 
-		g_camera[MAIN].posVDest.x = pPlayer->pos.x - sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-		g_camera[MAIN].posVDest.y = pPlayer->pos.y - cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-		g_camera[MAIN].posVDest.z = pPlayer->pos.z - cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-
 		g_camera[MAIN].posR.x += ((g_camera[MAIN].posRDest.x - g_camera[MAIN].posR.x) * 0.3f);
 		g_camera[MAIN].posR.y += ((g_camera[MAIN].posRDest.y - g_camera[MAIN].posR.y) * 0.3f);
 		g_camera[MAIN].posR.z += ((g_camera[MAIN].posRDest.z - g_camera[MAIN].posR.z) * 0.3f);
 
+//=============================================================================================================================
+
+		/*g_camera[MAIN].posVDest.x = pPlayer->pos.x - sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posVDest.y = pPlayer->pos.y - cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posVDest.z = pPlayer->pos.z - cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+
 		g_camera[MAIN].posV.x += ((g_camera[MAIN].posVDest.x - g_camera[MAIN].posV.x) * 0.3f);
-		g_camera[MAIN].posV.z += ((g_camera[MAIN].posVDest.z - g_camera[MAIN].posV.z) * 0.3f);
+		g_camera[MAIN].posV.z += ((g_camera[MAIN].posVDest.z - g_camera[MAIN].posV.z) * 0.3f);*/
 
 //**************************************************************************************************************************
 //      プレイヤー追従(MAPカメラ)
@@ -210,34 +213,36 @@ void UpdateCamera(void)
 	// スペシャルモーションを発動したとき
 	if (pPlayer->AttackSp && pPlayer->Motion.nKey <= 3)
 	{
-		// カウント用変数
-		static int nCounter = 0;
+		//// カウント用変数
+		//static int nCounter = 0;
 
-		// インクリメント
-		nCounter++;
+		//// インクリメント
+		//nCounter++;
 
-		// 右に移動
-		if (nCounter >= 0 && nCounter <= 3)
-		{
-			g_camera[MAIN].Direction = 5.0f;
+		//// 右に移動
+		//if (nCounter >= 0 && nCounter <= 3)
+		//{
+		//	g_camera[MAIN].Direction = 5.0f;
 
-		}
-		// 左に移動
-		if (nCounter >= 3 && nCounter <= 6)
-		{
-			g_camera[MAIN].Direction = - 5.0f;
-		}
-		if (nCounter >= 6)
-		{
-			nCounter = 0; // 初期化
-		}
+		//}
+		//// 左に移動
+		//if (nCounter >= 3 && nCounter <= 6)
+		//{
+		//	g_camera[MAIN].Direction = - 5.0f;
+		//}
+		//if (nCounter >= 6)
+		//{
+		//	nCounter = 0; // 初期化
+		//}
+
+		int n = rand() % aaa + 1 - aaa / 2;
 
 		// カメラを移動させる
-		g_camera[MAIN].posV.z -= sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].Direction;
-		g_camera[MAIN].posV.x += cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].Direction;
+		g_camera[MAIN].posV.z -= sinf(g_camera[MAIN].rot.y)+ n;
+		g_camera[MAIN].posV.x += cosf(g_camera[MAIN].rot.y)+ n;
 
-		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		//g_camera[MAIN].posR.x = sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		//g_camera[MAIN].posR.z = cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 	}
 #if 0
 	//******************
@@ -450,11 +455,6 @@ void StickCamera(void)
 				g_camera[MAIN].rot.x += 0.03f;
 			}
 
-			// カメラの視点の情報
-			g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-			g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
-			g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
-
 
 			//if (pStick->Gamepad.sThumbRY < -10920.0f)
 			//{// 上下移動
@@ -477,32 +477,39 @@ void StickCamera(void)
 
 			//}
 
-			// 角度の正規化
-			if (g_camera[MAIN].rot.y > D3DX_PI)
-			{// D3DX_PIより大きくなったら
-				g_camera[MAIN].rot.y -= D3DX_PI * 2.0f;
-			}
-
-			// 角度の正規化
-			if (g_camera[MAIN].rot.y < -D3DX_PI)
-			{// D3DX_PIより小さくなったら
-				g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
-			}
-
-			if (g_camera[MAIN].rot.x <= D3DX_PI * 0.55f)
-			{// カメラの下限
-
-				g_camera[MAIN].rot.x = D3DX_PI * 0.55f;
-			}
-
-			if (g_camera[MAIN].rot.x >= D3DX_PI * 0.9f)
-			{// カメラの上限
-
-				g_camera[MAIN].rot.x = D3DX_PI * 0.9f;
-			}
-
 		}
 	}
+
+	// 角度の正規化
+	if (g_camera[MAIN].rot.y > D3DX_PI)
+	{// D3DX_PIより大きくなったら
+		g_camera[MAIN].rot.y -= D3DX_PI * 2.0f;
+	}
+
+	// 角度の正規化
+	if (g_camera[MAIN].rot.y < -D3DX_PI)
+	{// D3DX_PIより小さくなったら
+		g_camera[MAIN].rot.y += D3DX_PI * 2.0f;
+	}
+
+	if (g_camera[MAIN].rot.x <= D3DX_PI * 0.55f)
+	{// カメラの下限
+
+		g_camera[MAIN].rot.x = D3DX_PI * 0.55f;
+	}
+
+	if (g_camera[MAIN].rot.x >= D3DX_PI * 0.9f)
+	{// カメラの上限
+
+		g_camera[MAIN].rot.x = D3DX_PI * 0.9f;
+	}
+	// カメラの視点の情報
+	g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+
+	g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
+
+	g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+
 #endif
 }
 //===========================================================================================================
@@ -759,7 +766,6 @@ void InitCameraTex()
 
 	// アンロック
 	g_pVtxBuffCamera->Unlock();
-
 }
 //===========================================================================================================
 // カメラテクスチャの終了処理
@@ -812,7 +818,6 @@ void DrawCameraTex()
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
 		}
 	}
-
 }
 //===========================================================================================================
 // カメラテクスチャの設定処理
