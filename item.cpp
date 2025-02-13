@@ -20,6 +20,7 @@
 #include "Particle.h"
 #include "icon.h"
 #include "craftui.h"
+#include "sound.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -826,6 +827,15 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+	
+	// SEを出す
+	PlaySound(SOUND_LABEL_CRAFT);
+
+
+
+
+
+
 
 	// 持っているアイテムを変更
 	Itemchange(MixItem);

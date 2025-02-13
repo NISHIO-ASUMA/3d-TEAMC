@@ -146,6 +146,9 @@ void InitGame(void)
 	LoadEdit();
 	LoadEdit2d();
 
+	//弾の初期化処理
+	InitBullet();
+
 	//WaveEnemy(0); // 敵を出す処理
 	//WaveEnemy(1); // 敵を出す処理
 
@@ -264,6 +267,9 @@ void UninitGame(void)
 
 	// ビルボードの終了処理
 	UninitBillboard();
+
+	// 弾の終了処理
+	UninitBullet();
 
 }
 //=========================================================================================================
@@ -466,6 +472,9 @@ void UpdateGame(void)
 				// メッシュドームの更新処理
 				UpdatemeshFan();
 
+				//弾の更新処理
+				UpdateBullet();
+
 			}
 			// ビルボードの更新処理
 			UpdateBillboard();
@@ -569,6 +578,9 @@ void DrawGame(void)
 
 	// ゲームのUIの描画処理
 	DrawGameUI();
+
+	//弾の描画処理
+	DrawBullet();
 
 	if (g_bEditMode)
 	{
