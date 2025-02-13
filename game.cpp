@@ -91,6 +91,7 @@ void InitGame(void)
 	//プレイヤーの初期化処理
 	InitPlayer();
 
+
 	// エフェクトの初期化処理
 	InitEffect();
 
