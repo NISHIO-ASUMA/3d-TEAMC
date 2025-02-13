@@ -450,47 +450,5 @@ EDITCATEGORY = 1			# [ カテゴリー1 ]
    SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
-ITEMSET
-EDITCATEGORY = 1			# [ カテゴリー1 ]
-   ITEMTYPE = 30			# [ アイテムの種類 ]
-   POS = 185.9 0.0 88.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
-END_ITEMSET
-
-ITEMSET
-EDITCATEGORY = 1			# [ カテゴリー1 ]
-   ITEMTYPE = 30			# [ アイテムの種類 ]
-   POS = 358.1 0.0 -108.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
-END_ITEMSET
-
-ITEMSET
-EDITCATEGORY = 1			# [ カテゴリー1 ]
-   ITEMTYPE = 30			# [ アイテムの種類 ]
-   POS = 384.4 0.0 169.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
-END_ITEMSET
-
-ITEMSET
-EDITCATEGORY = 1			# [ カテゴリー1 ]
-   ITEMTYPE = 30			# [ アイテムの種類 ]
-   POS = 160.4 0.0 191.0			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
-END_ITEMSET
-
-ITEMSET
-EDITCATEGORY = 1			# [ カテゴリー1 ]
-   ITEMTYPE = 30			# [ アイテムの種類 ]
-   POS = 149.2 0.0 72.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
-END_ITEMSET
-
-ITEMSET
-EDITCATEGORY = 1			# [ カテゴリー1 ]
-   ITEMTYPE = 30			# [ アイテムの種類 ]
-   POS = -7.6 0.0 87.0			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
-END_ITEMSET
-
-BLOCK_COUNT = 68    # [ ブロックの配置数 ]
+BLOCK_COUNT = 62    # [ ブロックの配置数 ]
 END_SCRIPT          # この行は消さないでください

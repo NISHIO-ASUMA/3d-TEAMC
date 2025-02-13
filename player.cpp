@@ -113,7 +113,6 @@ void InitPlayer(void)
 	nKey = 0;
 	g_player.bCraft = false;
 
-
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)
 	{
@@ -181,8 +180,6 @@ void InitPlayer(void)
 
 		//最初に描画したいプレイヤーの情報を代入
 		g_player = g_LoadPlayer[0];
-
-		MotionChange(MOTION_KATANA, 0);
 	}
 	/*Itemchange(30);
 	MotionChange(MOTION_KATANA, 0);
@@ -1638,7 +1635,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				break;
 			case ITEMTYPE_KATANA:
 				MotionChange(MOTION_KATANA, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 70);
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
 				break;
 			default:
 				break;
@@ -1669,7 +1666,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
 	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
 	g_player.Combostate = Combstate;		  // コンボの状態を設定
-	SetMotion(&g_player.Motion, motiontype, MOTIONTYPE_NEUTRAL, true, 20);
+	SetMotion(&g_player.Motion, motiontype, MOTIONTYPE_NEUTRAL, true, 28);
 
 	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
