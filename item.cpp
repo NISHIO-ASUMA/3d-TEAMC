@@ -32,7 +32,7 @@
 //プロトタイプ宣言
 //**************************************************************************************************************
 void LoadItemModel(void); // アイテムのロード処理
-void CraftItem(int nCntItem);
+void CraftItem(void);
 void CraftMixItem(int nCntItem,int MixItem,int motionchange);
 void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem);
 bool CraftItemController(int nCntItem, int Item1, int HoldItem);
@@ -347,7 +347,7 @@ void UpdateItem(void)
 		// プレイヤーがクラフト状態だったら
 		if (pPlayer->bCraft)
 		{
-			CraftItem(nCntItem);
+			CraftItem();
 		}
 
 		// 状態を投げるにする
@@ -760,39 +760,61 @@ void CraftItemRange(BLOCK* pBlock)
 //==============================================================================================================
 // アイテムのクラフト
 //==============================================================================================================
-void CraftItem(int nCntItem)
+void CraftItem(void)
 {
 	Player* pPlayer = GetPlayer();
 	Craftui* pMix = GetMixUI();
 
 	// キーを押したら
-	if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_A))
+	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
 	{
-		if (CraftItemController(nCntItem,WEPONTYPE_STONE,WEPONTYPE_BAT))
-		{				// アイテムをクラフトした時の処理
-			CraftMixItem(nCntItem, WEPONTYPE_STONEBAT, MOTION_DBHAND);
-
-			// ステータスの変更
-			StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
-		}
-
-		// 氷の剣の材料がそろった
-		if ((g_Item[nCntItem].nType == ITEMTYPE_ICEBLOCK && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA &&
-			g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
-			(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_ICEBLOCK && g_Item[nCntItem].nType == ITEMTYPE_KATANA) &&
-			g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+		if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_A))
 		{
-			// アイテムをクラフトした時の処理
-			CraftMixItem(nCntItem, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
+			// ストーンバットの材料がそろった
+			if ((g_Item[nCnt].nType == WEPONTYPE_STONE &&
+				g_Item[pPlayer->ItemIdx].nType == WEPONTYPE_BAT &&
+				g_Item[nCnt].state == ITEMSTATE_STOCK &&
+				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
+			{
+				CraftMixItem(nCnt, WEPONTYPE_STONEBAT, MOTION_DBHAND);
 
-			// ステータスの変更
-			StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+				// ステータスの変更
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+			}
+			// 氷の剣の材料がそろった
+			if ((g_Item[nCnt].nType == WEPONTYPE_ICEBLOCK &&
+				g_Item[pPlayer->ItemIdx].nType == WEPONTYPE_KATANA &&
+				g_Item[nCnt].state == ITEMSTATE_STOCK &&
+				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
+			{
+				CraftMixItem(nCnt, WEPONTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
+
+				// ステータスの変更
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+			}
+
 		}
+		// クラフトアイコンを表示するかしないか
+		EnableCraftIcon(nCnt, WEPONTYPE_STONE, WEPONTYPE_BAT, WEPONTYPE_STONEBAT);
+		EnableCraftIcon(nCnt, ITEMTYPE_ICEBLOCK, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCKSOWRD);
 	}
+	
 
-	// クラフトアイコンを表示するかしないか
-	EnableCraftIcon(nCntItem, WEPONTYPE_STONE, WEPONTYPE_BAT, WEPONTYPE_STONEBAT);
-	EnableCraftIcon(nCntItem, ITEMTYPE_ICEBLOCK, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCKSOWRD);
+
+	
+
+	//// 氷の剣の材料がそろった
+	//if ((g_Item[nCntItem].nType == ITEMTYPE_ICEBLOCK && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA &&
+	//	g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
+	//	(g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_ICEBLOCK && g_Item[nCntItem].nType == ITEMTYPE_KATANA) &&
+	//	g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+	//{
+	//	// アイテムをクラフトした時の処理
+	//	CraftMixItem(nCntItem, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
+
+	//	// ステータスの変更
+	//	StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+	//}
 }
 //==============================================================================================================
 // クラフト先のアイテム
@@ -842,10 +864,8 @@ void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
 	Player* pPlayer = GetPlayer();
 
 	// 石バットの素材が範囲内にある時
-	if ((g_Item[nCntItem].nType == Item1 && g_Item[pPlayer->ItemIdx].nType == Item2 &&
-		g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD) ||
-		(g_Item[pPlayer->ItemIdx].nType == Item1 && g_Item[nCntItem].nType == Item2) &&
-		g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+	if ((g_Item[nCntItem].nType == Item1 && g_Item[nCntItem].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].nType == Item2 &&
+		g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 	{
 		// アイコンを表示する
 		g_Item[nCntItem].bMixItem[MixItem] = true;
@@ -859,30 +879,6 @@ void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
 //==============================================================================================================
 // アイテムの材料がそろった
 //==============================================================================================================
-bool CraftItemController(int nCntItem, int Item1, int HoldItem)
-{
-	static bool bCraft = false;
-
-	Player* pPlayer = GetPlayer();
-
-	//// アイテムをクラフトした時の処理
-	//CraftMixItem(nCntItem, WEPONTYPE_STONEBAT, MOTION_DBHAND);
-
-	//// ステータスの変更
-	//StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
-
-	// ストーンバットの材料がそろった
-	if ((g_Item[nCntItem].nType == Item1 &&
-		g_Item[pPlayer->ItemIdx].nType == HoldItem &&
-		g_Item[nCntItem].state == ITEMSTATE_STOCK && 
-		g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
-	{
-		bCraft = true;
-	}
-	else
-	{
-		bCraft = false;
-	}
-
-	return bCraft;
-}
+//bool CraftItemController(int nCntItem, int Item1, int HoldItem)
+//{
+//}

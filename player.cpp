@@ -615,7 +615,7 @@ void UpdatePlayer(void)
 		// 音楽再生
 		PlaySound(SOUND_LABEL_JUMP_SE);
 
-		if (g_player.bJump == true && g_player.Motion.motionType != MOTIONTYPE_LANDING)
+		if (g_player.bJump == true && g_player.Motion.motionType != MOTIONTYPE_LANDING && g_player.AttackSp == false)
 		{
 			g_player.bJump = false;						 // ジャンプをできなくする
 			g_player.Motion.nKey = 0;					 // キーを0から始める
