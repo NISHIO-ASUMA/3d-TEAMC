@@ -781,6 +781,18 @@ void CraftItem(void)
 				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
 			}
+			// 氷の剣の材料がそろった
+			if ((g_Item[nCnt].nType == WEPONTYPE_ICEBLOCK &&
+				g_Item[pPlayer->ItemIdx].nType == WEPONTYPE_KATANA &&
+				g_Item[nCnt].state == ITEMSTATE_STOCK &&
+				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
+			{
+				CraftMixItem(nCnt, WEPONTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
+
+				// ステータスの変更
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+			}
+
 		}
 		// クラフトアイコンを表示するかしないか
 		EnableCraftIcon(nCnt, WEPONTYPE_STONE, WEPONTYPE_BAT, WEPONTYPE_STONEBAT);
