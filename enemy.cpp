@@ -691,6 +691,11 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 			g_Enemy[nCntEnemy].nCountAction = 0;
 			g_Enemy[nCntEnemy].bUse = true;   // égópèÛë‘
 
+			if (nType == ENEMYTYPE_SIX)
+			{
+				g_Enemy[nCntEnemy].nLife = 1;
+			}
+
 			// âeÇê›íË
 			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), g_Enemy[nCntEnemy].rot, 40.0f, 1.0f);
 

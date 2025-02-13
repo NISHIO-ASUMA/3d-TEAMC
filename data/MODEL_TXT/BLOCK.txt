@@ -2,7 +2,7 @@
 +   ブロックの読み込み処理(種類追加したら一応報告お願いします)   +
 +----------------------------------------------------------------+
 
-MAX_TYPE = 40 # 読み込むモデル数
+MAX_TYPE = 45 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -47,6 +47,13 @@ MODEL_FILENAME = data/MODEL/OBJ/enemy_spawn002.x		# [36]敵の発生位置2
 MODEL_FILENAME = data/MODEL/OBJ/guardrail.x				# [37]ガードレール
 MODEL_FILENAME = data/MODEL/OBJ/trashbox_set.x			# [38]ゴミ箱
 MODEL_FILENAME = data/MODEL/OBJ/OurSchool.x				# [39]我が校
+
+MODEL_FILENAME = data/MODEL/OBJ/gamecenter.x				# [40]我が校
+MODEL_FILENAME = data/MODEL/OBJ/seesaw.x				# [41]我が校
+MODEL_FILENAME = data/MODEL/OBJ/slide.x				# [42]我が校
+MODEL_FILENAME = data/MODEL/OBJ/swing.x				# [43]我が校
+MODEL_FILENAME = data/MODEL/OBJ/swing1.x				# [44]我が校
+
 # もしやり方わかるならBLOCK.hの列挙型追加頼む
 
 END_SCRIPT #この行は消さないでください
