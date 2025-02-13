@@ -235,6 +235,7 @@ void UpdateEdit(void)
 			g_Edit[g_EditCount + 1].EditCategory = g_Edit[g_EditCount].EditCategory;        // 今のカテゴリーを代入
 			g_Edit[g_EditCount + 1].nType = g_Edit[g_EditCount].nType;						// 今のタイプを代入
 			g_Edit[g_EditCount + 1].rot = g_Edit[g_EditCount].rot;							// 今の角度を代入
+			g_Edit[g_EditCount + 1].fMove = g_Edit[g_EditCount].fMove;							// 今の角度を代入
 
 			int Category = g_Edit[g_EditCount].EditCategory; // 変数に代入
 			int nType = g_Edit[g_EditCount].nType;           // 変数に代入

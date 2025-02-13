@@ -1698,7 +1698,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
 	{
 		// Žg—pó‘Ô‚Ì‚Ý
-		if (pEnemy[nCnt].bUse)
+		if (pEnemy[nCnt].bUse && pEnemy[nCnt].nType != ENEMYTYPE_SIX)
 		{
 			// ‹——£‚ð‹‚ß‚é
 			float DisposX = pEnemy[nCnt].pos.x - g_player.pos.x;

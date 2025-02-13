@@ -18,8 +18,9 @@
 //**************************************************************************************************************
 typedef enum
 {
-	CRAFTUITYPE_ONE = 0,
-	CRAFTUITYPE_TWO,
+	CRAFTUITYPE_BACKGROUND = 0,
+	CRAFTUITYPE_CRAFT,
+
 	CRAFTUITYPE_MAX
 }CRAFTUITYPE;
 

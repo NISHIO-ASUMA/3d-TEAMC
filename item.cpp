@@ -35,7 +35,6 @@ void LoadItemModel(void); // アイテムのロード処理
 void CraftItem(void);
 void CraftMixItem(int nCntItem,int MixItem,int motionchange);
 void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem);
-bool CraftItemController(int nCntItem, int Item1, int HoldItem);
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -776,6 +775,7 @@ void CraftItem(void)
 				g_Item[nCnt].state == ITEMSTATE_STOCK &&
 				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
+				// クラフト後のアイテムの処理
 				CraftMixItem(nCnt, WEPONTYPE_STONEBAT, MOTION_DBHAND);
 
 				// ステータスの変更
@@ -792,7 +792,6 @@ void CraftItem(void)
 				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
 			}
-
 		}
 		// クラフトアイコンを表示するかしないか
 		EnableCraftIcon(nCnt, WEPONTYPE_STONE, WEPONTYPE_BAT, WEPONTYPE_STONEBAT);
@@ -859,9 +858,3 @@ void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
 		g_Item[nCntItem].bMixItem[MixItem] = false;
 	}
 }
-//==============================================================================================================
-// アイテムの材料がそろった
-//==============================================================================================================
-//bool CraftItemController(int nCntItem, int Item1, int HoldItem)
-//{
-//}

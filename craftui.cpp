@@ -163,8 +163,8 @@ void InitCraftUI(void)
 	//頂点ロック解除
 	g_pVtxBuffItemIcon->Unlock();
 
-	SetCraftUI(D3DXVECTOR3(625.0f, 400.0f, 0.0f), CRAFTUITYPE_ONE, 325.0f, 200.0f, 0);
-	SetCraftUI(D3DXVECTOR3(625.0f, 450.0f, 0.0f), CRAFTUITYPE_TWO, 100.0f, 50.0f, -1);
+	SetCraftUI(D3DXVECTOR3(625.0f, 400.0f, 0.0f), CRAFTUITYPE_BACKGROUND, 325.0f, 200.0f, 0);
+	SetCraftUI(D3DXVECTOR3(625.0f, 550.0f, 0.0f), CRAFTUITYPE_CRAFT, 100.0f, 50.0f, -1);
 }
 //==============================================================================================================
 // UIの終了処理
@@ -401,7 +401,7 @@ void SetMixItemUI(int nCnt)
 		// 作れるアイテムが
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && g_MixUI[nCnt].bUse == false)
 		{
-			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
+			SetMixUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
 		}
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_ICEBLOCKSOWRD] && g_MixUI[nCnt].bUse == false)
 		{

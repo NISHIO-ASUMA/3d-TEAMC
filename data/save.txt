@@ -7,7 +7,7 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -321.0 0.0 -256.8			# [ 位置 ]
    ROT = 0.000 -1.570 0.000			# [ 向き ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -15,7 +15,7 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -690.6 0.0 -247.2			# [ 位置 ]
    ROT = 0.000 -1.570 0.000			# [ 向き ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -23,7 +23,7 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 2			# [ ブロックの種類 ]
    POS = -1100.2 0.0 -336.1			# [ 位置 ]
    ROT = 0.000 -1.570 0.000			# [ 向き ]
-   SIZE = 2.4 2.4 2.4		# [ 大きさ ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -31,7 +31,7 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -1138.2 0.0 -584.5			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.5 1.5 1.5		# [ 大きさ ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -39,7 +39,7 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 1			# [ ブロックの種類 ]
    POS = -1178.0 0.0 -799.5			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.5 1.5 1.5		# [ 大きさ ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -47,7 +47,7 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 1			# [ ブロックの種類 ]
    POS = -1191.6 0.0 -1019.7			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -55,7 +55,7 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -1190.2 0.0 -1303.1			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.8 1.8 1.8		# [ 大きさ ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -63,7 +63,7 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -218.6 0.0 -593.9			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.8 1.8 1.8		# [ 大きさ ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -502,15 +502,15 @@ END_ITEMSET
 BLOCKSET
 EDITCATEGORY = 0			# [ カテゴリー0 ] 
    BLOCKTYPE = 39			# [ ブロックの種類 ]
-   POS = 517.1 0.0 549.7			# [ 位置 ]
+   POS = 856.5 0.0 523.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
    SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
 EDITCATEGORY = 0			# [ カテゴリー0 ] 
-   BLOCKTYPE = 38			# [ ブロックの種類 ]
-   POS = -204.2 0.0 491.0			# [ 位置 ]
+   BLOCKTYPE = 40			# [ ブロックの種類 ]
+   POS = -473.6 0.0 393.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
    SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET

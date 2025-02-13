@@ -2077,7 +2077,7 @@ bool PushBoss(int nCntBlock, int nIdx)
 float ShadowSize(D3DXVECTOR3 Size)
 {
 	// ‘å‚«‚³‚ğ‹‚ß‚é
-	float SizeOut = 40.0f / 40.0f * (Size.x + Size.z);
+	float SizeOut = 20.0f / 40.0f * (Size.x + Size.z) * 1.0f;
 
 	// ‘å‚«‚³‚ğ•Ô‚·
 	return SizeOut;
