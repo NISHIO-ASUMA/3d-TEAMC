@@ -394,12 +394,12 @@ void StickCamera(void)
 			}
 
 			if (pStick->Gamepad.sThumbRY < -10920.0f)
-			{// 左右移動
+			{// 上下移動
 				// 角度
 				g_camera[MAIN].rot.x -= 0.03f;
 			}
 			else if (pStick->Gamepad.sThumbRY > 10920.0f)
-			{// 左右移動
+			{// 上下移動
 				// 角度
 				g_camera[MAIN].rot.x += 0.03f;
 			}

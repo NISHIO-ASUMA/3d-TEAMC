@@ -25,6 +25,7 @@
 #include "boss.h"
 #include "time.h"
 #include "game.h"
+#include "Bullet.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -401,6 +402,8 @@ void UpdateEnemy(void)
 			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
 
 			g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
+
+			//SetBullet(g_Enemy[nCntEnemy].pos, g_Enemy[nCntEnemy].rot, 40, 10.0f, 2.0f, true);
 		}
 
 		//敵の角度の正規化

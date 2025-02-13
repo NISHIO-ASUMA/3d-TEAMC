@@ -776,7 +776,7 @@ void UpdatePlayer(void)
 	}
 
 	// スペシャルモードになった時の攻撃
-	if ((KeyboardTrigger(DIK_Q) || JoypadTrigger(JOYKEY_LS)) && g_player.Motion.nNumModel == 16 && g_player.HandState != PLAYERHOLD_HOLD)
+	if ((KeyboardTrigger(DIK_Q) || JoypadTrigger(JOYKEY_LS) || JoypadTrigger(JOYKEY_RS)) && g_player.Motion.nNumModel == 16 && g_player.HandState != PLAYERHOLD_HOLD)
 	{
 		if (g_player.Combostate == COMBO_NO && // 攻撃していない
 			!g_player.AttackSp &&              // SP技を発動していない
@@ -1520,7 +1520,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	{
 		bCollision = true;
 
-		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_RIGHT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) && g_player.Combostate == COMBO_NO)
+		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_RIGHT_B) || JoypadTrigger(JOYKEY_LEFT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) && g_player.Combostate == COMBO_NO)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
 			// 音楽再生
