@@ -252,6 +252,7 @@ void UpdatePlayer(void)
 	Item* pItem = GetItem();
 
 		/*StickPad();*/
+	bUsePad = false;
 
 	// フィーバーモードなら
 	if (g_player.FeverMode)
@@ -605,7 +606,11 @@ void UpdatePlayer(void)
 	////壁の衝突判定
 	//CollisionWall();
 
-	if (JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE))
+	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION2 &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION3 &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION4)
 	{//aボタン or Enterキーが押された
 
 		// 音楽再生
@@ -725,7 +730,7 @@ void UpdatePlayer(void)
 	}
 
 	// 持っているアイテムを置く処理
-	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)) && g_player.Combostate == COMBO_NO && g_player.bJump != false)
+	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_B)) && g_player.Combostate == COMBO_NO && g_player.bJump != false)
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -1029,7 +1034,7 @@ void SetMtxPos(void)
 	pDevice = GetDevice();
 
 	//計算用のマトリックス
-	D3DXMATRIX mtxRot, mtxTrans,mtxParent;
+	D3DXMATRIX mtxRot, mtxTrans, mtxParent;
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&g_player.SwordMtx);
@@ -1039,11 +1044,11 @@ void SetMtxPos(void)
 		g_player.Motion.aModel[15].rot.x,
 		g_player.Motion.aModel[15].rot.z);
 
-	D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx,&mtxRot);
+	D3DXMatrixMultiply(&g_player.SwordMtx, &g_player.SwordMtx, &mtxRot);
 
 	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, g_player.SwordOffpos.x,g_player.SwordOffpos.y,g_player.SwordOffpos.z);
-	D3DXMatrixMultiply(&g_player.SwordMtx,&g_player.SwordMtx, &mtxTrans);
+	D3DXMatrixTranslation(&mtxTrans, g_player.SwordOffpos.x, g_player.SwordOffpos.y, g_player.SwordOffpos.z);
+	D3DXMatrixMultiply(&g_player.SwordMtx, &g_player.SwordMtx, &mtxTrans);
 
 	mtxParent = g_player.Motion.aModel[15].mtxWorld;
 
@@ -1097,37 +1102,59 @@ void StickPad(void)
 
 	Camera* pCamera = GetCamera();
 
-	if (GetJoyStick() == true && g_player.Combostate == COMBO_NO)
+	if (g_player.Motion.motionType != MOTIONTYPE_ACTION &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION2 &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION3 &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION4)
 	{
-		float LStickAngleY = pStick->Gamepad.sThumbLY;
-		float LStickAngleX = pStick->Gamepad.sThumbLX;
-
-		float deadzone = 10920;
-		float magnitude = sqrtf(LStickAngleX * LStickAngleX + LStickAngleY * LStickAngleY);
-
-		if (magnitude > deadzone)
+		if (GetJoyStick() == true)
 		{
-			bUsePad = true;
-			float normalizeX = (LStickAngleX / magnitude);
-			float normalizeY = (LStickAngleY / magnitude);
+			// Lスティックの角度
+			float LStickAngleY = pStick->Gamepad.sThumbLY;
+			float LStickAngleX = pStick->Gamepad.sThumbLX;
 
-			float moveX = normalizeX * cosf(-pCamera->rot.y) - normalizeY * sinf(-pCamera->rot.y);
-			float moveZ = normalizeX * sinf(-pCamera->rot.y) + normalizeY * cosf(-pCamera->rot.y);
+			// デッドゾーン
+			float deadzone = 10920;
 
-			g_player.move.x += moveX * g_player.speed;
-			g_player.move.z += moveZ * g_player.speed;
+			// スティックの傾けた角度を求める
+			float magnitude = sqrtf(LStickAngleX * LStickAngleX + LStickAngleY * LStickAngleY);
 
-			g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
-			
-			if (bUsePad)
+			// 動かせる
+			if (magnitude > deadzone)
 			{
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				// パッドを使っている
+				bUsePad = true;
+
+				// アングルを正規化
+				float normalizeX = (LStickAngleX / magnitude);
+				float normalizeY = (LStickAngleY / magnitude);
+
+				// プレイヤーの移動量
+				float moveX = normalizeX * cosf(-pCamera->rot.y) - normalizeY * sinf(-pCamera->rot.y);
+				float moveZ = normalizeX * sinf(-pCamera->rot.y) + normalizeY * cosf(-pCamera->rot.y);
+
+				// プレイヤーの移動
+				g_player.move.x += moveX * g_player.speed;
+				g_player.move.z += moveZ * g_player.speed;
+
+				// プレイヤーの目的の角度を決める
+				g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
+
+				// プレイヤーを歩きモーションにする
+				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				{
+					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+				}
 			}
-			
-		}
-		else
-		{
-			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
+			else
+			{
+				// プレイヤーのモーションが歩きだったら
+				if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
+				{
+					// モーションをニュートラルに戻す
+					SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40);
+				}
+			}
 		}
 	}
 }

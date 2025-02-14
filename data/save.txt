@@ -959,5 +959,69 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    SIZE = 1.6 1.6 1.6		# [ 大きさ ]
 END_BLOCKSET
 
-BLOCK_COUNT = 131    # [ ブロックの配置数 ]
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 35			# [ ブロックの種類 ]
+   POS = 295.3 0.0 453.8			# [ 位置 ]
+   ROT = 0.000 3.142 0.000			# [ 向き ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 34			# [ ブロックの種類 ]
+   POS = 291.0 0.0 854.4			# [ 位置 ]
+   ROT = 0.000 3.142 0.000			# [ 向き ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 36			# [ ブロックの種類 ]
+   POS = 323.0 0.0 1156.9			# [ 位置 ]
+   ROT = 0.000 -2.601 0.000			# [ 向き ]
+   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 19			# [ ブロックの種類 ]
+   POS = 548.5 0.0 1251.5			# [ 位置 ]
+   ROT = 0.000 3.124 0.000			# [ 向き ]
+   SIZE = 1.3 1.3 1.3		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 20			# [ ブロックの種類 ]
+   POS = 648.6 0.0 1250.8			# [ 位置 ]
+   ROT = 0.000 3.124 0.000			# [ 向き ]
+   SIZE = 1.3 1.3 1.3		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 21			# [ ブロックの種類 ]
+   POS = 743.2 0.0 1257.7			# [ 位置 ]
+   ROT = 0.000 3.124 0.000			# [ 向き ]
+   SIZE = 1.3 1.3 1.3		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 22			# [ ブロックの種類 ]
+   POS = 1099.0 0.0 1141.1			# [ 位置 ]
+   ROT = 0.000 3.124 0.000			# [ 向き ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCKSET
+EDITCATEGORY = 0			# [ カテゴリー0 ] 
+   BLOCKTYPE = 22			# [ ブロックの種類 ]
+   POS = 935.2 0.0 1137.2			# [ 位置 ]
+   ROT = 0.000 3.037 0.000			# [ 向き ]
+   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
+END_BLOCKSET
+
+BLOCK_COUNT = 139    # [ ブロックの配置数 ]
 END_SCRIPT          # この行は消さないでください
