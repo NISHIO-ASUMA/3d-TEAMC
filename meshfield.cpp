@@ -68,9 +68,9 @@ void InitMeshField(void)
 		for (int nCntX = 0; nCntX <= XVTX; nCntX++)
 		{
 			pVtx[nCnt].pos = D3DXVECTOR3(
-				(0.0f + (MAX_WIDTH / XVTX) * nCntX) - (MAX_WIDTH * 0.5f),
+				(0.0f + (MAX_FIELDWIDTH / XVTX) * nCntX) - (MAX_FIELDWIDTH * 0.5f),
 				0.0f,
-				MAX_HEIGHT - ((MAX_HEIGHT / ZVTX) * nCntZ) - (MAX_HEIGHT * 0.5f));
+				MAX_FIELDHEIGHT - ((MAX_FIELDHEIGHT / ZVTX) * nCntZ) - (MAX_FIELDHEIGHT * 0.5f));
 
 			//法線ベクトルの設定
 			pVtx[nCnt].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -213,13 +213,13 @@ bool CollisionField(void)
 
 		D3DXVECTOR3 pos, pos1;
 
-		g_MeshField.vtxPos[0].x = (MAX_WIDTH / XVTX) * 0 - (MAX_WIDTH * 0.5f);
+		g_MeshField.vtxPos[0].x = (MAX_FIELDWIDTH / XVTX) * 0 - (MAX_FIELDWIDTH * 0.5f);
 		g_MeshField.vtxPos[0].y = 0.0f;
-		g_MeshField.vtxPos[0].z = MAX_HEIGHT - ((MAX_HEIGHT / ZVTX) * 0) - (MAX_HEIGHT * 0.5f);
+		g_MeshField.vtxPos[0].z = MAX_FIELDHEIGHT - ((MAX_FIELDHEIGHT / ZVTX) * 0) - (MAX_FIELDHEIGHT * 0.5f);
 
-		g_MeshField.vtxPos[1].x = (MAX_WIDTH / XVTX) * 1 - (MAX_WIDTH * 0.5f);
+		g_MeshField.vtxPos[1].x = (MAX_FIELDWIDTH / XVTX) * 1 - (MAX_FIELDWIDTH * 0.5f);
 		g_MeshField.vtxPos[1].y = 0.0f;
-		g_MeshField.vtxPos[1].z = MAX_HEIGHT - ((MAX_HEIGHT / ZVTX) * 1) - (MAX_HEIGHT * 0.5f);
+		g_MeshField.vtxPos[1].z = MAX_FIELDHEIGHT - ((MAX_FIELDHEIGHT / ZVTX) * 1) - (MAX_FIELDHEIGHT * 0.5f);
 
 		VecALine = g_MeshField.vtxPos[1] - g_MeshField.vtxPos[0];//0-1...
 
