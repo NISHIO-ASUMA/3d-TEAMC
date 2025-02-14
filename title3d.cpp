@@ -23,6 +23,8 @@
 #include "HPGauge.h"
 #include "spgauge.h"
 #include "minimap.h"
+#include "polygon.h"
+#include "edit2d.h"
 
 //==============================================================================================================
 //タイトル3dの初期化処理
@@ -68,8 +70,12 @@ void InitTitle3d(void)
 	// スペシャルゲージの初期化処理
 	InitSPgauge();
 
+	// ポリゴン
+	InitPolygon();
+
 	// タイトル用のステージを読み込む処理
 	LoadTitleState();
+	LoadEdit2d();
 
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(1200.0f, 200.0f, 0.0f), UITYPE_KATANA, 450.0f, 50.0f, 0); // タイトルの刀
@@ -120,6 +126,9 @@ void UninitTitle3d(void)
 	// ミニマップの終了処理
 	UninitMinMap();
 
+	// ポリゴン
+	UninitPolygon();
+
 	// プレイヤーの終了処理
 	UninitPlayer();
 }
@@ -158,8 +167,12 @@ void DrawTitle3d(void)
 	// メッシュフィールドの描画処理
 	DrawMeshField();
 
+
 	// 影の描画処理
 	DrawShadow();
+
+	// ポリゴン
+	DrawPolygon();
 
 	// タイトルの描画処理
 	DrawTitle();
