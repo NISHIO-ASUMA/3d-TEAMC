@@ -215,11 +215,13 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 dir, int nLife, in
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	VERTEX_3D* pVtx;
 	g_pVtxBuffBullet->Lock(0, 0, (void**)&pVtx, 0);
+	// 全て見回して
 	for (nCntBullet = 0; nCntBullet < MAX_BULLET; nCntBullet++)
 	{
+		// 使われてないなら
 		if (g_Bullet[nCntBullet].bUse == false)
 		{
-			// 影の設定
+			// 上から影の設定、場所、方向、寿命、ダメージ、速度、敵味方の区別、ベクトルと速度の合算、使用させる
 			g_Bullet[nCntBullet].nIdxShadow = SetShadow(g_Bullet[nCntBullet].pos, g_Bullet[nCntBullet].rot, fSize, 1.0f);
 			g_Bullet[nCntBullet].pos = pos;
 			g_Bullet[nCntBullet].dir = dir;
