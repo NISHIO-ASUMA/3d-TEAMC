@@ -606,6 +606,7 @@ void UpdatePlayer(void)
 	////壁の衝突判定
 	//CollisionWall();
 
+	// 
 	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) &&
 		g_player.Motion.motionType != MOTIONTYPE_ACTION &&
 		g_player.Motion.motionType != MOTIONTYPE_ACTION2 &&
@@ -734,6 +735,8 @@ void UpdatePlayer(void)
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
+
+		g_player.speed = 3.0f;
 
 		// 素手の時のモーション情報を代入
 		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
@@ -874,6 +877,7 @@ void UpdatePlayer(void)
 	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)))
 	{// Fキー or RBボタン
 		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
+		g_player.speed = 3.0f;
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
