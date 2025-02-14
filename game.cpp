@@ -582,11 +582,11 @@ void DrawGame(void)
 	// SPゲージの描画処理
 	DrawSPgauge();
 
-	// 影の描画処理
-	DrawShadow();
-
 	// アイコンの描画処理
 	DrawIcon();
+
+	// 影の描画処理
+	DrawShadow();
 
 	// ゲームのUIの描画処理
 	DrawGameUI();

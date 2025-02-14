@@ -734,7 +734,7 @@ void UpdatePlayer(void)
 	}
 
 	// 持っているアイテムを置く処理
-	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)))
+	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)) && g_player.Combostate == COMBO_NO)
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);

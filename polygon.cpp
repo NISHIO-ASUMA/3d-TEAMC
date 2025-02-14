@@ -143,12 +143,12 @@ void UpdatePolygon(void)
 			continue;
 		}
 
-		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x - g_Polygon[nCntPolygon].fWidth, 1.0f, g_Polygon[nCntPolygon].pos.z + g_Polygon[nCntPolygon].fHeight);
-		pVtx[1].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x + g_Polygon[nCntPolygon].fWidth, 1.0f, g_Polygon[nCntPolygon].pos.z + g_Polygon[nCntPolygon].fHeight);
-		pVtx[2].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x - g_Polygon[nCntPolygon].fWidth, 1.0f, g_Polygon[nCntPolygon].pos.z - g_Polygon[nCntPolygon].fHeight);
-		pVtx[3].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x + g_Polygon[nCntPolygon].fWidth, 1.0f, g_Polygon[nCntPolygon].pos.z - g_Polygon[nCntPolygon].fHeight);
-		pVtx += 4;
+		////頂点座標の設定
+		//pVtx[0].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x - g_Polygon[nCntPolygon].fWidth, 1.1f, g_Polygon[nCntPolygon].pos.z + g_Polygon[nCntPolygon].fHeight);
+		//pVtx[1].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x + g_Polygon[nCntPolygon].fWidth, 1.1f, g_Polygon[nCntPolygon].pos.z + g_Polygon[nCntPolygon].fHeight);
+		//pVtx[2].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x - g_Polygon[nCntPolygon].fWidth, 1.1f, g_Polygon[nCntPolygon].pos.z - g_Polygon[nCntPolygon].fHeight);
+		//pVtx[3].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x + g_Polygon[nCntPolygon].fWidth, 1.1f, g_Polygon[nCntPolygon].pos.z - g_Polygon[nCntPolygon].fHeight);
+		//pVtx += 4;
 	}
 
 	g_pVtxBuffPolygon->Unlock();
@@ -252,8 +252,8 @@ void SetMtxPolygon(int nCntPolygon)
 
 	Boss* pBoss = Getboss();
 	Player* pPlayer = GetPlayer();
-
 	//計算用のマトリックス
+
 	D3DXMATRIX mtxRot, mtxTrans,mtxParent;
 
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++,pBoss++)
@@ -305,5 +305,4 @@ void SetMtxPolygon(int nCntPolygon)
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPolygon * 4, 2);
 		}
 	}
-
 }

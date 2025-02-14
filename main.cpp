@@ -575,14 +575,14 @@ void Draw(void)
 
 			if (!GetEditState() && !GetEditStatetuto() && !GetEdit2d())
 			{
-				// 現在の画面の表示
-				DrawMode();
+				//// 現在の画面の表示
+				//DrawMode();
 
-				// 操作方法
-				DrawOperation();
+				//// 操作方法
+				//DrawOperation();
 
-				// プレイヤーの情報
-				DrawPlayerInfo();
+				//// プレイヤーの情報
+				//DrawPlayerInfo();
 			}
 			else if (GetEditState())
 			{
@@ -641,7 +641,7 @@ void DrawEnemySet(int g_nNumEnemy)
 {
 	// ローカル変数
 	RECT rect = { 0,180,SCREEN_WIDTH,SCREEN_HEIGHT };
-	char aString[256];
+	char aString[256] = {};
 
 	// 文字列に代入
 	wsprintf(&aString[0], "敵の総数:%d\n", g_nNumEnemy);
@@ -691,8 +691,8 @@ void DrawCameraPos(void)
 	RECT rect = { 0,240,SCREEN_WIDTH,SCREEN_HEIGHT };
 	RECT rect1 = { 0,260,SCREEN_WIDTH,SCREEN_HEIGHT };
 
-	char aString[256];
-	char aString1[256];
+	char aString[256] = {};
+	char aString1[256] = {};
 
 	// 取得
 	Camera* pCamera = GetCamera();
@@ -712,8 +712,8 @@ void DrawCameraPos(void)
 void DrawCameraType(void)
 {
 	RECT rect = { 0,20,SCREEN_WIDTH,SCREEN_HEIGHT };
-	char aString[256];
-	char aString1[256];
+	char aString[256] = {};
+	char aString1[256] = {};
 
 	// 取得
 	Camera* pCamera = GetCamera();
@@ -838,8 +838,8 @@ void DrawMode(void)
 	RECT rectState = { 0,20,SCREEN_WIDTH,SCREEN_HEIGHT };
 	RECT rectMode = { 0,80,SCREEN_WIDTH,SCREEN_HEIGHT };
 
-	char aStr[128];
-	char aStrState[256];
+	char aStr[128] = {};
+	char aStrState[256] = {};
 
 	wsprintf(&aStrState[0],
 		"+=================================================+\n"
