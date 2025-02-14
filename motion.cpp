@@ -28,6 +28,7 @@ void UpdateMotion(MOTION *pMotion)
 
 	for (int nCntModel = 0; nCntModel < pMotion->nNumModel; nCntModel++)
 	{
+		// モーション情報が入っていたら
 		if (pMotion->aMotionInfo[pMotion->motionType].nNumkey != NULL)
 		{
 			float DiffPosX, DiffPosY, DiffPosZ, DiffRotX, DiffRotY, DiffRotZ;
@@ -227,6 +228,7 @@ void UpdateMotion(MOTION *pMotion)
 		}
 		else
 		{
+			//モーションがなかったらニュートラルに戻す
 			SetMotion(pMotion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 10);
 		}
 	}

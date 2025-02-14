@@ -550,39 +550,43 @@ void Draw(void)
 			// 現在の画面の終了
 			switch (g_mode)
 			{
-			case MODE_TITLE:   // タイトル画面
+			case MODE_TITLE:   // タイトル画面(ここにデバック表示のDraw書かないでください)
 				DrawTitle3d();
 				break;
 
-			case MODE_TUTORIAL:// チュートリアル画面
+			case MODE_TUTORIAL:// チュートリアル画面(ここにデバック表示のDraw書かないでください)
 				DrawTutorial3d();
 				break;
 
-			case MODE_GAME:	   // ゲーム画面
+			case MODE_GAME:	   // ゲーム画面(ここにデバック表示のDraw書かないでください)
 				DrawGame();
-				DrawCameraPos();
 				break;
-			case MODE_RESULT:  // リザルト画面
+			case MODE_RESULT:  // リザルト画面(ここにデバック表示のDraw書かないでください)
 				DrawResult();
 				break;
 
-			case MODE_RANKING: // ランキング画面
+			case MODE_RANKING: // ランキング画面(ここにデバック表示のDraw書かないでください)
 				DrawRanking();
 				break;
 			}
 
 #ifdef _DEBUG
 
+			// デバッグ表示はこの下に書いてください
 			if (!GetEditState() && !GetEditStatetuto() && !GetEdit2d())
 			{
-				//// 現在の画面の表示
-				//DrawMode();
+				// 現在の画面の表示
+				DrawMode();
 
-				//// 操作方法
-				//DrawOperation();
+				// 操作方法
+				DrawOperation();
 
-				//// プレイヤーの情報
-				//DrawPlayerInfo();
+				// プレイヤーの情報
+				DrawPlayerInfo();
+
+				// カメラの位置表示用デバッグフォント
+				DrawCameraPos();
+
 			}
 			else if (GetEditState())
 			{
@@ -698,8 +702,8 @@ void DrawCameraPos(void)
 	Camera* pCamera = GetCamera();
 
 	// 文字列に代入
-	sprintf(&aString[0], "%f %f %f\n", pCamera->posV.x, pCamera->posV.y, pCamera->posV.z);
-	sprintf(&aString1[0], "%f %f %f\n", pCamera->posR.x, pCamera->posR.y, pCamera->posR.z);
+	sprintf(&aString[0], "%.2f %.2f %.2f\n", pCamera->posV.x, pCamera->posV.y, pCamera->posV.z);
+	sprintf(&aString1[0], "%.2f %.2f %.2f\n", pCamera->posR.x, pCamera->posR.y, pCamera->posR.z);
 
 	// テキスト描画
 	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
