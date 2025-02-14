@@ -12,6 +12,7 @@
 #include "camera.h"
 #include "input.h"
 #include"polygon.h"
+#include "boss.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -19,7 +20,12 @@
 #define MAX_POLYGON (100)
 
 //**************************************************************************************************************
-//グローバル変数宣言
+// プロトタイプ宣言
+//**************************************************************************************************************
+void SetMtxPolygon(int nCntPolygon);
+
+//**************************************************************************************************************
+// グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPolygon = NULL; //頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9 g_pTexturePolygon[POLYGON_TYPE_MAX] = {};//テクスチャへのポインタ保存用
@@ -123,7 +129,24 @@ void UninitPolygon(void)
 void UpdatePolygon(void)
 {
 	Camera* pCamera = GetCamera();
+	VERTEX_3D* pVtx = NULL;
 
+	//頂点バッファをロック
+	g_pVtxBuffPolygon->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCntPolygon = 0; nCntPolygon < MAX_POLYGON; nCntPolygon++)
+	{
+		if (g_Polygon[nCntPolygon].bUse == false)
+		{
+			continue;
+		}
+
+		if (g_Polygon[nCntPolygon].nType == POLYGON_TYPE_FIVE)
+		{
+		}
+	}
+
+	g_pVtxBuffPolygon->Unlock();
 
 }
 //===============================================================================================================
@@ -147,20 +170,26 @@ void DrawPolygon(void)
 
 		int nType = g_Polygon[nCntPolygon].nType;
 
-		//ワールドマトリックスの初期化
-		D3DXMatrixIdentity(&g_Polygon[nCntPolygon].mtxWorld);
+		if (nType == POLYGON_TYPE_FIVE)
+		{
+			SetMtxPolygon(nCntPolygon);
+		}
+		else
+		{
+			//ワールドマトリックスの初期化
+			D3DXMatrixIdentity(&g_Polygon[nCntPolygon].mtxWorld);
 
-		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Polygon[nCntPolygon].rot.y, g_Polygon[nCntPolygon].rot.x, g_Polygon[nCntPolygon].rot.z);
-		D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxRot);
+			//向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Polygon[nCntPolygon].rot.y, g_Polygon[nCntPolygon].rot.x, g_Polygon[nCntPolygon].rot.z);
+			D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxRot);
 
-		//位置を反映
-		D3DXMatrixTranslation(&mtxTrans, g_Polygon[nCntPolygon].pos.x, g_Polygon[nCntPolygon].pos.y, g_Polygon[nCntPolygon].pos.z);
-		D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxTrans);
+			//位置を反映
+			D3DXMatrixTranslation(&mtxTrans, g_Polygon[nCntPolygon].pos.x, g_Polygon[nCntPolygon].pos.y, g_Polygon[nCntPolygon].pos.z);
+			D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxTrans);
 
-		//ワールドマトリックスの設定
-		pDevice->SetTransform(D3DTS_WORLD, &g_Polygon[nCntPolygon].mtxWorld);
-
+			//ワールドマトリックスの設定
+			pDevice->SetTransform(D3DTS_WORLD, &g_Polygon[nCntPolygon].mtxWorld);
+		}
 		//頂点バッファをデバイスのデータストリームに設定
 		pDevice->SetStreamSource(0, g_pVtxBuffPolygon, 0, sizeof(VERTEX_3D));
 
@@ -206,4 +235,45 @@ void SetPolygon(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight, i
 		pVtx += 4;
 	}
 	g_pVtxBuffPolygon->Unlock();
+}
+//===============================================================================================================
+// ポリゴンのワールドマトリックス設定
+//===============================================================================================================
+void SetMtxPolygon(int nCntPolygon)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	Boss* pBoss = Getboss();
+
+	//計算用のマトリックス
+	D3DXMATRIX mtxRot, mtxTrans,mtxParent;
+
+	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++,pBoss++)
+	{
+		if (pBoss->bUse == false)
+		{
+			continue;
+		}
+
+		//ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&g_Polygon[nCntPolygon].mtxWorld);
+
+		//向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, pBoss->rot.y, pBoss->rot.x, pBoss->rot.z);
+		D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxRot);
+
+		//位置を反映
+		D3DXMatrixTranslation(&mtxTrans, g_Polygon[nCntPolygon].pos.x, g_Polygon[nCntPolygon].pos.y, g_Polygon[nCntPolygon].pos.z);
+		D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxTrans);
+
+		// 親のワールドマトリックスの設定
+		mtxParent = pBoss->mtxWorld;
+
+		// 親のワールドマトリックスと自分のワールドマトリックスをかけ合わせる
+		D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxParent);
+
+		//ワールドマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &g_Polygon[nCntPolygon].mtxWorld);
+	}
+
 }
