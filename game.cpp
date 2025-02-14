@@ -534,6 +534,9 @@ void DrawGame(void)
 	//敵の描画処理
 	DrawEnemy();
 
+	// ボスの描画処理
+	DrawBoss();
+
 	if (!g_bEditMode)
 	{
 		// ビルボードの描画処理
@@ -548,9 +551,6 @@ void DrawGame(void)
 		//アイテムの描画処理
 		DrawItem();
 	}
-
-	// ボスの描画処理
-	DrawBoss();
 
 	//壁の描画処理
 	DrawWall();

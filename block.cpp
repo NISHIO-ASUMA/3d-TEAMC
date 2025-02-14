@@ -847,7 +847,7 @@ void CreateObb(int nCnt)
 	// í∑Ç≥éÊìæ
 	g_Block[nCnt].Obb.Length[0] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.x * g_Block[nCnt].Scal.x) - (g_Block[nCnt].BlockTex[nType].vtxMin.x * g_Block[nCnt].Scal.x)) * 0.6f; // í∑Ç≥X
 	g_Block[nCnt].Obb.Length[1] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.y * g_Block[nCnt].Scal.y) - (g_Block[nCnt].BlockTex[nType].vtxMin.y * g_Block[nCnt].Scal.y)) * 0.6f; // í∑Ç≥Y
-	g_Block[nCnt].Obb.Length[2] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.z * g_Block[nCnt].Scal.z) - (g_Block[nCnt].BlockTex[nType].vtxMin.z * g_Block[nCnt].Scal.z)) * 0.6f; // í∑Ç≥Z
+	g_Block[nCnt].Obb.Length[2] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.z * g_Block[nCnt].Scal.z) - (g_Block[nCnt].BlockTex[nType].vtxMin.z * g_Block[nCnt].Scal.z)) * 0.7f; // í∑Ç≥Z
 }
 //=======================
 // OBBÇÃîªíË
@@ -1582,8 +1582,10 @@ bool PushPlayer(int nCntBlock)
 	float DotZp = fabsf(D3DXVec3Dot(&VecRot[2], &PlayerVecZp)); // ì‡êœZ+ÇãÅÇﬂÇÈ
 	float DotZm = fabsf(D3DXVec3Dot(&norZm, &PlayerVecZm));     // ì‡êœZ-ÇãÅÇﬂÇÈ
 
+	//DotYp < 0.0f && DotYp <= DotXp && DotYp <= DotXm && DotYp <= DotZp && DotYp <= DotZm
+	
 	// ÉuÉçÉbÉNÇÃè„Ç…èÊÇ¡ÇƒÇ¢ÇÈ 
-	if (DotYp < DotYm && DotYp <= DotXp && DotYp <= DotXm && DotYp <= DotZp && DotYp <= DotZm)
+	if (DotYp < DotYm && DotYp < DotXp && DotYp < DotXm && DotYp < DotZp && DotYp < DotZm)
 	{
 		bLanding = true;
 		//pPlayer->bJump = true;
@@ -1631,7 +1633,7 @@ bool PushPlayer(int nCntBlock)
 
 	}
 	// -XÇÃñ Ç©ÇÁìñÇΩÇ¡ÇΩ
-	else if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
+	else if (DotXp <= DotXm && DotXp <= DotZp && DotXp <= DotZm)
 	{
 		D3DXVECTOR3 Nor = VecRot[0];
 		D3DXVec3Normalize(&Nor, &Nor);
@@ -1648,7 +1650,7 @@ bool PushPlayer(int nCntBlock)
 		pPlayer->pos = NewPlayerPos;
 	}
 	// +XÇÃñ Ç©ÇÁìñÇΩÇ¡ÇΩ
-	else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
+	else if (DotXm <= DotXp && DotXm <= DotZp && DotXm <= DotZm)
 	{
 		D3DXVECTOR3 Nor = -VecRot[0];
 		D3DXVec3Normalize(&Nor, &Nor);
@@ -1665,7 +1667,7 @@ bool PushPlayer(int nCntBlock)
 		pPlayer->pos = NewPlayerPos;
 	}
 	// -ZÇÃñ Ç©ÇÁìñÇΩÇ¡ÇΩ
-	else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
+	else if (DotZp >= DotZm && DotZp >= DotXp && DotZp >= DotXm)
 	{
 		D3DXVECTOR3 Nor = -VecRot[2];
 		D3DXVec3Normalize(&Nor, &Nor);
@@ -1683,7 +1685,7 @@ bool PushPlayer(int nCntBlock)
 
 	}
 	// +ZÇÃñ Ç©ÇÁìñÇΩÇ¡ÇΩ
-	else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
+	else if (DotZp <= DotZm && DotZp <= DotXp && DotZp <= DotXm)
 	{
 		D3DXVECTOR3 Nor = VecRot[2];
 		D3DXVec3Normalize(&Nor, &Nor);

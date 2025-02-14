@@ -527,7 +527,7 @@ void Draw(void)
 	{
 		if (!pPlayer->bCraft && nCnt == 1)
 		{
-			break;
+			continue;
 		}
 
 		g_pD3DDevice->SetViewport(&pCamera[nCnt].viewport); // ビューポートの設定
@@ -575,17 +575,17 @@ void Draw(void)
 			// デバッグ表示はこの下に書いてください
 			if (!GetEditState() && !GetEditStatetuto() && !GetEdit2d())
 			{
-				// 現在の画面の表示
-				DrawMode();
+				//// 現在の画面の表示
+				//DrawMode();
 
-				// 操作方法
-				DrawOperation();
+				//// 操作方法
+				//DrawOperation();
 
-				// プレイヤーの情報
-				DrawPlayerInfo();
+				//// プレイヤーの情報
+				//DrawPlayerInfo();
 
-				// カメラの位置表示用デバッグフォント
-				DrawCameraPos();
+				//// カメラの位置表示用デバッグフォント
+				//DrawCameraPos();
 
 			}
 			else if (GetEditState())
@@ -974,8 +974,8 @@ void DrawPlayerInfo(void)
 	RECT rectPos = { 0, 160, SCREEN_WIDTH, SCREEN_HEIGHT };
 	RECT rectState = { 0, 180, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-	char aStrPos[256];
-	char aStrState[256];
+	char aStrPos[256] = {};
+	char aStrState[256] = {};
 
 	sprintf(&aStrPos[0], "プレイヤーの位置X:[ %3.2f ] Y:[ %3.2f ] Z:[ %3.2f ]\n", pPlayer->pos.x,pPlayer->pos.y,pPlayer->pos.z);
 
