@@ -525,6 +525,7 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].bUse = true;   // égópèÛë‘Ç…Ç∑ÇÈ
 
 			g_Boss[nCnt].nIdxShadow = SetShadow(g_Boss[nCnt].pos, g_Boss[nCnt].rot, 40.0f,1.0f);
+			SetPolygon(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 50.0f, 100.0f, POLYGON_TYPE_FIVE);
 
 			break;
 		}

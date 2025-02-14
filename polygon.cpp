@@ -18,6 +18,7 @@
 //マクロ定義
 //**************************************************************************************************************
 #define MAX_POLYGON (100)
+#define OFFSET (100.0f) /// 矢印ポリゴンのオフセット
 
 //**************************************************************************************************************
 // プロトタイプ宣言
@@ -60,6 +61,7 @@ void InitPolygon(void)
 	for (int nCntPolygon = 0; nCntPolygon < MAX_POLYGON; nCntPolygon++)
 	{
 		g_Polygon[nCntPolygon].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_Polygon[nCntPolygon].nType = 0.0f;
 		g_Polygon[nCntPolygon].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_Polygon[nCntPolygon].fWidth = 0.0f;
 		g_Polygon[nCntPolygon].fHeight = 0.0f;
@@ -141,9 +143,12 @@ void UpdatePolygon(void)
 			continue;
 		}
 
-		if (g_Polygon[nCntPolygon].nType == POLYGON_TYPE_FIVE)
-		{
-		}
+		//頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x - g_Polygon[nCntPolygon].fWidth, 1.0f, g_Polygon[nCntPolygon].pos.z + g_Polygon[nCntPolygon].fHeight);
+		pVtx[1].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x + g_Polygon[nCntPolygon].fWidth, 1.0f, g_Polygon[nCntPolygon].pos.z + g_Polygon[nCntPolygon].fHeight);
+		pVtx[2].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x - g_Polygon[nCntPolygon].fWidth, 1.0f, g_Polygon[nCntPolygon].pos.z - g_Polygon[nCntPolygon].fHeight);
+		pVtx[3].pos = D3DXVECTOR3(g_Polygon[nCntPolygon].pos.x + g_Polygon[nCntPolygon].fWidth, 1.0f, g_Polygon[nCntPolygon].pos.z - g_Polygon[nCntPolygon].fHeight);
+		pVtx += 4;
 	}
 
 	g_pVtxBuffPolygon->Unlock();
@@ -172,6 +177,7 @@ void DrawPolygon(void)
 
 		if (nType == POLYGON_TYPE_FIVE)
 		{
+			// ポリゴンのワールドマトリックスの設定
 			SetMtxPolygon(nCntPolygon);
 		}
 		else
@@ -189,18 +195,19 @@ void DrawPolygon(void)
 
 			//ワールドマトリックスの設定
 			pDevice->SetTransform(D3DTS_WORLD, &g_Polygon[nCntPolygon].mtxWorld);
+
+			//頂点バッファをデバイスのデータストリームに設定
+			pDevice->SetStreamSource(0, g_pVtxBuffPolygon, 0, sizeof(VERTEX_3D));
+
+			//テクスチャフォーマットの設定
+			pDevice->SetFVF(FVF_VERTEX_3D);
+
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_pTexturePolygon[nType]);
+
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPolygon * 4, 2);
 		}
-		//頂点バッファをデバイスのデータストリームに設定
-		pDevice->SetStreamSource(0, g_pVtxBuffPolygon, 0, sizeof(VERTEX_3D));
-
-		//テクスチャフォーマットの設定
-		pDevice->SetFVF(FVF_VERTEX_3D);
-
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_pTexturePolygon[nType]);
-
-		//ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPolygon * 4, 2);
 	}
 }
 //===============================================================================================================
@@ -244,6 +251,7 @@ void SetMtxPolygon(int nCntPolygon)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	Boss* pBoss = Getboss();
+	Player* pPlayer = GetPlayer();
 
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans,mtxParent;
@@ -255,15 +263,21 @@ void SetMtxPolygon(int nCntPolygon)
 			continue;
 		}
 
+		// 現在のタイプを取得
+		int nType = g_Polygon[nCntPolygon].nType;
+
+		// 角度を求める
+		float fAngle = atan2f(pPlayer->pos.x - pPlayer->pos.x, pPlayer->pos.z - pPlayer->pos.z) + D3DX_PI;
+
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_Polygon[nCntPolygon].mtxWorld);
 
 		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, pBoss->rot.y, pBoss->rot.x, pBoss->rot.z);
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, fAngle, pBoss->rot.x, pBoss->rot.z);
 		D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxRot);
 
 		//位置を反映
-		D3DXMatrixTranslation(&mtxTrans, g_Polygon[nCntPolygon].pos.x, g_Polygon[nCntPolygon].pos.y, g_Polygon[nCntPolygon].pos.z);
+		D3DXMatrixTranslation(&mtxTrans, g_Polygon[nCntPolygon].pos.x, g_Polygon[nCntPolygon].pos.y + 1.1f, g_Polygon[nCntPolygon].pos.z - OFFSET);
 		D3DXMatrixMultiply(&g_Polygon[nCntPolygon].mtxWorld, &g_Polygon[nCntPolygon].mtxWorld, &mtxTrans);
 
 		// 親のワールドマトリックスの設定
@@ -274,6 +288,22 @@ void SetMtxPolygon(int nCntPolygon)
 
 		//ワールドマトリックスの設定
 		pDevice->SetTransform(D3DTS_WORLD, &g_Polygon[nCntPolygon].mtxWorld);
+
+		//頂点バッファをデバイスのデータストリームに設定
+		pDevice->SetStreamSource(0, g_pVtxBuffPolygon, 0, sizeof(VERTEX_3D));
+
+		//テクスチャフォーマットの設定
+		pDevice->SetFVF(FVF_VERTEX_3D);
+
+		// モーションタイプがアクションだったら
+		if (pBoss->Motion.motionType == MOTIONTYPE_ACTION)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_pTexturePolygon[nType]);
+
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPolygon * 4, 2);
+		}
 	}
 
 }

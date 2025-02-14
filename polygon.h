@@ -35,8 +35,8 @@ static const char* POLYGON_TYPE[POLYGON_TYPE_MAX] =
 	"data\\TEXTURE\\Roardtexture.png",
 	"data\\TEXTURE\\Roardtexture2.png",
 	"data\\TEXTURE\\load3.png",
-	"data\\TEXTURE\\grass.png"
-	"data\\TEXTURE\\dest.png"
+	"data\\TEXTURE\\grass.png",
+	"data\\TEXTURE\\dest.png",
 };
 
 //**************************************************************************************************************

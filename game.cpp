@@ -168,7 +168,6 @@ void InitGame(void)
 
 	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 
-	SetPolygon(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10.0f, 50.0f, POLYGON_TYPE_FIVE);
 	//// 壁を設置する
 	//SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	//SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
@@ -287,7 +286,7 @@ void UninitGame(void)
 //=========================================================================================================
 void UpdateGame(void)
 {
-	if (!g_bCraft)
+	if (g_bCraft == false && g_bPause == false && g_bEditMode == false)
 	{
 		// 敵の出現時間を加算する
 		g_EnemyWaveTime++;
