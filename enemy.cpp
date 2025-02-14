@@ -606,7 +606,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH; // 敵の状態を死亡状態にする
 		KillShadow(g_Enemy[nCnt].nIdxShadow);   // 敵の影を消す
-		EnableMap(g_Enemy[nCnt].nIdxMap);
+		EnableMap(g_Enemy[nCnt].nIdxMap);		// マップから消す
 		g_Enemy[nCnt].bUse = false;			    // 未使用判定
 
 		g_nNumEnemy--; // デクリメント

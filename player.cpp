@@ -626,7 +626,7 @@ void UpdatePlayer(void)
 			g_player.Motion.nKey = 0;					 // キーを0から始める
 			g_player.Motion.nCountMotion = 0;            // モーションカウントを0から始める
 			g_player.Motion.motionType = MOTIONTYPE_JUMP;// モーションタイプをジャンプにする
-			g_player.move.y = 15.0f;					 // 頒布量		
+			g_player.move.y = 12.0f;					 // 頒布量		
 		}
 	}
 

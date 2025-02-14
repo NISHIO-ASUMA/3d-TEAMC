@@ -202,10 +202,10 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 		g_MiniMap[nIdx].pos.y = (pPos->z / MAX_HEIGHT) * 200.0f;
 
 		// 頂点座標の更新
-		pVtx[0].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x - 10.0f, 100.0f + g_MiniMap[nIdx].pos.y - 10.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x + 10.0f, 100.0f + g_MiniMap[nIdx].pos.y - 10.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x - 10.0f, 100.0f + g_MiniMap[nIdx].pos.y + 10.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x + 10.0f, 100.0f + g_MiniMap[nIdx].pos.y + 10.0f, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x - 5.0f, 100.0f + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x + 5.0f, 100.0f + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x - 5.0f, 100.0f + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x + 5.0f, 100.0f + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
 	}
 	// 頂点バッファのアンロック
 	g_pVtxBuffMiniMap->Unlock();
@@ -232,10 +232,10 @@ int SetMiniMap(D3DXVECTOR3 pos, int nType)
 			g_MiniMap[nCnt].bUse = true;
 
 			// 頂点座標の更新
-			pVtx[0].pos = D3DXVECTOR3(1100.0f + pos.x - 10.0f, 100.0f + pos.y - 10.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(1100.0f + pos.x + 10.0f, 100.0f + pos.y - 10.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(1100.0f + pos.x - 10.0f, 100.0f + pos.y + 10.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(1100.0f + pos.x + 10.0f, 100.0f + pos.y + 10.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(1100.0f + pos.x - 5.0f, 100.0f + pos.y - 5.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(1100.0f + pos.x + 5.0f, 100.0f + pos.y - 5.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(1100.0f + pos.x - 5.0f, 100.0f + pos.y + 5.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(1100.0f + pos.x + 5.0f, 100.0f + pos.y + 5.0f, 0.0f);
 
 			break;
 		}

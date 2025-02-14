@@ -92,6 +92,9 @@ void InitGame(void)
 	// ミニマップの初期化処理
 	InitMiniMap();
 
+	//敵の初期化処理
+	InitEnemy();
+
 	//プレイヤーの初期化処理
 	InitPlayer();
 
@@ -106,9 +109,6 @@ void InitGame(void)
 
 	// スコアの初期化処理
 	InitScore();
-
-	//敵の初期化処理
-	InitEnemy();
 
 	// ビルボードの初期化処理
 	InitBillboard();
@@ -166,6 +166,9 @@ void InitGame(void)
 
 	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 5, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
+	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+
+	SetPolygon(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10.0f, 50.0f, POLYGON_TYPE_FIVE);
 	//// 壁を設置する
 	//SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
 	//SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
