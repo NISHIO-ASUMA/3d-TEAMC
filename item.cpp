@@ -21,6 +21,7 @@
 #include "icon.h"
 #include "craftui.h"
 #include "sound.h"
+#include "Effect.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -246,10 +247,14 @@ void UpdateItem(void)
 		// 投げられたアイテムにエフェクト
 		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
 		{
+			// アイテムの属性を反映し
 			int nType = g_Item[nCntItem].nType;
 			g_Item[nCntItem].nElement = g_TexItem[nType].nElement;
-			if (g_Item[nCntItem].nElement == ITEMELEMENT_STANDARD)
+			if (g_Item[nCntItem].nElement == ITEMELEMENT_STANDARD)// 無属性なら
 			{
+				// エフェクトを出す
+				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+				// パーティクルを出す、以下全て同じ
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -258,8 +263,10 @@ void UpdateItem(void)
 					2.0f, 2, 20, 7, 3.0f, 10.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 			}
-			else if(g_Item[nCntItem].nElement == ITEMELEMENT_BLOOD)
+			else if(g_Item[nCntItem].nElement == ITEMELEMENT_BLOOD)// 出血属性
 			{
+				// エフェクトを出す
+				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -268,8 +275,10 @@ void UpdateItem(void)
 					3.0f, 2, 20, 7, 3.0f, 10.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_FIRE)
+			else if (g_Item[nCntItem].nElement == ITEMELEMENT_FIRE)// 炎属性
 			{
+				// エフェクトを出す
+				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -285,8 +294,10 @@ void UpdateItem(void)
 					4.0f, 2, 20, 7, 3.0f, 20.0f,
 					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_FREEZE)
+			else if (g_Item[nCntItem].nElement == ITEMELEMENT_FREEZE)// 氷属性
 			{
+				// エフェクトを出す
+				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -295,8 +306,10 @@ void UpdateItem(void)
 					2.0f, 2, 50, 7, 0.5f, 10.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_SPARK)
+			else if (g_Item[nCntItem].nElement == ITEMELEMENT_SPARK)// 雷撃属性
 			{
+				// エフェクトを出す
+				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(2.0f, 2.0f, 2.0f),
@@ -305,8 +318,10 @@ void UpdateItem(void)
 					1.0f, 2, 10, 20, 9.0f, 10.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_AQUA)
+			else if (g_Item[nCntItem].nElement == ITEMELEMENT_AQUA)// 水属性
 			{
+				// エフェクトを出す
+				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -315,8 +330,10 @@ void UpdateItem(void)
 					5.0f, 2, 20, 7, 3.0f, 20.0f,
 					true, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
 			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_DARK)
+			else if (g_Item[nCntItem].nElement == ITEMELEMENT_DARK)// 闇属性
 			{
+				// エフェクトを出す
+				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),

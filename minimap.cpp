@@ -156,12 +156,47 @@ void DarwMinimap()
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
+	// 雑魚敵のマーカー探知
 	for (int nCnt = 0; nCnt < MAX_TREXMINIMAP; nCnt++)
 	{
 		// 種類を保存
 		int nType = g_MiniMap[nCnt].nType;
 
-		if (g_MiniMap[nCnt].bUse)
+		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == 1)
+		{// 使用判定のものだけ
+
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureMiniMap[nType]);
+
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+		}
+	}
+
+	// ボスのマーカー探知
+	for (int nCnt = 0; nCnt < MAX_TREXMINIMAP; nCnt++)
+	{
+		// 種類を保存
+		int nType = g_MiniMap[nCnt].nType;
+
+		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == 2)
+		{// 使用判定のものだけ
+
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureMiniMap[nType]);
+
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+		}
+	}
+
+	// プレイヤーのマーカー探知
+	for (int nCnt = 0; nCnt < MAX_TREXMINIMAP; nCnt++)
+	{
+		// 種類を保存
+		int nType = g_MiniMap[nCnt].nType;
+
+		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == 0)
 		{// 使用判定のものだけ
 
 			// テクスチャの設定
