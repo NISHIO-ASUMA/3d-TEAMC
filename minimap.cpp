@@ -193,7 +193,7 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 
 		// プレイヤーの座標をミニマップの座標に変換
 		g_MiniMap[nIdx].pos.x = (pPos->x / MAX_FIELDWIDTH) * MINIMAP_WIDTH;
-		g_MiniMap[nIdx].pos.y = (pPos->z / MAX_FIELDHEIGHT) * MINIMAP_HEIGHT;
+		g_MiniMap[nIdx].pos.y = (-pPos->z / MAX_FIELDHEIGHT) * MINIMAP_HEIGHT;
 
 		// 頂点座標の更新
 		pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
@@ -261,14 +261,11 @@ void InitMapField(void)
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	for (int nCnt = 0; nCnt < MINIMAPTEX_MAX; nCnt++)
-	{
-		//テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice,
-			"data\\TEXTURE\\field.png",
-			&g_pTextureMiniMapField);
-	}
-
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\minimap.png",
+		&g_pTextureMiniMapField);
+	
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,
 		D3DUSAGE_WRITEONLY,

@@ -18,6 +18,7 @@
 #include "player.h"
 #include "Timer.h"
 #include"spgauge.h"
+#include "meshsword.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -161,6 +162,7 @@ void UpdateSPgauge(void)
 					pPlayer->Motion.nKey == 0 &&
 					pPlayer->Motion.nCountMotion == 1)
 				{
+					ResetMeshSword(); //剣の軌跡のリセット
 					g_SPgauge[nCnt].SpGauge -= 100.0f; // ゲージを100.0f消費
 				}
 			}

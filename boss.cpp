@@ -555,20 +555,20 @@ void HitBoss(int nCntBoss,int nDamage)
 
 	if (g_Boss[nCntBoss].nLife <= 0)
 	{
-		// 死んだらパーティクルを出す
+		// 死んだらパーティクルを出す(雑魚より派手に)
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z),
 			g_Boss[nCntBoss].rot,
 			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
 			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-			4.0f, 8, 15, 20, 5.0f, 0.0f,
+			7.0f, 40, 60, 20, 7.0f, 20.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-
-		// 消す
-		g_Boss[nCntBoss].bUse = false;
 
 		// 影から消す
 		KillShadow(g_Boss[nCntBoss].nIdxShadow);
+
+		// 消す
+		g_Boss[nCntBoss].bUse = false;
 
 		if (gamestate != GAMESTATE_END)
 		{

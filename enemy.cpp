@@ -577,6 +577,15 @@ void HitEnemy(int nCnt,int nDamage)
 
 	g_Enemy[nCnt].nLife -= nDamage;
 
+	// パーティクルをセット
+	SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z),
+		g_Enemy[nCnt].rot,
+		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+		D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f),
+		4.0f, 1, 20, 30, 8.0f, 0.0f,
+		false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 	int nMin = GetTimeMinute();
 	int nSec = GetTimeSecond();
 	if (g_Enemy[nCnt].nLife <= 0)
@@ -673,9 +682,6 @@ void HitEnemy(int nCnt,int nDamage)
 
 			break;
 		}
-
-		// パーティクルをセット
-		SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), g_Enemy[nCnt].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 30, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE; // 敵の状態をダメージにする
 
