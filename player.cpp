@@ -866,8 +866,8 @@ void UpdatePlayer(void)
 	}	//モーションの更新
 
 	// アイテムのストック
-	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && KeyboardTrigger(DIK_F))
-	{
+	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)))
+	{// Fキー or RBボタン
 		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
 
 		// モーションを歩きにする(第2引数に1を入れる)
@@ -1525,7 +1525,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	{
 		bCollision = true;
 
-		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_RIGHT_B) || JoypadTrigger(JOYKEY_LEFT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) && g_player.Combostate == COMBO_NO)
+		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_LEFT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) && g_player.Combostate == COMBO_NO)
 		{
 			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
 			// 音楽再生

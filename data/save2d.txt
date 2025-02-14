@@ -458,5 +458,13 @@ POLYGONSET
    HEIGHT = 166.0					# [ 高さ ]
 END_POLYGONSET
 
-OBJ_COUNT = 57    # [ 2dオブジェクトの配置数 ]
+POLYGONSET
+   TEX_TYPE = 3					# [ 2dオブジェクトの種類 ]
+   POS = -332.4 1.0 -358.6				# [ 位置 ]
+   ROT = 0.0 0.0 0.0				# [ 向き ]
+   WIDTH = 236.0						# [ 横幅 ]
+   HEIGHT = 202.0					# [ 高さ ]
+END_POLYGONSET
+
+OBJ_COUNT = 58    # [ 2dオブジェクトの配置数 ]
 END_SCRIPT          # この行は消さないでください
