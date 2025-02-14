@@ -166,7 +166,7 @@ void UpdateTitle(void)
 				TitleMenuFlash(TITLESELECT_GAME); // チュートリアル点滅
 			}
 
-			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || OnMouseTriggerDown(LEFT_MOUSE))
+			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))
 			{//Enterキーを押したら
 				//ゲーム画面へ
 				SetFade(MODE_GAME);
@@ -194,7 +194,7 @@ void UpdateTitle(void)
 				TitleMenuFlash(TITLESELECT_TUTO); // メニューチュートリアル
 			}
 
-			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || OnMouseTriggerDown(LEFT_MOUSE))
+			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))
 			{//Enterキーを押したら
 				//チュートリアル画面へ
 				SetFade(MODE_TUTORIAL);

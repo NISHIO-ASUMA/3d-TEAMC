@@ -143,8 +143,13 @@ void InitGame(void)
 	// ポリゴンの初期化処理
 	InitPolygon();
 
+#ifdef DEBUG
+
 	//エディットの初期化処理
 	InitEdit();
+
+#endif // DEBUG
+
 
 	//エディットのロード処理
 	LoadEdit();
@@ -271,8 +276,12 @@ void UninitGame(void)
 	// ミニマップの終了処理
 	UninitMinMap();
 
+#ifdef DEBUG
+
 	//エディットの終了処理
 	UninitEdit();
+
+#endif // DEBUG
 
 	// ビルボードの終了処理
 	UninitBillboard();
@@ -499,8 +508,12 @@ void UpdateGame(void)
 		}
 		else if (g_bEditMode)
 		{
-			//エディットの更新処理
+#ifdef DEBUG
+
+			//エディットの終了処理
 			UpdateEdit();
+
+#endif // DEBUG
 
 			// カメラの更新処理
 			UpdateCamera();
@@ -597,11 +610,16 @@ void DrawGame(void)
 	// ミニマップの描画処理
 	DarwMinimap();
 
+#ifdef DEBUG
+
 	if (g_bEditMode)
 	{
 		//エディットの描画処理
 		DrawEdit();
 	}
+
+#endif // DEBUG
+
 
 	if (g_bPause == true)
 	{//ポーズ中
