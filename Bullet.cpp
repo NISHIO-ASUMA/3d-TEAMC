@@ -4,6 +4,10 @@
 //弾描画の基礎
 //
 //======================
+
+//***************************
+// インクルードファイル宣言
+//***************************
 #include "main.h"
 #include "Bullet.h"
 #include "Shadow.h"
@@ -12,14 +16,23 @@
 #include "Player.h"
 #include "block.h"
 #include "explosion.h"
+
+//***************************
+// グローバル変数達
+//***************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBullet = NULL;
 LPDIRECT3DTEXTURE9 g_pTextureBullet = NULL;
 #define MAX_BULLET (1000)
 Bullet g_Bullet[MAX_BULLET];
 
+//==========================
+// 初期化処理
+//==========================
 void InitBullet(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	// テクスチャ
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\BBBullet.png", &g_pTextureBullet);
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_BULLET * 500, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffBullet, NULL);
 	VERTEX_3D* pVtx;
@@ -27,16 +40,17 @@ void InitBullet(void)
 	//左、手前、下がマイナス
 	for (int nCnt = 0; nCnt < MAX_BULLET; nCnt++)
 	{
-		g_Bullet[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Bullet[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Bullet[nCnt].dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Bullet[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Bullet[nCnt].bUse = false;
-		g_Bullet[nCnt].nLife = 0;
-		g_Bullet[nCnt].fSize = 2.0f;
-		g_Bullet[nCnt].fSpeed = 1.0f;
-		g_Bullet[nCnt].bEnemy = true;
+		g_Bullet[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 場所
+		g_Bullet[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 角度
+		g_Bullet[nCnt].dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 方向
+		g_Bullet[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// ベクトル
+		g_Bullet[nCnt].bUse = false;// 使用の有無
+		g_Bullet[nCnt].nLife = 0;// 寿命
+		g_Bullet[nCnt].fSize = 2.0f;// 大きさ
+		g_Bullet[nCnt].fSpeed = 1.0f;// 速度
+		g_Bullet[nCnt].bEnemy = true;// 敵の弾かどうか
 
+		// 描画色々
 		pVtx[0].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x - g_Bullet[nCnt].fSize, g_Bullet[nCnt].pos.y + g_Bullet[nCnt].fSize, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x + g_Bullet[nCnt].fSize, g_Bullet[nCnt].pos.y + g_Bullet[nCnt].fSize, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(g_Bullet[nCnt].pos.x - g_Bullet[nCnt].fSize, g_Bullet[nCnt].pos.y - g_Bullet[nCnt].fSize, 0.0f);
@@ -62,6 +76,9 @@ void InitBullet(void)
 	g_pVtxBuffBullet->Unlock();
 }
 
+//==========================
+// 終了処理
+//==========================
 void UninitBullet(void)
 {
 	if (g_pVtxBuffBullet != NULL)
@@ -76,29 +93,45 @@ void UninitBullet(void)
 	}
 }
 
+//==========================
+// 更新処理
+//==========================
 void UpdateBullet(void)
 {
 	Player* pPlayer = GetPlayer();
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	VERTEX_3D* pVtx;
 	g_pVtxBuffBullet->Lock(0, 0, (void**)&pVtx, 0);
+	// 全て見回し
 	for (int nCnt = 0; nCnt < MAX_BULLET; nCnt++)
 	{
+		// 存在するなら
 		if (g_Bullet[nCnt].bUse == true)
 		{
+			// 場所を保存し
 			g_Bullet[nCnt].posDest = g_Bullet[nCnt].pos;
+			
+			// moveの分移動
 			g_Bullet[nCnt].pos += g_Bullet[nCnt].move;
+			
+			// 寿命減少
 			g_Bullet[nCnt].nLife--;
+
+			// 影の場所移動
 			SetPositionShadow(g_Bullet[nCnt].nIdxShadow, g_Bullet[nCnt].pos, 2.0f + 2.0f * g_Bullet[nCnt].pos.y / 200.0f, 1.0f / (1.0f + g_Bullet[nCnt].pos.y / 30.0f));
 			
+			// 味方の弾なら
 			if (g_Bullet[nCnt].bEnemy == false)
 			{
 				SetEffect(g_Bullet[nCnt].pos, g_Bullet[nCnt].dir, 5, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f), 0.0f, 3.0f);
 			}
+			// 敵の弾なら
 			else
 			{
+				// エフェクトを書き
 				SetEffect(g_Bullet[nCnt].pos, g_Bullet[nCnt].dir, 3, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, 3.0f);
 
+				// 当たり判定を纏わせる
 				if (sphererange(&g_Bullet[nCnt].pos, &pPlayer->pos, g_Bullet[nCnt].fSize, 30.0f))
 				{
 					//pPlayer->state != PLAYERSTATE_DAMAGE
@@ -108,6 +141,7 @@ void UpdateBullet(void)
 				}
 			}
 
+			// 寿命で死ぬ
 			if (g_Bullet[nCnt].nLife <= 0)
 			{
 				g_Bullet[nCnt].bUse = false;
@@ -118,6 +152,9 @@ void UpdateBullet(void)
 	g_pVtxBuffBullet->Unlock();
 }
 
+//==========================
+// 描画処理
+//==========================
 void DrawBullet(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;
@@ -167,6 +204,11 @@ void DrawBullet(void)
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
+//==========================
+// 設置処理
+//==========================
+
+// 左から場所、ベクトル、向き、寿命、ダメージ、大きさ、速度、敵味方の判別
 void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 dir, int nLife, int nDamege, float fSize,float fSpeed, bool Enemy)
 {
 	int nCntBullet;
@@ -177,6 +219,7 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 dir, int nLife, in
 	{
 		if (g_Bullet[nCntBullet].bUse == false)
 		{
+			// 影の設定
 			g_Bullet[nCntBullet].nIdxShadow = SetShadow(g_Bullet[nCntBullet].pos, g_Bullet[nCntBullet].rot, fSize, 1.0f);
 			g_Bullet[nCntBullet].pos = pos;
 			g_Bullet[nCntBullet].dir = dir;
@@ -194,11 +237,17 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 dir, int nLife, in
 	g_pVtxBuffBullet->Unlock();
 }
 
+//==========================
+// 取得処理
+//==========================
 Bullet* GetBullet(void)
 {
 	return &g_Bullet[0];
 }
 
+//==========================
+// 破壊処理
+//==========================
 void KillBullet(int nNum)
 {
 	g_Bullet[nNum].bUse = false;

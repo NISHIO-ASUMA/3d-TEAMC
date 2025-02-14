@@ -1,6 +1,20 @@
-#include "main.h"
+//======================
+//
+//Author:長尾悠成
+//弾関係のヘッダー
+//
+//======================
 #ifndef _BULLET_H_
 #define _BULLET_H_
+
+//****************************
+// インクルードファイル宣言
+//****************************
+#include "main.h"
+
+//****************************
+// 構造体
+//****************************
 typedef struct
 {
 	D3DXVECTOR3 pos;
@@ -17,6 +31,9 @@ typedef struct
 	bool bUse;
 	bool bEnemy;
 }Bullet;
+//****************************
+// 処理一覧
+//****************************
 void InitBullet(void);
 void UninitBullet(void);
 void UpdateBullet(void);
