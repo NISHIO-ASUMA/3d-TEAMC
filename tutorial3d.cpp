@@ -229,6 +229,9 @@ void DrawTutorial3d(void)
 	// プレイヤーの描画処理
 	DrawPlayer();
 
+	// ポリゴンの描画処理
+	DrawPolygon();
+
 	// 影の描画処理
 	DrawShadow();
 
