@@ -29,6 +29,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMiniMap = NULL;		   // í∏ì_ÉoÉbÉtÉ@Ç÷ÇÃÉ|ÉCÉìÉ
 
 LPDIRECT3DTEXTURE9 g_pTextureMiniMapField = NULL;           // ÉeÉNÉXÉ`ÉÉÇ÷ÇÃÉ|ÉCÉìÉ^
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMiniMapField = NULL;		// í∏ì_ÉoÉbÉtÉ@Ç÷ÇÃÉ|ÉCÉìÉ^
+D3DXVECTOR3 MapFiledPos;
 
 //==============================================================================================================
 // É~ÉjÉ}ÉbÉvèâä˙âªèàóù
@@ -191,14 +192,14 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 		pVtx += 4 * nIdx;
 
 		// ÉvÉåÉCÉÑÅ[ÇÃç¿ïWÇÉ~ÉjÉ}ÉbÉvÇÃç¿ïWÇ…ïœä∑
-		g_MiniMap[nIdx].pos.x = (pPos->x / MAX_WIDTH) * 200.0f;
-		g_MiniMap[nIdx].pos.y = (pPos->z / MAX_HEIGHT) * 200.0f;
+		g_MiniMap[nIdx].pos.x = (pPos->x / MAX_FIELDWIDTH) * MINIMAP_WIDTH;
+		g_MiniMap[nIdx].pos.y = (pPos->z / MAX_FIELDHEIGHT) * MINIMAP_HEIGHT;
 
 		// í∏ì_ç¿ïWÇÃçXêV
-		pVtx[0].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x - 5.0f, 100.0f + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x + 5.0f, 100.0f + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x - 5.0f, 100.0f + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1100.0f + g_MiniMap[nIdx].pos.x + 5.0f, 100.0f + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
 	}
 	// í∏ì_ÉoÉbÉtÉ@ÇÃÉAÉìÉçÉbÉN
 	g_pVtxBuffMiniMap->Unlock();
@@ -225,10 +226,10 @@ int SetMiniMap(D3DXVECTOR3 pos, int nType)
 			g_MiniMap[nCnt].bUse = true;
 
 			// í∏ì_ç¿ïWÇÃçXêV
-			pVtx[0].pos = D3DXVECTOR3(1100.0f + pos.x - 5.0f, 100.0f + pos.y - 5.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(1100.0f + pos.x + 5.0f, 100.0f + pos.y - 5.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(1100.0f + pos.x - 5.0f, 100.0f + pos.y + 5.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(1100.0f + pos.x + 5.0f, 100.0f + pos.y + 5.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + pos.x - 5.0f, MapFiledPos.y + pos.y - 5.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + pos.x + 5.0f, MapFiledPos.y + pos.y - 5.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + pos.x - 5.0f, MapFiledPos.y + pos.y + 5.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + pos.x + 5.0f, MapFiledPos.y + pos.y + 5.0f, 0.0f);
 
 			break;
 		}
@@ -276,15 +277,17 @@ void InitMapField(void)
 		&g_pVtxBuffMiniMapField,
 		NULL);
 
+	MapFiledPos = D3DXVECTOR3(1100.0f, 180.0f, 0.0f);
+
 	// í∏ì_ÉoÉbÉtÉ@ÇÃÉçÉbÉN
 	g_pVtxBuffMiniMapField->Lock(0, 0, (void**)&pVtx, 0);
 
 	// í∏ì_ç¿ïWä÷åW
 	// í∏ì_ç¿ïWÇÃê›íË
-	pVtx[0].pos = D3DXVECTOR3(1000.0f, 0.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1200.0f, 0.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(1000.0f, 200.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1200.0f, 200.0f, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(1000.0f, 80.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(1200.0f, 80.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(1000.0f, 280.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(1200.0f, 280.0f, 0.0f);
 
 	// rhwÇÃê›íË
 	pVtx[0].rhw = 1.0f;
