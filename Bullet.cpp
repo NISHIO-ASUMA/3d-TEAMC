@@ -98,11 +98,13 @@ void UpdateBullet(void)
 			else
 			{
 				SetEffect(g_Bullet[nCnt].pos, g_Bullet[nCnt].dir, 3, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, 3.0f);
+
 				if (sphererange(&g_Bullet[nCnt].pos, &pPlayer->pos, g_Bullet[nCnt].fSize, 30.0f))
 				{
 					//pPlayer->state != PLAYERSTATE_DAMAGE
 					HitPlayer(g_Bullet[nCnt].nDamege);
 					g_Bullet[nCnt].bUse = false;
+					KillShadow(g_Bullet[nCnt].nIdxShadow);
 				}
 			}
 

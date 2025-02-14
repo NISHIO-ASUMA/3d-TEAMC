@@ -88,7 +88,7 @@ void InitPlayer(void)
 	g_player.bMove = false;								   // 
 	g_player.nLife = PLAYERLIFE;						   // 体力
 	g_player.state = PLAYERSTATE_NORMAL;				   // 状態
-	g_player.Motion.bLoopMotion = true;					   // 
+	g_player.Motion.bLoopMotion = true;					   // モーションのループ
 	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	   // 剣の角度
 	g_player.Motion.nKey = 0;							   // キー数
 	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;	   // モーションの種類
@@ -118,20 +118,11 @@ void InitPlayer(void)
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)
 	{
-		LoadMotion(0);
-		LoadMotion(1);
-		LoadMotion(2);
-		LoadMotion(3);
-		LoadMotion(4);
-		LoadMotion(5);
-		LoadMotion(6);
-		LoadMotion(7);
-		LoadMotion(8);
-		LoadMotion(9);
 
 		// 切り替わるモーションの数だけ
 		for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
 		{
+			LoadMotion(nCnt);
 		}
 
 		g_LoadPlayer[0].nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f, 1.0f);
@@ -734,7 +725,7 @@ void UpdatePlayer(void)
 	}
 
 	// 持っているアイテムを置く処理
-	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)) && g_player.Combostate == COMBO_NO)
+	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_Y)) && g_player.Combostate == COMBO_NO && g_player.bJump != false)
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -1069,19 +1060,28 @@ void SetMtxPos(void)
 //===============================================================================================================
 void HitPlayer(int nDamage)
 {
-	if (!g_player.AttackSp)
+	// プレイヤーの状態がスペシャルじゃなかったら
+	if (g_player.AttackSp == false)
 	{
+		// プレイヤーの体力を減らす
 		g_player.nLife -= nDamage;
 
+		// プレイヤーの体力が0になったら
 		if (g_player.nLife <= 0)
 		{
 			g_player.state = PLAYERSTATE_FALL;
+
+			// プレイヤーを消す
 			g_player.bDisp = false;
 			KillShadow(g_player.nIdxShadow); // 影を消す
+			EnableMap(g_player.nIdxMap);    // マップから消す
 		}
 		else
 		{
+			// 状態カウンター
 			g_nCounterState = 30;
+
+			// プレイヤーの状態をダメージにする
 			g_player.state = PLAYERSTATE_DAMAGE;
 		}
 	}

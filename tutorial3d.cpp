@@ -23,6 +23,7 @@
 #include "HPGauge.h"
 #include "gameui.h"
 #include "edit.h"
+#include "minimap.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -54,6 +55,9 @@ void InitTutorial3d(void)
 
 	// UIの初期化処理
 	InitGameUI();
+
+	// ミニマップの初期化処理
+	InitMiniMap();
 
 	// プレイヤーの初期化処理
 	InitPlayer();
@@ -120,6 +124,9 @@ void UninitTutorial3d(void)
 
 	// 壁の終了処理
 	UninitWall();
+
+	// ミニマップの終了処理
+	UninitMinMap();
 
 	// プレイヤーの終了処理
 	UninitPlayer();
