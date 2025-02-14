@@ -26,6 +26,8 @@
 #include "minimap.h"
 #include "edit2d.h"
 #include "meshsword.h"
+#include "Effect.h"
+#include "Particle.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -82,6 +84,11 @@ void InitTutorial3d(void)
 	// 爆発の初期化処理
 	InitExplosion();
 
+	// エフェクトの初期化
+	InitEffect();
+
+	// パーチくる
+	InitParticle();
 
 	// ステージの読み込み
 	LoadEdit();
@@ -157,6 +164,9 @@ void UninitTutorial3d(void)
 	// 爆発の終了処理
 	UninitExplosion();
 
+	// エフェクトの終了
+	UninitEffect();
+
 	//// エディター画面の終了処理
 	//UninitEdit();
 }
@@ -191,6 +201,9 @@ void UpdateTutorial3d(void)
 
 	// プレイヤーの更新処理
 	UpdatePlayer();
+
+	// エフェクトの更新処理
+	UpdateEffect();
 
 	if ((KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true))
 	{//Enterキー or Startボタンが押された
@@ -230,6 +243,9 @@ void DrawTutorial3d(void)
 
 	// 剣の軌跡の描画処理
 	DrawMeshSword();
+
+	// エフェクトの描画処理
+	//DrawEffect();
 
 	// UIの描画処理
 	DrawGameUI();
