@@ -844,10 +844,17 @@ void CreateObb(int nCnt)
 	g_Block[nCnt].Obb.VecRot[1] = D3DXVECTOR3(mtxRot._21, mtxRot._22, mtxRot._23); // âÒì]çsóÒY
 	g_Block[nCnt].Obb.VecRot[2] = D3DXVECTOR3(mtxRot._31, mtxRot._32, mtxRot._33); // âÒì]çsóÒZ
 
+	float Length[3] = {};
+
 	// í∑Ç≥éÊìæ
-	g_Block[nCnt].Obb.Length[0] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.x * g_Block[nCnt].Scal.x) - (g_Block[nCnt].BlockTex[nType].vtxMin.x * g_Block[nCnt].Scal.x)) * 0.6f; // í∑Ç≥X
-	g_Block[nCnt].Obb.Length[1] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.y * g_Block[nCnt].Scal.y) - (g_Block[nCnt].BlockTex[nType].vtxMin.y * g_Block[nCnt].Scal.y)) * 0.6f; // í∑Ç≥Y
-	g_Block[nCnt].Obb.Length[2] = fabsf((g_Block[nCnt].BlockTex[nType].vtxMax.z * g_Block[nCnt].Scal.z) - (g_Block[nCnt].BlockTex[nType].vtxMin.z * g_Block[nCnt].Scal.z)) * 0.7f; // í∑Ç≥Z
+	Length[0] = fabsf(g_Block[nCnt].Size.x * g_Block[nCnt].Scal.x); // í∑Ç≥X
+	Length[1] = fabsf(g_Block[nCnt].Size.y * g_Block[nCnt].Scal.y); // í∑Ç≥Y
+	Length[2] = fabsf(g_Block[nCnt].Size.z * g_Block[nCnt].Scal.z); // í∑Ç≥Z
+
+	g_Block[nCnt].Obb.Length[0] = fabsf(Length[0]) * 0.5f; // í∑Ç≥X
+	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.5f; // í∑Ç≥Y
+	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.55f; // í∑Ç≥Z
+
 }
 //=======================
 // OBBÇÃîªíË
@@ -2002,7 +2009,7 @@ bool PushBoss(int nCntBlock, int nIdx)
 		}
 
 		// -XÇÃñ Ç©ÇÁìñÇΩÇ¡ÇΩ
-		else if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
+		if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
 		{
 			D3DXVECTOR3 Nor = VecRot[0];
 			D3DXVec3Normalize(&Nor, &Nor);
@@ -2019,7 +2026,7 @@ bool PushBoss(int nCntBlock, int nIdx)
 			pBoss[nIdx].pos = NewBossPos;
 		}
 		// +XÇÃñ Ç©ÇÁìñÇΩÇ¡ÇΩ
-		else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
+		if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
 		{
 			D3DXVECTOR3 Nor = -VecRot[0];
 			D3DXVec3Normalize(&Nor, &Nor);
@@ -2036,7 +2043,7 @@ bool PushBoss(int nCntBlock, int nIdx)
 			pBoss[nIdx].pos = NewBossPos;
 		}
 		// -ZÇÃñ Ç©ÇÁìñÇΩÇ¡ÇΩ
-		else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
+		if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
 		{
 			D3DXVECTOR3 Nor = -VecRot[2];
 			D3DXVec3Normalize(&Nor, &Nor);
@@ -2053,7 +2060,7 @@ bool PushBoss(int nCntBlock, int nIdx)
 			pBoss[nIdx].pos = NewBossPos;
 		}
 		// +ZÇÃñ Ç©ÇÁìñÇΩÇ¡ÇΩ
-		else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
+		if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
 		{
 			D3DXVECTOR3 Nor = VecRot[2];
 			D3DXVec3Normalize(&Nor, &Nor);
