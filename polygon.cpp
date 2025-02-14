@@ -296,7 +296,7 @@ void SetMtxPolygon(int nCntPolygon)
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
 		// モーションタイプがアクションだったら
-		if (pBoss->Motion.motionType == MOTIONTYPE_ACTION)
+		if (pBoss->Motion.motionType == MOTIONTYPE_ACTION && pBoss->Motion.nKey <= 2)
 		{
 			//テクスチャの設定
 			pDevice->SetTexture(0, g_pTexturePolygon[nType]);

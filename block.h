@@ -29,7 +29,6 @@ typedef enum
 	BLOCKTYPE_BILL000,
 	BLOCKTYPE_BILL001,
 	BLOCKTYPE_BILL002,
-
 	BLOCKTYPE_BANNER,
 	BLOCKTYPE_BUS_STOP,
 	BLOCKTYPE_DUMPSTER,
@@ -76,7 +75,7 @@ typedef enum
 	BLOCKTYPE_SWING,
 	BLOCKTYPE_SWING1,
 	BLOCKTYPE_BURGERSHOP,
-
+	BLOCKTYPE_BILLDINGSTRUCTURE,
 	BLOCKTYPE_MAX
 }BLOCKTYPE;
 
@@ -111,7 +110,7 @@ typedef struct
 	D3DXVECTOR3 CenterPos; // 中心点の座標
 	D3DXVECTOR3 VecRot[3];   // 回転
 	float Length[3];         // XYZの長さ
-	D3DXMATRIX ObbMtx;
+	D3DXMATRIX ObbMtx;       // OBBのワールドマトリックス
 }OBB;
 
 //***************************
