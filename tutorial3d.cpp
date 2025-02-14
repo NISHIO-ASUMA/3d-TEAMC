@@ -24,6 +24,8 @@
 #include "gameui.h"
 #include "edit.h"
 #include "minimap.h"
+#include "edit2d.h"
+#include "meshsword.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -44,6 +46,9 @@ void InitTutorial3d(void)
 	// 影の初期化処理
 	InitShadow();
 
+	// 剣の軌跡の初期化処理
+	InitMeshSword();
+
 	// メッシュフィールドの初期化処理
 	InitMeshField();
 
@@ -58,6 +63,9 @@ void InitTutorial3d(void)
 
 	// ミニマップの初期化処理
 	InitMiniMap();
+
+	// ポリゴンの初期化処理
+	InitPolygon();
 
 	// プレイヤーの初期化処理
 	InitPlayer();
@@ -74,21 +82,23 @@ void InitTutorial3d(void)
 	// 爆発の初期化処理
 	InitExplosion();
 
-	//// エディター画面の初期化処理
-	//InitEdit();
 
-	// ステージを読み込む
-	tutoload();
+	// ステージの読み込み
+	LoadEdit();
+	LoadEdit2d();
+
+	//// ステージを読み込む
+	//tutoload();
 
 	// ブロックをセット
 	// TODO : ここの配置情報を修正---------------------
-	SetBlock(D3DXVECTOR3(-160.0f, 20.0f, 0.0f),D3DXVECTOR3(0.0f,0.0f,0.0f), 19, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
-	SetBlock(D3DXVECTOR3( -60.0f, 20.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 20, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
-	SetBlock(D3DXVECTOR3( 40.0f, 20.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 21, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
-	SetBlock(D3DXVECTOR3(40.0f, 20.0f, -90.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 47, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
+	SetBlock(D3DXVECTOR3(-160.0f, 0.0f, 0.0f),D3DXVECTOR3(0.0f,D3DX_PI * 0.5f,0.0f), 19, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	SetBlock(D3DXVECTOR3( -60.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 20, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	SetBlock(D3DXVECTOR3( 40.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 21, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	SetBlock(D3DXVECTOR3(140.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 47, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 
 	// アイテムをセット
-	SetItem(D3DXVECTOR3(140.0f, -10.0f, 0.0f), 29, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
+	SetItem(D3DXVECTOR3(40.0f, 0.0f, -90.0f), 29, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
 	//-------------------------------------------------
 	
 	// UIをセット
@@ -113,6 +123,12 @@ void UninitTutorial3d(void)
 
 	// 影の終了処理
 	UninitShadow();
+
+	// ポリゴンの終了処理
+	UninitPolygon();
+
+	// 剣の軌跡の終了処理
+	UninitMeshSword();
 
 	// メッシュフィールドの終了処理
 	UninitMeshField();
@@ -170,31 +186,13 @@ void UpdateTutorial3d(void)
 	// 爆発の更新処理
 	UpdateExplosion();
 
-	if (g_bEditMode2)
-	{// g_bEditMode2がture
-		//UpdateEdit();
-	}
-	else
-	{
-		// プレイヤーの更新処理
-		UpdatePlayer();
-	}
+	// 剣の軌跡の更新処理
+	UpdateMeshSword();
 
-	// エディットモードだったら
-	if (KeyboardTrigger(DIK_F2) && g_bEditMode2)
-	{
-		g_bEditMode2 = false; // 判定を変更
-		InitBlock(); // 出ているオブジェクトの初期化
-		InitItem();  // 出ているオブジェクトの初期化
-		LoadEdit();  // ロード
-	}
-	// エディットモードじゃなかったら
-	else if (KeyboardTrigger(DIK_F2) && !g_bEditMode2)
-	{
-		g_bEditMode2 = true; // 判定を有効化
-	}
+	// プレイヤーの更新処理
+	UpdatePlayer();
 
-	if ((KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true) && !g_bEditMode2)
+	if ((KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true))
 	{//Enterキー or Startボタンが押された
 		//ゲーム画面へ
 		SetFade(MODE_GAME);
@@ -229,6 +227,9 @@ void DrawTutorial3d(void)
 
 	// 爆発の描画処理
 	DrawExplosion();
+
+	// 剣の軌跡の描画処理
+	DrawMeshSword();
 
 	// UIの描画処理
 	DrawGameUI();
