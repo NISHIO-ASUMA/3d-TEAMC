@@ -34,7 +34,7 @@ typedef enum
 //***************************************************************************************************************
 static const char* CAMERA_TEX[MINIMAPTEX_MAX] =
 {
-	"data\\TEXTURE\\player_circle.png", // プレイヤー
+	"data\\TEXTURE\\player_position.png", // プレイヤー
 	"data\\TEXTURE\\enemy_circle.png",  // 敵
 };
 
