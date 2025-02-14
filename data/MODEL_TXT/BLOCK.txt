@@ -54,7 +54,7 @@ MODEL_FILENAME = data/MODEL/OBJ/swing.x					# [43]ベンチ
 MODEL_FILENAME = data/MODEL/OBJ/swing1.x				# [44]ベンチ
 MODEL_FILENAME = data/MODEL/OBJ/burgershop.x			# [45]ハンバーガーショップ
 MODEL_FILENAME = data/MODEL/OBJ/buildingstructure.x		# [46]
-MODEL_FILENAME = data/MODEL/tutorial300.x				# [47]チュートリアル看板
+MODEL_FILENAME = data/MODEL/OBJ/tutorial300.x			# [47]チュートリアル看板
 
 
 # もしやり方わかるならBLOCK.hの列挙型追加頼む

@@ -85,6 +85,7 @@ void InitTutorial3d(void)
 	SetBlock(D3DXVECTOR3(-160.0f, 20.0f, 0.0f),D3DXVECTOR3(0.0f,0.0f,0.0f), 19, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
 	SetBlock(D3DXVECTOR3( -60.0f, 20.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 20, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
 	SetBlock(D3DXVECTOR3( 40.0f, 20.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 21, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
+	SetBlock(D3DXVECTOR3(40.0f, 20.0f, -90.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 47, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
 
 	// アイテムをセット
 	SetItem(D3DXVECTOR3(140.0f, -10.0f, 0.0f), 29, D3DXVECTOR3(1.5f, 1.5f, 1.5f));

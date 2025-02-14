@@ -46,7 +46,7 @@ D3DXVECTOR3 Zoom;						// ホイールのズーム
 void InitCamera(void)
 {
 	// 変数の初期化
-	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 250.0f, -600.0f);			// カメラの位置
+	g_camera[MAIN].posV = D3DXVECTOR3(0.0f, 250.0f, -550.0f);			// カメラの位置
 
 	for (int nCnt = 0; nCnt < CAMERATYPE_MAX; nCnt++)
 	{
