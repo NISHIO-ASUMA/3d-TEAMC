@@ -26,6 +26,7 @@ typedef enum
 {
 	MINIMAPTEX_PLAYER = 0, // プレイヤー
 	MINIMAPTEX_ENEMY,	   // 敵
+	MINIMAPTEX_BOSS,
 	MINIMAPTEX_MAX
 }MINIMAPTEX;
 
@@ -36,6 +37,7 @@ static const char* CAMERA_TEX[MINIMAPTEX_MAX] =
 {
 	"data\\TEXTURE\\player_position.png", // プレイヤー
 	"data\\TEXTURE\\enemy_circle.png",  // 敵
+	"data\\TEXTURE\\boss_icon.png",
 };
 
 //***************************************************************************************************************
