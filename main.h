@@ -71,6 +71,7 @@ typedef enum
 	MODE_RESULT,		// リザルト
 	MODE_EDIT,			// エディット
 	MODE_RANKING,		// ランキング
+	MODE_EFFECT,        // エフェクトの編集モード
 	MODE_MAX,
 }MODE;
 

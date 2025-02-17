@@ -31,6 +31,7 @@
 #include "boss.h"
 #include "Bullet.h"
 #include "minimap.h"
+#include "effectEdit.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -387,7 +388,7 @@ void UpdatePlayer(void)
 		{
 			if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 			{
-				SetMotion(&g_player.Motion,MOTIONTYPE_NEUTRAL,MOTIONTYPE_NEUTRAL,true,40); // モーションをニュートラルにする
+				SetMotion(&g_player.Motion,MOTIONTYPE_NEUTRAL,MOTIONTYPE_NEUTRAL,false,40); // モーションをニュートラルにする
 			}
 		}
 	}
@@ -412,7 +413,7 @@ void UpdatePlayer(void)
 		break;
 	default:
 		break;
-	}
+	}	
 
 	D3DXVECTOR3 SwordPos(
 		g_player.SwordMtx._41, // X方向
@@ -573,17 +574,18 @@ void UpdatePlayer(void)
 		// モーションがジャンプだったら
 		if (g_player.Motion.motionType == MOTIONTYPE_JUMP)
 		{
-			// 着地のときに出す煙分
-			for (int nCnt = 0; nCnt < LANDINGEXPLOSION; nCnt++)
-			{
-				// 角度を求める
-				float fAngle = (D3DX_PI * 2.0f) / LANDINGEXPLOSION * nCnt;
+			//// 着地のときに出す煙分
+			//for (int nCnt = 0; nCnt < LANDINGEXPLOSION; nCnt++)
+			//{
+			//	// 角度を求める
+			//	float fAngle = (D3DX_PI * 2.0f) / LANDINGEXPLOSION * nCnt;
 
-				// 煙を出す
-				SetExplosion(D3DXVECTOR3(g_player.pos.x,0.0f,g_player.pos.z),D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),
-					60,15.0f,15.0f, EXPLOSION_LANDING);
-				g_player.pos.y = 0.0f;
-			}
+			//	// 煙を出す
+			//	SetExplosion(D3DXVECTOR3(g_player.pos.x,0.0f,g_player.pos.z),D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),
+			//		60,15.0f,15.0f, EXPLOSION_LANDING);
+			//	g_player.pos.y = 0.0f;
+			//}
+			LoadEffect(0, g_player.pos);
 			SetMotion(&g_player.Motion, MOTIONTYPE_LANDING, MOTIONTYPE_NEUTRAL, true, 10); // モーションを着地にする
 		}
 		g_player.bJump = true; // ジャンプを可能にする
@@ -684,7 +686,7 @@ void UpdatePlayer(void)
 	}
 
 	// フォーバーモード
-	if (g_player.FeverMode)
+	if (g_player.FeverMode == true)
 	{
 		g_player.speed = g_player.fStockSpeed * 1.8f;
 		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
@@ -768,13 +770,13 @@ void UpdatePlayer(void)
 
 	static int FiverCnt = 0; // 回数制限
 
-	if (g_player.FeverMode && FiverCnt == 0 && !g_player.AttackSp)
+	if (g_player.FeverMode == true && FiverCnt == 0 && g_player.AttackSp == false)
 	{
 		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, 0);
 		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
 		FiverCnt = 1; // 制限回数を超えた
 	}
-	if (!g_player.FeverMode)
+	if (g_player.FeverMode == false)
 	{
 		FiverCnt = 0; // 制限回数をリセット
 	}
@@ -835,9 +837,9 @@ void UpdatePlayer(void)
 	}
 
 	// スペシャルモーションからもとに戻す
-	if (g_player.AttackSp && g_player.Motion.nKey >= g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION].nNumkey - 1)
+	if (g_player.AttackSp == true && g_player.Motion.motionType != MOTIONTYPE_ACTION)
 	{
-		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
+		//SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
 		g_player.SwordOffpos.y = 65.0f;		// 判定の長さを戻す
 		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
 		g_player.Motion.nNumModel = 15;		// 武器を消す
@@ -846,6 +848,7 @@ void UpdatePlayer(void)
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
 	}
 
+	// ハンマーのスペシャルモーションの設定
 	if (g_player.WeponMotion == MOTION_SPHAMMER && g_player.AttackSp && g_player.Motion.nKey <= 15)
 	{
 		g_player.speed = 7.0f; // スピードを設定
@@ -899,6 +902,7 @@ void UpdatePlayer(void)
 		g_player.HandState = PLAYERHOLD_NO;
 	}
 
+	// モーションの更新
 	UpdateMotion(&g_player.Motion);
 
 	//プレイヤーの向きを目的の向きに近づける
@@ -1766,7 +1770,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
 		// ボスがプレイヤーの近くにいたら
-		if (sphererange(&g_player.pos, &pBoss[nCnt].pos, 50.0f, 140.0f) && pBoss[nCnt].bUse)
+		if (sphererange(&g_player.pos, &pBoss[nCnt].pos, 50.0f, 200.0f) && pBoss[nCnt].bUse)
 		{
 			// 範囲にいる間だけロックオン
 			if (sphererange(&g_player.pos, &pBoss[nCnt].pos, 150.0f, 150.0f))
@@ -1774,6 +1778,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 				// 角度を求める
 				float fAngle = atan2f(pBoss[nCnt].pos.x - g_player.pos.x, pBoss[nCnt].pos.z - g_player.pos.z);
 				g_player.rotDestPlayer.y = fAngle + D3DX_PI;
+				break;
 			}
 
 			// ボスの場所を向く

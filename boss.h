@@ -63,8 +63,9 @@ typedef struct
 	int state;
 	int nCounterState;
 	int nIdxShadow;
-	int AttackState;
+	int AttackState; // 
 	float Speed; // 足の速さ
+	int nHitStopCount; // ヒットストップのカウント
 }Boss;
 
 //**************************************************************************************************************

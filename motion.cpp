@@ -72,56 +72,52 @@ void UpdateMotion(MOTION *pMotion)
 				DiffRotZ += D3DX_PI * 2.0f;
 			}
 
-			//********************************************************************************************************************
-			// パーツの位置を設定
-			//********************************************************************************************************************
+			if (pMotion->bFinishMotion == false)
+			{
+				pMotion->aModel[nCntModel].pos.x =
+					pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosX +
+					DiffPosX *
+					((float)pMotion->nCountMotion /
+						(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-			pMotion->aModel[nCntModel].pos.x =
-				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosX +
-				DiffPosX *
-				((float)pMotion->nCountMotion /
-					(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
+				pMotion->aModel[nCntModel].pos.y =
+					pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosY +
+					DiffPosY *
+					((float)pMotion->nCountMotion /
+						(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-			pMotion->aModel[nCntModel].pos.y =
-				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosY +
-				DiffPosY *
-				((float)pMotion->nCountMotion /
-					(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
+				pMotion->aModel[nCntModel].pos.z =
+					pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosZ +
+					DiffPosZ *
+					((float)pMotion->nCountMotion /
+						(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-			pMotion->aModel[nCntModel].pos.z =
-				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fPosZ +
-				DiffPosZ *
-				((float)pMotion->nCountMotion /
-					(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
+				pMotion->aModel[nCntModel].rot.x =
+					pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX +
+					DiffRotX *
+					((float)pMotion->nCountMotion /
+						(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-			//********************************************************************************************************************
-			// パーツの向きを設定
-			//********************************************************************************************************************
-			pMotion->aModel[nCntModel].rot.x =
-				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX +
-				DiffRotX *
-				((float)pMotion->nCountMotion /
-					(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
+				pMotion->aModel[nCntModel].rot.y =
+					pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY +
+					DiffRotY *
+					((float)pMotion->nCountMotion /
+						(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-			pMotion->aModel[nCntModel].rot.y =
-				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotY +
-				DiffRotY *
-				((float)pMotion->nCountMotion /
-					(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
+				pMotion->aModel[nCntModel].rot.z =
+					pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ +
+					DiffRotZ *
+					((float)pMotion->nCountMotion /
+						(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
 
-			pMotion->aModel[nCntModel].rot.z =
-				pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ +
-				DiffRotZ *
-				((float)pMotion->nCountMotion /
-					(float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame);
-
-			pMotion->nNextKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey; // ブレンドモーションの次のキー
-
-			float fRateMotion = (float)pMotion->nCountMotion / (float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame; // 相対値
-			float fRateBlend = (float)pMotion->nCounterBlend / (float)pMotion->nFrameBlend;
+				pMotion->nNextKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey; // ブレンドモーションの次のキー
+			}
 
 			if (pMotion->bFinishMotion && pMotion->bBlendMotion)
 			{
+				float fRateMotion = (float)pMotion->nCountMotion / (float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame; // 相対値
+				float fRateBlend = (float)pMotion->nCounterBlend / (float)pMotion->nFrameBlend;
+
 				//現在のモーションの回転X
 				float fDiffMotionRX = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotX -
 					pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX;
@@ -229,15 +225,23 @@ void UpdateMotion(MOTION *pMotion)
 		else
 		{
 			//モーションがなかったらニュートラルに戻す
-			SetMotion(pMotion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 10);
+			//SetMotion(pMotion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, false, 10);
 		}
 	}
 
-	if (!pMotion->aMotionInfo[pMotion->motionType].bLoop &&
-		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
+	if (pMotion->aMotionInfo[pMotion->motionType].bLoop == false &&
+		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
+		pMotion->bBlendMotion == true)
 	{
 		pMotion->bFinishMotion = true;
 		//pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
+	}
+
+	// モーションブレンドのキー
+	if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].nFrame && pMotion->bBlendMotion == true && pMotion->bFinishMotion == true)
+	{
+		pMotion->nCountMotion = 0;
+		pMotion->nKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey;
 	}
 
 	// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった

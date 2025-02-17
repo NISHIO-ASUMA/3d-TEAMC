@@ -145,6 +145,12 @@
     <ClCompile Include="minimap.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="effect2.cpp">
+      <Filter>ソースファイル\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="particle2.cpp">
+      <Filter>ソースファイル\editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -290,6 +296,12 @@
     </ClInclude>
     <ClInclude Include="minimap.h">
       <Filter>ヘッダーファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="particle2.h">
+      <Filter>ヘッダーファイル\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="effect2.h">
+      <Filter>ヘッダーファイル\editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

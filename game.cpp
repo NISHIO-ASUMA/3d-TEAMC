@@ -47,6 +47,9 @@
 
 #include "Bullet.h"
 #include "minimap.h"
+#include "effect2.h"
+#include "particle2.h"
+#include "effectEdit.h"
 //**************************************************************************************************************
 //グローバル変数
 //**************************************************************************************************************
@@ -101,8 +104,14 @@ void InitGame(void)
 	// エフェクトの初期化処理
 	InitEffect();
 
+	// エフェクトの初期化処理
+	InitEffectX();
+
 	// パーティクルの初期化処理
 	InitParticle();
+
+	// パーティクルの初期化処理
+	InitParticleX();
 
 	// ダメージの初期化処理
 	InitDamege();
@@ -148,8 +157,10 @@ void InitGame(void)
 	//エディットの初期化処理
 	InitEdit();
 
-#endif // DEBUG
+	// エフェクト編集モードの初期化処理
+	InitEffectEdit();
 
+#endif // DEBUG
 
 	//エディットのロード処理
 	LoadEdit();
@@ -237,6 +248,12 @@ void UninitGame(void)
 	// パーティクルの終了処理
 	UninitParticle();
 
+	// エフェクトの終了処理
+	UninitEffectX();
+
+	// パーティクルの終了処理
+	UninitParticleX();
+
 	// ダメージの終了処理
 	UninitDamege();
 	
@@ -280,6 +297,9 @@ void UninitGame(void)
 
 	//エディットの終了処理
 	UninitEdit();
+
+	// エフェクト編集モードの終了処理
+	UninitEffectEdit();
 
 #endif // DEBUG
 
@@ -454,6 +474,12 @@ void UpdateGame(void)
 				// パーティクルの更新処理
 				UpdateParticle();
 
+				// エフェクトの更新処理
+				UpdateEffectX();
+
+				// パーティクルの更新処理
+				UpdateParticleX();
+
 				// ゲームのUIの更新処理
 				UpdateGameUI();
 
@@ -496,6 +522,9 @@ void UpdateGame(void)
 				// ミニマップの更新処理
 				UpdateMiniMap();
 
+				// エフェクト編集モードの終了処理
+				UpdateEffectEdit();
+
 			}
 			// ビルボードの更新処理
 			UpdateBillboard();
@@ -505,6 +534,7 @@ void UpdateGame(void)
 
 			//アイテムの更新処理
 			UpdateItem();
+
 		}
 		else if (g_bEditMode)
 		{
@@ -573,6 +603,15 @@ void DrawGame(void)
 
 	// パーティクルの描画処理
 	DrawParticle();
+
+	// エフェクトの描画処理
+	DrawEffectX();
+
+	// パーティクルの描画処理
+	DrawParticleX();
+
+	//// エフェクト編集モードの描画処理
+	//DrawEffectEdit();
 
 	//HPゲージの描写処理
     DrawGauge();

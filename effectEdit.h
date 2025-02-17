@@ -12,7 +12,7 @@
 //インクルードファイル
 //**************************************************************************************************************
 #include"main.h"
-#include"particle.h"
+#include"particle2.h"
 
 //**************************************************************************************************************
 // エフェクトの色の変更の種類
@@ -57,6 +57,6 @@ void UninitEffectEdit(void);	// エフェクトの終了処理
 void UpdateEffectEdit(void);	// エフェクトの更新処理
 void DrawEffectEdit(void);		// エフェクトの描画処理
 void SaveEffect(void);			// エフェクトのセーブ
-void LoadEffect(void);
-//SETPARTICLE* GetEditEffect(void);
+void LoadEffect(int nType, D3DXVECTOR3 pos);
+SETPARTICLE* GetEditEffect(void);
 #endif

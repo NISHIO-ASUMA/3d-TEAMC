@@ -28,6 +28,8 @@
 #include "player.h"
 #include "edit2d.h"
 #include "craftui.h"
+#include"effectEdit.h"
+#include"Particle2.h"
 
 //***************************************************************************************************************
 // プロトタイプ宣言
@@ -37,6 +39,7 @@ void DrawOperation(void); // 操作方法
 void DrawEditMode(void);  // 編集モーど
 void DrawPlayerInfo(void); // プレイヤーの情報
 void DrawEditmode2d(void);
+void DrawEffectEditMode(void);
 
 //***************************************************************************************************************
 // グローバル変数宣言
@@ -492,6 +495,10 @@ void Update(void)
 	case MODE_RANKING: // ランキング画面
 		UpdateRanking();
 		break;
+
+	case MODE_EFFECT: // エフェクト編集画面
+		UpdateEffectEdit();
+		break;
 	}
 
 #if _DEBUG
@@ -568,6 +575,10 @@ void Draw(void)
 			case MODE_RANKING: // ランキング画面(ここにデバック表示のDraw書かないでください)
 				DrawRanking();
 				break;
+
+			case MODE_EFFECT: // エフェクト編集画面
+				DrawEffectEdit();
+				break;
 			}
 
 #ifdef _DEBUG
@@ -599,6 +610,11 @@ void Draw(void)
 				{
 					DrawEditmode2d(); // エディター2dの描画
 				}
+			}
+
+			if (g_mode == MODE_EFFECT)
+			{
+				DrawEffectEditMode();
 			}
 			// プレイヤーの座標表示
 			//DrawDebugPlayerPos();
@@ -764,6 +780,10 @@ void SetMode(MODE mode)
 	case MODE_RANKING:  // ランキング画面
 		UninitRanking();
 		break;
+
+	case MODE_EFFECT: // エフェクト編集画面
+		UninitEffectEdit();
+		break;
 	}
 
 	g_mode = mode;		// 画面切り替え
@@ -789,6 +809,10 @@ void SetMode(MODE mode)
 
 	case MODE_RANKING:  // ランキング画面
 		InitRanking();
+		break;
+
+	case MODE_EFFECT: // エフェクト編集画面
+		InitEffectEdit();
 		break;
 	}
 }
@@ -1041,4 +1065,72 @@ void DrawEditmode2d(void)
 	g_pFont->DrawText(NULL, &aStrFile[0], -1, &rectFile, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrObj[0], -1, &rectObjpos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 
+}
+//==============================================================================================================
+// エフェクト編集モードの描画
+//==============================================================================================================
+void DrawEffectEditMode(void)
+{
+	SETPARTICLE* pEdit = GetEditEffect();
+
+	RECT rectAngle = { 0,20,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectSize = { 0,40,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectNum = { 0,60,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectColorType = { 0,80,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectColor = { 0,100,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectMove = { 0,120,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectLife = { 0,140,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectdir = { 0,160,SCREEN_WIDTH,SCREEN_HEIGHT };
+	RECT rectdecA = { 0,180,SCREEN_WIDTH,SCREEN_HEIGHT };
+
+	char aStrAbgle[256];
+	char aStrSize[256];
+	char aStrNum[256];
+	char aStrColorType[256];
+	char aStrColor[256];
+	char aStrMove[256];
+	char aStrLife[256];
+	char aStrdir[256];
+	char aStrdecA[256];
+
+	wsprintf(&aStrAbgle[0], "rand()%d + %d: MAX:[ + U / - Y ]:MIN:[ + O / - I ]", pEdit->AngleMax, pEdit->AngleMin);
+	sprintf(&aStrSize[0], "大きさ変更:[ + F / - G ]:[ %3.2f ]", pEdit->fSize);
+	wsprintf(&aStrNum[0], "粒子の数変更:[ + R / - T ]:[ %d ]", pEdit->nNumParticle);
+
+	switch (pEdit->ColorType)
+	{
+	case COLORCHANGE_R:
+		sprintf(&aStrColorType[0], "色変更 : [ + V / - B ] : [ R ]");
+		break;
+	case COLORCHANGE_G:
+		sprintf(&aStrColorType[0], "色変更 : [ + V / - B ] : [ G ]");
+		break;
+	case COLORCHANGE_B:
+		sprintf(&aStrColorType[0], "色変更 : [ + V / - B ] : [ B ]");
+		break;
+	case COLORCHANGE_A:
+		sprintf(&aStrColorType[0], "色変更 : [ + V / - B ] : [ A ]");
+		break;
+	default:
+		break;
+	}
+
+	sprintf(&aStrColor[0], "カラーRGBA[ ↑ / ↓ ]:[ %3.2f,%3.2f,%3.2f,%3.2f]", pEdit->col.r, pEdit->col.g, pEdit->col.b, pEdit->col.a);
+	sprintf(&aStrMove[0], "移動量:[ + J / - H ]:[ %3.2f ]", pEdit->fSpeed);
+	wsprintf(&aStrLife[0], "寿命:[ + K / - L ]:[ %d ]", pEdit->nLife);
+	sprintf(&aStrdir[0], "重力:[ X + 1 Y + 2 Z + 3 / X - 4 Y - 5 Z - 6 ]:[ %3.2f,%3.2f,%3.2f ]", pEdit->dir.x, pEdit->dir.y, pEdit->dir.z);
+	sprintf(&aStrdecA[0], "A値の減少:[ + N / - M ]:[ %f ]", pEdit->decfAlv);
+
+	g_pFont->DrawText(NULL, &aStrMove[0], -1, &rectMove, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+
+	g_pFont->DrawText(NULL, &aStrColor[0], -1, &rectColor, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+
+	g_pFont->DrawText(NULL, &aStrColorType[0], -1, &rectColorType, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+
+	g_pFont->DrawText(NULL, &aStrNum[0], -1, &rectNum, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrAbgle[0], -1, &rectAngle, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrSize[0], -1, &rectSize, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrLife[0], -1, &rectLife, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrdir[0], -1, &rectdir, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrdecA[0], -1, &rectdecA, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 }

@@ -150,7 +150,7 @@ void UpdateCamera(void)
 	}
 	
 	// スペシャルモーションを発動したとき
-	if (pPlayer->AttackSp && pPlayer->Motion.nKey <= 3)
+	if (pPlayer->AttackSp == true && pPlayer->Motion.nKey <= 3)
 	{
 		//// カウント用変数
 		//static int nCounter = 0;

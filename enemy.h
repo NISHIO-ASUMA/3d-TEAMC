@@ -89,7 +89,6 @@ typedef struct
 	int nType;
 	bool bUse;//使用しているかどうか
 	MOTION Motion;
-	D3DXVECTOR3 AttackEnemy;
 	D3DXVECTOR3 Size;
 	D3DXVECTOR3 vtxMin,vtxMax;
 	int nLife;
@@ -108,6 +107,7 @@ typedef struct
 	D3DXVECTOR3 rotDest; // 目的の角度
 	D3DXVECTOR3 PosDest; // 目的の位置
 	int nIdxMap;
+	int HitStopCount;    // ヒットストップ
 }ENEMY;
 
 //**************************************************************************************************************

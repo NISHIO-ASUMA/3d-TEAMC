@@ -65,7 +65,9 @@ void InitBoss(void)
 		g_Boss[nCnt].state = BOSSSTATE_NORMAL;			 // 状態
 		g_Boss[nCnt].Speed = 5.0f;						 // 足の速さ
 		g_Boss[nCnt].AttackState = BOSSATTACK_NO;			 // 攻撃状態
+		g_Boss[nCnt].nHitStopCount = 0;                  // ヒットストップのカウント
 	}
+
 	LoadBoss(); // ボスのロード
 
 	D3DXMATERIAL* pMat; // マテリアルへのポインタ
@@ -219,8 +221,10 @@ void UpdateBoss(void)
 
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
+		g_Boss[nCnt].nHitStopCount--;
+
 		// 使用状態のみ
-		if (!g_Boss[nCnt].bUse)
+		if (g_Boss[nCnt].bUse == false || g_Boss[nCnt].nHitStopCount > 0)
 		{
 			continue;
 		}
@@ -351,13 +355,13 @@ void UpdateBoss(void)
 			g_Boss[nCnt].move.z = Dest.z * g_Boss[nCnt].Speed;
 
 		}
-		else
-		{
-			if (g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION)
-			{
-				g_Boss[nCnt].Motion.motionType = MOTIONTYPE_NEUTRAL; // 攻撃してない
-			}
-		}
+		//else
+		//{
+		//	if (g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION)
+		//	{
+		//		g_Boss[nCnt].Motion.motionType = MOTIONTYPE_NEUTRAL; // 攻撃してない
+		//	}
+		//}
 
 		// 攻撃範囲に入ったら
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 50.0f) && g_Boss[nCnt].AttackState != BOSSATTACK_ATTACK)
@@ -642,6 +646,7 @@ void HitBoss(int nCntBoss,int nDamage)
 
 		g_Boss[nCntBoss].state = ENEMYSTATE_DAMAGE;
 		g_Boss[nCntBoss].nCounterState = 20;
+		g_Boss[nCntBoss].nHitStopCount = 10;
 		AddSpgauge(1.0f);   // SPゲージを取得
 	}
 }

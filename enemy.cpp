@@ -68,7 +68,6 @@ void InitEnemy(void)
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		g_Enemy[nCntEnemy].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 座標
-		g_Enemy[nCntEnemy].AttackEnemy = D3DXVECTOR3(5.0f, 10.0f, 5.0f);// 敵の攻撃
 		g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 移動量
 		g_Enemy[nCntEnemy].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 角度
 		g_Enemy[nCntEnemy].bUse = false;								// 未使用状態
@@ -77,7 +76,9 @@ void InitEnemy(void)
 		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;					// 状態
 		g_Enemy[nCntEnemy].Speed = 0.0f;							    // 足の速さ
 		g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;                // 敵が攻撃状態か
-		g_Enemy[nCntEnemy].nCountAction = 0;                // 攻撃のインターバル値
+		g_Enemy[nCntEnemy].nCountAction = 0;							// 攻撃のインターバル値
+		g_Enemy[nCntEnemy].HitStopCount = 0;						    // ヒット時のヒットストップ
+
 	}
 
 	//グローバル変数の初期化
@@ -99,6 +100,7 @@ void InitEnemy(void)
 		g_LoadEnemy[nCntEnemyType].state = ENEMYSTATE_NORMAL;			  // 状態
 		g_LoadEnemy[nCntEnemyType].Speed = 0.0f;						  // 足の速さ
 		g_LoadEnemy[nCntEnemyType].AttackState = ENEMYATTACK_NO;          // 敵が攻撃状態か
+		g_LoadEnemy[nCntEnemyType].HitStopCount = 0;					  // ヒット時のヒットストップ
 
 		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
 		{
@@ -268,12 +270,16 @@ void UpdateEnemy(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		if (!g_Enemy[nCntEnemy].bUse)
+		// ヒットストップのカウントを減らす
+		g_Enemy[nCntEnemy].HitStopCount--;
+
+		if (g_Enemy[nCntEnemy].bUse == false || g_Enemy[nCntEnemy].HitStopCount > 0)
 		{// 未使用状態だったら
 			// とばしてカウントを進める
 			continue;
 		}
 
+		// 敵の状態
 		switch (g_Enemy[nCntEnemy].state)
 		{
 		case ENEMYSTATE_NORMAL:
@@ -687,7 +693,8 @@ void HitEnemy(int nCnt,int nDamage)
 
 		g_Enemy[nCnt].g_bDamage = false;		 // ダメージを通らなくする
 
-		g_Enemy[nCnt].nCounterState = 30;		 // ダメージ状態からノーマルに戻るまでの時間
+		g_Enemy[nCnt].nCounterState = 20;		 // ダメージ状態からノーマルに戻るまでの時間
+		g_Enemy[nCnt].HitStopCount = 10;         // ヒットストップの時間
 
 		// スコアを加算
 		if (gamestate != GAMESTATE_END)
