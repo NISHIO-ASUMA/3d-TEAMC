@@ -359,6 +359,11 @@ void UpdateBoss(void)
 					D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
 					2.0f, 4, 20, 12, 2.0f, 5.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				if (g_Boss[nCnt].Motion.nCountMotion == 1 && g_Boss[nCnt].Motion.nKey == 2)
+				{
+					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 20.0f;
+					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 20.0f;
+				}
 			}
 			else if (g_Boss[nCnt].Motion.nKey >= 6)//蹴り中にもエフェクトを出す
 			{
