@@ -57,6 +57,7 @@ void InitIcon()
 		g_Icon[nCnt].fWidth = 0.0f;						  // 横幅
 		g_Icon[nCnt].bUse = false;						  // 未使用判定
 		g_Icon[nCnt].nType = WEPONTYPE_BAT;				  // 種類
+		g_Icon[nCnt].nIconType = ICONTYPE_HOLDITEM;		  // 種類
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -131,7 +132,7 @@ void UpdateIcon()
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)// 全てのアイコンを数え
 	{
-		if (g_Icon[nCnt].bUse && pItem[pPlayer->ItemIdx].state)// 使用されてるかつアイテム持ち
+		if (g_Icon[nCnt].bUse && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD && g_Icon[nCnt].nIconType == ICONTYPE_HOLDITEM)// 使用されてるかつアイテム持ち
 		{
 			if (pItem[pPlayer->ItemIdx].durability < 15)// 更に耐久力が減ってたら赤く点滅
 			{
@@ -194,7 +195,8 @@ void DrawIcon()
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
-		if (g_Icon[nCnt].bUse == true && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+		// 持っているアイテムのアイコン
+		if (g_Icon[nCnt].bUse == true && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD && g_Icon[nCnt].nIconType == ICONTYPE_HOLDITEM)
 		{// アイコンが使用状態 かつ アイテムの状態がホールドなら
 
 			// 種類
@@ -205,14 +207,26 @@ void DrawIcon()
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
-			
+		}
+		// ストックしているアイテムのアイコン
+		if (g_Icon[nCnt].bUse == true && pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && g_Icon[nCnt].nIconType == ICONTYPE_STOCKITEM)
+		{// アイコンが使用状態 かつ アイテムの状態がホールドなら
+
+			// 種類
+			int nType = pItem[pPlayer->StockItemIdx].nType;
+
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureIcon[nType]);
+
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
 		}
 	}
 }
 //=================================================================================================================
 // アイコンの設定処理
 //=================================================================================================================
-void SetIcon(D3DXVECTOR3 pos, float fWidth, float fHeight, int nType)
+void SetIcon(D3DXVECTOR3 pos, float fWidth, float fHeight, int nType, int IconType) // 設定処理
 {
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
@@ -228,6 +242,7 @@ void SetIcon(D3DXVECTOR3 pos, float fWidth, float fHeight, int nType)
 			g_Icon[nCnt].fWidth = fWidth;  // 横幅
 			g_Icon[nCnt].fHeight = fHeight;// 高さ
 			g_Icon[nCnt].nType = nType;	   // 種類
+			g_Icon[nCnt].nIconType = IconType;	   // 種類
 			g_Icon[nCnt].bUse = true;	   // 使用状態
 
 			// 頂点座標の設定
