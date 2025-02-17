@@ -17,7 +17,7 @@
 //**************************************************************************************************************
 #define MINIMAP_WIDTH (200.0f) // ミニマップの横幅
 #define MINIMAP_HEIGHT (200.0f) // ミニマップの高さ
-#define MAX_TREXMINIMAP (257) // 最大数 (敵とプレイヤー)
+#define MAX_TREXMINIMAP (258) // 最大数 (敵とプレイヤー)
 
 //***************************************************************************************************************
 // ミニマップ用テクスチャ列挙型宣言
@@ -36,7 +36,7 @@ typedef enum
 static const char* CAMERA_TEX[MINIMAPTEX_MAX] =
 {
 	"data\\TEXTURE\\player_position.png", // プレイヤー
-	"data\\TEXTURE\\enemy_circle.png",  // 敵
+	"data\\TEXTURE\\enemy_icon.png",  // 敵
 	"data\\TEXTURE\\boss_icon.png",
 };
 
