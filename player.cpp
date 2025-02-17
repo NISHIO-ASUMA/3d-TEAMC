@@ -133,8 +133,6 @@ void InitPlayer(void)
 		g_LoadPlayer[0].PlayerType = PLAYERTYPE_NOHAND;
 		g_LoadPlayer[1].PlayerType = PLAYERTYPE_WEPON;
 
-		D3DXMATERIAL* pMat;//マテリアルへのポインタ
-
 		for (int nCntPlayer = 0; nCntPlayer < PLAYERTYPE_MAX; nCntPlayer++)
 		{
 			//必要な情報を設定
@@ -739,7 +737,7 @@ void UpdatePlayer(void)
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
 
-		g_player.speed = 3.0f;
+		StatusChange(3.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 素手の時のモーション情報を代入
 		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
@@ -878,12 +876,20 @@ void UpdatePlayer(void)
 	}	//モーションの更新
 
 	// アイテムのストック
-	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)))
+	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && (KeyboardTrigger(DIK_R) || JoypadTrigger(JOYKEY_RIGHT_B)))
 	{// Fキー or RBボタン
-		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
-		g_player.speed = 3.0f;
 
-		SetIcon(D3DXVECTOR3(600.0f,600.0f,0.0f),40.0f,40.0f,pItem[g_player.ItemIdx].nType);
+		// アイテムの状態をストックにする
+		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
+
+		// ストックされたアイテムのインデックスを渡す
+		g_player.StockItemIdx = g_player.ItemIdx;
+
+		// プレイヤーの速度をリセット
+		StatusChange(3.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+
+		// 持っているアイテムのアイコン
+		SetIcon(D3DXVECTOR3(210.0f,580.0f,0.0f),40.0f,40.0f,pItem[g_player.StockItemIdx].nType,ICONTYPE_STOCKITEM);
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);

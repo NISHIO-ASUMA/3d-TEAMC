@@ -54,6 +54,16 @@ typedef enum
 }WEPON_TYPE;
 
 //**************************************************************************************************************
+// アイコンの種類の列挙型宣言
+//**************************************************************************************************************
+typedef enum
+{
+	ICONTYPE_HOLDITEM = 0,
+	ICONTYPE_STOCKITEM,
+	ICONTYPE_MAX
+}ICONTYPE;
+
+//**************************************************************************************************************
 // アイコンのテクスチャ宣言
 //**************************************************************************************************************
 static const char* ICON_TEXTURE[WEPONTYPE_MAX] =
@@ -104,6 +114,7 @@ typedef struct
 	float fWidth;	 // 横幅
 	float fHeight;	 // 高さ
 	bool bUse;		 // 使用しているか
+	int nIconType;   // アイコンのカテゴリー
 }ICON;
 
 //**************************************************************************************************************
@@ -113,6 +124,6 @@ void InitIcon();	// 初期化処理
 void UninitIcon();	// 終了処理
 void UpdateIcon();	// 更新処理
 void DrawIcon();	// 描画処理
-void SetIcon(D3DXVECTOR3 pos, float fWidth,float fHeight,int nType); // 設定処理
+void SetIcon(D3DXVECTOR3 pos, float fWidth,float fHeight,int nType,int IconType); // 設定処理
 
 #endif

@@ -797,6 +797,8 @@ void CraftItem(void)
 
 				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
+
+				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
 			// 氷の剣の材料がそろった
 			if ((g_Item[nCnt].nType == WEPONTYPE_ICEBLOCK &&
@@ -808,6 +810,8 @@ void CraftItem(void)
 
 				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
+
+				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
 		}
 		// クラフトアイコンを表示するかしないか
