@@ -436,6 +436,9 @@ void LoadEffect(int nType,D3DXVECTOR3 pos)
 	case 0:
 		pFile = fopen("data\\EFFECT\\effect000.txt", "r");
 		break;
+	case 1:
+		pFile = fopen("data\\EFFECT\\effect001.txt", "r");
+		break;
 	default:
 		pFile = NULL;
 		break;
@@ -497,7 +500,7 @@ void LoadEffect(int nType,D3DXVECTOR3 pos)
 					else if (strcmp(aString, "ANGLE_MIN") == 0)
 					{
 						fscanf(pFile, "%s", &skip[0]);
-						fscanf(pFile, "%d", &AngleMax);
+						fscanf(pFile, "%d", &AngleMin);
 					}
 					else if (strcmp(aString, "SPEED") == 0)
 					{

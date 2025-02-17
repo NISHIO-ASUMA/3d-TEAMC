@@ -84,13 +84,14 @@ void UpdateParticleX(void)
 		//パーティクル生成
 		for (nCntApper = 0; nCntApper < g_aParticle[nCntParticle].nNumParticle/*発生させたい粒子の数*/; nCntApper++)
 		{
-			g_aParticle[nCntParticle].pos.x += g_aParticle[nCntParticle].move.x;
-			g_aParticle[nCntParticle].pos.y += g_aParticle[nCntParticle].move.y;
-			g_aParticle[nCntParticle].pos.z += g_aParticle[nCntParticle].move.z;
+			g_aParticle[nCntParticle].pos += g_aParticle[nCntParticle].move;
 
-			float fAngleX = (float)(rand() % 628 - 314) * 0.01f;
-			float fAngleY = (float)(rand() % 628 - 314) * 0.01f;
-			float fAngleZ = (float)(rand() % 628 - 314) * 0.01f;
+			int MAX = g_aParticle[nCntParticle].AngleMax;
+			int MIN = g_aParticle[nCntParticle].AngleMin;
+
+			float fAngleX = (float)(rand() % MAX - MIN) * 0.01f;
+			float fAngleY = (float)(rand() % MAX - MIN) * 0.01f;
+			float fAngleZ = (float)(rand() % MAX - MIN) * 0.01f;
 
 			float fMoveX = ((float)(rand() % 1) + 1.0f);
 			float fMoveY = ((float)(rand() % 1) + 1.0f);
@@ -106,7 +107,7 @@ void UpdateParticleX(void)
 			//pos.z += (float)(rand() % 100 - 100.0f);
 
 			//移動量の設定
-			move.x = sinf(fAngleX) * g_aParticle[nCntParticle].dir.x * fMoveX;
+			move.x = cosf(fAngleX) * g_aParticle[nCntParticle].dir.x * fMoveX;
 			move.y = sinf(fAngleY) * g_aParticle[nCntParticle].dir.y * fMoveY;
 			move.z = cosf(fAngleZ) * g_aParticle[nCntParticle].dir.z * fMoveZ;
 

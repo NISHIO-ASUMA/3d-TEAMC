@@ -27,6 +27,8 @@
 #include "game.h"
 #include "Bullet.h"
 #include "minimap.h"
+#include "effectEdit.h"
+#include "effect2.h"
 
 //**************************************************************************************************************
 //ƒ}ƒNƒ’è‹`
@@ -598,13 +600,15 @@ void HitEnemy(int nCnt,int nDamage)
 	{// ‘Ì—Í‚ª0ˆÈ‰º‚È‚ç
 		if (pPlayer->nElement == WEPONELEMENT_DARK)
 		{
-			SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z),
-				g_Enemy[nCnt].rot,
-				D3DXVECTOR3(3.14f, 3.14f, 3.14f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f),
-				9.0f, 3, 30, 10, 5.0f, 30.0f,
-				true, D3DXVECTOR3(0.0f, 5.0f, 0.0f));
+			//SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z),
+			//	g_Enemy[nCnt].rot,
+			//	D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+			//	D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			//	D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f),
+			//	9.0f, 3, 30, 10, 5.0f, 30.0f,
+			//	true, D3DXVECTOR3(0.0f, 5.0f, 0.0f));
+
+			LoadEffect(1,D3DXVECTOR3(g_Enemy[nCnt].pos.x,g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y,g_Enemy[nCnt].pos.z));
 		}
 		else
 		{

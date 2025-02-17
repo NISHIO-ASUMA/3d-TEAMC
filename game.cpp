@@ -606,12 +606,6 @@ void DrawGame(void)
 	// パーティクルの描画処理
 	DrawParticle();
 
-	// エフェクトの描画処理
-	DrawEffectX();
-
-	// パーティクルの描画処理
-	DrawParticleX();
-
 	//// エフェクト編集モードの描画処理
 	//DrawEffectEdit();
 
@@ -626,6 +620,12 @@ void DrawGame(void)
 
 	// 軌跡の描画処理
 	DrawMeshSword();
+
+	// エフェクトの描画処理
+	DrawEffectX();
+
+	// パーティクルの描画処理
+	DrawParticleX();
 
 	// ダメージの描画処理
 	DrawDamege();

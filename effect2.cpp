@@ -16,7 +16,7 @@
 //*****************************************************************************************************
 //マクロ定義
 //*****************************************************************************************************
-#define MAX_EFFECT (4096) //爆発の最大数
+#define MAX_EFFECT (7000) //爆発の最大数
 #define XTEX (8) // テクスチャの横幅
 #define YTEX (1) // テクスチャの高さ
 #define UV (1.0f / XTEX)
@@ -181,7 +181,11 @@ void UpdateEffectX(void)
 		{
 			SetTextureAnim(nCnt, 8, 1,15);
 		}
-		else
+		if (g_EffectX[nCnt].EffectType == EFFECT_SOUL)
+		{
+			SetTextureAnim(nCnt, 4, 1, 5);
+		}
+		if(g_EffectX[nCnt].EffectType == EFFECT_NORMAL)
 		{
 			//テクスチャ座標の設定
 			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -223,7 +227,7 @@ void DrawEffectX(void)
 			//ライトを無効にする
 			pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-			if (EffectType != EFFECT_SMORK)
+			if (EffectType == EFFECT_NORMAL)
 			{
 				//aブレンディング
 				pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
