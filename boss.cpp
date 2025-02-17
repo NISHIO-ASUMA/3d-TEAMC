@@ -302,6 +302,82 @@ void UpdateBoss(void)
 				}
 			}
 		}
+		else if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION2)// アッパー＆ハイの状態で
+		{
+			if (g_Boss[nCnt].Motion.nKey == 0)// 溜める動作中に
+			{
+				// 向きをプレイヤーに向ける
+				float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);
+
+				// ボスの向き代入
+				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
+			}
+			else if (g_Boss[nCnt].Motion.nKey == 1)// 溜まり切ったモーションになって
+			{
+				if (g_Boss[nCnt].Motion.nCountMotion == 1)// その最初にエフェクトを出す
+				{
+					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
+						D3DXVECTOR3(1.57f, g_Boss[nCnt].rot.y, 1.57f),
+						D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+						2.0f, 3, 20, 150, 4.0f, 50.0f,
+						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				}
+			}
+			else if (g_Boss[nCnt].Motion.nKey == 6)// ハイキックモーション中の			
+			{
+				if (g_Boss[nCnt].Motion.nCountMotion == 1)// 最初は加速させる
+				{
+					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 30.0f;
+					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 30.0f;
+				}
+				else
+				{
+					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
+						g_Boss[nCnt].rot,
+						D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+						2.0f, 4, 60, 40, 6.0f, 60.0f,
+						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+				}
+			}
+			else if (g_Boss[nCnt].Motion.nKey == 2 || g_Boss[nCnt].Motion.nKey == 3)//アッパー中にはエフェクトを出す
+			{
+				D3DXVECTOR3 BlowPos(
+					g_Boss[nCnt].Motion.aModel[5].mtxWorld._41, // X方向
+					g_Boss[nCnt].Motion.aModel[5].mtxWorld._42, // Y方向
+					g_Boss[nCnt].Motion.aModel[5].mtxWorld._43  // Z方向
+				);
+
+				g_Boss[nCnt].pos += g_Boss[nCnt].move;
+				SetParticle(D3DXVECTOR3(BlowPos),
+					g_Boss[nCnt].rot,
+					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+					2.0f, 4, 20, 12, 2.0f, 5.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
+			else if (g_Boss[nCnt].Motion.nKey >= 6)//蹴り中にもエフェクトを出す
+			{
+				D3DXVECTOR3 BlowPos(
+					g_Boss[nCnt].Motion.aModel[11].mtxWorld._41, // X方向
+					g_Boss[nCnt].Motion.aModel[11].mtxWorld._42, // Y方向
+					g_Boss[nCnt].Motion.aModel[11].mtxWorld._43  // Z方向
+				);
+
+				g_Boss[nCnt].pos += g_Boss[nCnt].move;
+				SetParticle(D3DXVECTOR3(BlowPos),
+					g_Boss[nCnt].rot,
+					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+					2.0f, 4, 20, 12, 2.0f, 5.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
+		}
 
 		// 移動量の減衰
 		g_Boss[nCnt].move.x += (0.0f - g_Boss[nCnt].move.x) * 0.25f;
@@ -314,7 +390,7 @@ void UpdateBoss(void)
 		g_Boss[nCnt].pos += g_Boss[nCnt].move;
 
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
-		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 2000.0f) && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION)
+		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 2000.0f) && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION2)
 		{
 			// モデル情報を代入
 			D3DXVECTOR3 HootR(g_Boss[nCnt].Motion.aModel[11].mtxWorld._41, g_Boss[nCnt].Motion.aModel[11].mtxWorld._42, g_Boss[nCnt].Motion.aModel[11].mtxWorld._43);
@@ -366,12 +442,27 @@ void UpdateBoss(void)
 		// 攻撃範囲に入ったら
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 50.0f) && g_Boss[nCnt].AttackState != BOSSATTACK_ATTACK)
 		{
-			// モーションを攻撃にする
-			SetMotion(&g_Boss[nCnt].Motion, // モーション構造体のアドレス
-				MOTIONTYPE_ACTION,    // モーションタイプ
-				MOTIONTYPE_NEUTRAL,   // ブレンドモーションタイプ
-				true,                 // ブレンドするかしないか
-				10);				  // ブレンドのフレーム
+			// 行動パターンをランダム選択し
+			g_Boss[nCnt].nAttackPattern = rand() % 2;
+			// もし0ならドス突きを行う
+			if (g_Boss[nCnt].nAttackPattern == 0)
+			{
+				// モーションを攻撃にする
+				SetMotion(&g_Boss[nCnt].Motion, // モーション構造体のアドレス
+					MOTIONTYPE_ACTION,    // モーションタイプ
+					MOTIONTYPE_NEUTRAL,   // ブレンドモーションタイプ
+					true,                 // ブレンドするかしないか
+					10);				  // ブレンドのフレーム
+			}
+			else if (g_Boss[nCnt].nAttackPattern == 1)// もし1ならアッパー＆ハイを行う
+			{
+				// モーションを攻撃にする
+				SetMotion(&g_Boss[nCnt].Motion, // モーション構造体のアドレス
+					MOTIONTYPE_ACTION2,    // モーションタイプ
+					MOTIONTYPE_NEUTRAL,   // ブレンドモーションタイプ
+					true,                 // ブレンドするかしないか
+					10);				  // ブレンドのフレーム
+			}
 
 			g_Boss[nCnt].AttackState = BOSSATTACK_ATTACK; // 攻撃している
 		}
@@ -379,9 +470,15 @@ void UpdateBoss(void)
 		// 攻撃範囲に入った
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20.0f) &&
 			pPlayer->state != PLAYERSTATE_DAMAGE &&
-			g_Boss[nCnt].Motion.nKey >= 3 && !pPlayer->AttackSp)
+			g_Boss[nCnt].Motion.nKey >= 3 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)
 		{
-			HitPlayer(50);
+			HitPlayer(60);
+		}
+		else if(sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20.0f) &&
+			pPlayer->state != PLAYERSTATE_DAMAGE &&
+			g_Boss[nCnt].Motion.nKey >= 2 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION2)
+		{
+			HitPlayer(60);
 		}
 
 		colisionSword(nCnt);   // 剣との当たり判定
@@ -526,6 +623,8 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].pos = pos;	  // 位置を代入
 			//g_Boss.Speed = speed; // 足の速さ
 			g_Boss[nCnt].nLife = nLife; // 体力を挿入
+			g_Boss[nCnt].state = BOSSSTATE_NORMAL;			 // 状態
+			g_Boss[nCnt].AttackState = BOSSATTACK_NO;			 // 攻撃状態
 			g_Boss[nCnt].bUse = true;   // 使用状態にする
 
 			SetPolygon(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 20.0f, 100.0f, POLYGON_TYPE_FIVE);
