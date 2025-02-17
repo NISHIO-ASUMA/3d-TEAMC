@@ -102,6 +102,7 @@ void UpdateBullet(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	VERTEX_3D* pVtx;
 	g_pVtxBuffBullet->Lock(0, 0, (void**)&pVtx, 0);
+
 	// ‘S‚ÄŒ©‰ñ‚µ
 	for (int nCnt = 0; nCnt < MAX_BULLET; nCnt++)
 	{

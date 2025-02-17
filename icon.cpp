@@ -194,7 +194,7 @@ void DrawIcon()
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
-		if (g_Icon[nCnt].bUse && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+		if (g_Icon[nCnt].bUse == true && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
 		{// アイコンが使用状態 かつ アイテムの状態がホールドなら
 
 			// 種類

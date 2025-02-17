@@ -32,6 +32,7 @@
 #include "Bullet.h"
 #include "minimap.h"
 #include "effectEdit.h"
+#include "icon.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -882,6 +883,8 @@ void UpdatePlayer(void)
 		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
 		g_player.speed = 3.0f;
 
+		SetIcon(D3DXVECTOR3(600.0f,600.0f,0.0f),40.0f,40.0f,pItem[g_player.ItemIdx].nType);
+
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
 
@@ -1410,6 +1413,7 @@ void ThrowItem(void)
 
 			// 飛ばす方向を設定
 			pItem[nIdx].move.x = dest.x * 10.0f;
+			pItem[nIdx].move.y = dest.y * 10.0f;
 			pItem[nIdx].move.z = dest.z * 10.0f;
 			pItem[nIdx].bUse = true; // 使用状態をtrueにする
 
@@ -1427,6 +1431,7 @@ void ThrowItem(void)
 
 			// 飛ばす方向を設定
 			pItem[nIdx].move.x = dest.x * 10.0f;
+			pItem[nIdx].move.y = dest.y * 10.0f;
 			pItem[nIdx].move.z = dest.z * 10.0f;
 			pItem[nIdx].bUse = true; // 使用状態をtrueにする
 

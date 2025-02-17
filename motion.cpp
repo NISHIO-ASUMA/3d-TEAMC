@@ -26,11 +26,12 @@ void UpdateMotion(MOTION *pMotion)
 {
 	int nextKey = 0;
 
-	for (int nCntModel = 0; nCntModel < pMotion->nNumModel; nCntModel++)
+	if (pMotion->aMotionInfo[pMotion->motionType].nNumkey != NULL)
 	{
-		// モーション情報が入っていたら
-		if (pMotion->aMotionInfo[pMotion->motionType].nNumkey != NULL)
+
+		for (int nCntModel = 0; nCntModel < pMotion->nNumModel; nCntModel++)
 		{
+			// モーション情報が入っていたら
 			float DiffPosX, DiffPosY, DiffPosZ, DiffRotX, DiffRotY, DiffRotZ;
 
 			DiffPosX = DiffPosY = DiffPosZ = DiffRotX = DiffRotY = DiffRotZ = 0.0f;
@@ -222,58 +223,57 @@ void UpdateMotion(MOTION *pMotion)
 			// オフセットを考慮した位置設定
 			pMotion->aModel[nCntModel].pos += pMotion->aModel[nCntModel].offpos;
 		}
-		else
+
+		if (pMotion->aMotionInfo[pMotion->motionType].bLoop == false &&
+			pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
+			pMotion->bBlendMotion == true)
 		{
-			//モーションがなかったらニュートラルに戻す
-			//SetMotion(pMotion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, false, 10);
+			pMotion->bFinishMotion = true;
+			//pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
+		}
+
+		// モーションブレンドのキー
+		if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].nFrame && pMotion->bBlendMotion == true && pMotion->bFinishMotion == true)
+		{
+			pMotion->nCountMotion = 0;
+			pMotion->nKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey;
+		}
+
+		// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった
+		if (pMotion->bFinishMotion &&
+			pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
+			pMotion->nCounterBlend >= pMotion->nFrameBlend &&
+			pMotion->bBlendMotion)
+		{
+			pMotion->bFinishMotion = false;           // もとに戻す
+			pMotion->bBlendMotion = false;			  // もとに戻す
+			pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
+		}
+
+		if (!pMotion->bBlendMotion && pMotion->bFinishMotion)
+		{
+			pMotion->motionType = MOTIONTYPE_NEUTRAL;
+		}
+
+		if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame)
+		{
+			//モーションカウントが最大になったら0に戻す
+			pMotion->nKey = (pMotion->nKey + 1) % pMotion->aMotionInfo[pMotion->motionType].nNumkey;
+			pMotion->nCountMotion = 0;
+		}
+
+		//モーションカウントを加算
+		pMotion->nCountMotion++;
+
+		if (pMotion->bFinishMotion)
+		{
+			pMotion->nCounterBlend++; // ブレンドモーションカウントをインクリメント
 		}
 	}
-
-	if (pMotion->aMotionInfo[pMotion->motionType].bLoop == false &&
-		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
-		pMotion->bBlendMotion == true)
+	else
 	{
-		pMotion->bFinishMotion = true;
-		//pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
-	}
-
-	// モーションブレンドのキー
-	if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].nFrame && pMotion->bBlendMotion == true && pMotion->bFinishMotion == true)
-	{
-		pMotion->nCountMotion = 0;
-		pMotion->nKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey;
-	}
-
-	// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった
-	if (pMotion->bFinishMotion &&
-		pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
-		pMotion->nCounterBlend >= pMotion->nFrameBlend &&
-		pMotion->bBlendMotion)
-	{
-		pMotion->bFinishMotion = false;           // もとに戻す
-		pMotion->bBlendMotion = false;			  // もとに戻す
-		pMotion->motionType = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
-	}
-
-	if (!pMotion->bBlendMotion && pMotion->bFinishMotion)
-	{
-		pMotion->motionType = MOTIONTYPE_NEUTRAL;
-	}
-
-	if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame)
-	{
-		//モーションカウントが最大になったら0に戻す
-		pMotion->nKey = (pMotion->nKey + 1) % pMotion->aMotionInfo[pMotion->motionType].nNumkey;
-		pMotion->nCountMotion = 0;
-	}
-
-
-	//モーションカウントを加算
-	pMotion->nCountMotion++;
-	
-	if (pMotion->bFinishMotion)
-	{
-		pMotion->nCounterBlend++; // ブレンドモーションカウントをインクリメント
+		//モーションがなかったらニュートラルに戻す
+		SetMotion(pMotion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, false, 10);
 	}
 
 
