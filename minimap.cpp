@@ -67,6 +67,7 @@ void InitMiniMap()
 		g_MiniMap[nCnt].fHeight = 0.0f; // 高さ
 		g_MiniMap[nCnt].fWidth = 0.0f; // 横幅
 		g_MiniMap[nCnt].bUse = false; // 未使用判定
+		g_MiniMap[nCnt].fAngle = 0.0f; // 角度計算用
 	}
 
 	// 頂点バッファのロック
@@ -230,11 +231,38 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 		g_MiniMap[nIdx].pos.x = (pPos->x / MAX_FIELDWIDTH) * MINIMAP_WIDTH;
 		g_MiniMap[nIdx].pos.y = (-pPos->z / MAX_FIELDHEIGHT) * MINIMAP_HEIGHT;
 
-		// 頂点座標の更新
-		pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
+		// プレイヤーの向きを取得
+		float fAngle = pPlayer->rot.y;
+
+		// 角度計算
+		float cosA = cosf(fAngle);
+		float sinA = sinf(fAngle);
+
+		if (g_MiniMap[nIdx].nType == 0)
+		{// 種類がプレイヤーの時
+			// 回転を考慮した座標更新
+			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + (-5.0f * cosA - (-5.0f) * sinA),
+									  MapFiledPos.y + g_MiniMap[nIdx].pos.y + (-5.0f * sinA + (-5.0f) * cosA),
+									  0.0f);
+			pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + (5.0f * cosA - (-5.0f) * sinA),
+									  MapFiledPos.y + g_MiniMap[nIdx].pos.y + (5.0f * sinA +(-5.0f) * cosA),
+									  0.0f);
+			pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + (-5.0f * cosA - (5.0f) * sinA),
+									  MapFiledPos.y + g_MiniMap[nIdx].pos.y + (-5.0f * sinA + (5.0f) * cosA),
+									  0.0f);
+			pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + (5.0f * cosA - (5.0f) * sinA),
+									  MapFiledPos.y + g_MiniMap[nIdx].pos.y + (5.0f * sinA + (5.0f) * cosA),
+									  0.0f);
+		}
+		else if (g_MiniMap[nIdx].nType == 1)
+		{// 種類が敵,ボスの時
+			// 頂点座標の更新
+			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
+
+		}
 	}
 	// 頂点バッファのアンロック
 	g_pVtxBuffMiniMap->Unlock();
@@ -389,3 +417,10 @@ void DrawMapField(void)
 	// ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }
+#if 0
+// 回転を計算
+g_MiniMap[nIdx].rot.y = sqrtf((pPlayer->rot.y * pPlayer->rot.y)) * 0.5f;
+g_MiniMap[nIdx].rot.x = sqrtf((pPlayer->rot.z * pPlayer->rot.z)) * 0.5f;
+
+g_MiniMap[nIdx].fAngle = atan2f(pPlayer->rot.y, pPlayer->rot.z);
+#endif

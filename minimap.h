@@ -48,10 +48,11 @@ typedef struct
 	D3DXVECTOR3 pos; // 座標
 	D3DXVECTOR3 rot; // 角度
 	int nType;		 // 種類
+	int nIdx;		 // インデックス
 	bool bUse;		 // 使用しているかどうか
 	float fWidth;	 //	横幅
 	float fHeight;	 // 高さ
-	int nIdx;		 // インデックス
+	float fAngle;
 }MINIMAP;
 
 //***************************************************************************************************************
