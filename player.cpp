@@ -876,7 +876,7 @@ void UpdatePlayer(void)
 	}	//モーションの更新
 
 	// アイテムのストック
-	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && (KeyboardTrigger(DIK_R) || JoypadTrigger(JOYKEY_RIGHT_B)))
+	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)))
 	{// Fキー or RBボタン
 
 		// アイテムの状態をストックにする
