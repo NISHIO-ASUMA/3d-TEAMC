@@ -81,6 +81,7 @@ void UpdateParticleX(void)
 		{//使用している
 			continue;
 		}
+
 		//パーティクル生成
 		for (nCntApper = 0; nCntApper < g_aParticle[nCntParticle].nNumParticle/*発生させたい粒子の数*/; nCntApper++)
 		{
@@ -116,7 +117,7 @@ void UpdateParticleX(void)
 
 			fSize = g_aParticle[nCntParticle].fSize;
 
-			int nLife = g_aParticle[nCntParticle].nLife;
+			int nLife = (rand() % g_aParticle[nCntParticle].nLife) + 60;
 
 			/*int nLife = (rand() % 120) + 20;*/
 			

@@ -152,13 +152,10 @@ void InitGame(void)
 	// ポリゴンの初期化処理
 	InitPolygon();
 
-#ifdef DEBUG
+#ifdef _DEBUG
 
 	//エディットの初期化処理
 	InitEdit();
-
-	// エフェクト編集モードの初期化処理
-	InitEffectEdit();
 
 #endif // DEBUG
 
@@ -182,15 +179,15 @@ void InitGame(void)
 	// テスト用 : 　ビルボードのセット
 	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);
 
-	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 5, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 6, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
 	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 
-	//// 壁を設置する
-	//SetWall(D3DXVECTOR3(1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
-	//SetWall(D3DXVECTOR3(-1000.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
-	//SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1000.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
-	//SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1000.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(10.0f, 1.0f, 1.0f));
+	// 壁を設置する
+	SetWall(D3DXVECTOR3(1900.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(-1900.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1900.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1900.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f));
 
 	g_gameState = GAMESTATE_NORMAL; // 通常状態に設定
 	g_nCounterGameState = 0;		// 画面遷移の時間
@@ -295,13 +292,10 @@ void UninitGame(void)
 	// ミニマップの終了処理
 	UninitMinMap();
 
-#ifdef DEBUG
+#ifdef _DEBUG
 
 	//エディットの終了処理
 	UninitEdit();
-
-	// エフェクト編集モードの終了処理
-	UninitEffectEdit();
 
 #endif // DEBUG
 
@@ -458,6 +452,12 @@ void UpdateGame(void)
 				//影の更新処理
 				UpdateShadow();
 
+				// エフェクトの更新処理
+				UpdateEffectX();
+
+				// パーティクルの更新処理
+				UpdateParticleX();
+
 				// 煙の更新処理
 				UpdateExplosion();
 
@@ -472,12 +472,6 @@ void UpdateGame(void)
 
 				// パーティクルの更新処理
 				UpdateParticle();
-
-				// エフェクトの更新処理
-				UpdateEffectX();
-
-				// パーティクルの更新処理
-				UpdateParticleX();
 
 				// ゲームのUIの更新処理
 				UpdateGameUI();
@@ -520,10 +514,6 @@ void UpdateGame(void)
 
 				// ミニマップの更新処理
 				UpdateMiniMap();
-
-				// エフェクト編集モードの終了処理
-				UpdateEffectEdit();
-
 			}
 			// ビルボードの更新処理
 			UpdateBillboard();
@@ -537,7 +527,7 @@ void UpdateGame(void)
 		}
 		else if (g_bEditMode)
 		{
-#ifdef DEBUG
+#ifdef _DEBUG
 
 			//エディットの終了処理
 			UpdateEdit();
@@ -603,9 +593,6 @@ void DrawGame(void)
 	// パーティクルの描画処理
 	DrawParticle();
 
-	//// エフェクト編集モードの描画処理
-	//DrawEffectEdit();
-
 	//HPゲージの描写処理
     DrawGauge();
 
@@ -648,7 +635,7 @@ void DrawGame(void)
 	// ミニマップの描画処理
 	DarwMinimap();
 
-#ifdef DEBUG
+#ifdef _DEBUG
 
 	if (g_bEditMode)
 	{

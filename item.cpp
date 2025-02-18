@@ -68,6 +68,7 @@ void InitItem(void)
 		g_Item[nCntItem].nLife = 180;						   // 体力
 		g_Item[nCntItem].durability = MAX_DURABILITY;		   // 耐久力
 		g_Item[nCntItem].EnableCraft = false;				   // クラフトできるか否か
+		g_Item[nCntItem].grabity = 0.0f;				   // クラフトできるか否か
 
 		for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
 		{
@@ -91,6 +92,7 @@ void InitItem(void)
 		g_TexItem[nCntNum].nElement = ITEMELEMENT_STANDARD;     // 初期化
 		ElementChange(nCntNum);
 		g_TexItem[nCntNum].bMixItem[nCntNum] = false;           // クラフト後のアイテム表示用フラグ
+		g_TexItem[nCntNum].grabity = 0.0f;           // クラフト後のアイテム表示用フラグ
 
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
@@ -279,6 +281,7 @@ void UpdateItem(void)
 			{
 				// エフェクトを出す
 				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -286,6 +289,7 @@ void UpdateItem(void)
 					D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
 					4.0f, 2, 20, 7, 3.0f, 20.0f,
 					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),

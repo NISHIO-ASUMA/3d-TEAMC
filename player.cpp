@@ -33,12 +33,13 @@
 #include "minimap.h"
 #include "effectEdit.h"
 #include "icon.h"
+#include "effect2.h"
 
 //**************************************************************************************************************
 //マクロ定義
 //**************************************************************************************************************
 #define MAX_WORD (256)			// 最大文字数
-#define PLAYERLIFE (1000)		// プレイヤーの体力
+#define PLAYERLIFE (100)		// プレイヤーの体力
 #define MAX_TEXPLAYER (128)		// テクスチャの最大数
 #define MAX_JUMP (15.0f)		// ジャンプ量
 #define MAX_MOVE (1.0f)			// プレイヤーの移動量
@@ -115,6 +116,7 @@ void InitPlayer(void)
 	nCntMotion = 0;
 	nKey = 0;
 	g_player.bCraft = false;
+
 	// TODO : ここの処理考える
 
 	// タイトルでロードをすると重くなるので
@@ -600,6 +602,9 @@ void UpdatePlayer(void)
 	SetPositionShadow(g_player.nIdxShadow, g_player.pos, 30.0f + 30.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
 
 	SetMiniMapPotision(g_player.nIdxMap, &g_player.pos);
+
+	//D3DXVECTOR3 Pos(g_player.pos.x, g_player.pos.y + g_player.Size.y, g_player.pos.z);
+	//SetEffectX(Pos,D3DXVECTOR3(0.0f,0.0f,0.0f),D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),10,30.0f,0.01f,EFFECT_WATER);
 
 	////壁の衝突判定
 	//CollisionWall();
@@ -1100,14 +1105,13 @@ void HitPlayer(int nDamage)
 		// プレイヤーの体力が0になったら
 		if (g_player.nLife <= 0 && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 		{
+			// モーションを上書き
+			g_player.Motion = g_LoadPlayer[0].Motion;
 			g_player.Motion.motionType = MOTIONTYPE_DEATH;
 
 			D3DXVECTOR3 HeadPos(g_player.Motion.aModel[2].mtxWorld._41, g_player.Motion.aModel[2].mtxWorld._42, g_player.Motion.aModel[2].mtxWorld._43);
 
 			// 魂
-			LoadEffect(1, HeadPos);
-			LoadEffect(1, HeadPos);
-			LoadEffect(1, HeadPos);
 			LoadEffect(1, HeadPos);
 
 			// プレイヤーを消す
@@ -1420,6 +1424,7 @@ void ThrowItem(void)
 			pItem[nIdx].move.x = dest.x * 10.0f;
 			pItem[nIdx].move.y = dest.y * 10.0f;
 			pItem[nIdx].move.z = dest.z * 10.0f;
+
 			pItem[nIdx].bUse = true; // 使用状態をtrueにする
 
 				// プレイヤーの向きを一番近い敵の場所にする
@@ -1451,12 +1456,12 @@ void ThrowItem(void)
 			D3DXVECTOR3 dest = pEnemy[nIdxEnemy].pos - g_player.pos; // 近い敵の方向を求める
 			D3DXVec3Normalize(&dest, &dest); // 正規化する
 
-			// 飛ばす方向を設定
 			pItem[nIdx].move.x = dest.x * 10.0f;
 			pItem[nIdx].move.y = dest.y * 10.0f;
 			pItem[nIdx].move.z = dest.z * 10.0f;
-			pItem[nIdx].bUse = true; // 使用状態をtrueにする
 
+			pItem[nIdx].bUse = true; // 使用状態をtrueにする
+			
 				// プレイヤーの向きを一番近い敵の場所にする
 			float fAngle = atan2f(pEnemy[nIdxEnemy].pos.x - g_player.pos.x, pEnemy[nIdxEnemy].pos.z - g_player.pos.z);
 			g_player.rotDestPlayer.y = fAngle + D3DX_PI;

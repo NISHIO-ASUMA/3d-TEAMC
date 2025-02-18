@@ -29,6 +29,7 @@
 #include "minimap.h"
 #include "effectEdit.h"
 #include "effect2.h"
+#include "Effect.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -322,11 +323,6 @@ void UpdateEnemy(void)
 		{
 			g_Enemy[nCntEnemy].pos.y = 200.0f;
 		}
-		//// ブロックの当たり判定
-		//if (CollisionBlock(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, &g_Enemy[nCntEnemy].Size))
-		//{
-
-		//}
 
 		// アイテムが当たったか
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f)&& g_Enemy[nCntEnemy].state!=ENEMYSTATE_DAMAGE)
@@ -336,14 +332,13 @@ void UpdateEnemy(void)
 		// 剣と敵の当たり判定
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);
 
-		//SetMiniMapPotision(&g_Enemy[nCntEnemy].pos);
-
 		// 影の計算
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
 		// ホーミング範囲
-		if (AgentRange(50.0f, 20000.0f, nCntEnemy) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
+		if (AgentRange(50.0f, 20000.0f, nCntEnemy) && 
+			g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
 		{
 			AgentEnemy(nCntEnemy);
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
@@ -352,16 +347,20 @@ void UpdateEnemy(void)
 
 			g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
 		}
-
-		if (pPlayer->AttackSp && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
-		{
-			//CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 50.0f, 10.0f);
-		}
-		else
-		{
-			//CollisionPlayer(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].move, 5.0f, 5.0f);
-		}
 		
+		// 敵の種類がスコア高いやつだったら
+		if (sphererange(&g_Enemy[nCntEnemy].pos, &pPlayer->pos, 50.0f, 80.0f) && g_Enemy[nCntEnemy].nType == ENEMYTYPE_SEVEN)
+		{
+			// 敵をプレイヤーに向かわせる
+			AgentEnemy(nCntEnemy);
+
+			// プレイヤーまでの角度
+			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+
+			// 逆にして移動方向を反転する
+			g_Enemy[nCntEnemy].rotDest.y = fAngle; // 角度を代入
+		}
+
 		CollisionToEnemy(nCntEnemy); // 敵と敵の当たり判定
 
 		// 攻撃範囲に入った
@@ -401,7 +400,7 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
 
-		// 7番目の敵以外
+		// 6番目の敵以外 && 7番目の敵以外
 		if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX)
 		{
 			//モーションの更新
@@ -410,11 +409,15 @@ void UpdateEnemy(void)
 
 		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
 		{
+			// 追尾処理
 			AgentEnemy(nCntEnemy);
+
+			// 範囲内だったら
 			if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 300.0f))
 			{
 				g_Enemy[nCntEnemy].nCountAction++;
 			}
+
 			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
 			D3DXVECTOR3 dest = pPlayer->pos - g_Enemy[nCntEnemy].pos; // プレイヤーのベクトルを求める
 			D3DXVec3Normalize(&dest, &dest); // 正規化する
@@ -429,6 +432,7 @@ void UpdateEnemy(void)
 				g_Enemy[nCntEnemy].nCountAction = 0;
 			}
 		}
+
 
 		//敵の角度の正規化
 		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
@@ -596,18 +600,11 @@ void HitEnemy(int nCnt,int nDamage)
 
 	int nMin = GetTimeMinute();
 	int nSec = GetTimeSecond();
+
 	if (g_Enemy[nCnt].nLife <= 0)
 	{// 体力が0以下なら
 		if (pPlayer->nElement == WEPONELEMENT_DARK)
 		{
-			//SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z),
-			//	g_Enemy[nCnt].rot,
-			//	D3DXVECTOR3(3.14f, 3.14f, 3.14f),
-			//	D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-			//	D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f),
-			//	9.0f, 3, 30, 10, 5.0f, 30.0f,
-			//	true, D3DXVECTOR3(0.0f, 5.0f, 0.0f));
-
 			LoadEffect(1,D3DXVECTOR3(g_Enemy[nCnt].pos.x,g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y,g_Enemy[nCnt].pos.z));
 		}
 		else
@@ -831,6 +828,21 @@ void LoadEnemy(int nType)
 
 		//Xファイルの読み込み
 		D3DXLoadMeshFromX("data\\MODEL\\enemy600\\subenemy000_drone.x",
+			D3DXMESH_SYSTEMMEM,
+			pDevice,
+			NULL,
+			&g_LoadEnemy[nType].EnemyModel[0].pBuffMatEnemy,
+			NULL,
+			&g_LoadEnemy[nType].EnemyModel[0].dwNumMatEnemy,
+			&g_LoadEnemy[nType].EnemyModel[0].pMeshEnemy);
+		break;
+	case 6:
+		pFile = NULL; //NULLにする
+		g_LoadEnemy[nType].Motion.nNumModel = 1;
+		g_LoadEnemy[nType].Motion.aModel[0].nIdxModelParent = -1;
+
+		//Xファイルの読み込み
+		D3DXLoadMeshFromX("data\\MODEL\\enemy700\\subenemy001_escape.x",
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
@@ -1134,7 +1146,7 @@ void LoadEnemy(int nType)
 	}
 	else
 	{
-		if (nType != ENEMYTYPE_SIX)
+		if (nType != ENEMYTYPE_SIX && nType != ENEMYTYPE_SEVEN)
 		{
 			//メッセージボックス
 			MessageBox(NULL, "ファイルが開けません。", "エラー(enemy.cpp)", MB_OK);

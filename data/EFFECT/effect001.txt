@@ -4,7 +4,7 @@
 PARTICLESET
     POS = 0.00 100.00 0.00					# 位置
     MOVE = 0.00 0.00 0.00					# 移動量
-    LIFE = 147								# 寿命
+    LIFE = 60								# 寿命
     COLOR = 1.00 1.00 1.00 1.00				# 色
     TYPE = 0								# パーティクルの種類
     SIZE = 15.00							# パーティクルの大きさ
@@ -13,7 +13,7 @@ PARTICLESET
     ANGLE_MIN = -88							# パーティクルの角度のMIN
     SPEED = 1.00							# パーティクルの速さ
     DIR = 1.00 2.34 1.00					# パーティクルの重力XYZ
-    DECREMENT = 0.020000					# パーティクルのアルファ値の減少の速さ
+    DECREMENT = 0.100000					# パーティクルのアルファ値の減少の速さ
     EFFECT_TEXTPE = 2						# パーティクルのテクスチャの種類
     BLIFE = 0								# パーティクルの寿命をつけるかつけないか
  END_PARTICLESET

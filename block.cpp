@@ -225,7 +225,7 @@ void UpdateBlock(void)
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
 		// ブロックが使われていない
-		if (!g_Block[nCntBlock].bUse)
+		if (g_Block[nCntBlock].bUse == false || g_Block[nCntBlock].nType == BLOCKTYPE_MANHOLE)
 		{
 			// 処理を読み飛ばす
 			continue;
@@ -365,8 +365,12 @@ void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
 			g_Block[nCntBlock].nType = nType; // 種類
 			g_Block[nCntBlock].bUse = true;   // 使用状態
 
-			// 影をセット
-			g_Block[nCntBlock].nIdxShadow = SetShadow(D3DXVECTOR3(g_Block[nCntBlock].pos.x,1.0f, g_Block[nCntBlock].pos.z),D3DXVECTOR3(0.0f, 0.0f, 0.0f), ShadowSize(g_Block[nCntBlock].Size), 0.3f);
+			// マンホールは飛ばす
+			if (nType != BLOCKTYPE_MANHOLE)
+			{
+				// 影をセット
+				g_Block[nCntBlock].nIdxShadow = SetShadow(D3DXVECTOR3(g_Block[nCntBlock].pos.x, 1.0f, g_Block[nCntBlock].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), ShadowSize(g_Block[nCntBlock].Size), 0.3f);
+			}
 
 			// ブロックの種類がクラフトベンチだったら
 			if (g_Block[nCntBlock].nType == BLOCKTYPE_WORKBENCH && mode == MODE_GAME)

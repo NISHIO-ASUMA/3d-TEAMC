@@ -36,7 +36,7 @@ void InitWall(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\wall000.png",
+		"data\\TEXTURE\\city.png",
 		&g_pTextureWall);
 
 	// 頂点バッファの生成
@@ -324,8 +324,8 @@ void CollisionWall(void)
 				pPlayer->pos.x -= vector.x * pPlayer->speed;
 				pPlayer->pos.z -= vector.z * pPlayer->speed;
 
-				pPlayer->move.x += WallMove.x * 0.01f;
-				pPlayer->move.z += WallMove.z * 0.01f;
+				pPlayer->move.x += WallMove.x;
+				pPlayer->move.z += WallMove.z;
 			}
 		}
 	}

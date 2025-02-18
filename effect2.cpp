@@ -16,7 +16,7 @@
 //*****************************************************************************************************
 //マクロ定義
 //*****************************************************************************************************
-#define MAX_EFFECT (7000) //爆発の最大数
+#define MAX_EFFECT (4096) //爆発の最大数
 #define XTEX (8) // テクスチャの横幅
 #define YTEX (1) // テクスチャの高さ
 #define UV (1.0f / XTEX)
@@ -164,11 +164,13 @@ void UpdateEffectX(void)
 		// α値を減少させる
 		g_EffectX[nCnt].col.a -= g_EffectX[nCnt].decfAlv;
 
+		float fRadius = g_EffectX[nCnt].fRadius;
+
 		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(-g_EffectX[nCnt].fRadius, g_EffectX[nCnt].fRadius, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_EffectX[nCnt].fRadius, g_EffectX[nCnt].fRadius, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(-g_EffectX[nCnt].fRadius, - g_EffectX[nCnt].fRadius, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_EffectX[nCnt].fRadius, - g_EffectX[nCnt].fRadius, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(-fRadius, fRadius, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(fRadius, fRadius, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(-fRadius, -fRadius, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(fRadius, - fRadius, 0.0f);
 
 		//頂点カラー
 		pVtx[0].col = g_EffectX[nCnt].col;
@@ -184,6 +186,10 @@ void UpdateEffectX(void)
 		if (g_EffectX[nCnt].EffectType == EFFECT_SOUL)
 		{
 			SetTextureAnim(nCnt, 4, 1, 5);
+		}
+		if (g_EffectX[nCnt].EffectType == EFFECT_WATER)
+		{
+			SetTextureAnim(nCnt, 5, 1, 5);
 		}
 		if(g_EffectX[nCnt].EffectType == EFFECT_NORMAL)
 		{
@@ -227,9 +233,9 @@ void DrawEffectX(void)
 			//ライトを無効にする
 			pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-			if (EffectType != EFFECT_SMORK)
+			if (EffectType != EFFECT_SMORK && EffectType != EFFECT_WATER)
 			{
-				//aブレンディング
+				//アルファテストを有効
 				pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 				pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 				pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
@@ -239,7 +245,7 @@ void DrawEffectX(void)
 			pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 			pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-			//アルファテストを有効
+			//aブレンディング
 			pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 			pDevice->SetRenderState(D3DRS_ALPHAREF, NULL);
 			pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
@@ -322,6 +328,40 @@ void SetEffectX(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, flo
 			g_EffectX[nCnt].decfAlv = decfAlv; // α値の減少値
 			g_EffectX[nCnt].EffectType = EffectType; // エフェクトの種類
 			g_EffectX[nCnt].bUse = true;// 使用状態にする
+
+			switch (EffectType)
+			{
+			case EFFECT_NORMAL:
+				//テクスチャ座標の設定
+				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+				break;
+			case EFFECT_SMORK:
+				//テクスチャ座標の設定
+				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(0.125f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(0.125f, 1.0f);
+				break;
+			case EFFECT_SOUL:
+				//テクスチャ座標の設定
+				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(0.25f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(0.25f, 1.0f);
+				break;
+			case EFFECT_WATER:
+				//テクスチャ座標の設定
+				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(0.2f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(0.2f, 1.0f);
+				break;
+			default:
+				break;
+			}
 
 			break;
 		}

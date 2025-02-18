@@ -123,6 +123,7 @@ typedef struct
 	int nIdxShadow; // 影のインデックス
 	bool EnableCraft; // クラフトが有効なアイテムか否か
 	bool bMixItem[ITEMTYPE_MAX]; // 完成品表示用フラグ
+	float grabity;
 }Item;
 
 //***************************
