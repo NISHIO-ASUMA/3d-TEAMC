@@ -388,7 +388,7 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._43);
 
 		// UŒ‚”ÍˆÍ‚É“ü‚Á‚½
-		if (sphererange(&PlayerModel, &EnemyModel, 20.0f, 20.0f) &&
+		if (sphererange(&PlayerModel, &EnemyModel, 20.0f, 50.0f) &&
 			g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_ATTACK &&
 			pPlayer->state != PLAYERSTATE_DAMAGE && g_Enemy[nCntEnemy].Motion.nKey >= 4)
 		{

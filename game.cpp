@@ -377,7 +377,7 @@ void UpdateGame(void)
 		g_gameState = GAMESTATE_END;
 	}
 
-	if (!pPlayer->bDisp)
+	if (pPlayer->nLife <= 0)
 	{// プレイヤーが未使用判定
 		g_gameState = GAMESTATE_END;
 	}
@@ -461,12 +461,9 @@ void UpdateGame(void)
 				// 煙の更新処理
 				UpdateExplosion();
 
-				if (pPlayer->bDisp)
-				{// bDispがtrue
-					//プレイヤーの更新処理
-					UpdatePlayer();
-				}
-
+				//プレイヤーの更新処理
+				UpdatePlayer();
+				
 				// ダメージの更新処理
 				UpdateDamege();
 

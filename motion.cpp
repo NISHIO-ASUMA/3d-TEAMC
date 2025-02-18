@@ -262,6 +262,13 @@ void UpdateMotion(MOTION *pMotion)
 			pMotion->nCountMotion = 0;
 		}
 
+		// モーションが死亡だったら
+		if (pMotion->motionType == MOTIONTYPE_DEATH && pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
+		{
+			pMotion->nCountMotion--;
+			pMotion->nCounterBlend--;
+		}
+
 		//モーションカウントを加算
 		pMotion->nCountMotion++;
 

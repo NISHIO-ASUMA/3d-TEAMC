@@ -176,10 +176,6 @@ void InitPlayer(void)
 		//最初に描画したいプレイヤーの情報を代入
 		g_player = g_LoadPlayer[0];
 	}
-
-	/*Itemchange(30);
-	MotionChange(MOTION_KATANA, 0);
-	StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);*/
 }
 //===============================================================================================================
 //プレイヤーの終了処理
@@ -264,10 +260,11 @@ void UpdatePlayer(void)
 
 	// パッドを使っていないかつ攻撃モーションじゃない
 	if (!bUsePad &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION&&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION2&&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION3&&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION4)
+		g_player.Motion.motionType != MOTIONTYPE_ACTION &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION2 &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION3 &&
+		g_player.Motion.motionType != MOTIONTYPE_ACTION4 &&
+		g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{
 		if (GetKeyboardPress(DIK_A))
 		{
@@ -373,10 +370,10 @@ void UpdatePlayer(void)
 		//プレイヤーの移動(下)
 		else if (GetKeyboardPress(DIK_S) == true)
 		{
-		if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
-		{
-			g_player.Motion.motionType = MOTIONTYPE_MOVE;
-		}
+			if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+			{
+				g_player.Motion.motionType = MOTIONTYPE_MOVE;
+			}
 
 			g_player.move.x -= sinf(pCamera->rot.y) * g_player.speed;
 			g_player.move.z -= cosf(pCamera->rot.y) * g_player.speed;
@@ -387,7 +384,7 @@ void UpdatePlayer(void)
 		{
 			if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 			{
-				SetMotion(&g_player.Motion,MOTIONTYPE_NEUTRAL,MOTIONTYPE_NEUTRAL,false,40); // モーションをニュートラルにする
+				SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, false, 40); // モーションをニュートラルにする
 			}
 		}
 	}
@@ -412,7 +409,7 @@ void UpdatePlayer(void)
 		break;
 	default:
 		break;
-	}	
+	}
 
 	D3DXVECTOR3 SwordPos(
 		g_player.SwordMtx._41, // X方向
@@ -600,7 +597,7 @@ void UpdatePlayer(void)
 	g_player.move.y -= 1.0f;
 
 	// 影の計算
-	SetPositionShadow(g_player.nIdxShadow,g_player.pos,30.0f + 30.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
+	SetPositionShadow(g_player.nIdxShadow, g_player.pos, 30.0f + 30.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
 
 	SetMiniMapPotision(g_player.nIdxMap, &g_player.pos);
 
@@ -612,7 +609,8 @@ void UpdatePlayer(void)
 		g_player.Motion.motionType != MOTIONTYPE_ACTION &&
 		g_player.Motion.motionType != MOTIONTYPE_ACTION2 &&
 		g_player.Motion.motionType != MOTIONTYPE_ACTION3 &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION4)
+		g_player.Motion.motionType != MOTIONTYPE_ACTION4 &&
+		g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{//aボタン or Enterキーが押された
 
 		// 音楽再生
@@ -631,9 +629,9 @@ void UpdatePlayer(void)
 	//SetEffect(D3DXVECTOR3(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1, 20.0f);
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (g_player.bDisp && !bNohand && !g_player.AttackSp)
+	if (g_player.bDisp && !bNohand && !g_player.AttackSp && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{
-		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))&&g_player.Combostate == COMBO_NO && g_AttackState <= 30)
+		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && g_AttackState <= 30)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // コンボ1
 		}
@@ -732,7 +730,8 @@ void UpdatePlayer(void)
 	}
 
 	// 持っているアイテムを置く処理
-	if (g_player.Motion.nNumModel == 16 && (KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_B)) && g_player.Combostate == COMBO_NO && g_player.bJump != false)
+	if (g_player.Motion.nNumModel == 16 && g_player.Motion.motionType != MOTIONTYPE_DEATH &&
+		(KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_B)) && g_player.Combostate == COMBO_NO && g_player.bJump != false)
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -758,7 +757,7 @@ void UpdatePlayer(void)
 		SetItem(g_player.pos, pItem[g_player.ItemIdx].nType, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
-	}	
+	}
 
 	// 大型武器モーションの時
 	if (g_player.WeponMotion == MOTION_BIGWEPON && g_player.Motion.motionType == MOTIONTYPE_ACTION4 && g_player.Motion.nKey == 0 && GetKeyboardPress(DIK_W))
@@ -781,7 +780,8 @@ void UpdatePlayer(void)
 	}
 
 	// スペシャルモードになった時の攻撃
-	if ((KeyboardTrigger(DIK_Q) || JoypadTrigger(JOYKEY_LS) || JoypadTrigger(JOYKEY_RS)) && g_player.Motion.nNumModel == 16 && g_player.HandState != PLAYERHOLD_HOLD)
+	if ((KeyboardTrigger(DIK_Q) || JoypadTrigger(JOYKEY_LS) || JoypadTrigger(JOYKEY_RS)) &&
+		g_player.Motion.nNumModel == 16 && g_player.HandState != PLAYERHOLD_HOLD && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{
 		if (g_player.Combostate == COMBO_NO && // 攻撃していない
 			!g_player.AttackSp &&              // SP技を発動していない
@@ -889,7 +889,7 @@ void UpdatePlayer(void)
 		StatusChange(3.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 持っているアイテムのアイコン
-		SetIcon(D3DXVECTOR3(210.0f,580.0f,0.0f),40.0f,40.0f,pItem[g_player.StockItemIdx].nType,ICONTYPE_STOCKITEM);
+		SetIcon(D3DXVECTOR3(210.0f, 580.0f, 0.0f), 40.0f, 40.0f, pItem[g_player.StockItemIdx].nType, ICONTYPE_STOCKITEM);
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -909,6 +909,15 @@ void UpdatePlayer(void)
 
 		// プレイヤーの状態を何も持っていない状態にする
 		g_player.HandState = PLAYERHOLD_NO;
+	}
+
+	// 死亡モーションだったら
+	if (g_player.Motion.motionType == MOTIONTYPE_DEATH && g_player.Motion.nKey <= 0)
+	{
+		g_player.move.x = sinf(g_player.rot.y) * 50.0f;
+		g_player.move.y = 10.0f;
+		g_player.move.z = cosf(g_player.rot.y) * 50.0f;
+
 	}
 
 	// モーションの更新
@@ -1089,12 +1098,19 @@ void HitPlayer(int nDamage)
 		g_player.nLife -= nDamage;
 
 		// プレイヤーの体力が0になったら
-		if (g_player.nLife <= 0)
+		if (g_player.nLife <= 0 && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 		{
-			g_player.state = PLAYERSTATE_FALL;
+			g_player.Motion.motionType = MOTIONTYPE_DEATH;
+
+			D3DXVECTOR3 HeadPos(g_player.Motion.aModel[2].mtxWorld._41, g_player.Motion.aModel[2].mtxWorld._42, g_player.Motion.aModel[2].mtxWorld._43);
+
+			// 魂
+			LoadEffect(1, HeadPos);
+			LoadEffect(1, HeadPos);
+			LoadEffect(1, HeadPos);
+			LoadEffect(1, HeadPos);
 
 			// プレイヤーを消す
-			g_player.bDisp = false;
 			KillShadow(g_player.nIdxShadow); // 影を消す
 			EnableMap(g_player.nIdxMap);    // マップから消す
 		}

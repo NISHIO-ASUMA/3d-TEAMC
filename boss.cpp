@@ -1087,6 +1087,7 @@ void colisionSword(int nCntBoss)
 
 	D3DXVECTOR3 mtxDis, SwordPos;
 
+	// スペシャル攻撃じゃない
 	if (pPlayer->Motion.nNumModel == 16 && !pPlayer->AttackSp)
 	{
 		//剣の長さを求める
@@ -1119,6 +1120,7 @@ void colisionSword(int nCntBoss)
 
 			fRadius = (fRadius * fRadius); // 半径を求める
 
+			// ボスの範囲に入った
 			if (fDistance <= fRadius && g_Boss[nCntBoss].state != BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO)
 			{
 				HitBoss(nCntBoss,pPlayer->nDamage * 5);
@@ -1133,6 +1135,7 @@ void colisionSword(int nCntBoss)
 			}
 		}
 	}
+	// 素手でsp攻撃してない
 	else if (pPlayer->Motion.nNumModel == 15 && !pPlayer->AttackSp)
 	{
 		// モデルの位置を変数に代入
@@ -1179,9 +1182,29 @@ void colisionSword(int nCntBoss)
 
 			fRadius = (fRadius * fRadius); // 半径を求める
 
-			if (fDistance <= fRadius && g_Boss[nCntBoss].state != ENEMYSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO && pPlayer->Motion.nKey >= 3)
+			// 範囲内にいたら
+			if (fDistance <= fRadius && pPlayer->WeponMotion != MOTION_SPPIERCING && pPlayer->WeponMotion != MOTION_SPDOUBLE &&
+				g_Boss[nCntBoss].state !=BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO && pPlayer->Motion.nKey >= 3)
 			{
-				HitBoss(nCntBoss,pPlayer->nDamage * 50);
+				// 敵にダメージを与える
+				HitBoss(nCntBoss, (pPlayer->nDamage * 50));
+				break;
+			}
+			// 範囲内にいたら
+			if (sphererange(&pPlayer->pos, &g_Boss[nCntBoss].pos, 200.0f, 50.0f) && pPlayer->WeponMotion == MOTION_SPPIERCING &&
+				g_Boss[nCntBoss].state != BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO && pPlayer->Motion.nKey >= 19)
+			{
+				// 敵にダメージを与える
+				HitBoss(nCntBoss, (pPlayer->nDamage * 50));
+				break;
+			}
+
+			// 範囲内にいたら
+			if (sphererange(&pPlayer->pos, &g_Boss[nCntBoss].pos, 200.0f, 50.0f) && pPlayer->WeponMotion == MOTION_SPDOUBLE &&
+				g_Boss[nCntBoss].state != BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO && pPlayer->Motion.nKey >= 6)
+			{
+				// 敵にダメージを与える
+				HitBoss(nCntBoss, (pPlayer->nDamage * 50));
 				break;
 			}
 		}
