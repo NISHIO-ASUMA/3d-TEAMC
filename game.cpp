@@ -612,9 +612,6 @@ void DrawGame(void)
 	//HPゲージの描写処理
     DrawGauge();
 
-	// タイマーの描画処理
-	DrawTime();
-
 	// 煙の描画処理
 	DrawExplosion();
 
@@ -644,6 +641,9 @@ void DrawGame(void)
 
 	// ゲームのUIの描画処理
 	DrawGameUI();
+
+	// タイマーの描画処理
+	DrawTime();
 
 	//弾の描画処理
 	DrawBullet();

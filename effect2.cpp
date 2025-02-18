@@ -206,7 +206,7 @@ void UpdateEffectX(void)
 	g_pVtxBuffEffectX->Unlock();
 }
 //=====================================================================================================
-//エフェクトの描画処理
+// エフェクトの描画処理
 //=====================================================================================================
 void DrawEffectX(void)
 {
@@ -227,7 +227,7 @@ void DrawEffectX(void)
 			//ライトを無効にする
 			pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-			if (EffectType == EFFECT_NORMAL)
+			if (EffectType != EFFECT_SMORK)
 			{
 				//aブレンディング
 				pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);

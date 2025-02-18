@@ -37,6 +37,9 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeMinute = NULL;	// 頂点バッファへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeSecond = NULL;	// 頂点バッファへのポインタ秒
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimeCircle = NULL;	// 頂点バッファへのポインタコロン
 
+LPDIRECT3DTEXTURE9 g_pTextureContDown = NULL;			// テクスチャへのポインタコロン
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffContDown = NULL;	// 頂点バッファへのポインタ分
+
 D3DXVECTOR3 g_posTime; // スコアの位置
 int g_nCountTime;      // タイムのカウント
 
@@ -69,6 +72,11 @@ void InitTime(void)
 		"data\\TEXTURE\\timer_circle.png",
 		&g_pTextureTimeCircle);
 
+	//テクスチャの読み込み(コロン)
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\time001.png",
+		&g_pTextureContDown);
+
 	//頂点バッファの生成・頂点情報の設定
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_NUM_TIME,
 		D3DUSAGE_WRITEONLY,
@@ -93,6 +101,15 @@ void InitTime(void)
 		&g_pVtxBuffTimeCircle, // コロン
 		NULL);
 
+	//頂点バッファの生成・頂点情報の設定
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_NUM_TIME,
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_2D,
+		D3DPOOL_MANAGED,
+		&g_pVtxBuffContDown, // コロン
+		NULL);
+
+	// 分のロック
 	g_pVtxBuffTimeMinute->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt1 = 0; nCnt1 < MAX_NUM_TIME; nCnt1++)
@@ -113,7 +130,6 @@ void InitTime(void)
 		pVtx[2].pos = D3DXVECTOR3(1020.0f + nCntTime * 30.0f, 60.0f, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(1020.0f + nCntTime * 30.0f + 30.0f, 60.0f, 0.0f);
 				
-
 		//rhwの設定
 		pVtx[0].rhw = 1.0f;
 		pVtx[1].rhw = 1.0f;
@@ -203,6 +219,43 @@ void InitTime(void)
 
 	// 頂点バッファをアンロック
 	g_pVtxBuffTimeCircle->Unlock();
+
+	// 頂点バッファのロック
+	g_pVtxBuffContDown->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 秒の分回す
+	for (int nCntTime = 0; nCntTime < MAX_NUM_TIME; nCntTime++)
+	{
+		//頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
+		pVtx[1].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
+		pVtx[3].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
+
+		//rhwの設定
+		pVtx[0].rhw = 1.0f;
+		pVtx[1].rhw = 1.0f;
+		pVtx[2].rhw = 1.0f;
+		pVtx[3].rhw = 1.0f;
+
+		//頂点カラーの設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+
+		//テクスチャの設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(0.1f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(0.1f, 1.0f);
+
+		pVtx += 4;
+	}
+
+	// 頂点バッファのアンロック
+	g_pVtxBuffContDown->Unlock();
+
 }
 //=======================================================================================================
 //スコアの終了処理
@@ -247,6 +300,19 @@ void UninitTime(void)
 	{
 		g_pVtxBuffTimeCircle->Release();
 		g_pVtxBuffTimeCircle = NULL;
+	}
+
+	//テクスチャの破棄
+	if (g_pTextureContDown != NULL)
+	{
+		g_pTextureContDown->Release();
+		g_pTextureContDown = NULL;
+	}
+	// 頂点バッファの破棄
+	if (g_pVtxBuffContDown != NULL)
+	{
+		g_pVtxBuffContDown->Release();
+		g_pVtxBuffContDown = NULL;
 	}
 
 }
@@ -320,40 +386,22 @@ void UpdateTime(void)
 		}
 	}
 
+	// 分のバッファをロック
 	g_pVtxBuffTimeMinute->Lock(0, 0, (void**)&pVtx, 0);
 
-	// 残り10秒になったら
-	if (g_nTimerMinute <= 0 && g_nTimerSecond <= 10)
-	{
-		//頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+	// 残り10秒じゃなかったら
 
-		//頂点カラーの設定
-		pVtx[4].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[5].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[6].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[7].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+	//頂点カラーの設定
+	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
-	}
-	else
-	{
-		// 残り10秒じゃなかったら
-
-		//頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
-		//頂点カラーの設定
-		pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	}
+	//頂点カラーの設定
+	pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
 	//テクスチャの設定
 	pVtx[0].tex = D3DXVECTOR2(offpos * Min10,0.0f);
@@ -371,37 +419,17 @@ void UpdateTime(void)
 
 	g_pVtxBuffTimeSecond->Lock(0, 0, (void**)&pVtx, 0);
 
-	// 残り10秒になったら
-	if (g_nTimerMinute <= 0 && g_nTimerSecond <= 10)
-	{
-		//頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 0, 0, 255);
+	//頂点カラーの設定
+	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
-		//頂点カラーの設定
-		pVtx[4].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[5].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[6].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-		pVtx[7].col = D3DCOLOR_RGBA(255, 0, 0, 255);
-
-	}
-	else
-	{		// 残り10秒じゃなかったら
-
-		//頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
-		//頂点カラーの設定
-		pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	}
+	//頂点カラーの設定
+	pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
 	//テクスチャの設定
 	pVtx[0].tex = D3DXVECTOR2(offpos * Second10, 0.0f);
@@ -415,7 +443,67 @@ void UpdateTime(void)
 	pVtx[6].tex = D3DXVECTOR2(offpos * Second1, 1.0f);
 	pVtx[7].tex = D3DXVECTOR2(offpos * Second1 + offpos, 1.0f);
 
+	// 頂点バッファのアンロック
 	g_pVtxBuffTimeSecond->Unlock();
+
+	// カウントダウン
+	g_pVtxBuffContDown->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 10秒以下になったら
+	if (g_nTimerSecond <= 10 && g_nTimerMinute <= 0)
+	{
+		//頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(400.0f, 200.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(600.0f, 200.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(400.0f, 400.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(600.0f, 400.0f, 0.0f);
+
+		//頂点座標の設定
+		pVtx[4].pos = D3DXVECTOR3(400.0f + 250.0f, 200.0f, 0.0f);
+		pVtx[5].pos = D3DXVECTOR3(600.0f + 250.0f, 200.0f, 0.0f);
+		pVtx[6].pos = D3DXVECTOR3(400.0f + 250.0f, 400.0f, 0.0f);
+		pVtx[7].pos = D3DXVECTOR3(600.0f + 250.0f, 400.0f, 0.0f);
+
+		//頂点カラーの設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+
+		//頂点カラーの設定
+		pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+		pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+		pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+		pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+
+		//テクスチャの設定
+		pVtx[0].tex = D3DXVECTOR2(offpos * Second10, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(offpos * Second10 + offpos, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(offpos * Second10, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(offpos * Second10 + offpos, 1.0f);
+
+		//テクスチャの設定
+		pVtx[4].tex = D3DXVECTOR2(offpos * Second1, 0.0f);
+		pVtx[5].tex = D3DXVECTOR2(offpos * Second1 + offpos, 0.0f);
+		pVtx[6].tex = D3DXVECTOR2(offpos * Second1, 1.0f);
+		pVtx[7].tex = D3DXVECTOR2(offpos * Second1 + offpos, 1.0f);
+	}
+	else
+	{
+		// 秒の分回す
+		for (int nCntTime = 0; nCntTime < MAX_NUM_TIME; nCntTime++)
+		{
+			//頂点座標の設定
+			pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+			pVtx += 4;
+		}
+	}
+	// 頂点バッファのアンロック
+	g_pVtxBuffContDown->Unlock();
 
 }
 //=======================================================================================================
@@ -448,8 +536,10 @@ void DrawTime(void)
 		}
 	}
 
+	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffTimeSecond, 0, sizeof(VERTEX_2D));
 
+	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	for (int nCntTime = 0; nCntTime < MAX_NUM_TIME; nCntTime++)
@@ -464,8 +554,10 @@ void DrawTime(void)
 		}
 	}
 
+	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffTimeCircle, 0, sizeof(VERTEX_2D));
 
+	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	//テクスチャの設定
@@ -473,6 +565,26 @@ void DrawTime(void)
 
 	//プレイヤーの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);//プリミティブの種類
+
+
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffContDown, 0, sizeof(VERTEX_2D));
+
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_2D);
+
+	for (int nCntTime = 0; nCntTime < MAX_NUM_TIME; nCntTime++)
+	{
+		if (g_aTime[nCntTime].bUse == true)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureContDown);
+
+			//プレイヤーの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTime * 4, 2);//プリミティブの種類
+		}
+	}
+
 
 }
 //=====================================================================================================================================================================
