@@ -26,6 +26,7 @@
 #include "polygon.h"
 #include "edit2d.h"
 #include "player.h"
+#include "wall.h"
 
 //==============================================================================================================
 //タイトル3dの初期化処理
@@ -59,6 +60,9 @@ void InitTitle3d(void)
 	// 影の初期化処理
 	InitShadow();
 
+	// 壁の初期化処理
+	InitWall();
+
 	// ブロックの初期化処理
 	InitBlock();
 	
@@ -77,6 +81,12 @@ void InitTitle3d(void)
 	// タイトル用のステージを読み込む処理
 	LoadTitleState();
 	LoadEdit2d();
+
+	// 壁を設置する
+	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f), 0);
+	SetWall(D3DXVECTOR3(-1550.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f), 0);
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f), 0);
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f), 0);
 
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(1200.0f, 200.0f, 0.0f), UITYPE_KATANA, 450.0f, 50.0f, 0); // タイトルの刀
@@ -114,6 +124,9 @@ void UninitTitle3d(void)
 
 	// ゲームUIの終了処理
 	UninitGameUI();
+
+	// 壁の終了処理
+	UninitWall();
 
 	// 影の終了処理
 	UninitShadow();
@@ -172,6 +185,8 @@ void DrawTitle3d(void)
 	// メッシュフィールドの描画処理
 	DrawMeshField();
 
+	// 壁の描画処理
+	DrawWall();
 
 	// 影の描画処理
 	DrawShadow();

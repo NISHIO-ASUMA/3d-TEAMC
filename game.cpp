@@ -184,10 +184,16 @@ void InitGame(void)
 	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 
 	// 壁を設置する
-	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f));
-	SetWall(D3DXVECTOR3(-1550.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f));
-	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f));
-	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f));
+	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f),0);
+	SetWall(D3DXVECTOR3(-1550.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f),0);
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f),0);
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f),0);
+
+	//// 壁を設置する
+	//SetWall(D3DXVECTOR3(1600.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 4.0f, 1.0f), 1);
+	//SetWall(D3DXVECTOR3(-1650.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 4.0f, 1.0f), 1);
+	//SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1900.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 4.0f, 1.0f), 1);
+	//SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1950.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 4.0f, 1.0f), 1);
 
 	g_gameState = GAMESTATE_NORMAL; // 通常状態に設定
 	g_nCounterGameState = 0;		// 画面遷移の時間
@@ -585,23 +591,14 @@ void DrawGame(void)
 		DrawItem();
 	}
 
-	//壁の描画処理
-	DrawWall();
-
 	// エフェクトの描画処理
 	DrawEffect();
 
 	// パーティクルの描画処理
 	DrawParticle();
 
-	//HPゲージの描写処理
-    DrawGauge();
-
 	// 煙の描画処理
 	DrawExplosion();
-
-	// 軌跡の描画処理
-	DrawMeshSword();
 
 	// エフェクトの描画処理
 	DrawEffectX();
@@ -615,14 +612,33 @@ void DrawGame(void)
 	// スコアの描画処理
 	DrawScore();
 
-	// SPゲージの描画処理
-	DrawSPgauge();
+	// 影の描画処理
+	DrawShadow();
 
 	// アイコンの描画処理
 	DrawIcon();
 
-	// 影の描画処理
-	DrawShadow();
+#ifdef _DEBUG
+
+	if (g_bEditMode)
+	{
+		//エディットの描画処理
+		DrawEdit();
+	}
+
+#endif // DEBUG
+
+	//壁の描画処理
+	DrawWall();
+
+	// 軌跡の描画処理
+	DrawMeshSword();
+
+	//HPゲージの描写処理
+	DrawGauge();
+
+	// SPゲージの描画処理
+	DrawSPgauge();
 
 	// ゲームのUIの描画処理
 	DrawGameUI();
@@ -635,17 +651,6 @@ void DrawGame(void)
 
 	// ミニマップの描画処理
 	DarwMinimap();
-
-#ifdef _DEBUG
-
-	if (g_bEditMode)
-	{
-		//エディットの描画処理
-		DrawEdit();
-	}
-
-#endif // DEBUG
-
 
 	if (g_bPause == true)
 	{//ポーズ中

@@ -50,6 +50,7 @@ typedef struct
 	D3DVIEWPORT9 viewport;		// ビューポート
 	float oldDistance;          // 保存用の変数
 	float Direction;            // カメラのうごく方向
+	int WaveTIme;               // カメラを揺らす時間
 }Camera;
 
 //**********************
@@ -62,5 +63,5 @@ void SetCamera(int nCnt);		// カメラの設定
 Camera* GetCamera();		// カメラの取得
 void StickCamera(void);		// 右スティックのカメラ処理
 void MouseWheel(int zDelta);// マウスホイール
-
+void WaveCamera(int WaveTime); // カメラを揺らす処理
 #endif

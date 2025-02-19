@@ -2,7 +2,7 @@
 +   ブロックの読み込み処理(種類追加したら一応報告お願いします)   +
 +----------------------------------------------------------------+
 
-MAX_TYPE = 48 # 読み込むモデル数
+MAX_TYPE = 51 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -55,6 +55,9 @@ MODEL_FILENAME = data/MODEL/OBJ/swing1.x				# [44]ベンチ
 MODEL_FILENAME = data/MODEL/OBJ/burgershop.x			# [45]ハンバーガーショップ
 MODEL_FILENAME = data/MODEL/OBJ/buildingstructure.x		# [46]
 MODEL_FILENAME = data/MODEL/OBJ/tutorial300.x			# [47]チュートリアル看板
+MODEL_FILENAME = data/MODEL/OBJ/wood001.x				# [48]木２
+MODEL_FILENAME = data/MODEL/OBJ/wood002.x				# [49]木３
+MODEL_FILENAME = data/MODEL/OBJ/mount000.x				# [50]山
 
 
 # もしやり方わかるならBLOCK.hの列挙型追加頼む

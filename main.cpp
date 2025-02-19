@@ -370,27 +370,30 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	// 各種初期化処理
 	//===================================================================================================
 
+	// キーボードの初期化処理
 	if (FAILED(InitKeyboard(hInstance, hWnd)))
 	{
 		return E_FAIL;
 	}
+	// ジョイパッドの初期化処理
 	if (FAILED(InitJoypad()))
 	{
 		return E_FAIL;
 	}
+	// マウスの初期化処理
 	if (FAILED(InitMouse(hInstance,hWnd)))
 	{
 		return E_FAIL;
 	}
 
 	// デバッグ表示用のフォントを設定
-	D3DXCreateFont(g_pD3DDevice, 18, 0, 0, 0,
+	D3DXCreateFont(g_pD3DDevice, 18, 0, FW_BOLD, 0,
 		FALSE,
 		DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS,
 		DEFAULT_QUALITY,
 		DEFAULT_PITCH,
-		"Terminal", &g_pFont);
+		"MS Gothic", &g_pFont);
 
 	// サウンドの初期化
 	InitSound(hWnd);

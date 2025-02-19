@@ -798,22 +798,26 @@ void UpdatePlayer(void)
 			switch (g_player.WeponMotion)
 			{
 			case MOTION_KATANA:
+				WaveCamera(120); // カメラを揺らす
 				g_player.SwordOffpos.y = 250.0f;
 				MotionChange(MOTION_SP, 0);
 				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_BIGWEPON:
+				WaveCamera(120); // カメラを揺らす
 				g_player.SwordOffpos.y = 100.0f;
 				MotionChange(MOTION_SPHAMMER, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_DBHAND:
+				WaveCamera(120); // カメラを揺らす
 				g_player.SwordOffpos.y = 250.0f;
 				MotionChange(MOTION_SPDOUBLE, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 240, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_ONE_HAND:
+				WaveCamera(120); // カメラを揺らす
 				g_player.SwordOffpos.y = 250.0f;
 				MotionChange(MOTION_ONEHANDBLOW, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
@@ -1120,6 +1124,9 @@ void HitPlayer(int nDamage)
 		}
 		else
 		{
+			// カメラを揺らす
+			WaveCamera(5);
+
 			// 状態カウンター
 			g_nCounterState = 30;
 

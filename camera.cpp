@@ -38,7 +38,7 @@ void MouseEditMode(void); // 編集モードの時のマウス移動
 // グローバル変数宣言
 //***************************************************************************************************************
 Camera g_camera[CAMERATYPE_MAX];		// カメラ情報
-D3DXVECTOR3 Zoom;						// ホイールのズーム
+bool bWaveCamera = false;
 
 //===========================================================================================================
 // カメラの初期化処理
@@ -54,7 +54,6 @@ void InitCamera(void)
 		g_camera[nCnt].vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
 		g_camera[nCnt].rot = D3DXVECTOR3(D3DX_PI * 0.65f, 0.0f, 0.0f);	    // 角度
 		g_camera[nCnt].g_CameraMode = CAMERAMODE_PLAYER;						// 初期状態
-		Zoom = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 		float fRotx = g_camera[nCnt].posV.x - g_camera[nCnt].posR.x;
 		float fRoty = g_camera[nCnt].posV.y - g_camera[nCnt].posR.y;
@@ -63,6 +62,8 @@ void InitCamera(void)
 		g_camera[nCnt].fDistance = sqrtf((fRotx * fRotx) + (fRoty * fRoty) + (fRotz * fRotz));	// 視点から注視点までの距離
 		g_camera[nCnt].oldDistance = g_camera[nCnt].fDistance;	// 距離を保存しておく
 	}
+	bWaveCamera = false; // カメラを揺らすかどうか
+
 	g_camera[MAIN].Direction = 1.0f; // 移動量
 
 	g_camera[MAIN].viewport.X = 0; // 2DX座標
@@ -149,31 +150,15 @@ void UpdateCamera(void)
 
 	}
 	
-	// スペシャルモーションを発動したとき
-	if (pPlayer->AttackSp == true && pPlayer->Motion.nKey <= 3)
+
+	if (bWaveCamera == true)
 	{
-		//// カウント用変数
-		//static int nCounter = 0;
+		g_camera[MAIN].WaveTIme--;
+	}
 
-		//// インクリメント
-		//nCounter++;
-
-		//// 右に移動
-		//if (nCounter >= 0 && nCounter <= 3)
-		//{
-		//	g_camera[MAIN].Direction = 5.0f;
-
-		//}
-		//// 左に移動
-		//if (nCounter >= 3 && nCounter <= 6)
-		//{
-		//	g_camera[MAIN].Direction = - 5.0f;
-		//}
-		//if (nCounter >= 6)
-		//{
-		//	nCounter = 0; // 初期化
-		//}
-
+	// スペシャルモーションを発動したとき
+	if (g_camera[MAIN].WaveTIme > 0)
+	{
 		int n = rand() % SPCOUNT + 1 - SPCOUNT / 2;
 
 		// カメラを移動させる
@@ -183,6 +168,12 @@ void UpdateCamera(void)
 		//g_camera[MAIN].posR.x = sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 		//g_camera[MAIN].posR.z = cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 	}
+	else
+	{
+		g_camera[MAIN].WaveTIme = -1;
+		bWaveCamera == false;
+	}
+
 #if 0
 	//******************
 	// 視点の旋回
@@ -605,9 +596,6 @@ void MouseWheel(int zDelta)
 	{// ゲーム チュートリアル 編集モード
 		// TODO : ここのズームの処理変更の可能性あり
 
-		Zoom = g_camera[MAIN].posV - g_camera[MAIN].posR;
-		D3DXVec3Normalize(&Zoom, &Zoom);
-
 		if (zDelta < 0)
 		{
 			g_camera[MAIN].fDistance += 10.0f;
@@ -621,6 +609,14 @@ void MouseWheel(int zDelta)
 		g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * g_camera[MAIN].fDistance;
 		g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 	}
+}
+//===========================================================================================================
+// カメラを揺らす処理
+//===========================================================================================================
+void WaveCamera(int WaveTime)
+{
+	g_camera[MAIN].WaveTIme = WaveTime;
+	bWaveCamera = true;
 }
 //===========================================================================================================
 // カメラテクスチャの設定処理

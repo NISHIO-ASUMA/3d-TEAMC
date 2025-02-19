@@ -21,7 +21,7 @@
 //**************************************************************************************************************
 //グローバル変数宣言
 //**************************************************************************************************************
-LPDIRECT3DTEXTURE9 g_pTextureWall = NULL;	   // テクスチャへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureWall[WALLTEXTURE_MAX] = {};	   // テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffWall = NULL; // 頂点バッファへのポインタ
 WALL g_Wall[MAX_WALL];						   // 壁の構造体
 int nNumWall;								   // 壁の数
@@ -37,7 +37,12 @@ void InitWall(void)
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\city.png",
-		&g_pTextureWall);
+		&g_pTextureWall[0]);
+
+	// テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\mt.png",
+		&g_pTextureWall[1]);
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_WALL,
@@ -61,6 +66,7 @@ void InitWall(void)
 		g_Wall[nCntWall].fA = 1.0f;
 		g_Wall[nCntWall].bUse = false;
 		g_Wall[nCntWall].fScal = D3DXVECTOR3(0.0f,0.0f,0.0f);//基準を決める
+		g_Wall[nCntWall].nType = WALLTEXTURE_CITY;           //種類を初期化
 	}
 
 	// グローバル変数の初期化
@@ -102,9 +108,9 @@ void InitWall(void)
 
 		// テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(100.0f, 0.0f);
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(100.0f, 1.0f);
 
 		pVtx += 4;
 	}
@@ -117,12 +123,17 @@ void InitWall(void)
 //===============================================================================================================
 void UninitWall(void)
 {
-	if (g_pTextureWall != NULL)
-	{
-		g_pTextureWall->Release();
-		g_pTextureWall = NULL;
-	}
 
+	// テクスチャの種類分
+	for (int nCnt = 0; nCnt < WALLTEXTURE_MAX; nCnt++)
+	{
+		// テクスチャの解放
+		if (g_pTextureWall[nCnt] != NULL)
+		{
+			g_pTextureWall[nCnt]->Release();
+			g_pTextureWall[nCnt] = NULL;
+		}
+	}
 	//頂点バッファの解放
 	if (g_pVtxBuffWall != NULL)
 	{
@@ -150,44 +161,58 @@ void DrawWall(void)
 
 	for (int nCntWall = 0; nCntWall < MAX_WALL; nCntWall++)
 	{
-		if (g_Wall[nCntWall].bUse == true)
+		if (g_Wall[nCntWall].bUse == false)
 		{
-			// ワールドマトリックスの初期化
-			D3DXMatrixIdentity(&g_Wall[nCntWall].mtxWorld);
-
-			// 大きさを反映
-			D3DXMatrixScaling(&mtxScal, g_Wall[nCntWall].Size.x, g_Wall[nCntWall].Size.y, g_Wall[nCntWall].Size.z);
-			D3DXMatrixMultiply(&g_Wall[nCntWall].mtxWorld, &g_Wall[nCntWall].mtxWorld, &mtxScal);
-
-			// 向きを反映
-			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Wall[nCntWall].rot.y, g_Wall[nCntWall].rot.x, g_Wall[nCntWall].rot.z);
-			D3DXMatrixMultiply(&g_Wall[nCntWall].mtxWorld, &g_Wall[nCntWall].mtxWorld, &mtxRot);
-
-			// 位置を反映
-			D3DXMatrixTranslation(&mtxTrans, g_Wall[nCntWall].pos.x, g_Wall[nCntWall].pos.y, g_Wall[nCntWall].pos.z);
-			D3DXMatrixMultiply(&g_Wall[nCntWall].mtxWorld, &g_Wall[nCntWall].mtxWorld, &mtxTrans);
-			
-			// ワールドマトリックスの設定
-			pDevice->SetTransform(D3DTS_WORLD, &g_Wall[nCntWall].mtxWorld);
-
-			// 頂点バッファをデバイスのデータストリームに設定
-			pDevice->SetStreamSource(0, g_pVtxBuffWall, 0, sizeof(VERTEX_3D));
-
-			// テクスチャフォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_3D);
-
-			// テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureWall);
-			 
-			// ポリゴンの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntWall * 4, 2);
+			continue;
 		}
+
+		// 種類を代入
+		int nType = g_Wall[nCntWall].nType;
+
+		// ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&g_Wall[nCntWall].mtxWorld);
+
+		// 大きさを反映
+		D3DXMatrixScaling(&mtxScal, g_Wall[nCntWall].Size.x, g_Wall[nCntWall].Size.y, g_Wall[nCntWall].Size.z);
+		D3DXMatrixMultiply(&g_Wall[nCntWall].mtxWorld, &g_Wall[nCntWall].mtxWorld, &mtxScal);
+
+		// 向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Wall[nCntWall].rot.y, g_Wall[nCntWall].rot.x, g_Wall[nCntWall].rot.z);
+		D3DXMatrixMultiply(&g_Wall[nCntWall].mtxWorld, &g_Wall[nCntWall].mtxWorld, &mtxRot);
+
+		// 位置を反映
+		D3DXMatrixTranslation(&mtxTrans, g_Wall[nCntWall].pos.x, g_Wall[nCntWall].pos.y, g_Wall[nCntWall].pos.z);
+		D3DXMatrixMultiply(&g_Wall[nCntWall].mtxWorld, &g_Wall[nCntWall].mtxWorld, &mtxTrans);
+			
+		// ワールドマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &g_Wall[nCntWall].mtxWorld);
+
+		// 頂点バッファをデバイスのデータストリームに設定
+		pDevice->SetStreamSource(0, g_pVtxBuffWall, 0, sizeof(VERTEX_3D));
+
+		// テクスチャフォーマットの設定
+		pDevice->SetFVF(FVF_VERTEX_3D);
+
+		if (nType == WALLTEXTURE_MT)
+		{
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureWall[nType]);
+		}
+
+		if (nType == WALLTEXTURE_CITY)
+		{
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureWall[nType]);
+		}
+
+		// ポリゴンの描画
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntWall * 4, 2);
 	}
 }
 //===============================================================================================================
 //壁の設定処理
 //===============================================================================================================
-void SetWall(D3DXVECTOR3 pos, D3DXVECTOR3 rot,float fA, D3DXVECTOR3 Size)
+void SetWall(D3DXVECTOR3 pos, D3DXVECTOR3 rot,float fA, D3DXVECTOR3 Size,int nType)
 {
 	// 頂点情報へのポインタ
 	VERTEX_3D* pVtx;
@@ -203,7 +228,8 @@ void SetWall(D3DXVECTOR3 pos, D3DXVECTOR3 rot,float fA, D3DXVECTOR3 Size)
 			g_Wall[nCntWall].Size = Size; // 大きさ
 			g_Wall[nCntWall].fA = fA;	  // アルファ値
 			g_Wall[nCntWall].rot = rot;	  // 角度
-										  
+			g_Wall[nCntWall].nType = nType;	  // 種類
+
 			g_Wall[nCntWall].bUse = true; // 使用判定
 
 			// 各頂点の法線の設定(ベクトルの大きさは１にする必要がある)
