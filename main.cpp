@@ -584,7 +584,7 @@ void Draw(void)
 #ifdef _DEBUG
 
 			// デバッグ表示はこの下に書いてください
-			if (!GetEditState() && !GetEditStatetuto() && !GetEdit2d())
+			if (GetEditState()==false && GetEdit2d()==false)
 			{
 				//// 現在の画面の表示
 				//DrawMode();

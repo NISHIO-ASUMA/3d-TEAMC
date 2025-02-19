@@ -44,12 +44,12 @@
 #include "meshfan.h"
 #include "billboard.h"
 #include "craftui.h"
-
 #include "Bullet.h"
 #include "minimap.h"
 #include "effect2.h"
 #include "particle2.h"
 #include "effectEdit.h"
+
 //**************************************************************************************************************
 //グローバル変数
 //**************************************************************************************************************
@@ -509,12 +509,13 @@ void UpdateGame(void)
 				// メッシュドームの更新処理
 				UpdatemeshFan();
 
-				//弾の更新処理
+				//更新処理
 				UpdateBullet();
 
 				// ミニマップの更新処理
 				UpdateMiniMap();
 			}
+
 			// ビルボードの更新処理
 			UpdateBillboard();
 

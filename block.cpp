@@ -855,9 +855,9 @@ void CreateObb(int nCnt)
 	Length[1] = fabsf(g_Block[nCnt].Size.y * g_Block[nCnt].Scal.y); // ’·‚³Y
 	Length[2] = fabsf(g_Block[nCnt].Size.z * g_Block[nCnt].Scal.z); // ’·‚³Z
 
-	g_Block[nCnt].Obb.Length[0] = fabsf(Length[0]) * 0.6f; // ’·‚³X
-	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.6f; // ’·‚³Y
-	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.6f; // ’·‚³Z
+	g_Block[nCnt].Obb.Length[0] = fabsf(Length[0]) * 0.55f; // ’·‚³X
+	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.55f; // ’·‚³Y
+	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.55f; // ’·‚³Z
 
 }
 //=======================
