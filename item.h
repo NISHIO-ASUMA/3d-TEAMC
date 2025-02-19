@@ -71,6 +71,7 @@ typedef enum
 	ITEMSTATE_HOLD,
 	ITEMSTATE_THROW,
 	ITEMSTATE_STOCK,
+	ITEMSTATE_RELEASE,
 	ITEMSTATE_MAX
 }ItemSTATE;
 
@@ -125,6 +126,7 @@ typedef struct
 	bool EnableCraft; // クラフトが有効なアイテムか否か
 	bool bMixItem[ITEMTYPE_MAX]; // 完成品表示用フラグ
 	float grabity;
+	int nCounterState; // 状態カウンター
 }Item;
 
 //***************************

@@ -227,6 +227,26 @@ void UpdateItem(void)
 			continue;
 		}
 
+		switch (g_Item[nCntItem].state)
+		{
+		case ITEMSTATE_NORMAL:
+			break;
+		case ITEMSTATE_HOLD:
+			break;
+		case ITEMSTATE_THROW:
+			break;
+		case ITEMSTATE_STOCK:
+			break;
+		case ITEMSTATE_RELEASE:
+			g_Item[nCntItem].nCounterState--;
+			if (g_Item[nCntItem].nCounterState <= 0)
+			{
+				g_Item[nCntItem].state = ITEMSTATE_NORMAL;
+			}
+			break;
+		default:
+			break;
+		}
 		// プレイヤーのアイテムを刀にする
 		if (bFIrstCraftItem == false && g_Item[nCntItem].nType == ITEMTYPE_KATANA)
 		{
@@ -238,6 +258,7 @@ void UpdateItem(void)
 
 			// アイテムのインデックスを保存
 			pPlayer->ItemIdx = nCntItem;
+			g_Item[nCntItem].state = ITEMSTATE_HOLD;
 
 			// ステータス変更
 			StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
@@ -861,14 +882,21 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 	// 持っているアイテムを変更
 	Itemchange(MixItem);
 
-	// モーションの変更
-	MotionChange(motionchange, 0);
-
 	// クラフトに使ったアイテムを消す
 	g_Item[nCntItem].bUse = false;
 
-	// 手に持ってるアイテムの種類を石破っと
+	// モーションの変更
+	MotionChange(motionchange, 0);
+
+	// 種類を代入
+	int nType = g_Item[pPlayer->ItemIdx].nType;
+
+	// アイテムの見た目を変える
+	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem].ItemTex[MixItem];
+
+	// 手に持ってるアイテムの種類を石バットにする
 	g_Item[pPlayer->ItemIdx].nType = MixItem;
+
 }
 //==============================================================================================================
 // クラフト先のアイテムのアイコンの表示

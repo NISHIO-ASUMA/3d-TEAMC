@@ -35,7 +35,6 @@
 // プロトタイプ宣言
 //***************************************************************************************************************
 void DrawMode(void); // 現在の画面の表示
-void DrawOperation(void); // 操作方法
 void DrawEditMode(void);  // 編集モーど
 void DrawPlayerInfo(void); // プレイヤーの情報
 void DrawEditmode2d(void);
@@ -589,9 +588,6 @@ void Draw(void)
 				// 現在の画面の表示
 				DrawMode();
 
-				// 操作方法
-				DrawOperation();
-
 				// プレイヤーの情報
 				DrawPlayerInfo();
 
@@ -902,23 +898,6 @@ void DrawMode(void)
 
 	g_pFont->DrawText(NULL, &aStrState[0], -1, &rectState, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 	g_pFont->DrawText(NULL, &aStr[0], -1, &rectMode, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-
-}
-//=============================================================================================================
-// 操作方法表示
-//=============================================================================================================
-void DrawOperation(void)
-{
-	RECT rectPlayer = { 0,100,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rectThrow = { 0,120,SCREEN_WIDTH,SCREEN_HEIGHT };
-
-	char aStr[128];
-	char aStrthrow[128];
-
-	wsprintf(&aStr[0], "移動 [ WASD ]\n");
-	wsprintf(&aStrthrow[0],"ブロック :拾う[ F ]:飛ばす[ 左クリック ]\n");
-
-	g_pFont->DrawText(NULL, &aStrthrow[0], -1, &rectThrow, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 
 }
 //=============================================================================================================
