@@ -76,6 +76,7 @@ void InitEnemy(void)
 		g_Enemy[nCntEnemy].bUse = false;								// 未使用状態
 		g_Enemy[nCntEnemy].Motion.bLoopMotion = true;					// ループするか否か
 		g_Enemy[nCntEnemy].nLife = 20;									// 体力
+		g_Enemy[nCntEnemy].nMaxLife = 20;								// 最大体力
 		g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;					// 状態
 		g_Enemy[nCntEnemy].Speed = 0.0f;							    // 足の速さ
 		g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;                // 敵が攻撃状態か
@@ -94,6 +95,7 @@ void InitEnemy(void)
 
 		//g_LoadEnemy[nCntEnemyType].
 		g_LoadEnemy[nCntEnemyType].nLife = 20;
+		g_LoadEnemy[nCntEnemyType].nMaxLife = 20;								// 最大体力
 		//g_LoadEnemy[nCntEnemyType].nType = ENEMYTYPE_ONE;
 		g_LoadEnemy[nCntEnemyType].Motion.motionType = MOTIONTYPE_NEUTRAL;// モーションの種類
 		g_LoadEnemy[nCntEnemyType].g_bDamage = true;					  // ダメージか否か
@@ -281,6 +283,12 @@ void UpdateEnemy(void)
 			// とばしてカウントを進める
 			continue;
 		}
+		
+		// 最大体力を超えてたら調整
+		if (g_Enemy[nCntEnemy].nMaxLife < g_Enemy[nCntEnemy].nLife)
+		{
+			g_Enemy[nCntEnemy].nLife = g_Enemy[nCntEnemy].nMaxLife;
+		}
 
 		// 敵の状態
 		switch (g_Enemy[nCntEnemy].state)
@@ -348,17 +356,37 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
 		}
 		
-		// 敵の種類がスコア高いやつだったら
-		if (sphererange(&g_Enemy[nCntEnemy].pos, &pPlayer->pos, 50.0f, 80.0f) && g_Enemy[nCntEnemy].nType == ENEMYTYPE_SEVEN)
+		// 敵の種類がスコア高いやつなら
+		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SEVEN)
 		{
-			// 敵をプレイヤーに向かわせる
-			AgentEnemy(nCntEnemy);
+			// 体力が最大値と同等、つまりノーダメなら何もしない
+			if (g_Enemy[nCntEnemy].nMaxLife == g_Enemy[nCntEnemy].nLife)
+			{
 
-			// プレイヤーまでの角度
-			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+			}
+			else // 少しでもダメージを受けてて
+			{
+				// プレイヤーの近くに居たら
+				if (sphererange(&g_Enemy[nCntEnemy].pos, &pPlayer->pos, 50.0f, 80.0f))
+				{
+					// 敵をプレイヤーに向かわせる
+					AgentEnemy(nCntEnemy);
 
-			// 逆にして移動方向を反転する
-			g_Enemy[nCntEnemy].rotDest.y = fAngle; // 角度を代入
+					// プレイヤーまでの角度
+					float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+
+					// 逆にして移動方向を反転する
+					g_Enemy[nCntEnemy].rotDest.y = fAngle; // 角度を代入
+				}
+
+				// 高価そうなオーラを出す
+				SetParticle(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + 10, g_Enemy[nCntEnemy].pos.z),
+				D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), 
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+				2.0f, 1, 20, 5, 20.0f, 20.0f, true, D3DXVECTOR3(0.0f, 3.0f, 0.0f));
+			}
 		}
 
 		CollisionToEnemy(nCntEnemy); // 敵と敵の当たり判定
@@ -721,6 +749,7 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 			g_Enemy[nCntEnemy].pos = pos;	  // 座標
 			g_Enemy[nCntEnemy].nType = nType; // 種類
 			g_Enemy[nCntEnemy].nLife = nLife; // 体力
+			g_Enemy[nCntEnemy].nMaxLife = nLife; // 最大体力
 			g_Enemy[nCntEnemy].Speed = Speed; // 足の速さ
 			g_Enemy[nCntEnemy].nCountAction = 0;
 			g_Enemy[nCntEnemy].bUse = true;   // 使用状態
