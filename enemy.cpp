@@ -656,14 +656,31 @@ void HitEnemy(int nCnt,int nDamage)
 		{
 			if (pPlayer->FeverMode)
 			{
-				AddScore(16000);		// スコアを取得
-				AddSpgauge(2.5f);   // SPゲージを取得
+				if (g_Enemy[nCnt].nType == ENEMYTYPE_SEVEN)
+				{
+					AddScore(32000);		// スコアを取得
+					AddSpgauge(5.0f);   // SPゲージを取得
+				}
+				else
+				{
+					AddScore(16000);		// スコアを取得
+					AddSpgauge(2.5f);   // SPゲージを取得
+				}
 			}
 			else if (!pPlayer->FeverMode)
 			{
-				AddFever(5.0f);		// フィーバーポイントを取得
-				AddScore(8100);		// スコアを取得
-				AddSpgauge(2.0f);   // SPゲージを取得
+				if (g_Enemy[nCnt].nType == ENEMYTYPE_SEVEN)
+				{
+					AddFever(10.0f);		// フィーバーポイントを取得
+					AddScore(16200);		// スコアを取得
+					AddSpgauge(4.0f);   // SPゲージを取得
+				}
+				else
+				{
+					AddFever(5.0f);		// フィーバーポイントを取得
+					AddScore(8100);		// スコアを取得
+					AddSpgauge(2.0f);   // SPゲージを取得
+				}
 			}
 		}
 
