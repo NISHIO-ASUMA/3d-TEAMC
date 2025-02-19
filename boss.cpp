@@ -395,45 +395,48 @@ void UpdateBoss(void)
 		g_Boss[nCnt].pos += g_Boss[nCnt].move;
 
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
-		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 2000.0f) && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION2)
+		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 2000.0f))
 		{
-			// モデル情報を代入
-			D3DXVECTOR3 HootR(g_Boss[nCnt].Motion.aModel[11].mtxWorld._41, g_Boss[nCnt].Motion.aModel[11].mtxWorld._42, g_Boss[nCnt].Motion.aModel[11].mtxWorld._43);
-			D3DXVECTOR3 HootL(g_Boss[nCnt].Motion.aModel[14].mtxWorld._41, g_Boss[nCnt].Motion.aModel[14].mtxWorld._42, g_Boss[nCnt].Motion.aModel[14].mtxWorld._43);
-
-			// モーションがムーブの時1キーの1フレーム目
-			if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_MOVE &&
-				g_Boss[nCnt].Motion.nKey == 1 &&
-				g_Boss[nCnt].Motion.nCountMotion == 1)
+			if (g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION2 && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION3)// 勿論モーションが攻撃中でない時のみ
 			{
-				SetExplosion(HootR, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
+				// モデル情報を代入
+				D3DXVECTOR3 HootR(g_Boss[nCnt].Motion.aModel[11].mtxWorld._41, g_Boss[nCnt].Motion.aModel[11].mtxWorld._42, g_Boss[nCnt].Motion.aModel[11].mtxWorld._43);
+				D3DXVECTOR3 HootL(g_Boss[nCnt].Motion.aModel[14].mtxWorld._41, g_Boss[nCnt].Motion.aModel[14].mtxWorld._42, g_Boss[nCnt].Motion.aModel[14].mtxWorld._43);
+
+				// モーションがムーブの時1キーの1フレーム目
+				if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_MOVE &&
+					g_Boss[nCnt].Motion.nKey == 1 &&
+					g_Boss[nCnt].Motion.nCountMotion == 1)
+				{
+					SetExplosion(HootR, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
+				}
+
+				// モーションがムーブの時3キーの1フレーム目
+				else if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_MOVE &&
+					g_Boss[nCnt].Motion.nKey == 3 &&
+					g_Boss[nCnt].Motion.nCountMotion == 1)
+				{
+					SetExplosion(HootL, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
+				}
+
+				g_Boss[nCnt].Motion.motionType = MOTIONTYPE_MOVE; // モーションの種類を移動にする
+
+				// ボスの向きをプレイヤーの位置を向くようにする
+				float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);
+
+				// ボスの向き代入
+				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
+
+				// プレイヤーの位置を算出
+				D3DXVECTOR3 Dest = pPlayer->pos - g_Boss[nCnt].pos;
+
+				// 正規化
+				D3DXVec3Normalize(&Dest, &Dest);
+
+				// 移動量に代入
+				g_Boss[nCnt].move.x = Dest.x * g_Boss[nCnt].Speed;
+				g_Boss[nCnt].move.z = Dest.z * g_Boss[nCnt].Speed;
 			}
-
-			// モーションがムーブの時3キーの1フレーム目
-			else if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_MOVE &&
-				g_Boss[nCnt].Motion.nKey == 3 &&
-				g_Boss[nCnt].Motion.nCountMotion == 1)
-			{
-				SetExplosion(HootL, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
-			}
-
-			g_Boss[nCnt].Motion.motionType = MOTIONTYPE_MOVE; // モーションの種類を移動にする
-
-			// ボスの向きをプレイヤーの位置を向くようにする
-			float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);
-
-			// ボスの向き代入
-			g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
-
-			// プレイヤーの位置を算出
-			D3DXVECTOR3 Dest = pPlayer->pos - g_Boss[nCnt].pos;
-
-			// 正規化
-			D3DXVec3Normalize(&Dest, &Dest);
-
-			// 移動量に代入
-			g_Boss[nCnt].move.x = Dest.x * g_Boss[nCnt].Speed;
-			g_Boss[nCnt].move.z = Dest.z * g_Boss[nCnt].Speed;
 
 		}
 		//else
