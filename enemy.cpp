@@ -30,6 +30,7 @@
 #include "effectEdit.h"
 #include "effect2.h"
 #include "Effect.h"
+#include "wall.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -334,6 +335,9 @@ void UpdateEnemy(void)
 		{
 			g_Enemy[nCntEnemy].pos.y = 200.0f;
 		}
+
+		// 壁との当たり判定
+		CollisionWall(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, g_Enemy[nCntEnemy].Speed);
 
 		// アイテムが当たったか
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f)&& g_Enemy[nCntEnemy].state!=ENEMYSTATE_DAMAGE)

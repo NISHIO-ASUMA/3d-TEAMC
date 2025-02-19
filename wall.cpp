@@ -239,13 +239,10 @@ void SetWall(D3DXVECTOR3 pos, D3DXVECTOR3 rot,float fA, D3DXVECTOR3 Size)
 //============================================================================================================
 // 壁との衝突判定
 //============================================================================================================
-void CollisionWall(void)
+void CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3* pPosOld,D3DXVECTOR3 *pMove,float speed)
 {
 	// 頂点情報へのポインタ
 	VERTEX_3D* pVtx;
-
-	// プレイヤーの取得
-	Player* pPlayer = GetPlayer();
 
 	// 頂点バッファをロック
 	g_pVtxBuffWall->Lock(0, 0, (void**)&pVtx, 0);
@@ -255,7 +252,7 @@ void CollisionWall(void)
 
 	for (int nCnt = 0; nCnt < MAX_WALL; nCnt++)
 	{
-		if (g_Wall[nCnt].bUse == true&&pPlayer->bDisp==true)
+		if (g_Wall[nCnt].bUse == true)
 		{
 			g_Wall[nCnt].vtxPos[0].x = g_Wall[nCnt].pos.x - cosf(g_Wall[nCnt].rot.y) * WALL_WIDTH;
 			g_Wall[nCnt].vtxPos[0].y = g_Wall[nCnt].pos.y + WALL_HEIGHT;
@@ -283,7 +280,7 @@ void CollisionWall(void)
 
 			D3DXVECTOR3 VecBLine;	// 壁からプレイヤー
 
-			VecBLine = pPlayer->pos - g_Wall[nCnt].vtxPos[0];	// 壁からプレイヤーにベクトルを引く
+			VecBLine = *pPos - g_Wall[nCnt].vtxPos[0];	// 壁からプレイヤーにベクトルを引く
 
 			D3DXVec3Normalize(&VecBLine, &VecBLine); // 正規化
 
@@ -298,9 +295,7 @@ void CollisionWall(void)
 			// プレイヤーが壁の外に出た
 			if (Cross.y < 0)
 			{
-				Player* pPlayer = GetPlayer();
-
-				D3DXVECTOR3 VecMoveF = pPlayer->pos - pPlayer->posOld; // 進行ベクトル
+				D3DXVECTOR3 VecMoveF = *pPos - *pPosOld; // 進行ベクトル
 
 				D3DXVECTOR3 Vector1 = g_Wall[nCnt].vtxPos[1] - g_Wall[nCnt].vtxPos[0];
 				D3DXVECTOR3 Vector2 = g_Wall[nCnt].vtxPos[2] - g_Wall[nCnt].vtxPos[0];
@@ -314,31 +309,24 @@ void CollisionWall(void)
 
 				D3DXVec3Normalize(&WallMove, &WallMove);
 
-				D3DXVECTOR3 vector = pPlayer->posOld - WallMove;
+				D3DXVECTOR3 vector = *pPosOld - WallMove;
 
 				D3DXVec3Normalize(&vector, &vector);
 
-				pPlayer->move.x = 0.0f;
-				pPlayer->move.z = 0.0f;
+				pMove->x = 0.0f;
+				pMove->z = 0.0f;
 
-				pPlayer->pos.x -= vector.x * pPlayer->speed;
-				pPlayer->pos.z -= vector.z * pPlayer->speed;
+				pPos->x -= vector.x * speed;
+				pPos->z -= vector.z * speed;
 
-				pPlayer->move.x += WallMove.x;
-				pPlayer->move.z += WallMove.z;
+				pMove->x += WallMove.x;
+				pMove->z += WallMove.z;
 			}
 		}
 	}
 
 	// 頂点バッファをアンロック
 	g_pVtxBuffWall->Unlock();
-}
-//============================================================================================================
-// 壁の内積
-//============================================================================================================
-void DotWall(void)
-{
-
 }
 ////==========================================================================================================
 ////弾の判定

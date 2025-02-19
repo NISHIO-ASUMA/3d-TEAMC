@@ -25,6 +25,7 @@
 #include "sound.h"
 #include "game.h"
 #include "polygon.h"
+#include "wall.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -393,6 +394,9 @@ void UpdateBoss(void)
 
 		// 位置の更新
 		g_Boss[nCnt].pos += g_Boss[nCnt].move;
+
+		// 壁との当たり判定
+		CollisionWall(&g_Boss[nCnt].pos, &g_Boss[nCnt].posOld, &g_Boss[nCnt].move, g_Boss[nCnt].Speed);
 
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 2000.0f))

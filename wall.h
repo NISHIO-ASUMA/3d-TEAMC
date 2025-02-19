@@ -50,7 +50,7 @@ void UninitWall(void); // •Ç‚ÌI—¹ˆ—
 void UpdateWall(void); // •Ç‚ÌXVˆ—
 void DrawWall(void);   // •Ç‚Ì•`‰æˆ—
 void SetWall(D3DXVECTOR3 pos, D3DXVECTOR3 rot,float fA, D3DXVECTOR3 Size); // •Ç‚Ìİ’èˆ—
-void CollisionWall(void);
+void CollisionWall(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld,D3DXVECTOR3* pMove, float speed);
 void DotWall(void);
 WALL* GetWall(void);
 int NumWall(void);

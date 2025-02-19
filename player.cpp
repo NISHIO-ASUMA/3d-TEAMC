@@ -593,7 +593,7 @@ void UpdatePlayer(void)
 		g_player.bJump = false;
 	}
 
-	CollisionWall();
+	CollisionWall(&g_player.pos,&g_player.posOld,&g_player.move,g_player.speed);
 
 	//プレイヤーの重力
 	g_player.move.y -= 1.0f;
