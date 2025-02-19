@@ -97,9 +97,9 @@ void InitItem(void)
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
 		// マテリアルのデータへのポインタを取得
-		pMat = (D3DXMATERIAL*)g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatItem->GetBufferPointer();
+		pMat = (D3DXMATERIAL*)g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel->GetBufferPointer();
 
-		for (int nCntMat = 0; nCntMat < (int)g_TexItem[nCntNum].ItemTex[nCntNum].g_dwNumMatItem; nCntMat++)
+		for (int nCntMat = 0; nCntMat < (int)g_TexItem[nCntNum].ItemTex[nCntNum].g_dwNumMatModel; nCntMat++)
 		{
 			if (pMat[nCntMat].pTextureFilename != NULL)
 			{
@@ -107,7 +107,7 @@ void InitItem(void)
 				//テクスチャの読み込み
 				D3DXCreateTextureFromFile(pDevice,
 					pMat[nCntMat].pTextureFilename,
-					&g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureItem[nCntMat]);
+					&g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureModel[nCntMat]);
 			}
 		}
 	}
@@ -120,13 +120,13 @@ void InitItem(void)
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		// 頂点数の取得
-		nNumVtx = g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->GetNumVertices();
+		nNumVtx = g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->GetNumVertices();
 
 		// 頂点フォーマットのサイズ取得
-		sizeFVF = D3DXGetFVFVertexSize(g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->GetFVF());
+		sizeFVF = D3DXGetFVFVertexSize(g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->GetFVF());
 
 		// 頂点バッファのロック
-		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
 		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 		{
@@ -169,7 +169,7 @@ void InitItem(void)
 		}
 
 		// 頂点バッファのアンロック
-		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->UnlockVertexBuffer();
+		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->UnlockVertexBuffer();
 	}
 
 	Player* pPlayer = GetPlayer();
@@ -184,25 +184,25 @@ void UninitItem(void)
 		// テクスチャの破棄
 		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
 		{
-			if (g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureItem[nCntTex] != NULL)
+			if (g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureModel[nCntTex] != NULL)
 			{
-				g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureItem[nCntTex]->Release();
-				g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureItem[nCntTex] = NULL;
+				g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureModel[nCntTex]->Release();
+				g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureModel[nCntTex] = NULL;
 			}
 		}
 
 		// メッシュの破棄
-		if (g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem != NULL)
+		if (g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel != NULL)
 		{
-			g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem->Release();
-			g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshItem = NULL;
+			g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->Release();
+			g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel = NULL;
 		}
 
 		// マテリアルの破棄
-		if (g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatItem != NULL)
+		if (g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel != NULL)
 		{
-			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatItem->Release();
-			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatItem = NULL;
+			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel->Release();
+			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel = NULL;
 		}
 	}
 }
@@ -440,19 +440,19 @@ void DrawItem(void)
 			// 現在のマテリアルを取得
 			pDevice->GetMaterial(&matDef);
 
-			for (int nCntMat = 0; nCntMat < (int)g_Item[nCntItem].ItemTex[nCntNum].g_dwNumMatItem; nCntMat++)
+			for (int nCntMat = 0; nCntMat < (int)g_Item[nCntItem].ItemTex[nCntNum].g_dwNumMatModel; nCntMat++)
 			{
 				// マテリアルのデータへのポインタを取得
-				pMat = (D3DXMATERIAL*)g_Item[nCntItem].ItemTex[nCntNum].g_pBuffMatItem->GetBufferPointer();
+				pMat = (D3DXMATERIAL*)g_Item[nCntItem].ItemTex[nCntNum].g_pBuffMatModel->GetBufferPointer();
 
 				// マテリアルの設定
 				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 				// テクスチャの設定
-				pDevice->SetTexture(0, g_Item[nCntItem].ItemTex[nCntNum].g_apTextureItem[nCntMat]);
+				pDevice->SetTexture(0, g_Item[nCntItem].ItemTex[nCntNum].g_apTextureModel[nCntMat]);
 
 				// ブロック(パーツ)の描画
-				g_Item[nCntItem].ItemTex[nCntNum].g_pMeshItem->DrawSubset(nCntMat);
+				g_Item[nCntItem].ItemTex[nCntNum].g_pMeshModel->DrawSubset(nCntMat);
 			}
 		}
 	}
@@ -532,9 +532,9 @@ void Itemchange(int nType)
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
-	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].ItemTex[nType].g_dwNumMatItem; // アイテムのマテリアルの情報を代入
-	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].ItemTex[nType].g_pBuffMatItem; // アイテムのバッファの情報を代入
-	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].ItemTex[nType].g_pMeshItem;       // アイテムのメッシュの情報を代入
+	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].ItemTex[nType].g_dwNumMatModel; // アイテムのマテリアルの情報を代入
+	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].ItemTex[nType].g_pBuffMatModel; // アイテムのバッファの情報を代入
+	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].ItemTex[nType].g_pMeshModel;       // アイテムのメッシュの情報を代入
 	pPlayer->nElement = g_TexItem[nType].nElement; // アイテムの属性情報を代入
 
 	//if (g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
@@ -596,10 +596,10 @@ void LoadItemModel(void)
 					D3DXMESH_SYSTEMMEM,
 					pDevice,
 					NULL,
-					&g_TexItem[nType].ItemTex[nType].g_pBuffMatItem,
+					&g_TexItem[nType].ItemTex[nType].g_pBuffMatModel,
 					NULL,
-					&g_TexItem[nType].ItemTex[nType].g_dwNumMatItem,
-					&g_TexItem[nType].ItemTex[nType].g_pMeshItem);
+					&g_TexItem[nType].ItemTex[nType].g_dwNumMatModel,
+					&g_TexItem[nType].ItemTex[nType].g_pMeshModel);
 
 				nType++;
 			}
@@ -749,6 +749,13 @@ void ElementChange(int nTypeItem)
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
+}
+//==============================================================================================================
+// アイテムの取得
+//==============================================================================================================
+Item* GetItemOrigin(void)
+{
+	return &g_TexItem[0];
 }
 //==============================================================================================================
 // アイテムのクラフト

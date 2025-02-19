@@ -10,7 +10,6 @@
 //***********************
 #include "edit.h"
 #include "input.h"
-#include "block.h"
 #include "item.h"
 #include "meshfield.h"
 #include "camera.h"
@@ -68,34 +67,29 @@ void InitEdit(void)
 
 	EditMode2d = false; // 2DOBJ編集モードか
 
-	// カテゴリー分回す
-	for (int nCntNum = 0; nCntNum < EDITMODE_MAX; nCntNum++)
+	// アイテムとブロックのテクスチャ情報を取得
+	BLOCK* BlockOrigin = GetBlockOrigin();
+	Item* ItemOrigin = GetItemOrigin();
+
+	// ブロックの種類
+	for (int nCntBlock = 0; nCntBlock < BLOCKTYPE_MAX; nCntBlock++)
 	{
-		LoadEditObj(nCntNum); // カテゴリー分ロード
-
-		// カテゴリーの種類分回す
-		for (int nCntModel = 0; nCntModel < g_BlockTexInfo[nCntNum].nNumModel; nCntModel++)
-		{
-			D3DXMATERIAL* pMat;//マテリアルへのポインタ
-
-			//マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_BlockTexInfo[nCntNum].pModel[nCntModel].g_pBuffMatEdit->GetBufferPointer();
-
-			for (int nCntMat = 0; nCntMat < (int)g_BlockTexInfo[nCntNum].pModel[nCntModel].g_dwNumMatEdit; nCntMat++)
-			{
-				if (pMat[nCntMat].pTextureFilename != NULL)
-				{
-					//このファイル名を使用してテクスチャを読み込む
-						//テクスチャの読み込み
-					D3DXCreateTextureFromFile(pDevice,
-						pMat[nCntMat].pTextureFilename,
-						&g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[nCntMat]);
-				}
-			}
-		}
+		// テクスチャ情報を取得
+		g_BlockTexInfo[0].pModel[nCntBlock] = BlockOrigin[nCntBlock].BlockTex[nCntBlock];
 	}
 
+	// アイテムの種類
+	for (int nCntItem = 0; nCntItem < ITEMTYPE_MAX; nCntItem++)
+	{
+		// テクスチャ情報を取得
+		g_BlockTexInfo[1].pModel[nCntItem] = ItemOrigin[nCntItem].ItemTex[nCntItem];
+	}
 
+	// ブロック最大数を代入
+	g_BlockTexInfo[0].nNumModel = BLOCKTYPE_MAX;
+
+	// アイテム最大数を代入
+	g_BlockTexInfo[1].nNumModel = ITEMTYPE_MAX;
 
 	g_nNumBlock = 0;												// オブジェクトの数の初期化
 	g_Edit[0].bUse = true;											// 一つ目を使用状態にする
@@ -112,38 +106,6 @@ void UninitEdit(void)
 {
 	UninitEdit2d();
 
-	//カテゴリー分回す
-	for (int nCntNum = 0; nCntNum < EDITMODE_MAX; nCntNum++)
-	{
-		//各カテゴリーの種類数分回す
-		for (int nCntModel = 0; nCntModel < g_BlockTexInfo[nCntNum].nNumModel; nCntModel++)
-		{
-			//テクスチャ分回す
-			for (int nCnt = 0; nCnt < (int)g_BlockTexInfo[nCntNum].pModel[nCntModel].g_dwNumMatEdit; nCnt++)
-			{
-				//テクスチャの破棄
-				if (g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt] != NULL)
-				{
-					g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt]->Release();
-					g_BlockTexInfo[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt] = NULL;
-				}
-			}
-			//バッファの破棄
-			if (g_BlockTexInfo[nCntNum].pModel[nCntModel].g_pBuffMatEdit != NULL)
-			{
-				g_BlockTexInfo[nCntNum].pModel[nCntModel].g_pBuffMatEdit->Release();
-				g_BlockTexInfo[nCntNum].pModel[nCntModel].g_pBuffMatEdit = NULL;
-			}
-
-			//メッシュの破棄
-			if (g_BlockTexInfo[nCntNum].pModel[nCntModel].g_pMeshEdit != NULL)
-			{
-				g_BlockTexInfo[nCntNum].pModel[nCntModel].g_pMeshEdit->Release();
-				g_BlockTexInfo[nCntNum].pModel[nCntModel].g_pMeshEdit = NULL;
-			}
-		}
-	}
-
 	// 全オブジェクト分回す
 	for (int nCntEdit = 0; nCntEdit < MAX_OBJ; nCntEdit++)
 	{
@@ -154,24 +116,24 @@ void UninitEdit(void)
 			for (int nCntModel = 0; nCntModel < g_Edit[nCntEdit].Category[nCntNum].nNumModel; nCntModel++)
 			{
 				//テクスチャ分回す
-				for (int nCnt = 0; nCnt < (int)g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_dwNumMatEdit; nCnt++)
+				for (int nCnt = 0; nCnt < (int)g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_dwNumMatModel; nCnt++)
 				{
 					//テクスチャの破棄
-					if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt] != NULL)
+					if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_apTextureModel[nCnt] != NULL)
 					{
-						g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_apTextureEdit[nCnt] = NULL;
+						g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_apTextureModel[nCnt] = NULL;
 					}
 				}
 				//バッファの破棄
-				if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pBuffMatEdit != NULL)
+				if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pBuffMatModel != NULL)
 				{
-					g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pBuffMatEdit = NULL;
+					g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pBuffMatModel = NULL;
 				}
 
 				//メッシュの破棄
-				if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pMeshEdit != NULL)
+				if (g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pMeshModel != NULL)
 				{
-					g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pMeshEdit = NULL;
+					g_Edit[nCntEdit].Category[nCntNum].pModel[nCntModel].g_pMeshModel = NULL;
 				}
 			}
 		}
@@ -230,7 +192,10 @@ void UpdateEdit(void)
 		if (KeyboardTrigger(DIK_RETURN))
 		{
 			g_Edit[g_EditCount + 1].pos = g_Edit[g_EditCount].pos;							// 次のオブジェクトに現在のオブジェクトの位置を代入
-			g_Edit[g_EditCount + 1].bUse = true;											// 次のオブジェクトを使用状態にする
+			g_Edit[g_EditCount + 1].bUse = true;
+			
+
+			// 次のオブジェクトを使用状態にする
 			g_Edit[g_EditCount + 1].Scal = g_Edit[g_EditCount].Scal;						// 次のオブジェクトにスケールを代入する
 			g_Edit[g_EditCount + 1].EditCategory = g_Edit[g_EditCount].EditCategory;        // 今のカテゴリーを代入
 			g_Edit[g_EditCount + 1].nType = g_Edit[g_EditCount].nType;						// 今のタイプを代入
@@ -482,10 +447,10 @@ void DrawEdit(void)
 		//現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
-		for (int nCntMat = 0; nCntMat < (int)g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_dwNumMatEdit; nCntMat++)
+		for (int nCntMat = 0; nCntMat < (int)g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_dwNumMatModel; nCntMat++)
 		{
 			//マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pBuffMatEdit->GetBufferPointer();
+			pMat = (D3DXMATERIAL*)g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pBuffMatModel->GetBufferPointer();
 
 			//選択中のブロックだったら
 			if (nCntBlock == g_EditCount)
@@ -509,10 +474,10 @@ void DrawEdit(void)
 			}
 
 			//テクスチャの設定
-			pDevice->SetTexture(0, g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_apTextureEdit[nCntMat]);
+			pDevice->SetTexture(0, g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_apTextureModel[nCntMat]);
 
 			//ブロック(パーツ)の描画
-			g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pMeshEdit->DrawSubset(nCntMat);
+			g_Edit[nCntBlock].Category[EditCategory].pModel[nType].g_pMeshModel->DrawSubset(nCntMat);
 		}
 		pDevice->SetMaterial(&matDef);
 	}
@@ -855,73 +820,73 @@ int GetNumobj(void)
 //=============================================================================================================
 void LoadEditObj(int category)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	//LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	FILE* pFile;
-	char Skip[5];
-	int nCntModel = 0;
+	//FILE* pFile;
+	//char Skip[5];
+	//int nCntModel = 0;
 
-	switch (category)
-	{
-	case EDITMODE_BLOCK:
-		pFile = fopen("data\\MODEL_TXT\\BLOCK.txt", "r");
-		break;
-	case EDITMODE_ITEM:
-		pFile = fopen("data\\MODEL_TXT\\ITEM.txt", "r");
-		break;
-	default:
-		pFile = NULL;
-		break;
-	}
+	//switch (category)
+	//{
+	//case EDITMODE_BLOCK:
+	//	pFile = fopen("data\\MODEL_TXT\\BLOCK.txt", "r");
+	//	break;
+	//case EDITMODE_ITEM:
+	//	pFile = fopen("data\\MODEL_TXT\\ITEM.txt", "r");
+	//	break;
+	//default:
+	//	pFile = NULL;
+	//	break;
+	//}
 
-	if (pFile != NULL)
-	{
-		char aString[256];
+	//if (pFile != NULL)
+	//{
+	//	char aString[256];
 
-		while (1)
-		{
-			fscanf(pFile, "%s", &aString[0]);
+	//	while (1)
+	//	{
+	//		fscanf(pFile, "%s", &aString[0]);
 
-			if (strcmp(aString, "MAX_TYPE") == 0)
-			{
-				fscanf(pFile, "%s", &Skip[0]);
-				fscanf(pFile, "%d", &g_BlockTexInfo[category].nNumModel);
-			}
-			else if (strcmp(aString, "MODEL_FILENAME") == 0)
-			{
-				fscanf(pFile, "%s", &Skip[0]);
+	//		if (strcmp(aString, "MAX_TYPE") == 0)
+	//		{
+	//			fscanf(pFile, "%s", &Skip[0]);
+	//			fscanf(pFile, "%d", &g_BlockTexInfo[category].nNumModel);
+	//		}
+	//		else if (strcmp(aString, "MODEL_FILENAME") == 0)
+	//		{
+	//			fscanf(pFile, "%s", &Skip[0]);
 
-				fscanf(pFile, "%s", &aString[0]);
+	//			fscanf(pFile, "%s", &aString[0]);
 
-				const char* MODEL_FILENAME = {};
+	//			const char* MODEL_FILENAME = {};
 
-				MODEL_FILENAME = aString;
+	//			MODEL_FILENAME = aString;
 
-				//Xファイルの読み込み
-				D3DXLoadMeshFromX(MODEL_FILENAME,
-					D3DXMESH_SYSTEMMEM,
-					pDevice,
-					NULL,
-					&g_BlockTexInfo[category].pModel[nCntModel].g_pBuffMatEdit,
-					NULL,
-					&g_BlockTexInfo[category].pModel[nCntModel].g_dwNumMatEdit,
-					&g_BlockTexInfo[category].pModel[nCntModel].g_pMeshEdit);
+	//			//Xファイルの読み込み
+	//			D3DXLoadMeshFromX(MODEL_FILENAME,
+	//				D3DXMESH_SYSTEMMEM,
+	//				pDevice,
+	//				NULL,
+	//				&g_BlockTexInfo[category].pModel[nCntModel].g_pBuffMatModel,
+	//				NULL,
+	//				&g_BlockTexInfo[category].pModel[nCntModel].g_dwNumMatModel,
+	//				&g_BlockTexInfo[category].pModel[nCntModel].g_pMeshModel);
 
-				nCntModel++;
-			}
-			else if (strcmp(aString, "END_SCRIPT") == 0)
-			{
-				break;
-			}
-		}
-	}
-	else
-	{
-		//メッセージボックス
-		MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
-		return;
-	}
-	fclose(pFile);
+	//			nCntModel++;
+	//		}
+	//		else if (strcmp(aString, "END_SCRIPT") == 0)
+	//		{
+	//			break;
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	//メッセージボックス
+	//	MessageBox(NULL, "ファイルが開けません。", "エラー(Edit.cpp)", MB_OK);
+	//	return;
+	//}
+	//fclose(pFile);
 }
 //===============================================================================================================
 // エディット2dモードかどうか

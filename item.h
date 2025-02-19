@@ -13,6 +13,7 @@
 //***************************
 #include"main.h"
 #include"player.h"
+#include"block.h"
 
 //***************************
 //マクロ定義
@@ -88,17 +89,17 @@ typedef enum
 	ITEMELEMENT_MAX
 }ITEMELEMENT;
 
-//***************************
-//ブロックのテクスチャ構造体
-//***************************
-typedef struct
-{
-	LPD3DXMESH g_pMeshItem;//メッシュ(頂点座標)へのポインタ
-	LPD3DXBUFFER g_pBuffMatItem;//マテリアルへのポインタ
-	DWORD g_dwNumMatItem;//マテリアルの数
-	LPDIRECT3DTEXTURE9 g_apTextureItem[32];
-	D3DXVECTOR3 vtxMin, vtxMax;
-}ItemTex;
+////***************************
+////ブロックのテクスチャ構造体
+////***************************
+//typedef struct
+//{
+//	LPD3DXMESH g_pMeshItem;//メッシュ(頂点座標)へのポインタ
+//	LPD3DXBUFFER g_pBuffMatItem;//マテリアルへのポインタ
+//	DWORD g_dwNumMatItem;//マテリアルの数
+//	LPDIRECT3DTEXTURE9 g_apTextureItem[32];
+//	D3DXVECTOR3 vtxMin, vtxMax;
+//}ItemTex;
 
 //***************************
 //ブロックの構造体
@@ -117,7 +118,7 @@ typedef struct
 	ItemSTATE state;//ブロックの状態
 	int nElement;//アイテムの属性
 	float fRadius;
-	ItemTex ItemTex[ITEMTYPE_MAX];
+	TEXTURE_INFO ItemTex[ITEMTYPE_MAX];
 	D3DXMATRIX mtxParent;
 	int durability; // 耐久力
 	int nIdxShadow; // 影のインデックス
@@ -138,4 +139,6 @@ bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius);
 void Itemchange(int nType);
 Item* GetItem(void);
 void ElementChange(int nCountItem);
+Item* GetItemOrigin(void);
+
 #endif

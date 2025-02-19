@@ -12,6 +12,7 @@
 #include "block.h"
 #include "game.h"
 #include "input.h"
+#include "player.h"
 
 //*****************************
 // ƒOƒ[ƒoƒ‹•Ï”éŒ¾

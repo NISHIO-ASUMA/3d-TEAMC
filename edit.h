@@ -12,6 +12,7 @@
 //インクルードファイル
 //***********************
 #include"main.h"
+#include"block.h"
 
 //*******************
 //マクロ定義
@@ -28,25 +29,25 @@ typedef enum
 	EDITMODE_MAX
 }EDITMODE;
 
-//**************************
-//エディットモデル構造体宣言
-//**************************
-typedef struct
-{
-	LPDIRECT3DTEXTURE9 g_pTextureEdit2d;	    // テクスチャへのポインタ
-	LPD3DXMESH g_pMeshEdit;				// メッシュ(頂点座標)へのポインタ
-	LPD3DXBUFFER g_pBuffMatEdit;		// マテリアルへのポインタ
-	DWORD g_dwNumMatEdit;				// マテリアルの数
-	LPDIRECT3DTEXTURE9 g_apTextureEdit[MAX_TYPE]; // テクスチャ設定
-	D3DXVECTOR3 vtxMin, vtxMax;			// 最大値,最小値
-}EditModel;
+////**************************
+////エディットモデル構造体宣言
+////**************************
+//typedef struct
+//{
+//	LPDIRECT3DTEXTURE9 g_pTextureEdit2d;	    // テクスチャへのポインタ
+//	LPD3DXMESH g_pMeshEdit;				// メッシュ(頂点座標)へのポインタ
+//	LPD3DXBUFFER g_pBuffMatEdit;		// マテリアルへのポインタ
+//	DWORD g_dwNumMatEdit;				// マテリアルの数
+//	LPDIRECT3DTEXTURE9 g_apTextureEdit[MAX_TYPE]; // テクスチャ設定
+//	D3DXVECTOR3 vtxMin, vtxMax;			// 最大値,最小値
+//}EditModel;
 
 //***************************************************************************************************************
 //エディットのテクスチャ構造体
 //***************************************************************************************************************
 typedef struct
 {
-	EditModel pModel[MAX_TYPE];
+	TEXTURE_INFO pModel[MAX_TYPE];
 	int nNumModel;
 }EditTex;
 

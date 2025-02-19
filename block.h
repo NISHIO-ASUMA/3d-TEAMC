@@ -11,7 +11,6 @@
 // インクルードファイル
 //***************************
 #include"main.h"
-#include"player.h"
 
 //***************************
 // マクロ定義
@@ -96,12 +95,12 @@ typedef enum
 //***************************
 typedef struct
 {
-	LPD3DXMESH g_pMeshBlock;		// メッシュ(頂点座標)へのポインタ
-	LPD3DXBUFFER g_pBuffMatBlock;   // マテリアルへのポインタ
-	DWORD g_dwNumMatBlock;          // マテリアルの数
-	LPDIRECT3DTEXTURE9 g_apTextureBlock[MAX_TEX]; // テクスチャ
+	LPD3DXMESH g_pMeshModel;		// メッシュ(頂点座標)へのポインタ
+	LPD3DXBUFFER g_pBuffMatModel;   // マテリアルへのポインタ
+	DWORD g_dwNumMatModel;          // マテリアルの数
+	LPDIRECT3DTEXTURE9 g_apTextureModel[MAX_TEX]; // テクスチャ
 	D3DXVECTOR3 vtxMin, vtxMax;		// 最小値,最大値
-}BLOCKTEX;
+}TEXTURE_INFO;
 
 //***************************
 //ブロックの構造体
@@ -132,7 +131,7 @@ typedef struct
 	int nLife;
 	BLOCKSTATE state; // ブロックの状態
 	float fRadius;
-	BLOCKTEX BlockTex[BLOCKTYPE_MAX];
+	TEXTURE_INFO BlockTex[BLOCKTYPE_MAX];
 	D3DXMATRIX mtxParent;
 	OBB Obb;
 	int nIdxShadow;   // 影のインデックス
@@ -159,4 +158,5 @@ bool collisionObbBoss(int nCntBlock);
 float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D3DXVECTOR3* e3);
 void CraftRange(BLOCK* pBlock);
 void CraftItemRange(BLOCK* pBlock); // アイテムのクラフト
+BLOCK* GetBlockOrigin(void);
 #endif

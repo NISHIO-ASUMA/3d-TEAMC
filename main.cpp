@@ -586,17 +586,17 @@ void Draw(void)
 			// デバッグ表示はこの下に書いてください
 			if (GetEditState()==false && GetEdit2d()==false)
 			{
-				//// 現在の画面の表示
-				//DrawMode();
+				// 現在の画面の表示
+				DrawMode();
 
-				//// 操作方法
-				//DrawOperation();
+				// 操作方法
+				DrawOperation();
 
-				//// プレイヤーの情報
-				//DrawPlayerInfo();
+				// プレイヤーの情報
+				DrawPlayerInfo();
 
-				//// カメラの位置表示用デバッグフォント
-				//DrawCameraPos();
+				// カメラの位置表示用デバッグフォント
+				DrawCameraPos();
 
 			}
 			else if (GetEditState())

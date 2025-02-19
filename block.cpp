@@ -16,6 +16,7 @@
 #include "boss.h"
 #include "Shadow.h"
 #include "billboard.h"
+#include "player.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -79,16 +80,16 @@ void InitBlock(void)
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
 		// マテリアルのデータへのポインタを取得
-		pMat = (D3DXMATERIAL*)g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock->GetBufferPointer();
+		pMat = (D3DXMATERIAL*)g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatModel->GetBufferPointer();
 
-		for (int nCntMat = 0; nCntMat < (int)g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatBlock; nCntMat++)
+		for (int nCntMat = 0; nCntMat < (int)g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatModel; nCntMat++)
 		{
 			if (pMat[nCntMat].pTextureFilename != NULL)
 			{
 				// テクスチャの読み込み
 				D3DXCreateTextureFromFile(pDevice,
 					pMat[nCntMat].pTextureFilename,
-					&g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntMat]);
+					&g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureModel[nCntMat]);
 			}
 		}
 	}
@@ -101,13 +102,13 @@ void InitBlock(void)
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
 		// 頂点数の取得
-		nNumVtx = g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->GetNumVertices();
+		nNumVtx = g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshModel->GetNumVertices();
 
 		// 頂点フォーマットのサイズ取得
-		sizeFVF = D3DXGetFVFVertexSize(g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->GetFVF());
+		sizeFVF = D3DXGetFVFVertexSize(g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshModel->GetFVF());
 		
 		// 頂点バッファのロック
-		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshModel->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
 		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 		{
@@ -150,7 +151,7 @@ void InitBlock(void)
 		g_TexBlock[nCntNum].Size.z = g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMax.z - g_TexBlock[nCntNum].BlockTex[nCntNum].vtxMin.z;
 
 		// 頂点バッファのアンロック
-		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->UnlockVertexBuffer();
+		g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshModel->UnlockVertexBuffer();
 	}
 }
 //=============================
@@ -161,27 +162,27 @@ void UninitBlock(void)
 	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 	{
 		// テクスチャの破棄
-		for (int nCntTex = 0; nCntTex < (int)g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatBlock; nCntTex++)
+		for (int nCntTex = 0; nCntTex < (int)g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatModel; nCntTex++)
 		{
-			if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntTex] != NULL)
+			if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureModel[nCntTex] != NULL)
 			{
-				g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntTex]->Release();
-				g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureBlock[nCntTex] = NULL;
+				g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureModel[nCntTex]->Release();
+				g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureModel[nCntTex] = NULL;
 			}
 		}
 
 		// メッシュの破棄
-		if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock != NULL)
+		if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshModel != NULL)
 		{
-			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock->Release();
-			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshBlock = NULL;
+			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshModel->Release();
+			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshModel = NULL;
 		}
 
 		// マテリアルの破棄
-		if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock != NULL)
+		if (g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatModel != NULL)
 		{
-			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock->Release();
-			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatBlock = NULL;
+			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatModel->Release();
+			g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatModel = NULL;
 		}
 	}
 
@@ -190,24 +191,24 @@ void UninitBlock(void)
 		for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
 		{
 			// テクスチャの破棄
-			for (int nCntTex = 0; nCntTex < (int)g_Block[nCnt].BlockTex[nCntNum].g_dwNumMatBlock; nCntTex++)
+			for (int nCntTex = 0; nCntTex < (int)g_Block[nCnt].BlockTex[nCntNum].g_dwNumMatModel; nCntTex++)
 			{
-				if (g_Block[nCnt].BlockTex[nCntNum].g_apTextureBlock[nCntTex] != NULL)
+				if (g_Block[nCnt].BlockTex[nCntNum].g_apTextureModel[nCntTex] != NULL)
 				{
-					g_Block[nCnt].BlockTex[nCntNum].g_apTextureBlock[nCntTex] = NULL;
+					g_Block[nCnt].BlockTex[nCntNum].g_apTextureModel[nCntTex] = NULL;
 				}
 			}
 
 			// メッシュの破棄
-			if (g_Block[nCnt].BlockTex[nCntNum].g_pMeshBlock != NULL)
+			if (g_Block[nCnt].BlockTex[nCntNum].g_pMeshModel != NULL)
 			{
-				g_Block[nCnt].BlockTex[nCntNum].g_pMeshBlock = NULL;
+				g_Block[nCnt].BlockTex[nCntNum].g_pMeshModel = NULL;
 			}
 
 			// マテリアルの破棄
-			if (g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatBlock != NULL)
+			if (g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatModel != NULL)
 			{
-				g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatBlock = NULL;
+				g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatModel = NULL;
 			}
 		}
 	}
@@ -328,19 +329,19 @@ void DrawBlock(void)
 		// 現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
-		for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatBlock; nCntMat++)
+		for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
 		{
 			// マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatBlock->GetBufferPointer();
+			pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatModel->GetBufferPointer();
 
 			// マテリアルの設定
 			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 			// テクスチャの設定
-			pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureBlock[nCntMat]);
+			pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureModel[nCntMat]);
 
 			// ブロック(パーツ)の描画
-			g_Block[nCntBlock].BlockTex[nType].g_pMeshBlock->DrawSubset(nCntMat);
+			g_Block[nCntBlock].BlockTex[nType].g_pMeshModel->DrawSubset(nCntMat);
 		}
 		SetMtx(nCntBlock);
 	}
@@ -715,10 +716,10 @@ void LoadBlockModel(void)
 					D3DXMESH_SYSTEMMEM,
 					pDevice,
 					NULL,
-					&g_TexBlock[nType].BlockTex[nType].g_pBuffMatBlock,
+					&g_TexBlock[nType].BlockTex[nType].g_pBuffMatModel,
 					NULL,
-					&g_TexBlock[nType].BlockTex[nType].g_dwNumMatBlock,
-					&g_TexBlock[nType].BlockTex[nType].g_pMeshBlock);
+					&g_TexBlock[nType].BlockTex[nType].g_dwNumMatModel,
+					&g_TexBlock[nType].BlockTex[nType].g_pMeshModel);
 
 				nType++;
 			}
@@ -2094,4 +2095,11 @@ float ShadowSize(D3DXVECTOR3 Size)
 
 	// 大きさを返す
 	return SizeOut;
+}
+//===========================================================================
+// ブロックのテクスチャの取得
+//===========================================================================
+BLOCK* GetBlockOrigin(void)
+{
+	return &g_TexBlock[0];
 }
