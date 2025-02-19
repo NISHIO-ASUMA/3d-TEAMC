@@ -379,13 +379,18 @@ void UpdateEnemy(void)
 					g_Enemy[nCntEnemy].rotDest.y = fAngle; // 角度を代入
 				}
 
+				// 虹の素
+				float fColor[3];
+				fColor[0] = ((float)(rand() % 100) / 100.0f);
+				fColor[1] = ((float)(rand() % 100) / 100.0f);
+				fColor[2] = ((float)(rand() % 100) / 100.0f);
 				// 高価そうなオーラを出す
 				SetParticle(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + 10, g_Enemy[nCntEnemy].pos.z),
 				D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), 
 				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-				2.0f, 1, 20, 5, 20.0f, 20.0f, true, D3DXVECTOR3(0.0f, 3.0f, 0.0f));
+				D3DXCOLOR(fColor[0], fColor[1], fColor[2], 1.0f),
+				2.0f, 1, 20, 5, 20.0f, 20.0f, true, D3DXVECTOR3(0.0f, 1.0f, 0.0f));
 			}
 		}
 
