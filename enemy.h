@@ -92,6 +92,7 @@ typedef struct
 	D3DXVECTOR3 Size;
 	D3DXVECTOR3 vtxMin,vtxMax;
 	int nLife;
+	int nMaxLife;
 	int nDamage;
 	ENEMYSTATE state;
 	int nCounterState;
