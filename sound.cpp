@@ -242,44 +242,30 @@ HRESULT PlaySound(SOUND_LABEL label)
 	XAUDIO2_VOICE_STATE xa2state;
 	XAUDIO2_BUFFER buffer;
 
-	if (g_SoundCount <= 15)
-	{
-		// バッファの値設定
-		memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
-		buffer.AudioBytes = g_aSizeAudio[label];
-		buffer.pAudioData = g_apDataAudio[label];
-		buffer.Flags = XAUDIO2_END_OF_STREAM;
-		buffer.LoopCount = g_aSoundInfo[label].nCntLoop;
+	// バッファの値設定
+	memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
+	buffer.AudioBytes = g_aSizeAudio[label];
+	buffer.pAudioData = g_apDataAudio[label];
+	buffer.Flags = XAUDIO2_END_OF_STREAM;
+	buffer.LoopCount = g_aSoundInfo[label].nCntLoop;
 
-		// 状態取得
-		g_apSourceVoice[label]->GetState(&xa2state);
-		if (xa2state.BuffersQueued != 0)
-		{// 再生中
-			// 一時停止
-			g_apSourceVoice[label]->Stop(0);
+	// 状態取得
+	g_apSourceVoice[label]->GetState(&xa2state);
+	if (xa2state.BuffersQueued != 0)
+	{// 再生中
+		// 一時停止
+		g_apSourceVoice[label]->Stop(0);
 
-			// オーディオバッファの削除
-			g_apSourceVoice[label]->FlushSourceBuffers();
-		}
-
-		// オーディオバッファの登録
-		g_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
-
-		// 再生
-		g_apSourceVoice[label]->Start(0);
-
-		g_SoundCount++;
+		// オーディオバッファの削除
+		g_apSourceVoice[label]->FlushSourceBuffers();
 	}
-	else
-	{
-		g_SoundInterval++;
 
-		if (g_SoundInterval >= 120)
-		{
-			g_SoundCount = 0;
-			g_SoundInterval = 0;
-		}
-	}
+	// オーディオバッファの登録
+	g_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
+
+	// 再生
+	g_apSourceVoice[label]->Start(0);
+
 	return S_OK;
 }
 
