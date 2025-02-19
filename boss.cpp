@@ -304,7 +304,7 @@ void UpdateBoss(void)
 		}
 		else if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION2)// アッパー＆ハイの状態で
 		{
-			if (g_Boss[nCnt].Motion.nKey == 0)// 溜める動作中に
+			if (g_Boss[nCnt].Motion.nKey == 0 || g_Boss[nCnt].Motion.nKey == 4)// 溜める動作中に
 			{
 				// 向きをプレイヤーに向ける
 				float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);

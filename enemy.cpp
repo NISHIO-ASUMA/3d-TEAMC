@@ -59,6 +59,7 @@ void CollisionToEnemy(int nCntEnemy);							  // 敵と敵の当たり判定
 ENEMY g_Enemy[MAX_ENEMY];		  // 構造体変数
 ENEMY g_LoadEnemy[ENEMYTYPE_MAX]; // 読み込み
 int g_nNumEnemy;				  // 敵の総数カウント
+bool g_bSound;
 
 //===============================================================================================================
 //ブロックの初期化処理
@@ -70,6 +71,7 @@ void InitEnemy(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
+		g_bSound = false;
 		g_Enemy[nCntEnemy].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 座標
 		g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 移動量
 		g_Enemy[nCntEnemy].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 角度
@@ -270,6 +272,7 @@ void UninitEnemy(void)
 //===============================================================================================================
 void UpdateEnemy(void)
 {
+	g_bSound = false;
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
@@ -691,53 +694,62 @@ void HitEnemy(int nCnt,int nDamage)
 
 		g_nNumEnemy--; // デクリメント
 
-		switch (pItem[pPlayer->ItemIdx].nType)
+		if (g_bSound == false) // もしそのフレーム中一度も音が鳴らされてないなら鳴らす
 		{
-		case ITEMTYPE_BAT:
+			switch (pItem[pPlayer->ItemIdx].nType)
+			{
+			case ITEMTYPE_BAT:
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_BAT_SE);
+				// 音楽再生
+				PlaySound(SOUND_LABEL_BAT_SE);
 
-			break;
+				break;
 
-		case ITEMTYPE_HUNMER:
+			case ITEMTYPE_HUNMER:
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_HAMMER_SE);
+				// 音楽再生
+				PlaySound(SOUND_LABEL_HAMMER_SE);
 
-			break;
-		default:
+				break;
+			default:
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_ACTION_SE);
+				// 音楽再生
+				PlaySound(SOUND_LABEL_ACTION_SE);
 
-			break;
+				break;
+			}
+			g_bSound = true;
+
 		}
 
 	}
 	else
 	{
-		switch (pItem[pPlayer->ItemIdx].nType)
+		if (g_bSound == false) // もしそのフレーム中一度も音が鳴らされてないなら鳴らす
 		{
-		case ITEMTYPE_BAT:
+			switch (pItem[pPlayer->ItemIdx].nType)
+			{
+			case ITEMTYPE_BAT:
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_BAT_SE);
+				// 音楽再生
+				PlaySound(SOUND_LABEL_BAT_SE);
 
-			break;
+				break;
 
-		case ITEMTYPE_HUNMER:
+			case ITEMTYPE_HUNMER:
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_HAMMER_SE);
+				// 音楽再生
+				PlaySound(SOUND_LABEL_HAMMER_SE);
 
-			break;
-		default:
+				break;
+			default:
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_ACTION_SE);
+				// 音楽再生
+				PlaySound(SOUND_LABEL_ACTION_SE);
 
-			break;
+				break;
+			}
+			g_bSound = true;
 		}
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE; // 敵の状態をダメージにする
