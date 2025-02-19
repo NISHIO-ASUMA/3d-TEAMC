@@ -251,6 +251,7 @@ HRESULT PlaySound(SOUND_LABEL label)
 
 	// ó‘Ôæ“¾
 	g_apSourceVoice[label]->GetState(&xa2state);
+
 	if (xa2state.BuffersQueued != 0)
 	{// Ä¶’†
 		// ˆê’â~

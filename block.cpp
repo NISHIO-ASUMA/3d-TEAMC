@@ -257,8 +257,6 @@ void UpdateBlock(void)
 
 		CraftRange(&g_Block[nCntBlock]);
 
-		CraftItemRange(&g_Block[nCntBlock]);
-
 #ifdef _DEBUG
 
 		if (GetKeyboardPress(DIK_L))

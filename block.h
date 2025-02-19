@@ -157,6 +157,5 @@ bool collisionObbEnemy(int nCntBlock);
 bool collisionObbBoss(int nCntBlock);
 float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D3DXVECTOR3* e3);
 void CraftRange(BLOCK* pBlock);
-void CraftItemRange(BLOCK* pBlock); // アイテムのクラフト
 BLOCK* GetBlockOrigin(void);
 #endif
