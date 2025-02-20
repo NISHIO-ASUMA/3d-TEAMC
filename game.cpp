@@ -439,12 +439,14 @@ void UpdateGame(void)
 		g_bEditMode = true;
 	}
 
+	Camera* pCamera = GetCamera();
+
 	if (g_bPause == false)
 	{// ポーズ中でなければ
 		// カーソルを無効化
 		SetCursorVisibility(false);
 
-		if (!g_bEditMode)
+		if (!g_bEditMode && pCamera->bEditMode == false)
 		{// 編集モードじゃなかったら
 
 			if (!g_bCraft)
@@ -532,7 +534,7 @@ void UpdateGame(void)
 			UpdateItem();
 
 		}
-		else if (g_bEditMode)
+		else if (g_bEditMode == true || pCamera->bEditMode == true)
 		{
 #ifdef _DEBUG
 

@@ -39,6 +39,7 @@ void DrawEditMode(void);  // 編集モーど
 void DrawPlayerInfo(void); // プレイヤーの情報
 void DrawEditmode2d(void);
 void DrawEffectEditMode(void);
+void DrawCameraEdit(void);
 
 //***************************************************************************************************************
 // グローバル変数宣言
@@ -586,7 +587,7 @@ void Draw(void)
 #ifdef _DEBUG
 
 			// デバッグ表示はこの下に書いてください
-			if (GetEditState()==false && GetEdit2d()==false)
+			if (GetEditState()==false && GetEdit2d()==false && pCamera->bEditMode==false)
 			{
 				// 現在の画面の表示
 				DrawMode();
@@ -617,7 +618,10 @@ void Draw(void)
 			}
 			// プレイヤーの座標表示
 			//DrawDebugPlayerPos();
-
+			if (pCamera[0].bEditMode == true)
+			{
+				DrawCameraEdit();
+			}
 #endif
 			if (nCnt == 1)
 			{
@@ -730,26 +734,6 @@ void DrawCameraPos(void)
 //==========================================================================================================
 void DrawCameraType(void)
 {
-	RECT rect = { 0,20,SCREEN_WIDTH,SCREEN_HEIGHT };
-	char aString[256] = {};
-	char aString1[256] = {};
-
-	// 取得
-	Camera* pCamera = GetCamera();
-
-	if (pCamera->g_CameraMode == CAMERAMODE_NONE)
-	{
-		strcpy(&aString1[0], "NORMAL");
-	}
-	else if (pCamera->g_CameraMode == CAMERAMODE_PLAYER)
-	{
-		strcpy(&aString1[0], "PLAYER");
-	}
-
-	//文字列に代入
-	wsprintf(&aString[0], "現在のモード[F2] : %s\n",&aString1[0]);
-
-	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
 
 }
 //========================================================================================================
@@ -1115,4 +1099,93 @@ void DrawEffectEditMode(void)
 	g_pFont->DrawText(NULL, &aStrLife[0], -1, &rectLife, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrdir[0], -1, &rectdir, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrdecA[0], -1, &rectdecA, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+}
+//=============================================================================================================
+// カメラの編集モード
+//=============================================================================================================
+void DrawCameraEdit(void)
+{
+	Camera* pCamera = GetCamera();
+
+	RECT rectBlockComent000 = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectTracking = { 0, 60, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectoperation = { 0, 80, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+	RECT rectBlockComent001 = { 0, 110, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectType = { 0, 170, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectKey = { 0, 200, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectFrame = { 0, 230, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectSet = { 0, 260, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectSave = { 0, 320, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectLoop = { 0, 290, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+	char aStrBlockComent[256];
+	char aStrBlockComent1[256];
+	char aStrType[128];
+	char aStrFrame[128];
+	char aStrSet[128];
+	char aStrSave[128];
+	char aStrLoop[128];
+
+	char aStrTracking[128];
+	char aStrrectoperation[256];
+	char aStrKey[256];
+
+	wsprintf(&aStrBlockComent[0], "+*******************************************************************+\n"
+								  "+                 モード切替:[F6]       < EDITMODE >                +\n"
+								  "+*******************************************************************+\n");
+
+	wsprintf(&aStrBlockComent1[0], "+*******************************************************************+\n"
+								   "+                       アニメーションの設定                        +\n"
+								   "+*******************************************************************+\n");
+
+	if (pCamera->bTracking == true)
+	{
+		wsprintf(&aStrTracking[0], "[カメラ追従]:[F3]【オン】\n");
+	}
+	else if (pCamera->bTracking == false)
+	{
+		wsprintf(&aStrTracking[0], "[カメラ追従]:[F3]【オフ】\n");
+	}
+
+	wsprintf(&aStrrectoperation[0], "移動:[ WASD ]:視点移動:[ マウス右 ]:注視点移動:[ マウス左 ]\n");
+
+	wsprintf(&aStrType[0], "種類選択:[ 1 / 2 ]  タイプ【 %d / %d 】", pCamera->AnimType, CAMERAANIM_MAX);
+
+	int nType = pCamera->AnimType;
+	int nKey = pCamera->nAnimKey;
+
+	wsprintf(&aStrKey[0], "[ キー変更 ]:[ ← / → ]【 %d / %d 】\n", pCamera->nAnimKey, pCamera->aAnimInfo[nType].nNumKey);
+
+
+	wsprintf(&aStrFrame[0], "[ フレーム変更 ]:[ ↑ / ↓ ] 【 %d 】\n", pCamera->aAnimInfo[nType].Anim_KeyInfo[nKey].nAnimFrame);
+
+	wsprintf(&aStrSet[0], "[ 位置を決定する ]:[ RETURN ]");
+
+	wsprintf(&aStrSave[0], "[ 保存する ]:[ F7 ] << data\\cameraInfo.txt >>");
+
+	if (pCamera->aAnimInfo[nType].bLoopAnimation == true)
+	{
+		wsprintf(&aStrLoop[0], "[ LOOP ]:[ F8 ]【 ループする 】");
+	}
+	else if (pCamera->aAnimInfo[nType].bLoopAnimation == false)
+	{
+		wsprintf(&aStrLoop[0], "[ LOOP ]:[ F8 ]【 ループしない 】");
+	}
+
+	g_pFont->DrawText(NULL, &aStrBlockComent[0], -1, &rectBlockComent000, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+
+	g_pFont->DrawText(NULL, &aStrBlockComent1[0], -1, &rectBlockComent001, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+
+
+	g_pFont->DrawText(NULL, &aStrTracking[0], -1, &rectTracking, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+	g_pFont->DrawText(NULL, &aStrType[0], -1, &rectType, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+	g_pFont->DrawText(NULL, &aStrrectoperation[0], -1, &rectoperation, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+
+	g_pFont->DrawText(NULL, &aStrKey[0], -1, &rectKey, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+	g_pFont->DrawText(NULL, &aStrFrame[0], -1, &rectFrame, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+	g_pFont->DrawText(NULL, &aStrSet[0], -1, &rectSet, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+	g_pFont->DrawText(NULL, &aStrSave[0], -1, &rectSave, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+	g_pFont->DrawText(NULL, &aStrLoop[0], -1, &rectLoop, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+
 }

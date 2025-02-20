@@ -25,7 +25,7 @@
 #define CRAFT (1) // クラフト画面
 #define MAX_CAMERATEX (256) // テクスチャ最大数
 #define SPCOUNT	(20)
-
+#define MAX_WORD (256) // 最大文字数
 
 //***************************************************************************************************************
 // プロトタイプ宣言
@@ -33,12 +33,19 @@
 void MouseView(void);       // ゲームの時のマウスの視点移動
 void MouseEditMode(void); // 編集モードの時のマウス移動
 
+void UpdateCameraAnim(void);      // カメラのモーション
+void SetCameraAnim(void);
+void SaveCameraAnim(int nType);
+void LoadCameraAnim(int nType);
+void LoadAmimationKey(FILE* pFile, int nType, char* aStr);
+int LoadAnimationKeySet(FILE* pFile, int nType, char* aStr);
 
 //***************************************************************************************************************
 // グローバル変数宣言
 //***************************************************************************************************************
 Camera g_camera[CAMERATYPE_MAX];		// カメラ情報
 bool bWaveCamera = false;
+int nCntKey = 0;
 
 //===========================================================================================================
 // カメラの初期化処理
@@ -53,7 +60,7 @@ void InitCamera(void)
 		g_camera[nCnt].posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// カメラの見ている位置
 		g_camera[nCnt].vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
 		g_camera[nCnt].rot = D3DXVECTOR3(D3DX_PI * 0.65f, 0.0f, 0.0f);	    // 角度
-		g_camera[nCnt].g_CameraMode = CAMERAMODE_PLAYER;						// 初期状態
+		g_camera[nCnt].CameraState = CAMERAMODE_NORMAL;						// 初期状態
 
 		float fRotx = g_camera[nCnt].posV.x - g_camera[nCnt].posR.x;
 		float fRoty = g_camera[nCnt].posV.y - g_camera[nCnt].posR.y;
@@ -62,6 +69,21 @@ void InitCamera(void)
 		g_camera[nCnt].fDistance = sqrtf((fRotx * fRotx) + (fRoty * fRoty) + (fRotz * fRotz));	// 視点から注視点までの距離
 		g_camera[nCnt].oldDistance = g_camera[nCnt].fDistance;	// 距離を保存しておく
 	}
+
+	nCntKey = 0;
+
+	for (int nCntAnim = 0; nCntAnim < CAMERAANIM_MAX; nCntAnim++)
+	{
+		//g_camera.aAnimInfo[nCntAnim].nNumKey = 1;
+		//g_camera.AnimType = CAMERAANIM_ONE;
+
+		for (int nCntKey = 0; nCntKey < MAX_KEY; nCntKey++)
+		{
+			g_camera[MAIN].aAnimInfo[nCntAnim].Anim_KeyInfo[nCntKey].nAnimFrame = 40;
+		}
+		LoadCameraAnim(nCntAnim);
+	}
+
 	bWaveCamera = false; // カメラを揺らすかどうか
 
 	g_camera[MAIN].Direction = 1.0f; // 移動量
@@ -118,7 +140,7 @@ void UpdateCamera(void)
 
 	}
 		// ゲームの時のカメラの更新
-	if (mode != MODE_TITLE && !GetEditState() &&!GetEditStatetuto())
+	if (mode != MODE_TITLE && !GetEditState() &&!GetEditStatetuto() && g_camera[MAIN].bEditMode == false)
 	{
 		g_camera[MAIN].fDistance = g_camera[MAIN].oldDistance; // 距離をリセット
 		
@@ -149,7 +171,31 @@ void UpdateCamera(void)
 		//g_camera[MAIN].posV.z += ((g_camera[MAIN].posVDest.z - g_camera[MAIN].posV.z) * 0.3f);
 
 	}
-	
+	// カメラの編集モードがオンだったら
+	else if (g_camera[MAIN].bEditMode == true)
+	{
+		MouseEditMode();	//編集モード中のカメラ移動
+		SetCameraAnim();
+	}
+
+	// 編集モードをオンにする
+	if (KeyboardTrigger(DIK_F6) == true && g_camera[MAIN].bEditMode == false)
+	{
+		g_camera[MAIN].bEditMode = true;
+	}
+	// 編集モードをオフにする
+	else if (KeyboardTrigger(DIK_F6) == true && g_camera[MAIN].bEditMode == true)
+	{
+		g_camera[MAIN].bEditMode = false;
+	}
+
+	if (KeyboardTrigger(DIK_V))
+	{
+		SetAnimation(0);
+	}
+	// カメラのアニメーションの更新処理
+	UpdateCameraAnim();
+
 
 	if (bWaveCamera == true)
 	{
@@ -171,7 +217,7 @@ void UpdateCamera(void)
 	else
 	{
 		g_camera[MAIN].WaveTIme = -1;
-		bWaveCamera == false;
+		bWaveCamera = false;
 	}
 
 #if 0
@@ -619,6 +665,464 @@ void WaveCamera(int WaveTime)
 	bWaveCamera = true;
 }
 //===========================================================================================================
+// カメラのアニメーション処理
+//===========================================================================================================
+void UpdateCameraAnim(void)
+{
+	if (g_camera[MAIN].CameraState == CAMERAMODE_ANIMATION)
+	{
+		// 次のキーを設定
+		int nextKey = (g_camera[MAIN].nAnimKey + 1) % g_camera[MAIN].aAnimInfo[0].nNumKey;
+		int nType = g_camera[MAIN].AnimType;
+
+		// 変数に代入
+		float fPosVX = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVX;
+		float fPosVY = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVY;
+		float fPosVZ = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVZ;
+
+		// 変数に代入
+		float fPosRX = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRX;
+		float fPosRY = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRY;
+		float fPosRZ = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRZ;
+
+		// 変数に代入
+		float fRotX = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotX;
+		float fRotY = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotY;
+		float fRotZ = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotZ;
+
+		// 差分を求める
+		float DiffPosVX = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fPosVX - fPosVX;
+		float DiffPosVY = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fPosVY - fPosVY;
+		float DiffPosVZ = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fPosVZ - fPosVZ;
+		float DiffPosRX = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fPosRX - fPosRX;
+		float DiffPosRY = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fPosRY - fPosRY;
+		float DiffPosRZ = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fPosRZ - fPosRZ;
+
+		// 角度の差分を求める
+		float DiffRotX = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fRotX - fRotX;
+		float DiffRotY = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fRotY - fRotY;
+		float DiffRotZ = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nextKey].fRotZ - fRotZ;
+
+		// 角度の正規化
+		if (DiffRotX > D3DX_PI)
+		{
+			DiffRotX += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotX < -D3DX_PI)
+		{
+			DiffRotX += D3DX_PI * 2.0f;
+		}
+
+		if (DiffRotY > D3DX_PI)
+		{
+			DiffRotY += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotY < -D3DX_PI)
+		{
+			DiffRotY += D3DX_PI * 2.0f;
+		}
+
+		if (DiffRotZ > D3DX_PI)
+		{
+			DiffRotZ += -D3DX_PI * 2.0f;
+		}
+		else if (DiffRotZ < -D3DX_PI)
+		{
+			DiffRotZ += D3DX_PI * 2.0f;
+		}
+
+		// 割合を計算
+		float fRatePosVX = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+		float fRatePosVY = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+		float fRatePosVZ = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+		float fRatePosRX = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+		float fRatePosRY = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+		float fRatePosRZ = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+
+		// 向きの割合を代入
+		float fRateRotX = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+		float fRateRotY = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+		float fRateRotZ = (float)g_camera[MAIN].nCounterAnim / (float)g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame;
+
+		// 現在の向きを算出
+		float fCurrentRotX = fRotX + DiffRotX * fRateRotX;
+		float fCurrentRotY = fRotY + DiffRotY * fRateRotY;
+		float fCurrentRotZ = fRotZ + DiffRotZ * fRateRotZ;
+
+		// 視点を更新
+		g_camera[MAIN].posV.x = sinf(fCurrentRotY) + fPosVX + DiffPosVX * fRatePosVX;
+		g_camera[MAIN].posV.y = cosf(fCurrentRotX) + fPosVY + DiffPosVY * fRatePosVY;
+		g_camera[MAIN].posV.z = cosf(fCurrentRotY) + fPosVZ + DiffPosVZ * fRatePosVZ;
+
+		// 注視点を更新
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(fCurrentRotY);
+		g_camera[MAIN].posR.y = g_camera[MAIN].posV.y + cosf(fCurrentRotX);
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(fCurrentRotY);
+
+		// アニメーションが最後まで行った
+		if (g_camera[MAIN].aAnimInfo[nType].bLoopAnimation == false && g_camera[MAIN].nAnimKey >= g_camera[MAIN].aAnimInfo[nType].nNumKey - 1
+			&& g_camera[MAIN].nCounterAnim >= g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame)
+		{
+			g_camera[MAIN].CameraState = CAMERAMODE_NORMAL;
+		}
+
+		// フレームが最大になったら
+		if (g_camera[MAIN].nCounterAnim >= g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame)
+		{
+			//モーションカウントが最大になったら0に戻す
+			g_camera[MAIN].nAnimKey = (g_camera[MAIN].nAnimKey + 1) % g_camera[MAIN].aAnimInfo[nType].nNumKey;
+			g_camera[MAIN].nCounterAnim = 0;
+		}
+
+		//モーションカウントを加算
+		g_camera[MAIN].nCounterAnim++;
+	}
+}
+//===========================================================================================================
+// カメラのアニメーション設定
+//===========================================================================================================
+void SetCameraAnim(void)
+{
+	// 上移動
+	if (GetKeyboardPress(DIK_W) == true)
+	{
+		g_camera[MAIN].posV.x += sinf(g_camera[MAIN].rot.y) * 20;
+		g_camera[MAIN].posV.z += cosf(g_camera[MAIN].rot.y) * 20;
+
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+	}
+	// 下移動
+	else if (GetKeyboardPress(DIK_S) == true)
+	{
+		g_camera[MAIN].posV.x -= sinf(g_camera[MAIN].rot.y) * 20;
+		g_camera[MAIN].posV.z -= cosf(g_camera[MAIN].rot.y) * 20;
+
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+	}
+	// 左移動
+	if (GetKeyboardPress(DIK_A) == true)
+	{
+		//g_Camera.rot.x -= 0.1f;
+
+		g_camera[MAIN].posV.z += sinf(g_camera[MAIN].rot.y) * 20;
+		g_camera[MAIN].posV.x -= cosf(g_camera[MAIN].rot.y) * 20;
+
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+	}
+	// 右移動
+	else if (GetKeyboardPress(DIK_D) == true)
+	{
+		g_camera[MAIN].posV.z -= sinf(g_camera[MAIN].rot.y) * 20;
+		g_camera[MAIN].posV.x += cosf(g_camera[MAIN].rot.y) * 20;
+
+		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
+	}
+
+	// 種類を代入
+	int nType = g_camera[MAIN].AnimType;
+
+	// 設置する
+	if (KeyboardTrigger(DIK_RETURN) == true)
+	{
+		// 注視点の位置を保存
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRX = g_camera[MAIN].posR.x;
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRY = g_camera[MAIN].posR.y;
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRZ = g_camera[MAIN].posR.z;
+
+		// 視点の位置を保存
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVX = g_camera[MAIN].posV.x;
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVY = g_camera[MAIN].posV.y;
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVZ = g_camera[MAIN].posV.z;
+
+		// 角度を保存
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotX = g_camera[MAIN].rot.x;
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotY = g_camera[MAIN].rot.y;
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotZ = g_camera[MAIN].rot.z;
+	}
+
+	// キーの最大数を増やす
+	if (KeyboardTrigger(DIK_O) == true)
+	{
+		g_camera[MAIN].aAnimInfo[nType].nNumKey++;
+	}
+	else if (KeyboardTrigger(DIK_L) == true && g_camera[MAIN].aAnimInfo[nType].nNumKey > 1)
+	{
+		g_camera[MAIN].aAnimInfo[nType].nNumKey--;
+	}
+
+	// アニメーションのキーの変更
+	if (KeyboardTrigger(DIK_RIGHT) == true)
+	{
+		// 増やす
+		g_camera[MAIN].nAnimKey = (g_camera[MAIN].nAnimKey + 1) % g_camera[MAIN].aAnimInfo[nType].nNumKey;
+	}
+	else if (KeyboardTrigger(DIK_LEFT) == true && g_camera[MAIN].nAnimKey > 0)
+	{
+		// 減らす
+		g_camera[MAIN].nAnimKey--;
+	}
+
+	// 種類の変更
+	if (KeyboardTrigger(DIK_1) == true && g_camera[MAIN].AnimType > 0)
+	{
+		g_camera[MAIN].AnimType--;
+	}
+	else if (KeyboardTrigger(DIK_2) == true)
+	{
+		g_camera[MAIN].AnimType = (g_camera[MAIN].AnimType + 1) % CAMERAANIM_MAX;
+	}
+
+	// フレーム数の変更
+	if (GetKeyboardPress(DIK_UP))
+	{
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame++;
+	}
+	else if (GetKeyboardPress(DIK_DOWN) && g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame > 1)
+	{
+		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame--;
+	}
+
+	// 
+	if (KeyboardTrigger(DIK_F7))
+	{
+		SaveCameraAnim(nType);
+	}
+
+	// ループするかどうか
+	if (KeyboardTrigger(DIK_F8) == true && g_camera[MAIN].aAnimInfo[nType].bLoopAnimation == false)
+	{
+		g_camera[MAIN].aAnimInfo[nType].bLoopAnimation = true;
+	}
+	else if (KeyboardTrigger(DIK_F8) == true && g_camera[MAIN].aAnimInfo[nType].bLoopAnimation == true)
+	{
+		g_camera[MAIN].aAnimInfo[nType].bLoopAnimation = false;
+	}
+
+	if (KeyboardTrigger(DIK_F9) == true && g_camera[MAIN].CameraState == CAMERAMODE_NORMAL)
+	{
+		g_camera[MAIN].CameraState = CAMERAMODE_ANIMATION;
+	}
+	else if (KeyboardTrigger(DIK_F9) == true && g_camera[MAIN].CameraState == CAMERAMODE_ANIMATION)
+	{
+		g_camera[MAIN].CameraState = CAMERAMODE_NORMAL;
+	}
+}
+//===========================================================================================================
+// カメラワークの保存処理
+//===========================================================================================================
+void SaveCameraAnim(int nType)
+{
+	FILE* pFile; // ファイルのポインタ
+
+	pFile = fopen("data\\cameraInfo.txt", "w");
+
+	// pFileがNULLじゃなかったら
+	if (pFile != NULL)
+	{
+		fwrite(&g_camera[MAIN].nAnimKey, sizeof(int), 0, pFile);
+
+		fprintf(pFile,
+
+			"+================================================+\n"
+			"+	          [%d]アニメーションの情報            +\n"
+			"+================================================+\n", g_camera[MAIN].AnimType);
+
+		fprintf(pFile, "ANIMATIONSET\n");
+		fprintf(pFile, "	LOOP = %d \n", g_camera[MAIN].aAnimInfo[nType].bLoopAnimation);
+		fprintf(pFile, "	NUM_KEY = %d \n\n", g_camera[MAIN].aAnimInfo[nType].nNumKey);
+
+		for (int nCnt = 0; nCnt < g_camera[MAIN].aAnimInfo[nType].nNumKey; nCnt++)
+		{
+			fprintf(pFile, "	KEYSET		# --- << KEY  %d / %d >> --- \n", nCnt, g_camera[MAIN].aAnimInfo[nType].nNumKey);
+
+			fprintf(pFile, "		FRAME = %d \n", g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].nAnimFrame);
+
+			fprintf(pFile, "		POSV = %.2f %.2f %.2f \n", g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fPosVX, g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fPosVY, g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fPosVZ);
+
+			fprintf(pFile, "		POSR = %.2f %.2f %.2f \n", g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fPosRX, g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fPosRY, g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fPosRZ);
+
+			fprintf(pFile, "		ROT = %.2f %.2f %.2f \n", g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fRotX, g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fRotY, g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCnt].fRotZ);
+
+			fprintf(pFile, "	END_KEYSET\n\n");
+		}
+
+		fprintf(pFile, "END_ANIMATIONSET\n");
+	}
+	else
+	{
+		MessageBox(NULL, "ファイルが開けません", "SaveCameraAnim", MB_OK);
+		return;
+	}
+
+	// ファイルを閉じる
+	fclose(pFile);
+}
+//===========================================================================================================
+// カメラワークのロード処理
+//===========================================================================================================
+void LoadCameraAnim(int nType)
+{
+	FILE* pFile; // ファイルのポインタ
+
+	pFile = fopen("data\\cameraMotion000.txt", "r");
+
+	char aStr[MAX_WORD] = {};
+	char Skip[3] = {};
+
+	if (pFile != NULL)
+	{
+		while (1)
+		{
+			// 一文字づつ読み取る
+			int nData = fscanf(pFile, "%s", &aStr[0]);
+
+			if (strcmp(&aStr[0], "#") == 0 || strcmp(&aStr[0], "<<") == 0)
+			{
+				continue;
+			}
+
+			if (strcmp(aStr, "ANIMATIONSET") == 0)
+			{
+				LoadAmimationKey(pFile, nType, &aStr[0]);
+			}
+
+			if (nData == EOF)
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		MessageBox(NULL, "ファイルが開けません", "LoadCameraAnim", MB_OK);
+		return;
+	}
+
+	// ファイルを閉じる
+	fclose(pFile);
+}
+//===========================================================================================================
+// カメラワークのキー読み込み処理
+//===========================================================================================================
+void LoadAmimationKey(FILE* pFile, int nType, char* aStr)
+{
+	char Skip[3] = {};
+
+	while (1)
+	{
+		fscanf(pFile, "%s", aStr);
+
+		if (strcmp(aStr, "#") == 0 || strcmp(aStr, "<<") == 0)
+		{
+			continue;
+		}
+
+		if (strcmp(aStr, "NUM_KEY") == 0)
+		{
+			// [=]を読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// キーの最大数を読み取る
+			fscanf(pFile, "%d", &g_camera[MAIN].aAnimInfo[nType].nNumKey);
+		}
+		else if (strcmp(aStr, "LOOP") == 0)
+		{
+			// [=]を読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// ループするかどうか
+			fscanf(pFile, "%d", &g_camera[MAIN].aAnimInfo[nType].bLoopAnimation);
+
+		}
+		if (strcmp(aStr, "KEYSET") == 0)
+		{
+			if (LoadAnimationKeySet(pFile, nType, aStr) == -1)
+			{
+				break;
+			}
+		}
+	}
+
+}
+//===========================================================================================================
+// キーの設定のロード処理
+//===========================================================================================================
+int LoadAnimationKeySet(FILE* pFile, int nType, char* aStr)
+{
+	char Skip[3] = {};
+
+	while (1)
+	{
+		// 文字を読み取る
+		fscanf(pFile, "%s", aStr);
+
+		// コメントを飛ばす
+		if (strcmp(aStr, "#") == 0 || strcmp(aStr, "<<") == 0)
+		{
+			continue;
+		}
+
+		// フレームをよみとったら
+		if (strcmp(aStr, "FRAME") == 0)
+		{
+			// [=]を読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// フレームを読み取る
+			fscanf(pFile, "%d", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].nAnimFrame);
+		}
+		// フレームをよみとったら
+		else if (strcmp(aStr, "POSV") == 0)
+		{
+			// [=]を読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// 視点の位置を代入
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fPosVX);
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fPosVY);
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fPosVZ);
+		}
+		// フレームをよみとったら
+		else if (strcmp(aStr, "POSR") == 0)
+		{
+			// [=]を読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// 注視点を代入
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fPosRX);
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fPosRX);
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fPosRX);
+		}
+		// フレームをよみとったら
+		else if (strcmp(aStr, "ROT") == 0)
+		{
+			// [=]を読み飛ばす
+			fscanf(pFile, "%s", &Skip[0]);
+
+			// 向きを代入
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fRotX);
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fRotY);
+			fscanf(pFile, "%f", &g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[nCntKey].fRotZ);
+		}
+		// フレームをよみとったら
+		if (strcmp(aStr, "END_KEYSET") == 0)
+		{
+			nCntKey++;
+		}
+
+		if (nCntKey >= g_camera[MAIN].aAnimInfo[nType].nNumKey)
+		{
+			return -1;
+		}
+	}
+	return 0;
+}
+
+//===========================================================================================================
 // カメラテクスチャの設定処理
 //===========================================================================================================
 //int SetTexCamera(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nType, float fWidth, float fHeight)
@@ -630,4 +1134,14 @@ void WaveCamera(int WaveTime)
 void DeleteTex(int nIdx)
 {
 	//g_CameraTex[nIdx].bUse = false;
+}
+//===========================================================================================================
+// カメラのアニメーションの設定処理
+//===========================================================================================================
+void SetAnimation(int nAnimType)
+{
+	g_camera[MAIN].AnimType = nAnimType;
+	g_camera[MAIN].nAnimKey = 0;
+	g_camera[MAIN].nCounterAnim = 0;
+	g_camera[MAIN].CameraState = CAMERAMODE_ANIMATION;
 }
