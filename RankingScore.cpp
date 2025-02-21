@@ -58,7 +58,7 @@ void InitRankingScore(void)
 	Avalue = 0;
 	Rank = MAX_RANK - 1;
 	bFlash = false;
-
+	
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_POLYGON,
 		D3DUSAGE_WRITEONLY,
@@ -149,7 +149,7 @@ void UninitRankingScore(void)
 void UpdateRankingScore(void)
 {
 	// フラッシュできない
-	if (!bFlash)
+	if (bFlash == false)
 	{
 		VERTEX_2D* pVtx{};       // 頂点情報のポインタ
 
@@ -193,7 +193,7 @@ void UpdateRankingScore(void)
 		}
 		
 		// フラッシュできなかったら(上でtrueにしているので通る可能性があるから)
-		if (!bFlash)
+		if (bFlash == false)
 		{
 			pVtx += 32 * Rank;
 
@@ -218,7 +218,7 @@ void UpdateRankingScore(void)
 	static int nCounter{};
 
 	// フラッシュできる
-	if (g_nRankUpdate != -1 && bFlash)
+	if (g_nRankUpdate != -1 && bFlash == true)
 	{
 		nCounter++;   // 加算
 
@@ -366,6 +366,9 @@ void SetRanking(int nScore)
 {//ランキングスコアの並び替え→指定のスコアがランクインしたらg_nRankUpdateを更新
 	// スコア保存用の変数
 	int nData = {};
+
+	// 順位を初期化
+	g_nRankUpdate = -1;
 
 	//5番目のスコアと比較
 	if (g_RankScore[MAX_RANK - 1].nScore < nScore)

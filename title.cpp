@@ -215,14 +215,14 @@ void UpdateTitle(void)
 		TitleFlash(g_Title[nCnt].state,g_Title[nCnt].TitleMenu,nCnt);
 	}
 
-	// カウンターを加算
-	g_nTitleCount++;
+	//// カウンターを加算
+	//g_nTitleCount++;
 
-	if (g_nTitleCount >= 600)
-	{// 10秒経過
-		// ランキング画面へ
-		SetFade(MODE_RANKING);
-	}
+	//if (g_nTitleCount >= 600)
+	//{// 10秒経過
+	//	// ランキング画面へ
+	//	SetFade(MODE_RANKING);
+	//}
 }
 //==============================================================================================================
 //タイトルの描画処理

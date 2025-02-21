@@ -361,7 +361,7 @@ void UpdateGame(void)
 		}
 	}
 	// 敵が出てくるまでの時間
-	if (g_EnemyWaveTime >= 900 || nNumEnemy <= 0)
+	if ((g_EnemyWaveTime >= 900 || nNumEnemy <= 0) && nNumEnemy < MAX_ENEMY * 0.75f)
 	{// カウントが900 or 場に出ている敵が0体以下の時
 		int nSpawner = rand() % 2;
 

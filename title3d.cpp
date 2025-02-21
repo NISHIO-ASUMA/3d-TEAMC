@@ -34,7 +34,7 @@
 void InitTitle3d(void)
 {
 	// カーソルを無効化
-	SetCursorVisibility(false);
+	SetCursorVisibility(true);
 
 	// カメラの初期化処理
 	InitCamera();
@@ -77,6 +77,9 @@ void InitTitle3d(void)
 
 	// ポリゴン
 	InitPolygon();
+
+	// タイトルのカメラのうごき
+	SetAnimation(0);
 
 	// タイトル用のステージを読み込む処理
 	LoadTitleState();

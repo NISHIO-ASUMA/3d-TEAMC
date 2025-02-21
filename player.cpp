@@ -735,7 +735,7 @@ void UpdatePlayer(void)
 	}
 
 	// 持っているアイテムを置く処理
-	if (g_player.Motion.nNumModel == 16 && g_player.Motion.motionType != MOTIONTYPE_DEATH &&
+	if (g_player.Motion.nNumModel == 16 && g_player.Motion.motionType != MOTIONTYPE_DEATH && g_player.AttackSp == false &&
 		(KeyboardTrigger(DIK_G) || JoypadTrigger(JOYKEY_B)) && g_player.Combostate == COMBO_NO && g_player.bJump != false)
 	{
 		// モーションを歩きにする(第2引数に1を入れる)
@@ -1125,7 +1125,7 @@ void HitPlayer(int nDamage)
 		else
 		{
 			// カメラを揺らす
-			WaveCamera(5);
+			//WaveCamera(5);
 
 			// 状態カウンター
 			g_nCounterState = 30;

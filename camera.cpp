@@ -71,6 +71,7 @@ void InitCamera(void)
 	}
 
 	nCntKey = 0;
+	g_camera[MAIN].WaveTIme = 0;
 
 	for (int nCntAnim = 0; nCntAnim < CAMERAANIM_MAX; nCntAnim++)
 	{
@@ -129,14 +130,14 @@ void UpdateCamera(void)
 
 	if (mode == MODE_TITLE)
 	{
-		g_camera[MAIN].posV.z = -1500.0f;
-		g_camera[MAIN].posV.y = 1500.0f;
-		
-		g_camera[MAIN].rot.y += 0.005f;		// カメラの視点の情報
+		//g_camera[MAIN].posV.z = -1500.0f;
+		//g_camera[MAIN].posV.y = 1500.0f;
+		//
+		//g_camera[MAIN].rot.y += 0.005f;		// カメラの視点の情報
 
-		g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * 1800.0f;
-		g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * 1800.0f;
-		g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * 1800.0f;
+		//g_camera[MAIN].posV.x = g_camera[MAIN].posR.x - sinf(g_camera[MAIN].rot.x) * sinf(g_camera[MAIN].rot.y) * 1800.0f;
+		//g_camera[MAIN].posV.y = g_camera[MAIN].posR.y - cosf(g_camera[MAIN].rot.x) * 1800.0f;
+		//g_camera[MAIN].posV.z = g_camera[MAIN].posR.z - sinf(g_camera[MAIN].rot.x) * cosf(g_camera[MAIN].rot.y) * 1800.0f;
 
 	}
 		// ゲームの時のカメラの更新
@@ -189,10 +190,6 @@ void UpdateCamera(void)
 		g_camera[MAIN].bEditMode = false;
 	}
 
-	if (KeyboardTrigger(DIK_V))
-	{
-		SetAnimation(0);
-	}
 	// カメラのアニメーションの更新処理
 	UpdateCameraAnim();
 
@@ -786,8 +783,8 @@ void SetCameraAnim(void)
 	// 上移動
 	if (GetKeyboardPress(DIK_W) == true)
 	{
-		g_camera[MAIN].posV.x += sinf(g_camera[MAIN].rot.y) * 20;
-		g_camera[MAIN].posV.z += cosf(g_camera[MAIN].rot.y) * 20;
+		g_camera[MAIN].posV.x += sinf(g_camera[MAIN].rot.y) * 5.0f;
+		g_camera[MAIN].posV.z += cosf(g_camera[MAIN].rot.y) * 5.0f;
 
 		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
@@ -795,8 +792,8 @@ void SetCameraAnim(void)
 	// 下移動
 	else if (GetKeyboardPress(DIK_S) == true)
 	{
-		g_camera[MAIN].posV.x -= sinf(g_camera[MAIN].rot.y) * 20;
-		g_camera[MAIN].posV.z -= cosf(g_camera[MAIN].rot.y) * 20;
+		g_camera[MAIN].posV.x -= sinf(g_camera[MAIN].rot.y) * 5.0f;
+		g_camera[MAIN].posV.z -= cosf(g_camera[MAIN].rot.y) * 5.0f;
 
 		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
@@ -806,8 +803,8 @@ void SetCameraAnim(void)
 	{
 		//g_Camera.rot.x -= 0.1f;
 
-		g_camera[MAIN].posV.z += sinf(g_camera[MAIN].rot.y) * 20;
-		g_camera[MAIN].posV.x -= cosf(g_camera[MAIN].rot.y) * 20;
+		g_camera[MAIN].posV.z += sinf(g_camera[MAIN].rot.y) * 5.0f;
+		g_camera[MAIN].posV.x -= cosf(g_camera[MAIN].rot.y) * 5.0f;
 
 		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
@@ -815,8 +812,8 @@ void SetCameraAnim(void)
 	// 右移動
 	else if (GetKeyboardPress(DIK_D) == true)
 	{
-		g_camera[MAIN].posV.z -= sinf(g_camera[MAIN].rot.y) * 20;
-		g_camera[MAIN].posV.x += cosf(g_camera[MAIN].rot.y) * 20;
+		g_camera[MAIN].posV.z -= sinf(g_camera[MAIN].rot.y) * 5.0f;
+		g_camera[MAIN].posV.x += cosf(g_camera[MAIN].rot.y) * 5.0f;
 
 		g_camera[MAIN].posR.x = g_camera[MAIN].posV.x + sinf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
 		g_camera[MAIN].posR.z = g_camera[MAIN].posV.z + cosf(g_camera[MAIN].rot.y) * g_camera[MAIN].fDistance;
@@ -842,6 +839,8 @@ void SetCameraAnim(void)
 		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotX = g_camera[MAIN].rot.x;
 		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotY = g_camera[MAIN].rot.y;
 		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotZ = g_camera[MAIN].rot.z;
+
+		g_camera[MAIN].nAnimKey++;
 	}
 
 	// キーの最大数を増やす
@@ -886,7 +885,7 @@ void SetCameraAnim(void)
 		g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].nAnimFrame--;
 	}
 
-	// 
+	// アニメーションを保存
 	if (KeyboardTrigger(DIK_F7))
 	{
 		SaveCameraAnim(nType);
@@ -902,6 +901,7 @@ void SetCameraAnim(void)
 		g_camera[MAIN].aAnimInfo[nType].bLoopAnimation = false;
 	}
 
+	// カメラの状態を変更
 	if (KeyboardTrigger(DIK_F9) == true && g_camera[MAIN].CameraState == CAMERAMODE_NORMAL)
 	{
 		g_camera[MAIN].CameraState = CAMERAMODE_ANIMATION;
@@ -909,6 +909,31 @@ void SetCameraAnim(void)
 	else if (KeyboardTrigger(DIK_F9) == true && g_camera[MAIN].CameraState == CAMERAMODE_ANIMATION)
 	{
 		g_camera[MAIN].CameraState = CAMERAMODE_NORMAL;
+	}
+
+	// アニメーションの再生
+	if (KeyboardTrigger(DIK_V))
+	{
+		SetAnimation(nType);
+	}
+
+	// キーの場所に移動
+	if (KeyboardTrigger(DIK_B))
+	{
+		// 注視点の位置を保存
+		g_camera[MAIN].posR.x = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRX;
+		g_camera[MAIN].posR.y = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRY;
+		g_camera[MAIN].posR.z = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosRZ;
+		
+		// 視点の位置を保存
+		g_camera[MAIN].posV.x = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVX;
+		g_camera[MAIN].posV.y = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVY;
+		g_camera[MAIN].posV.z = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fPosVZ;
+		
+		// 角度を保存
+		g_camera[MAIN].rot.x = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotX;
+		g_camera[MAIN].rot.y = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotY;
+		g_camera[MAIN].rot.z = g_camera[MAIN].aAnimInfo[nType].Anim_KeyInfo[g_camera[MAIN].nAnimKey].fRotZ;
 	}
 }
 //===========================================================================================================
