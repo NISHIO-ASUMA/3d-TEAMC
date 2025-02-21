@@ -490,7 +490,7 @@ void UpdateBoss(void)
 			pPlayer->state != PLAYERSTATE_DAMAGE &&
 			g_Boss[nCnt].Motion.nKey >= 2 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION2)
 		{
-			HitPlayer(60);
+			HitPlayer(40);
 		}
 
 		colisionSword(nCnt);   // Œ•‚Æ‚Ì“–‚½‚è”»’è
