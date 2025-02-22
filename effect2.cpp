@@ -363,6 +363,12 @@ void SetEffectX(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, flo
 				break;
 			}
 
+			//í∏ì_ç¿ïWÇÃê›íË
+			pVtx[0].pos = D3DXVECTOR3(-fRadius, fRadius, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(fRadius, fRadius, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(-fRadius, -fRadius, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(fRadius, -fRadius, 0.0f);
+
 			break;
 		}
 		pVtx += 4;

@@ -1,0 +1,159 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++
++             アイテムの耐久力の設定              +
++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ITEMSET		
+	ITEMTYPE = 0	    # アイテムの種類<< バット >>
+	DURABILITY = 70    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 1	    # アイテムの種類<< ゴルフ >>
+	DURABILITY = 80    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 2	    # アイテムの種類<< ハンマー >>
+	DURABILITY = 150    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 3	    # アイテムの種類<< 石 >>
+	DURABILITY = 20    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 4	    # アイテムの種類<< 木 >>
+	DURABILITY = 50    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 5	    # アイテムの種類<< 石バット >>
+	DURABILITY = 150    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 6	    # アイテムの種類<< 蛍光灯 >>
+	DURABILITY = 60    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 7	    # アイテムの種類<< 蛍光灯木 >>
+	DURABILITY = 130    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 8	    # アイテムの種類<< ハリセン >>
+	DURABILITY = 40    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 9	    # アイテムの種類<< 氷の塊 >>
+	DURABILITY = 20    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 10	    # アイテムの種類<< 氷の剣 >>
+	DURABILITY = 200    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 11	    # アイテムの種類<< 鉄パイプ >>
+	DURABILITY = 110    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 12	    # アイテムの種類<< 鉄バット >>
+	DURABILITY = 150    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 13	    # アイテムの種類<< サーフボード >>
+	DURABILITY = 70    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 14	    # アイテムの種類<< 松明 >>
+	DURABILITY = 70    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 15	    # アイテムの種類<< 炎の剣 >>
+	DURABILITY = 200    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 16	    # アイテムの種類<< バール >>
+	DURABILITY = 100    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 17	    # アイテムの種類<< マネキン >>
+	DURABILITY = 100    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 18	    # アイテムの種類<< 首付きマネキン >>
+	DURABILITY = 150    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 19	    # アイテムの種類<< メガホン >>
+	DURABILITY = 30    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 20	    # アイテムの種類<< スッポン >>
+	DURABILITY = 50    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 21	    # アイテムの種類<< 電柱 >>
+	DURABILITY = 40    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 22	    # アイテムの種類<< 頭蓋骨 >>
+	DURABILITY = 50    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 23	    # アイテムの種類<< メガホン×拡声器×蛍光灯 >>
+	DURABILITY = 100    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 24	    # アイテムの種類<< 骨の槍 >>
+	DURABILITY = 180    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 25	    # アイテムの種類<< 魚 >>
+	DURABILITY = 70    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 26	    # アイテムの種類<< 呪物 >>
+	DURABILITY = 150    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 27	    # アイテムの種類<< 呪物×ハープ >>
+	DURABILITY = 100    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 28	    # アイテムの種類<< サーフボード×魚 >>
+	DURABILITY = 100    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 29	    # アイテムの種類<< チュートリアルの看板 >>
+	DURABILITY = 100    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 30	    # アイテムの種類<< 初期武器の刀 >>
+	DURABILITY = 100    # アイテムの耐久力
+END_ITEMSET
+

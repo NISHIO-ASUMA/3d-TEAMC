@@ -265,7 +265,7 @@ void UpdateBoss(void)
 			if (g_Boss[nCnt].Motion.nKey == 0 || g_Boss[nCnt].Motion.nKey == 1)// 溜める動作中に
 			{
 				// 向きをプレイヤーに向ける
-				float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);
+				float fAngle = atan2f(pPlayer->posOld.x - g_Boss[nCnt].pos.x, pPlayer->posOld.z - g_Boss[nCnt].pos.z);
 
 				// ボスの向き代入
 				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
@@ -279,7 +279,7 @@ void UpdateBoss(void)
 						D3DXVECTOR3(0.2f, 3.14f, 0.2f),
 						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 3, 20, 150, 4.0f, 50.0f,
+						2.0f, 3, 20, 30, 4.0f, 50.0f,
 						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 				}
 			}
@@ -298,7 +298,7 @@ void UpdateBoss(void)
 						D3DXVECTOR3(1.0f, 1.0f, 1.0f),
 						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 4, 60, 40, 6.0f, 60.0f,
+						2.0f, 4, 60, 30, 6.0f, 60.0f,
 						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 				}
 			}
@@ -308,7 +308,7 @@ void UpdateBoss(void)
 			if (g_Boss[nCnt].Motion.nKey == 0 || g_Boss[nCnt].Motion.nKey == 4)// 溜める動作中に
 			{
 				// 向きをプレイヤーに向ける
-				float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);
+				float fAngle = atan2f(pPlayer->posOld.x - g_Boss[nCnt].pos.x, pPlayer->posOld.z - g_Boss[nCnt].pos.z);
 
 				// ボスの向き代入
 				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
@@ -322,7 +322,7 @@ void UpdateBoss(void)
 						D3DXVECTOR3(0.2f, 3.14f, 0.2f),
 						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 3, 20, 150, 4.0f, 50.0f,
+						2.0f, 3, 20, 55, 4.0f, 50.0f,
 						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 				}
 			}
@@ -629,7 +629,7 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 {
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
-		if (!g_Boss[nCnt].bUse)
+		if (g_Boss[nCnt].bUse == false)
 		{// 未使用なら
 			g_Boss[nCnt].Motion = g_LoadBoss;
 			g_Boss[nCnt].pos = pos;	  // 位置を代入
@@ -639,8 +639,10 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].AttackState = BOSSATTACK_NO;			 // 攻撃状態
 			g_Boss[nCnt].bUse = true;   // 使用状態にする
 
+			D3DXVECTOR3 BossPos(g_Boss[nCnt].mtxWorld._41, g_Boss[nCnt].mtxWorld._42, g_Boss[nCnt].mtxWorld._43);
+
 			SetPolygon(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 20.0f, 100.0f, POLYGON_TYPE_FIVE);
-			g_Boss[nCnt].nIdxShadow = SetShadow(g_Boss[nCnt].pos, g_Boss[nCnt].rot, 40.0f,1.0f);
+			g_Boss[nCnt].nIdxShadow = SetShadow(BossPos, D3DXVECTOR3(0.0f,0.0f,0.0f), 40.0f,1.0f);
 
 			break;
 		}
@@ -753,7 +755,7 @@ void HitBoss(int nCntBoss,int nDamage)
 		AddFever(10.0f);		// フィーバーポイントを取得
 
 		// パーティクルをセット
-		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z), g_Boss[nCntBoss].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 30, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z), g_Boss[nCntBoss].rot, D3DXVECTOR3(3.14f, 3.14f, 3.14f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f), 4.0f, 1, 20, 10, 8.0f, 0.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 		g_Boss[nCntBoss].state = ENEMYSTATE_DAMAGE;
 		g_Boss[nCntBoss].nCounterState = 20;

@@ -41,6 +41,7 @@ LPDIRECT3DTEXTURE9 g_pTex;              // テクスチャ保存
 int g_EditCount, nCntobj;               // オブジェクトのカウント、保存用
 int g_nNumBlock;						// オブジェクトの数
 bool EditMode2d;
+int g_PressTime;
 
 //=============================================================================================================
 //エディット画面の初期化処理
@@ -63,6 +64,8 @@ void InitEdit(void)
 		g_Edit[nCnt].EditCategory = EDITMODE_BLOCK;			// 現在のオブジェクトのカテゴリーの初期化
 		g_Edit[nCnt].fMove = 10.0f;							// オブジェクトの移動量
 	}
+
+	g_PressTime = 0;
 
 	EditMode2d = false; // 2DOBJ編集モードか
 
@@ -359,6 +362,26 @@ void UpdateEdit(void)
 		if (g_Edit[g_EditCount].rot.z > D3DX_PI)
 		{
 			g_Edit[g_EditCount].rot.z += -D3DX_PI * 2.0f;
+		}
+
+		// 編集オブジェクトの選択
+		if (GetKeyboardPress(DIK_O) && g_EditCount < g_nNumBlock)
+		{
+			g_EditCount++;
+		}
+		else if (GetKeyboardPress(DIK_L) && g_EditCount > 0)
+		{
+			g_EditCount--;
+		}
+		
+		// 編集オブジェクトの選択
+		if (KeyboardTrigger(DIK_I) && g_EditCount < g_nNumBlock)
+		{
+			g_EditCount++;
+		}
+		else if (KeyboardTrigger(DIK_K) && g_EditCount > 0)
+		{
+			g_EditCount--;
 		}
 
 	}
@@ -812,7 +835,7 @@ EDIT_INFO* GetEdit(void)
 //=============================================================================================================
 int GetNumobj(void)
 {
-	return g_nNumBlock;
+	return g_EditCount;
 }
 //=============================================================================================================
 //オブジェクトのロード

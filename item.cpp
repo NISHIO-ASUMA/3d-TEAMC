@@ -36,6 +36,7 @@ void LoadItemModel(void); // アイテムのロード処理
 void CraftItem(void);
 void CraftMixItem(int nCntItem,int MixItem,int motionchange);
 void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem);
+void LoadDurability(void); // アイテムの耐久力のロード処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -66,7 +67,7 @@ void InitItem(void)
 		g_Item[nCntItem].state = ITEMSTATE_NORMAL;			   // 状態
 		g_Item[nCntItem].fRadius = 100.0f;					   // 半径
 		g_Item[nCntItem].nLife = 180;						   // 体力
-		g_Item[nCntItem].durability = MAX_DURABILITY;		   // 耐久力
+		g_Item[nCntItem].durability = 0;		   // 耐久力
 		g_Item[nCntItem].EnableCraft = false;				   // クラフトできるか否か
 		g_Item[nCntItem].grabity = 0.0f;				   // クラフトできるか否か
 
@@ -76,7 +77,9 @@ void InitItem(void)
 		}
 	}
 
+	LoadDurability();
 	LoadItemModel(); // アイテムのロード処理
+
 	bFIrstCraftItem = false;
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
@@ -86,9 +89,8 @@ void InitItem(void)
 		//g_TexItem[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);// 拡大率
 		g_TexItem[nCntNum].nLife = 120;							// 体力
-		g_TexItem[nCntNum].durability = MAX_DURABILITY;			// 耐久力
 		g_TexItem[nCntNum].state = ITEMSTATE_NORMAL;			// 状態
-		g_TexItem[nCntNum].nType = nCntNum;			            // 番号
+		g_TexItem[nCntNum].nType = ITEMTYPE_BAT;			            // 番号
 		g_TexItem[nCntNum].nElement = ITEMELEMENT_STANDARD;     // 初期化
 		ElementChange(nCntNum);
 		g_TexItem[nCntNum].bMixItem[nCntNum] = false;           // クラフト後のアイテム表示用フラグ
@@ -364,7 +366,7 @@ void UpdateItem(void)
 					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
 					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 					D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-					5.0f, 2, 45, 7, 3.0f, 7.0f,
+					5.0f, 2, 35, 7, 3.0f, 7.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 			}
 		}
@@ -837,14 +839,14 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
-		2.0f, 2, 40, 40, 5.0f, 2.0f, false,
+		2.0f, 2, 40, 20, 5.0f, 2.0f, false,
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-		3.0f, 2, 40, 40, 3.0f, 2.0f, false,
+		3.0f, 2, 40, 20, 3.0f, 2.0f, false,
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
@@ -889,4 +891,65 @@ void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
 		// アイコンを消す
 		g_Item[nCntItem].bMixItem[MixItem] = false;
 	}
+}
+//==============================================================================================================
+// アイテムの耐久力のロード処理
+//==============================================================================================================
+void LoadDurability(void)
+{
+	FILE* pFile; // ファイルのポインタ
+
+	// ファイルを開く
+	pFile = fopen("data\\item_Info.txt", "r");
+
+	// 文字列格納変数
+	char aString[MAX_WORD] = {};
+
+	// [=]読み飛ばしよう変数
+	char skip[3] = {};
+
+	// 種類
+	int nType = 0;
+
+	// ファイルが開けたら
+	if (pFile != NULL)
+	{
+		while (1)
+		{
+			int nData = fscanf(pFile, "%s", &aString[0]);
+
+			if (strcmp(&aString[0], "ITEMTYPE") == 0)
+			{
+				fscanf(pFile, "%s", &skip[0]);
+				fscanf(pFile, "%d", &nType);
+			}
+
+			if (strcmp(&aString[0], "DURABILITY") == 0)
+			{
+				fscanf(pFile, "%s", &skip[0]);
+				fscanf(pFile, "%d", &g_TexItem[nType].durability);			
+			}
+
+			if (strcmp(&aString[0], "END_ITEMSET") == 0)
+			{
+				nType++;
+			}
+
+			// ファイルの最後まで行ったら
+			if (nData == EOF)
+			{
+				// While文を抜ける
+				break;
+			}
+		}
+	}
+	else
+	{// 開けなかったとき
+		// メッセージボックスを表示
+		MessageBox(NULL, "ファイルが開けません", "LoadDuability", MB_OK);
+		return;
+	}
+
+	// ファイルを閉じる
+	fclose(pFile);
 }

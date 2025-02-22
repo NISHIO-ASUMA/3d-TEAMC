@@ -166,8 +166,8 @@ void InitGame(void)
 	//’e‚Ì‰Šú‰»ˆ—
 	InitBullet();
 
-	//WaveEnemy(0); // “G‚ğo‚·ˆ—
-	//WaveEnemy(1); // “G‚ğo‚·ˆ—
+	WaveEnemy(0); // “G‚ğo‚·ˆ—
+	WaveEnemy(1); // “G‚ğo‚·ˆ—
 
 	// UI‚ğƒZƒbƒg
 	SetGameUI(D3DXVECTOR3(80.0f,550.0f,0.0f),UITYPE_ICONFRAME,80.0f,80.0f,0);
@@ -361,7 +361,7 @@ void UpdateGame(void)
 		}
 	}
 	// “G‚ªo‚Ä‚­‚é‚Ü‚Å‚ÌŠÔ
-	if ((g_EnemyWaveTime >= 900 || nNumEnemy <= 0) && nNumEnemy < MAX_ENEMY * 0.75f)
+	if ((g_EnemyWaveTime >= 900 || nNumEnemy <= 0) && nNumEnemy < MAX_ENEMY * 0.5f)
 	{// ƒJƒEƒ“ƒg‚ª900 or ê‚Éo‚Ä‚¢‚é“G‚ª0‘ÌˆÈ‰º‚Ì
 		int nSpawner = rand() % 2;
 
@@ -578,6 +578,16 @@ void DrawGame(void)
 	// ƒ{ƒX‚Ì•`‰æˆ—
 	DrawBoss();
 
+#ifdef _DEBUG
+
+	if (g_bEditMode)
+	{
+		//ƒGƒfƒBƒbƒg‚Ì•`‰æˆ—
+		DrawEdit();
+	}
+
+#endif // DEBUG
+
 	if (!g_bEditMode)
 	{
 		// ƒrƒ‹ƒ{[ƒh‚Ì•`‰æˆ—
@@ -619,16 +629,6 @@ void DrawGame(void)
 
 	// ƒAƒCƒRƒ“‚Ì•`‰æˆ—
 	DrawIcon();
-
-#ifdef _DEBUG
-
-	if (g_bEditMode)
-	{
-		//ƒGƒfƒBƒbƒg‚Ì•`‰æˆ—
-		DrawEdit();
-	}
-
-#endif // DEBUG
 
 	//•Ç‚Ì•`‰æˆ—
 	DrawWall();

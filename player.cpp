@@ -867,7 +867,7 @@ void UpdatePlayer(void)
 			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
 			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
-			2.0f, 4, 30, 60, 4.0f, 0.0f,
+			2.0f, 4, 30, 40, 4.0f, 0.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 
@@ -880,7 +880,7 @@ void UpdatePlayer(void)
 			D3DXVECTOR3(1.57f, 3.14f, 1.57f),
 			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-			6.0f, 4, 80, 500, 6.0f, 30.0f,
+			6.0f, 4, 80, 300, 6.0f, 30.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}	//モーションの更新
 

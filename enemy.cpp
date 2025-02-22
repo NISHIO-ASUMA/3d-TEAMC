@@ -58,7 +58,7 @@ void CollisionToEnemy(int nCntEnemy);							  // 敵と敵の当たり判定
 //グローバル変数宣言
 //**************************************************************************************************************
 ENEMY g_Enemy[MAX_ENEMY];		  // 構造体変数
-ENEMY g_LoadEnemy[ENEMYTYPE_MAX]; // 読み込み
+MOTION g_LoadEnemy[ENEMYTYPE_MAX]; // 読み込み
 int g_nNumEnemy;				  // 敵の総数カウント
 bool g_bSound;
 
@@ -85,7 +85,10 @@ void InitEnemy(void)
 		g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;                // 敵が攻撃状態か
 		g_Enemy[nCntEnemy].nCountAction = 0;							// 攻撃のインターバル値
 		g_Enemy[nCntEnemy].HitStopCount = 0;						    // ヒット時のヒットストップ
-
+		g_Enemy[nCntEnemy].nType = ENEMYTYPE_ONE;
+		g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL;// モーションの種類
+		g_Enemy[nCntEnemy].Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // サイズ
+		g_Enemy[nCntEnemy].nIdxShadow = -1;
 	}
 
 	//グローバル変数の初期化
@@ -96,28 +99,14 @@ void InitEnemy(void)
 		// 敵の読み込み
 		LoadEnemy(nCntEnemyType);
 
-		//g_LoadEnemy[nCntEnemyType].
-		g_LoadEnemy[nCntEnemyType].nLife = 20;
-		g_LoadEnemy[nCntEnemyType].nMaxLife = 20;								// 最大体力
-		//g_LoadEnemy[nCntEnemyType].nType = ENEMYTYPE_ONE;
-		g_LoadEnemy[nCntEnemyType].Motion.motionType = MOTIONTYPE_NEUTRAL;// モーションの種類
-		g_LoadEnemy[nCntEnemyType].g_bDamage = true;					  // ダメージか否か
-		g_LoadEnemy[nCntEnemyType].Motion.bLoopMotion = true;			  // ループか否か
-		g_LoadEnemy[nCntEnemyType].Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // サイズ
-		g_LoadEnemy[nCntEnemyType].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	  // 座標
-		g_LoadEnemy[nCntEnemyType].state = ENEMYSTATE_NORMAL;			  // 状態
-		g_LoadEnemy[nCntEnemyType].Speed = 0.0f;						  // 足の速さ
-		g_LoadEnemy[nCntEnemyType].AttackState = ENEMYATTACK_NO;          // 敵が攻撃状態か
-		g_LoadEnemy[nCntEnemyType].HitStopCount = 0;					  // ヒット時のヒットストップ
-
-		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
+		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].nNumModel; nCntModel++)
 		{
 			D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
 			// マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy->GetBufferPointer();
+			pMat = (D3DXMATERIAL*)g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pBuffMat->GetBufferPointer();
 
-			for (int nCntMat = 0; nCntMat < (int)g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].dwNumMatEnemy; nCntMat++)
+			for (int nCntMat = 0; nCntMat < (int)g_LoadEnemy[nCntEnemyType].aModel[nCntModel].dwNumMat; nCntMat++)
 			{
 				if (pMat[nCntMat].pTextureFilename != NULL)
 				{
@@ -125,14 +114,9 @@ void InitEnemy(void)
 					// テクスチャの読み込み
 					D3DXCreateTextureFromFile(pDevice,
 						pMat[nCntMat].pTextureFilename,
-						&g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[nCntMat]);
+						&g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pTexture[nCntMat]);
 				}
 			}
-
-			//g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].Diffuse = pMat->MatD3D.Diffuse;
-
-			//g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].FirstDiffuse = g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].Diffuse;
-
 		}
 	}
 
@@ -143,16 +127,16 @@ void InitEnemy(void)
 
 	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
 	{
-		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
+		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].nNumModel; nCntModel++)
 		{
 			// 頂点数の取得
-			nNumVtx = g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy->GetNumVertices();
+			nNumVtx = g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->GetNumVertices();
 
 			// 頂点フォーマットのサイズ取得
-			sizeFVF = D3DXGetFVFVertexSize(g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy->GetFVF());
+			sizeFVF = D3DXGetFVFVertexSize(g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->GetFVF());
 
 			// 頂点バッファのロック
-			g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
 			for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 			{
@@ -160,29 +144,29 @@ void InitEnemy(void)
 				D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
 
 				// 頂点座標を比較してブロックの最小値,最大値を取得
-				if (vtx.x < g_LoadEnemy[nCntEnemyType].vtxMin.x)
+				if (vtx.x < g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.x)
 				{
-					g_LoadEnemy[nCntEnemyType].vtxMin.x = vtx.x;
+					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.x = vtx.x;
 				}
-				else if (vtx.y < g_LoadEnemy[nCntEnemyType].vtxMin.y)
+				else if (vtx.y < g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.y)
 				{
-					g_LoadEnemy[nCntEnemyType].vtxMin.y = vtx.y;
+					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.y = vtx.y;
 				}
-				else if (vtx.z < g_LoadEnemy[nCntEnemyType].vtxMin.z)
+				else if (vtx.z < g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.z)
 				{
-					g_LoadEnemy[nCntEnemyType].vtxMin.z = vtx.z;
+					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.z = vtx.z;
 				}
-				else if (vtx.x > g_LoadEnemy[nCntEnemyType].vtxMax.x)
+				else if (vtx.x > g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.x)
 				{
-					g_LoadEnemy[nCntEnemyType].vtxMax.x = vtx.x;
+					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.x = vtx.x;
 				}
-				else if (vtx.y > g_LoadEnemy[nCntEnemyType].vtxMax.y)
+				else if (vtx.y > g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.y)
 				{
-					g_LoadEnemy[nCntEnemyType].vtxMax.y = vtx.y;
+					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.y = vtx.y;
 				}
-				else if (vtx.z > g_LoadEnemy[nCntEnemyType].vtxMax.z)
+				else if (vtx.z > g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.z)
 				{
-					g_LoadEnemy[nCntEnemyType].vtxMax.z = vtx.z;
+					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.z = vtx.z;
 				}
 
 				// 頂点フォーマットのサイズ分ポインタを進める
@@ -190,14 +174,13 @@ void InitEnemy(void)
 
 			}
 			// 頂点バッファのアンロック
-			g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy->UnlockVertexBuffer();		
+			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->UnlockVertexBuffer();
+
+			// サイズに代入
+			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].Size.x = g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.x - g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.x;
+			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].Size.y = g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.y - g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.y;
+			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].Size.z = g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.z - g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.z;
 		}
-
-		// サイズに代入
-		g_LoadEnemy[nCntEnemyType].Size.x = g_LoadEnemy[nCntEnemyType].vtxMax.x - g_LoadEnemy[nCntEnemyType].vtxMin.x;
-		g_LoadEnemy[nCntEnemyType].Size.y = g_LoadEnemy[nCntEnemyType].vtxMax.y - g_LoadEnemy[nCntEnemyType].vtxMin.y;
-		g_LoadEnemy[nCntEnemyType].Size.z = g_LoadEnemy[nCntEnemyType].vtxMax.z - g_LoadEnemy[nCntEnemyType].vtxMin.z;
-
 	}
 }
 //===============================================================================================================
@@ -210,30 +193,30 @@ void UninitEnemy(void)
 
 	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
 	{
-		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].Motion.nNumModel; nCntModel++)
+		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].nNumModel; nCntModel++)
 		{
 			// テクスチャの破棄
-			for (int TexCnt = 0; TexCnt < (int)g_LoadEnemy[nCntEnemyType].Motion.aModel[nCntModel].dwNumMat; TexCnt++)
+			for (int TexCnt = 0; TexCnt < (int)g_LoadEnemy[nCntEnemyType].aModel[nCntModel].dwNumMat; TexCnt++)
 			{
-				if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
+				if (g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pTexture[TexCnt] != NULL)
 				{
-					g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt]->Release();
-					g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pTextureEnemy[TexCnt] = NULL;
+					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pTexture[TexCnt]->Release();
+					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pTexture[TexCnt] = NULL;
 				}
 			}
 
 			// メッシュの破棄
-			if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy != NULL)
+			if (g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh != NULL)
 			{
-				g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy->Release();
-				g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pMeshEnemy = NULL;
+				g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->Release();
+				g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh = NULL;
 			}
 
 			// マテリアルの破棄
-			if (g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy != NULL)
+			if (g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pBuffMat != NULL)
 			{
-				g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy->Release();
-				g_LoadEnemy[nCntEnemyType].EnemyModel[nCntModel].pBuffMatEnemy = NULL;
+				g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pBuffMat->Release();
+				g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pBuffMat = NULL;
 			}
 		}
 	}
@@ -248,22 +231,22 @@ void UninitEnemy(void)
 			for (int TexCnt = 0; TexCnt < (int)g_Enemy[nCntEnemy].Motion.aModel[nCntModel].dwNumMat; TexCnt++)
 			{
 
-				if (g_Enemy[nCntEnemy].EnemyModel[nCntModel].pTextureEnemy[TexCnt] != NULL)
+				if (g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pTexture[TexCnt] != NULL)
 				{
-					g_Enemy[nCntEnemy].EnemyModel[nCntModel].pTextureEnemy[TexCnt] = NULL;
+					g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pTexture[TexCnt] = NULL;
 				}
 			}
 
 			// メッシュの破棄
-			if (g_Enemy[nCntEnemy].EnemyModel[nCntModel].pMeshEnemy != NULL)
+			if (g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pMesh != NULL)
 			{
-				g_Enemy[nCntEnemy].EnemyModel[nCntModel].pMeshEnemy = NULL;
+				g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pMesh = NULL;
 			}
 
 			// マテリアルの破棄
-			if (g_Enemy[nCntEnemy].EnemyModel[nCntModel].pBuffMatEnemy != NULL)
+			if (g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pBuffMat != NULL)
 			{
-				g_Enemy[nCntEnemy].EnemyModel[nCntModel].pBuffMatEnemy = NULL;
+				g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pBuffMat = NULL;
 			}
 		}
 	}
@@ -351,18 +334,41 @@ void UpdateEnemy(void)
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
-		// ホーミング範囲
-		if (AgentRange(50.0f, 20000.0f, nCntEnemy) && 
+		// ホーミング範囲に入っているかつ視界に入っている
+		if (AgentRange(50.0f, 800.0f, nCntEnemy) && CollisionView(&g_Enemy[nCntEnemy].pos,&g_Enemy[nCntEnemy].rot,200.0f,0.75f) == true &&
 			g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
 		{
+			// ホーミング処理
 			AgentEnemy(nCntEnemy);
+
+			// モーションを歩きモーションにする
+			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
+			
+			// 敵の角度を設定
+			g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos) + D3DX_PI;
+		}
+		// 絶対に気づく範囲に入った
+		else if (AgentRange(50.0f, 200.0f, nCntEnemy) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
+		{
+			// ホーミング処理
+			AgentEnemy(nCntEnemy);
+
+			// 歩きモーションにする
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
 
-			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
-
-			g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
+			// 敵の角度を設定
+			g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos) + D3DX_PI;
 		}
-		
+		else
+		{
+			// 攻撃モーションじゃない
+			if (g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
+			{
+				// モーションをニュートラルにする
+				g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL;
+			}
+		}
+
 		// 敵の種類がスコア高いやつなら
 		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SEVEN)
 		{
@@ -379,11 +385,8 @@ void UpdateEnemy(void)
 					// 敵をプレイヤーに向かわせる
 					AgentEnemy(nCntEnemy);
 
-					// プレイヤーまでの角度
-					float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
-
-					// 逆にして移動方向を反転する
-					g_Enemy[nCntEnemy].rotDest.y = fAngle; // 角度を代入
+					// 敵の角度を設定
+					g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos);
 				}
 
 				// 虹の素
@@ -391,13 +394,14 @@ void UpdateEnemy(void)
 				fColor[0] = ((float)(rand() % 100) / 100.0f);
 				fColor[1] = ((float)(rand() % 100) / 100.0f);
 				fColor[2] = ((float)(rand() % 100) / 100.0f);
+
 				// 高価そうなオーラを出す
 				SetParticle(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + 10, g_Enemy[nCntEnemy].pos.z),
 				D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), 
 				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 				D3DXCOLOR(fColor[0], fColor[1], fColor[2], 1.0f),
-				2.0f, 1, 20, 5, 20.0f, 20.0f, true, D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+				2.0f, 1, 10, 5, 20.0f, 20.0f, true, D3DXVECTOR3(0.0f, 1.0f, 0.0f));
 			}
 		}
 
@@ -415,6 +419,7 @@ void UpdateEnemy(void)
 		{
 			g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		}
+
 
 		// プレイヤーのモデルの情報を代入
 		D3DXVECTOR3 PlayerModel(pPlayer->Motion.aModel[0].mtxWorld._41,
@@ -434,6 +439,7 @@ void UpdateEnemy(void)
 			HitPlayer(50);
 		}
 
+		// モーションが最後まで行ったら攻撃状態をリセット
 		if (!g_Enemy[nCntEnemy].Motion.aMotionInfo[g_Enemy[nCntEnemy].Motion.motionType].bLoop &&
 			g_Enemy[nCntEnemy].Motion.nKey >= g_Enemy[nCntEnemy].Motion.aMotionInfo[g_Enemy[nCntEnemy].Motion.motionType].nNumkey - 1)
 		{
@@ -493,6 +499,9 @@ void UpdateEnemy(void)
 //===============================================================================================================
 void DrawEnemy(void)
 {
+	// プレイヤーを取得
+	Player* pPlayer = GetPlayer();
+
 	// デバイスのポインタを取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
@@ -505,24 +514,32 @@ void DrawEnemy(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		if (g_Enemy[nCntEnemy].bUse == true)
+		if (g_Enemy[nCntEnemy].bUse == false)
+		{// 未使用だったら
+			// 処理を読み飛ばす
+			continue;
+		}
+
+		// 種類を代入
+		int nType = g_Enemy[nCntEnemy].nType;
+
+		// ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&g_Enemy[nCntEnemy].mtxWorldEnemy);
+
+		// 向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Enemy[nCntEnemy].rot.y, g_Enemy[nCntEnemy].rot.x, g_Enemy[nCntEnemy].rot.z);
+		D3DXMatrixMultiply(&g_Enemy[nCntEnemy].mtxWorldEnemy, &g_Enemy[nCntEnemy].mtxWorldEnemy, &mtxRot);
+
+		// 位置を反映
+		D3DXMatrixTranslation(&mtxTrans, g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y, g_Enemy[nCntEnemy].pos.z);
+		D3DXMatrixMultiply(&g_Enemy[nCntEnemy].mtxWorldEnemy, &g_Enemy[nCntEnemy].mtxWorldEnemy, &mtxTrans);
+
+		// ワールドマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &g_Enemy[nCntEnemy].mtxWorldEnemy);
+
+		// 一定範囲外の敵を描画しない
+		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 50.0f, 700.0f) == true)
 		{
-			int nType = g_Enemy[nCntEnemy].nType;
-
-			// ワールドマトリックスの初期化
-			D3DXMatrixIdentity(&g_Enemy[nCntEnemy].mtxWorldEnemy);
-
-			// 向きを反映
-			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Enemy[nCntEnemy].rot.y, g_Enemy[nCntEnemy].rot.x, g_Enemy[nCntEnemy].rot.z);
-			D3DXMatrixMultiply(&g_Enemy[nCntEnemy].mtxWorldEnemy, &g_Enemy[nCntEnemy].mtxWorldEnemy, &mtxRot);
-
-			// 位置を反映
-			D3DXMatrixTranslation(&mtxTrans, g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y, g_Enemy[nCntEnemy].pos.z);
-			D3DXMatrixMultiply(&g_Enemy[nCntEnemy].mtxWorldEnemy, &g_Enemy[nCntEnemy].mtxWorldEnemy, &mtxTrans);
-
-			// ワールドマトリックスの設定
-			pDevice->SetTransform(D3DTS_WORLD, &g_Enemy[nCntEnemy].mtxWorldEnemy);
-
 			// 現在のマテリアルを取得
 			pDevice->GetMaterial(&matDef);
 
@@ -564,9 +581,9 @@ void DrawEnemy(void)
 					&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld);
 
 				// マテリアルのデータへのポインタを取得
-				pMat = (D3DXMATERIAL*)g_Enemy[nCntEnemy].EnemyModel[nCntModel].pBuffMatEnemy->GetBufferPointer();
+				pMat = (D3DXMATERIAL*)g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
 
-				for (int nCntMat = 0; nCntMat < (int)g_Enemy[nCntEnemy].EnemyModel[nCntModel].dwNumMatEnemy; nCntMat++)
+				for (int nCntMat = 0; nCntMat < (int)g_Enemy[nCntEnemy].Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 				{
 					// カラー変更用の変数
 					D3DXMATERIAL color;
@@ -592,10 +609,10 @@ void DrawEnemy(void)
 					}
 
 					// テクスチャの設定
-					pDevice->SetTexture(0, g_Enemy[nCntEnemy].EnemyModel[nCntModel].pTextureEnemy[nCntMat]);
+					pDevice->SetTexture(0, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pTexture[nCntMat]);
 
 					// ブロック(パーツ)の描画
-					g_Enemy[nCntEnemy].EnemyModel[nCntModel].pMeshEnemy->DrawSubset(nCntMat);
+					g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 				}
 			}
 		}
@@ -635,7 +652,7 @@ void HitEnemy(int nCnt,int nDamage)
 		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 		D3DXCOLOR(1.0f, 0.2f, 0.0f, 1.0f),
-		4.0f, 1, 20, 30, 8.0f, 0.0f,
+		4.0f, 1, 20, 10, 8.0f, 0.0f,
 		false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	int nMin = GetTimeMinute();
@@ -773,7 +790,7 @@ void HitEnemy(int nCnt,int nDamage)
 //=========================================================================================================
 //敵の設定処理
 //=========================================================================================================
-void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
+void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed)
 {
 	// 現在のモードの取得
 	MODE mode = GetMode();
@@ -782,7 +799,7 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 	{
 		if (!g_Enemy[nCntEnemy].bUse)
 		{
-			g_Enemy[nCntEnemy] = g_LoadEnemy[nType]; // 情報を代入
+			g_Enemy[nCntEnemy].Motion = g_LoadEnemy[nType]; // 情報を代入
 
 			g_Enemy[nCntEnemy].pos = pos;	  // 座標
 			g_Enemy[nCntEnemy].nType = nType; // 種類
@@ -792,6 +809,8 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 			g_Enemy[nCntEnemy].nCountAction = 0;
 			g_Enemy[nCntEnemy].bUse = true;   // 使用状態
 
+			g_Enemy[nCntEnemy].rotDest.y = (float)(rand()% 628 - 314) * 0.01f;	  // 角度
+
 			if (nType == ENEMYTYPE_SIX)
 			{
 				g_Enemy[nCntEnemy].nLife = 1;
@@ -800,7 +819,7 @@ void SetEnemy(D3DXVECTOR3 pos, int nType,int nLife,float Speed)
 			g_Enemy[nCntEnemy].nIdxMap = SetMiniMap(pos,MINIMAPTEX_ENEMY);
 
 			// 影を設定
-			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), g_Enemy[nCntEnemy].rot, 40.0f, 1.0f);
+			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), D3DXVECTOR3(0.0f,0.0f,0.0f), 40.0f, 1.0f);
 
 			g_nNumEnemy++; // インクリメント
 			break;
@@ -817,26 +836,17 @@ void WaveEnemy(int nSpawner)
 		// スポナー0
 		if (nSpawner == 0)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 -700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー1
 		else if (nSpawner == 1)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -530.0f), 0.0f, (float)(rand() % 20 -780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -530.0f), 0.0f, (float)(rand() % 20 -780.0f)), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー2
 		else if (nSpawner == 2)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 50 - 500), 0.0f, (float)(rand() % 50 - 700.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 780.0f), 0.0f, (float)(rand() % 20 + 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 530.0f), 0.0f, (float)(rand() % 20 - 780.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 - 531.0f), 0.0f, (float)(rand() % 20 + 30.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 + 723.0f), 0.0f, (float)(rand() % 20 - 245.0f)), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 	}
 }
@@ -846,6 +856,75 @@ void WaveEnemy(int nSpawner)
 int GetNumEnemy(void)
 {
 	return g_nNumEnemy;
+}
+//=========================================================================================================
+// 敵の視界の判定
+//=========================================================================================================
+bool CollisionView(D3DXVECTOR3* pPos, D3DXVECTOR3* pRot, float fRange, float viewAngle)
+{
+	// 判定用変数
+	bool bCollision = false;
+
+	// プレイヤーを取得
+	Player* pPlayer = GetPlayer();
+
+	// 視界の範囲のベクトル
+	D3DXVECTOR3 ViewVectorL = {};
+	D3DXVECTOR3 ViewVectorR = {};
+
+	// 外積
+	D3DXVECTOR3 ViewCrossL = {};
+	D3DXVECTOR3 ViewCrossR = {};
+
+	// 左側の視界を作成
+	ViewVectorL.x = (pPos->x + sinf(pRot->y + D3DX_PI * viewAngle) * fRange) - pPos->x;
+	ViewVectorL.y = 0.0f;
+	ViewVectorL.z = (pPos->z + cosf(pRot->y + D3DX_PI * viewAngle) * fRange) - pPos->z;
+
+	// 右側の視界を作成
+	ViewVectorR.x = (pPos->x + sinf(pRot->y - D3DX_PI * viewAngle) * fRange) - pPos->x;
+	ViewVectorR.y = 0.0f;
+	ViewVectorR.z = (pPos->z + cosf(pRot->y - D3DX_PI * viewAngle) * fRange) - pPos->z;
+
+	// プレイヤーまでのベクトル
+	D3DXVECTOR3 PlayerVec = pPlayer->pos - *pPos;
+
+	// プレイヤーから敵までのベクトルとの外積
+	D3DXVec3Cross(&ViewCrossL, &ViewVectorL, &PlayerVec);
+	D3DXVec3Cross(&ViewCrossR, &ViewVectorR, &PlayerVec);
+
+	// 正規化する
+	D3DXVec3Normalize(&ViewCrossL, &ViewCrossL);
+	D3DXVec3Normalize(&ViewCrossR, &ViewCrossR);
+
+
+	//D3DXVECTOR3 pos(pPos->x + sinf(pRot->y + D3DX_PI * viewAngle) * fRange,0.0f, pPos->z + cosf(pRot->y + D3DX_PI * viewAngle) * fRange);
+	//D3DXVECTOR3 pos2(pPos->x + sinf(pRot->y - D3DX_PI * viewAngle) * fRange, 0.0f, pPos->z + cosf(pRot->y - D3DX_PI * viewAngle) * fRange);
+
+	//SetEffect(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 10, 10.0f, 0.02f, 0);
+	//SetEffect(pos2, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 10, 10.0f, 0.02f, 0);
+
+	// 視界の範囲内だったら
+	if (ViewCrossL.y > 0.0f && ViewCrossR.y < 0.0f)
+	{
+		// 視界内にいる
+		bCollision = true;
+	}
+
+	// 判定を返す
+	return bCollision;
+}
+//===============================================================================================================
+// 敵の角度の設定
+//===============================================================================================================
+float SetAngle(D3DXVECTOR3* pRot, D3DXVECTOR3* pPos)
+{
+	Player* pPlayer = GetPlayer();
+
+	float fAngle = atan2f(pPlayer->pos.x - pPos->x, pPlayer->pos.z - pPos->z); // 敵からプレイやまでの角度を求める
+
+	// 角度を返す
+	return fAngle;
 }
 //===============================================================================================================
 //敵のロード処理
@@ -889,8 +968,8 @@ void LoadEnemy(int nType)
 		break;
 	case 5:
 		pFile = NULL; //NULLにする
-		g_LoadEnemy[nType].Motion.nNumModel = 1;
-		g_LoadEnemy[nType].Motion.aModel[0].nIdxModelParent = -1;
+		g_LoadEnemy[nType].nNumModel = 1;
+		g_LoadEnemy[nType].aModel[0].nIdxModelParent = -1;
 
 
 		//Xファイルの読み込み
@@ -898,25 +977,25 @@ void LoadEnemy(int nType)
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
-			&g_LoadEnemy[nType].EnemyModel[0].pBuffMatEnemy,
+			&g_LoadEnemy[nType].aModel[0].pBuffMat,
 			NULL,
-			&g_LoadEnemy[nType].EnemyModel[0].dwNumMatEnemy,
-			&g_LoadEnemy[nType].EnemyModel[0].pMeshEnemy);
+			&g_LoadEnemy[nType].aModel[0].dwNumMat,
+			&g_LoadEnemy[nType].aModel[0].pMesh);
 		break;
 	case 6:
 		pFile = NULL; //NULLにする
-		g_LoadEnemy[nType].Motion.nNumModel = 1;
-		g_LoadEnemy[nType].Motion.aModel[0].nIdxModelParent = -1;
+		g_LoadEnemy[nType].nNumModel = 1;
+		g_LoadEnemy[nType].aModel[0].nIdxModelParent = -1;
 
 		//Xファイルの読み込み
 		D3DXLoadMeshFromX("data\\MODEL\\enemy700\\subenemy001_escape.x",
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
-			&g_LoadEnemy[nType].EnemyModel[0].pBuffMatEnemy,
+			&g_LoadEnemy[nType].aModel[0].pBuffMat,
 			NULL,
-			&g_LoadEnemy[nType].EnemyModel[0].dwNumMatEnemy,
-			&g_LoadEnemy[nType].EnemyModel[0].pMeshEnemy);
+			&g_LoadEnemy[nType].aModel[0].dwNumMat,
+			&g_LoadEnemy[nType].aModel[0].pMesh);
 		break;
 	default:
 		pFile = NULL; //NULLにする
@@ -945,7 +1024,7 @@ void LoadEnemy(int nType)
 
 						if (strcmp(&aString[0], "=") == 0)
 						{// 値を代入
-							fscanf(pFile, "%d", &g_LoadEnemy[nType].Motion.nNumModel);
+							fscanf(pFile, "%d", &g_LoadEnemy[nType].nNumModel);
 						}
 					}
 
@@ -969,10 +1048,10 @@ void LoadEnemy(int nType)
 								D3DXMESH_SYSTEMMEM,
 								pDevice,
 								NULL,
-								&g_LoadEnemy[nType].EnemyModel[nCnt].pBuffMatEnemy,
+								&g_LoadEnemy[nType].aModel[nCnt].pBuffMat,
 								NULL,
-								&g_LoadEnemy[nType].EnemyModel[nCnt].dwNumMatEnemy,
-								&g_LoadEnemy[nType].EnemyModel[nCnt].pMeshEnemy);
+								&g_LoadEnemy[nType].aModel[nCnt].dwNumMat,
+								&g_LoadEnemy[nType].aModel[nCnt].pMesh);
 
 							nCnt++; // nCntをインクリメント
 						}
@@ -1021,7 +1100,7 @@ void LoadEnemy(int nType)
 										if (strcmp(&aString[0], "=") == 0)
 										{// 代入
 											// ペアネント
-											fscanf(pFile, "%d", &g_LoadEnemy[nType].Motion.aModel[nIdx].nIdxModelParent);
+											fscanf(pFile, "%d", &g_LoadEnemy[nType].aModel[nIdx].nIdxModelParent);
 										}
 									}
 
@@ -1033,9 +1112,9 @@ void LoadEnemy(int nType)
 
 										if (strcmp(&aString[0], "=") == 0)
 										{// 座標を代入
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offpos.x);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offpos.y);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offpos.z);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.x);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.y);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.z);
 										}
 									}
 
@@ -1046,9 +1125,9 @@ void LoadEnemy(int nType)
 
 										if (strcmp(&aString[0], "=") == 0)
 										{// 角度を代入
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offrot.x);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offrot.y);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aModel[nIdx].offrot.z);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.x);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.y);
+											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.z);
 										}
 									}
 
@@ -1083,7 +1162,7 @@ void LoadEnemy(int nType)
 								if (strcmp(&aString[0], "=") == 0)
 								{// = を読み取ったら
 									// 値を代入
-									fscanf(pFile, "%d", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].bLoop);
+									fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].bLoop);
 								}
 							}
 
@@ -1095,10 +1174,10 @@ void LoadEnemy(int nType)
 								if (strcmp(&aString[0], "=") == 0)
 								{// = を読み取ったら
 									// 値を代入
-									fscanf(pFile, "%d", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].nNumkey);
+									fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].nNumkey);
 								}
 
-								while (nCntKey < g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].nNumkey)
+								while (nCntKey < g_LoadEnemy[nType].aMotionInfo[nCntMotion].nNumkey)
 								{
 									// 文字を読み飛ばす
 									fscanf(pFile, "%s", &aString[0]);
@@ -1120,7 +1199,7 @@ void LoadEnemy(int nType)
 
 												if (strcmp(&aString[0], "=") == 0)
 												{// 値を代入
-													fscanf(pFile, "%d", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].nFrame);
+													fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].nFrame);
 													break;
 												}
 											}
@@ -1145,9 +1224,9 @@ void LoadEnemy(int nType)
 
 														if (strcmp(&aString[0], "=") == 0)
 														{// 値を代入
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosX);
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosY);
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosZ);
+															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosX);
+															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosY);
+															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosZ);
 															nCntPosKey++;		// インクリメント
 														}
 													}
@@ -1159,9 +1238,9 @@ void LoadEnemy(int nType)
 
 														if (strcmp(&aString[0], "=") == 0)
 														{// 値を代入
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotX);
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotY);
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].Motion.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotZ);
+															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotX);
+															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotY);
+															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotZ);
 															nCntRotkey++;		// インクリメント
 														}
 													}

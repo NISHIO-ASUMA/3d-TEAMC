@@ -190,6 +190,7 @@ void DrawEffect(void)
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 50);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
+
 	for (int nCnt = 0; nCnt < MAX_EFFECT; nCnt++)
 	{
 		if (g_Effect[nCnt].bUse == true)

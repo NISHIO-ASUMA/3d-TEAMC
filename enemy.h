@@ -61,18 +61,6 @@ typedef enum
 }ENEMYTYPE;
 
 //**************************************************************************************************************
-//敵の種類構造体
-//**************************************************************************************************************
-typedef struct
-{
-	LPD3DXMESH pMeshEnemy;//メッシュ(頂点座標)へのポインタ
-	LPD3DXBUFFER pBuffMatEnemy;//マテリアルへのポインタ
-	DWORD dwNumMatEnemy;//マテリアルの数
-	LPDIRECT3DTEXTURE9 pTextureEnemy[128];
-	D3DCOLORVALUE Diffuse,FirstDiffuse;
-}EnemyModel;
-
-//**************************************************************************************************************
 //敵の構造体
 //**************************************************************************************************************
 typedef struct
@@ -99,7 +87,6 @@ typedef struct
 	int nIdxShadow;
 	int nIdxLifeBar,nIdxLifeFrame;
 	int nIdxUi;
-	EnemyModel EnemyModel[16];
 	bool g_bDamage;
 	float fMove;//ランダム
 	int nCountAction;
@@ -123,4 +110,6 @@ void HitEnemy(int nCnt,int nDamage);//敵のヒット処理
 void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed);//敵の設定処理
 void WaveEnemy(int nSpawner);
 int GetNumEnemy(void);//敵の総数取得処理
+bool CollisionView(D3DXVECTOR3* pPos, D3DXVECTOR3* pRot, float fRange, float viewAngle); // 視界の判定
+float SetAngle(D3DXVECTOR3* pRot, D3DXVECTOR3* pPos);
 #endif
