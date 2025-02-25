@@ -337,7 +337,7 @@ void UpdateEnemy(void)
 		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
 		// ホーミング範囲に入っているかつ視界に入っている
-		if (((sphererange(&pPlayer->pos,&g_Enemy[nCntEnemy].pos,50.0f, 800.0f) && CollisionView(&g_Enemy[nCntEnemy].pos,&g_Enemy[nCntEnemy].rot,200.0f,0.75f) == true) || (sphererange(&pPlayer->pos,&g_Enemy[nCntEnemy].pos,50.0f,200.0f) == true)) &&
+		if (((sphererange(&pPlayer->pos,&g_Enemy[nCntEnemy].pos,50.0f, 1800.0f) && CollisionView(&g_Enemy[nCntEnemy].pos,&g_Enemy[nCntEnemy].rot,200.0f,0.75f) == true) || (sphererange(&pPlayer->pos,&g_Enemy[nCntEnemy].pos,50.0f,500.0f) == true)) &&
 			g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
 		{
 			// ホーミング処理
@@ -533,85 +533,81 @@ void DrawEnemy(void)
 		// ワールドマトリックスの設定
 		pDevice->SetTransform(D3DTS_WORLD, &g_Enemy[nCntEnemy].mtxWorldEnemy);
 
-		// 一定範囲外の敵を描画しない
-		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 50.0f, 700.0f) == true)
+		// 現在のマテリアルを取得
+		pDevice->GetMaterial(&matDef);
+
+		// 全モデルパーツの描画
+		for (int nCntModel = 0; nCntModel < g_Enemy[nCntEnemy].Motion.nNumModel; nCntModel++)
 		{
-			// 現在のマテリアルを取得
-			pDevice->GetMaterial(&matDef);
+			D3DXMATRIX mtxRotModel, mtxTransform; // 計算用
+			D3DXMATRIX mtxParent;				  // 親のマトリックス
 
-			// 全モデルパーツの描画
-			for (int nCntModel = 0; nCntModel < g_Enemy[nCntEnemy].Motion.nNumModel; nCntModel++)
+			// ワールドマトリックスの初期化
+			D3DXMatrixIdentity(&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld);
+
+			// 向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].rot.y, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].rot.x, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].rot.z);
+			D3DXMatrixMultiply(&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld, &g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld, &mtxRotModel);
+
+			// 位置を反映
+			D3DXMatrixTranslation(&mtxTransform, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pos.x, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pos.y, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pos.z);
+			D3DXMatrixMultiply(&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld, &g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld, &mtxTransform);
+
+			// パーツの[親のマトリックス]を設定
+			if (g_Enemy[nCntEnemy].Motion.aModel[nCntModel].nIdxModelParent != -1)
 			{
-				D3DXMATRIX mtxRotModel, mtxTransform; // 計算用
-				D3DXMATRIX mtxParent;				  // 親のマトリックス
-
-				// ワールドマトリックスの初期化
-				D3DXMatrixIdentity(&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld);
-
-				// 向きを反映
-				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].rot.y, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].rot.x, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].rot.z);
-				D3DXMatrixMultiply(&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld, &g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld, &mtxRotModel);
-
-				// 位置を反映
-				D3DXMatrixTranslation(&mtxTransform, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pos.x, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pos.y, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pos.z);
-				D3DXMatrixMultiply(&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld, &g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld, &mtxTransform);
-
-				// パーツの[親のマトリックス]を設定
-				if (g_Enemy[nCntEnemy].Motion.aModel[nCntModel].nIdxModelParent != -1)
-				{
-					// 親モデルがある場合
-					mtxParent = g_Enemy[nCntEnemy].Motion.aModel[g_Enemy[nCntEnemy].Motion.aModel[nCntModel].nIdxModelParent].mtxWorld;
-				}
-				else
-				{// 親モデルがない場合
-					mtxParent = g_Enemy[nCntEnemy].mtxWorldEnemy;
-				}
-
-				// 算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
-				D3DXMatrixMultiply(&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld,
-					&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld,
-					&mtxParent);//自分自分親
-
-				// パーツのワールドマトリックスの設定
-				pDevice->SetTransform(D3DTS_WORLD,
-					&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld);
-
-				// マテリアルのデータへのポインタを取得
-				pMat = (D3DXMATERIAL*)g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
-
-				for (int nCntMat = 0; nCntMat < (int)g_Enemy[nCntEnemy].Motion.aModel[nCntModel].dwNumMat; nCntMat++)
-				{
-					// カラー変更用の変数
-					D3DXMATERIAL color;
-
-					if (g_Enemy[nCntEnemy].state != ENEMYSTATE_DAMAGE)
-					{
-						// マテリアルの設定
-						pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-					}
-					else if (g_Enemy[nCntEnemy].state == ENEMYSTATE_DAMAGE)
-					{
-						// 代入
-						color = pMat[nCntMat];
-
-						// カラーを設定
-						color.MatD3D.Diffuse.r = 1.0f;
-						color.MatD3D.Diffuse.g = 0.0f;
-						color.MatD3D.Diffuse.b = 0.0f;
-						color.MatD3D.Diffuse.a = 1.0f;
-
-						// マテリアルの設定
-						pDevice->SetMaterial(&color.MatD3D);
-					}
-
-					// テクスチャの設定
-					pDevice->SetTexture(0, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pTexture[nCntMat]);
-
-					// ブロック(パーツ)の描画
-					g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
-				}
+				// 親モデルがある場合
+				mtxParent = g_Enemy[nCntEnemy].Motion.aModel[g_Enemy[nCntEnemy].Motion.aModel[nCntModel].nIdxModelParent].mtxWorld;
 			}
-		}
+			else
+			{// 親モデルがない場合
+				mtxParent = g_Enemy[nCntEnemy].mtxWorldEnemy;
+			}
+
+			// 算出した[パーツのワールドマトリックス]と[親のマトリックス]をかけあわせる
+			D3DXMatrixMultiply(&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld,
+				&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld,
+				&mtxParent);//自分自分親
+
+			// パーツのワールドマトリックスの設定
+			pDevice->SetTransform(D3DTS_WORLD,
+				&g_Enemy[nCntEnemy].Motion.aModel[nCntModel].mtxWorld);
+
+			// マテリアルのデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pBuffMat->GetBufferPointer();
+
+			for (int nCntMat = 0; nCntMat < (int)g_Enemy[nCntEnemy].Motion.aModel[nCntModel].dwNumMat; nCntMat++)
+			{
+				// カラー変更用の変数
+				D3DXMATERIAL color;
+
+				if (g_Enemy[nCntEnemy].state != ENEMYSTATE_DAMAGE)
+				{
+					// マテリアルの設定
+					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+				}
+				else if (g_Enemy[nCntEnemy].state == ENEMYSTATE_DAMAGE)
+				{
+					// 代入
+					color = pMat[nCntMat];
+
+					// カラーを設定
+					color.MatD3D.Diffuse.r = 1.0f;
+					color.MatD3D.Diffuse.g = 0.0f;
+					color.MatD3D.Diffuse.b = 0.0f;
+					color.MatD3D.Diffuse.a = 1.0f;
+
+					// マテリアルの設定
+					pDevice->SetMaterial(&color.MatD3D);
+				}
+
+				// テクスチャの設定
+				pDevice->SetTexture(0, g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pTexture[nCntMat]);
+
+				// ブロック(パーツ)の描画
+				g_Enemy[nCntEnemy].Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
+			}
+		}	
 	}
 }
 //=========================================================================================================
@@ -832,17 +828,26 @@ void WaveEnemy(int nSpawner)
 		// スポナー0
 		if (nSpawner == 0)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(329.0f, 0.0f,1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(1065.0f, 0.0f, 188.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー1
 		else if (nSpawner == 1)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 20 -530.0f), 0.0f, (float)(rand() % 20 -780.0f)), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(1065.0f, 0.0f,188.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー2
 		else if (nSpawner == 2)
 		{
-			SetEnemy(D3DXVECTOR3((float)(rand() % 450 + 400), 0.0f, (float)(rand() % -400 - 680)), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(-592.0f, 0.0f,-747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(-196.0f, 0.0f, 130.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+		}
+		else if (nSpawner == 3)
+		{
+			SetEnemy(D3DXVECTOR3(-196.0f, 0.0f, 130.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(-592.0f, 0.0f, -747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 	}
 }
@@ -1359,13 +1364,13 @@ void CollisionToEnemy(int nCntEnemy)
 //===============================================================================================================
 // 線と球の当たり判定
 //===============================================================================================================
-bool CollisionLine(D3DXVECTOR3* pFirstPos, D3DXVECTOR3* pEndPos)
+bool CollisionLine(D3DXVECTOR3* pFirstPos, D3DXVECTOR3* pEndPos,float fRadius)
 {
 	BLOCK* pBlock = GetBlock();
 	Camera* pCamera = GetCamera();
 
 	// 球の半径
-	float radius = 10.0f;
+	float radius = fRadius;
 
 	// 球の半径を求める
 	float Radius = radius * radius;

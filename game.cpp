@@ -166,8 +166,8 @@ void InitGame(void)
 	//’e‚Ì‰Šú‰»ˆ—
 	InitBullet();
 
-	WaveEnemy(0); // “G‚ğo‚·ˆ—
-	WaveEnemy(1); // “G‚ğo‚·ˆ—
+	WaveEnemy(2); // “G‚ğo‚·ˆ—
+	WaveEnemy(3); // “G‚ğo‚·ˆ—
 
 	// UI‚ğƒZƒbƒg
 	SetGameUI(D3DXVECTOR3(80.0f,550.0f,0.0f),UITYPE_ICONFRAME,80.0f,80.0f,0);
@@ -363,7 +363,7 @@ void UpdateGame(void)
 	// “G‚ªo‚Ä‚­‚é‚Ü‚Å‚ÌŠÔ
 	if ((g_EnemyWaveTime >= 900 || nNumEnemy <= 0) && nNumEnemy < MAX_ENEMY * 0.5f)
 	{// ƒJƒEƒ“ƒg‚ª900 or ê‚Éo‚Ä‚¢‚é“G‚ª0‘ÌˆÈ‰º‚Ì
-		int nSpawner = rand() % 2;
+		int nSpawner = rand() % 4;
 
 		// “G‚ğo‚·ˆ—
 		WaveEnemy(nSpawner);

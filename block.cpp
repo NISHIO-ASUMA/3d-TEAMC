@@ -24,6 +24,7 @@
 #define MAX_WORD (256)	  // 最大の文字数
 #define HALF_VALUE (0.6f) // 割る数
 #define PLAYERJUMPHEIGHT (50.0f) // プレイヤーのジャンプ量
+#define RADIUS (15.0f)
 
 //**************************************************************************************************************
 // プロトタイプ宣言
@@ -835,7 +836,7 @@ void CreateObb(int nCnt)
 {
 	int nType = g_Block[nCnt].nType; // 種類を代入
 
-	D3DXMATRIX mtxRot; // 計算用マトリックス
+	D3DXMATRIX mtxRot, mtxScal; // 計算用マトリックス
 
 	// 位置を代入
 	D3DXVECTOR3 pos(g_Block[nCnt].Obb.ObbMtx._41, g_Block[nCnt].Obb.ObbMtx._42, g_Block[nCnt].Obb.ObbMtx._43);
@@ -854,13 +855,13 @@ void CreateObb(int nCnt)
 	float Length[3] = {};
 
 	// 長さ取得
-	Length[0] = fabsf(g_Block[nCnt].Size.x * g_Block[nCnt].Scal.x); // 長さX
-	Length[1] = fabsf(g_Block[nCnt].Size.y * g_Block[nCnt].Scal.y); // 長さY
-	Length[2] = fabsf(g_Block[nCnt].Size.z * g_Block[nCnt].Scal.z); // 長さZ
+	Length[0] = fabsf(g_Block[nCnt].Size.x *g_Block[nCnt].Scal.x); // 長さX
+	Length[1] = fabsf(g_Block[nCnt].Size.y *g_Block[nCnt].Scal.y); // 長さY
+	Length[2] = fabsf(g_Block[nCnt].Size.z *g_Block[nCnt].Scal.z); // 長さZ
 
 	g_Block[nCnt].Obb.Length[0] = fabsf(Length[0]) * 0.6f; // 長さX
-	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.6f; // 長さY
-	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.6f; // 長さZ
+	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.60f; // 長さY
+	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.65f; // 長さZ
 
 }
 //=======================
@@ -883,16 +884,13 @@ bool collisionObb(int nCnt)
 	D3DXVECTOR3 Nbe2(0.0f,0.0f,0.0f);
 	D3DXVECTOR3 Nbe3(0.0f,0.0f,0.0f);
 
-	D3DXVECTOR3 Max(pPlayer->Motion.aModel[14].vtxMax.x, pPlayer->Motion.aModel[14].vtxMax.y, pPlayer->Motion.aModel[14].vtxMax.z);
-	D3DXVECTOR3 Min(pPlayer->Motion.aModel[14].vtxMin.x, pPlayer->Motion.aModel[14].vtxMin.y, pPlayer->Motion.aModel[14].vtxMin.z);
-
 	//D3DXVECTOR3 Max(1000.0f,1000.0f,1000.0f);
 	//D3DXVECTOR3 Min(10.0f,0.0f,10.0f);
 
 	// Player
-	PlayerLength[0] = fabsf(Max.x - Min.x);
-	PlayerLength[1] = fabsf(Max.y - Min.y);
-	PlayerLength[2] = fabsf(Max.z - Min.z);
+	PlayerLength[0] = fabsf(pPlayer->Size.x);
+	PlayerLength[1] = fabsf(pPlayer->Size.y);
+	PlayerLength[2] = fabsf(pPlayer->Size.z);
 
 	// Player
 	D3DXVECTOR3 NBe1 = Nbe1 * PlayerLength[0];
@@ -1085,16 +1083,14 @@ bool collisionObbBoss(int nCntBlock)
 		D3DXVECTOR3 Nbe2(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 Nbe3(0.0f, 0.0f, 0.0f);
 
-		D3DXVECTOR3 Max(pBoss[nCnt].Motion.aModel[0].vtxMax.x, pBoss[nCnt].Motion.aModel[0].vtxMax.y, pBoss[nCnt].Motion.aModel[0].vtxMax.z);
-		D3DXVECTOR3 Min(pBoss[nCnt].Motion.aModel[0].vtxMin.x, pBoss[nCnt].Motion.aModel[0].vtxMin.y, pBoss[nCnt].Motion.aModel[0].vtxMin.z);
 
 		//D3DXVECTOR3 Max(1000.0f,1000.0f,1000.0f);
 		//D3DXVECTOR3 Min(10.0f,0.0f,10.0f);
 
 		// Player
-		BossLength[0] = fabsf(Max.x - Min.x);
-		BossLength[1] = fabsf(Max.y - Min.y);
-		BossLength[2] = fabsf(Max.z - Min.z);
+		BossLength[0] = fabsf(pBoss[nCnt].Size.x) * 0.5f;
+		BossLength[1] = fabsf(pBoss[nCnt].Size.y) * 0.5f;
+		BossLength[2] = fabsf(pBoss[nCnt].Size.z) * 0.5f;
 
 		// Player
 		D3DXVECTOR3 NBe1 = Nbe1 * BossLength[0];
@@ -1578,7 +1574,6 @@ bool PushPlayer(int nCntBlock)
 	float DotYm = fabsf(D3DXVec3Dot(&norYm, &PlayerVecYm));     // 内積Y-を求める
 
 
-
 	// 面の位置Z(法線プラス)
 	D3DXVECTOR3 faceposZp = g_Block[nCntBlock].Obb.CenterPos + (VecRot[2] * g_Block[nCntBlock].Obb.Length[2]);
 
@@ -1647,7 +1642,7 @@ bool PushPlayer(int nCntBlock)
 
 	}
 	// -Xの面から当たった
-	else if (DotXp <= DotXm && DotXp <= DotZp && DotXp <= DotZm)
+	if (DotXp <= DotXm && DotXp <= DotZp && DotXp <= DotZm)
 	{
 		D3DXVECTOR3 Nor = VecRot[0];
 		D3DXVec3Normalize(&Nor, &Nor);
@@ -1745,6 +1740,8 @@ bool PushPlayer(int nCntBlock)
 bool PushEnemy(int nCntBlock,int nIdx)
 {
 	bool bLanding = false;
+	Player* pPlayer = GetPlayer();
+
 	ENEMY* pEnemy = GetEnemy();
 
 	D3DXVECTOR3 VecRot[3] = {}; // 法線格納用変数
@@ -1839,6 +1836,17 @@ bool PushEnemy(int nCntBlock,int nIdx)
 			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + faceEnemyPos * Nor;
 
 			pEnemy[nIdx].pos.y = NewEnemyPos.y; // 位置を面に合わせる
+
+			// プレイヤーと敵の間にブロックが有ったら
+			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
+			{
+				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
+
+				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
+
+				pEnemy[nIdx].move.x += WallMove.x;
+				pEnemy[nIdx].move.z += WallMove.z;
+			}
 		}
 
 		// -Xの面から当たった
@@ -1857,6 +1865,18 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
+
+			// プレイヤーと敵の間にブロックが有ったら
+			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
+			{
+				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
+
+				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
+
+				pEnemy[nIdx].move.x += WallMove.x;
+				pEnemy[nIdx].move.z += WallMove.z;
+			}
+
 		}
 		// +Xの面から当たった
 		else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
@@ -1874,6 +1894,18 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
+
+			// プレイヤーと敵の間にブロックが有ったら
+			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
+			{
+				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
+
+				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
+
+				pEnemy[nIdx].move.x += WallMove.x;
+				pEnemy[nIdx].move.z += WallMove.z;
+			}
+
 		}
 		// -Zの面から当たった
 		else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
@@ -1891,6 +1923,18 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
+
+			// プレイヤーと敵の間にブロックが有ったら
+			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
+			{
+				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
+
+				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
+
+				pEnemy[nIdx].move.x += WallMove.x;
+				pEnemy[nIdx].move.z += WallMove.z;
+			}
+
 		}
 		// +Zの面から当たった
 		else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
@@ -1908,6 +1952,18 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
+
+			// プレイヤーと敵の間にブロックが有ったら
+			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
+			{
+				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
+
+				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
+
+				pEnemy[nIdx].move.x += WallMove.x;
+				pEnemy[nIdx].move.z += WallMove.z;
+			}
+
 		}
 	}
 
@@ -1920,6 +1976,7 @@ bool PushBoss(int nCntBlock, int nIdx)
 {
 	bool bLanding = false;
 	Boss* pBoss = Getboss();
+	Player* pPlayer = GetPlayer();
 
 	D3DXVECTOR3 VecRot[3] = {}; // 法線格納用変数
 
@@ -2016,7 +2073,7 @@ bool PushBoss(int nCntBlock, int nIdx)
 		}
 
 		// -Xの面から当たった
-		if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
+		else if (DotXp < DotXm && DotXp < DotZp && DotXp < DotZm)
 		{
 			D3DXVECTOR3 Nor = VecRot[0];
 			D3DXVec3Normalize(&Nor, &Nor);
@@ -2031,9 +2088,20 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
+
+			// プレイヤーと敵の間にブロックが有ったら
+			//if (CollisionLine(&pPlayer->pos, &pBoss[nIdx].pos, RADIUS) == true)
+			//{
+			//	float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
+
+			//	D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
+
+			//	pBoss[nIdx].move.x = sinf(pBoss->rot.y + D3DX_PI * 0.5f) * WallMove.x * pBoss[nIdx].Speed;
+			//	pBoss[nIdx].move.z = cosf(pBoss->rot.y + D3DX_PI * 0.5f) * WallMove.z * pBoss[nIdx].Speed;
+			//}
 		}
 		// +Xの面から当たった
-		if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
+		else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
 		{
 			D3DXVECTOR3 Nor = -VecRot[0];
 			D3DXVec3Normalize(&Nor, &Nor);
@@ -2048,9 +2116,15 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
+
+			// プレイヤーと敵の間にブロックが有ったら
+			if (CollisionLine(&pPlayer->pos, &pBoss[nIdx].pos, RADIUS) == true)
+			{
+
+			}
 		}
 		// -Zの面から当たった
-		if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
+		else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
 		{
 			D3DXVECTOR3 Nor = -VecRot[2];
 			D3DXVec3Normalize(&Nor, &Nor);
@@ -2065,9 +2139,15 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
+
+			// プレイヤーと敵の間にブロックが有ったら
+			if (CollisionLine(&pPlayer->pos, &pBoss[nIdx].pos, RADIUS) == true)
+			{
+
+			}
 		}
 		// +Zの面から当たった
-		if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
+		else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
 		{
 			D3DXVECTOR3 Nor = VecRot[2];
 			D3DXVec3Normalize(&Nor, &Nor);
@@ -2082,6 +2162,12 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
+
+			// プレイヤーと敵の間にブロックが有ったら
+			if (CollisionLine(&pPlayer->pos, &pBoss[nIdx].pos,RADIUS) == true)
+			{
+
+			}
 		}
 	}
 

@@ -116,6 +116,7 @@ void InitPlayer(void)
 	nCntMotion = 0;
 	nKey = 0;
 	g_player.bCraft = false;
+	g_player.nElement = WEPONELEMENT_STANDARD;
 
 	// TODO : ここの処理考える
 
@@ -1122,7 +1123,6 @@ void HitPlayer(int nDamage)
 			LoadEffect(1, HeadPos);
 
 			// プレイヤーを消す
-			KillShadow(g_player.nIdxShadow); // 影を消す
 			EnableMap(g_player.nIdxMap);    // マップから消す
 		}
 		else
@@ -1805,7 +1805,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	g_player.Motion.motionType = motiontype;  // モーションの種類を変更
 	g_nCounterState = nCounterState;		  // 状態カウンターを設定
 	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
-	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
+	//g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
 	g_player.Combostate = Combstate;		  // コンボの状態を設定
 	SetMotion(&g_player.Motion, motiontype, MOTIONTYPE_NEUTRAL, true, 28);
 

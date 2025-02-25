@@ -90,7 +90,7 @@ void InitItem(void)
 		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);// 拡大率
 		g_TexItem[nCntNum].nLife = 120;							// 体力
 		g_TexItem[nCntNum].state = ITEMSTATE_NORMAL;			// 状態
-		g_TexItem[nCntNum].nType = ITEMTYPE_BAT;			            // 番号
+		g_TexItem[nCntNum].nType = nCntNum;			            // 番号
 		g_TexItem[nCntNum].nElement = ITEMELEMENT_STANDARD;     // 初期化
 		ElementChange(nCntNum);
 		g_TexItem[nCntNum].bMixItem[nCntNum] = false;           // クラフト後のアイテム表示用フラグ
