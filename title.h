@@ -17,8 +17,9 @@
 //**************************************************************************************************************
 typedef enum
 {
-	TITLESELECT_GAME = 0,
-	TITLESELECT_TUTO,
+	TITLESELECT_GAME = 0, // ゲーム
+	TITLESELECT_TUTO, // チュートリアル
+	TITLESELECT_RANKING, // ランキング
 	TITLESELECT_MAX
 }TITLESELECT;
 
@@ -27,8 +28,9 @@ typedef enum
 //**************************************************************************************************************
 typedef enum
 {
-	TITLETYPE_TITLE = 0,
-	TITLETYPE_TUTO,
+	TITLETYPE_TITLE = 0, // タイトル
+	TITLETYPE_TUTO, // チュートリアル
+	TITLETYPE_RANKING, // ランキング
 	TITLETYPE_MAX
 }TITLETYPE;
 
@@ -39,6 +41,7 @@ static const char* TITLE_TYPE[TITLETYPE_MAX] =
 {
 	"data\\TEXTURE\\title002.png",
 	"data\\TEXTURE\\title001.png",
+	"data\\TEXTURE\\title003.png",
 };
 
 //**************************************************************************************************************

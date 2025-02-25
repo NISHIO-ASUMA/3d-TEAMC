@@ -158,7 +158,7 @@ void UpdateGameUI(void)
 		{
 		case UITYPE_TITLE:
 
-			if (g_GameUI[nCnt].pos.y <= 160.0f)
+			if (g_GameUI[nCnt].pos.y <= 140.0f)
 			{
 				g_GameUI[nCnt].pos.y += 5.0f; // ‰º‚ÉˆÚ“®
 			}
@@ -381,11 +381,15 @@ void FlashGameUI(int nSelect)
 		{
 			if (nSelect == TITLESELECT_GAME)
 			{
-				g_GameUI[nCnt].pos.y = 450.0f;
+				g_GameUI[nCnt].pos.y = 350.0f;
 			}
 			else if (nSelect == TITLESELECT_TUTO)
 			{
-				g_GameUI[nCnt].pos.y = 600.0f;
+				g_GameUI[nCnt].pos.y = 500.0f;
+			}
+			else if (nSelect == TITLESELECT_RANKING)
+			{
+				g_GameUI[nCnt].pos.y = 650.0f;
 			}
 		}
 
