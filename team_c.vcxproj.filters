@@ -151,6 +151,9 @@
     <ClCompile Include="particle2.cpp">
       <Filter>ソースファイル\editor</Filter>
     </ClCompile>
+    <ClCompile Include="easing.cpp">
+      <Filter>ソースファイル\efffect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -302,6 +305,9 @@
     </ClInclude>
     <ClInclude Include="effect2.h">
       <Filter>ヘッダーファイル\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="easing.h">
+      <Filter>ヘッダーファイル\effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

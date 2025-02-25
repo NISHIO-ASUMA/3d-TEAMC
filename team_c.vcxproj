@@ -151,6 +151,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="craftui.cpp" />
     <ClCompile Include="Damegepop.cpp" />
+    <ClCompile Include="easing.cpp" />
     <ClCompile Include="edit.cpp" />
     <ClCompile Include="edit2d.cpp" />
     <ClCompile Include="Effect.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="craftui.h" />
     <ClInclude Include="Damagepop.h" />
+    <ClInclude Include="easing.h" />
     <ClInclude Include="edit.h" />
     <ClInclude Include="edit2d.h" />
     <ClInclude Include="Effect.h" />
