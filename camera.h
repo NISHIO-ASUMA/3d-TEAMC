@@ -104,7 +104,8 @@ typedef struct
 	bool bEditMode;             // カメラの編集モード
 	bool bTracking;             // カメラ追従をするかどうか
 	int CameraState;            // カメラの状態
-
+	bool bViewCrossing;         // モデルと交差したか
+	int nBlockIdx;              // ブロックのインデックス
 }Camera;
 
 //**********************

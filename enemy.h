@@ -112,4 +112,5 @@ void WaveEnemy(int nSpawner);
 int GetNumEnemy(void);//“G‚Ì‘”æ“¾ˆ—
 bool CollisionView(D3DXVECTOR3* pPos, D3DXVECTOR3* pRot, float fRange, float viewAngle); // ‹ŠE‚Ì”»’è
 float SetAngle(D3DXVECTOR3* pRot, D3DXVECTOR3* pPos);
+bool CollisionLine(D3DXVECTOR3* pFirstPos, D3DXVECTOR3* pEndPos); // ü‚Æ‹…‚Ì“–‚½‚è”»’è
 #endif

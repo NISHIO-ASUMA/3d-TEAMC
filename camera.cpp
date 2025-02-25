@@ -68,6 +68,8 @@ void InitCamera(void)
 
 		g_camera[nCnt].fDistance = sqrtf((fRotx * fRotx) + (fRoty * fRoty) + (fRotz * fRotz));	// ‹“_‚©‚ç’‹“_‚Ü‚Å‚Ì‹——£
 		g_camera[nCnt].oldDistance = g_camera[nCnt].fDistance;	// ‹——£‚ğ•Û‘¶‚µ‚Ä‚¨‚­
+
+		g_camera[nCnt].bViewCrossing = false;             // ƒ‚ƒfƒ‹‚ÆŒğ·‚µ‚½‚©
 	}
 
 	nCntKey = 0;

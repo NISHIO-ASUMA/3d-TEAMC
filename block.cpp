@@ -232,6 +232,7 @@ void UpdateBlock(void)
 			continue;
 		}
 
+		// (OBB作成)
 		CreateObb(nCntBlock);
 
 		// OBBの判定(未完成)
@@ -288,6 +289,7 @@ void DrawBlock(void)
 
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
+	Camera* pCamera = GetCamera();
 
 	// 計算用のマトリックスを宣言
 	D3DXMATRIX mtxRot, mtxTrans, mtxScal,mtxParent;
@@ -334,7 +336,7 @@ void DrawBlock(void)
 
 			// マテリアルの設定
 			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-
+			
 			// テクスチャの設定
 			pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureModel[nCntMat]);
 
@@ -343,7 +345,9 @@ void DrawBlock(void)
 		}
 		SetMtx(nCntBlock);
 	}
-	
+	//マテリアルの設定
+	pDevice->SetMaterial(&matDef);
+
 }
 //=======================
 // ブロックの設定処理

@@ -31,6 +31,7 @@
 #include "effect2.h"
 #include "Effect.h"
 #include "wall.h"
+#include "camera.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -50,7 +51,7 @@
 //プロトタイプ宣言
 //**************************************************************************************************************
 void LoadEnemy(int nType);										  // 読み込み処理
-bool AgentRange(float plrange, float playerrange, int nCntEnemy); // ホーミングの範囲にいるかどうか
+//bool AgentRange(float plrange, float playerrange, int nCntEnemy); // ホーミングの範囲にいるかどうか
 void AgentEnemy(int nCntEnemy);									  // 敵のホーミング処理
 void CollisionToEnemy(int nCntEnemy);							  // 敵と敵の当たり判定
 
@@ -259,6 +260,7 @@ void UpdateEnemy(void)
 	g_bSound = false;
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
+	Camera* pCamera = GetCamera();
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
@@ -335,7 +337,7 @@ void UpdateEnemy(void)
 		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
 		// ホーミング範囲に入っているかつ視界に入っている
-		if (AgentRange(50.0f, 800.0f, nCntEnemy) && CollisionView(&g_Enemy[nCntEnemy].pos,&g_Enemy[nCntEnemy].rot,200.0f,0.75f) == true &&
+		if (((sphererange(&pPlayer->pos,&g_Enemy[nCntEnemy].pos,50.0f, 800.0f) && CollisionView(&g_Enemy[nCntEnemy].pos,&g_Enemy[nCntEnemy].rot,200.0f,0.75f) == true) || (sphererange(&pPlayer->pos,&g_Enemy[nCntEnemy].pos,50.0f,200.0f) == true)) &&
 			g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
 		{
 			// ホーミング処理
@@ -344,18 +346,6 @@ void UpdateEnemy(void)
 			// モーションを歩きモーションにする
 			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
 			
-			// 敵の角度を設定
-			g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos) + D3DX_PI;
-		}
-		// 絶対に気づく範囲に入った
-		else if (AgentRange(50.0f, 200.0f, nCntEnemy) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
-		{
-			// ホーミング処理
-			AgentEnemy(nCntEnemy);
-
-			// 歩きモーションにする
-			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
-
 			// 敵の角度を設定
 			g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos) + D3DX_PI;
 		}
@@ -405,7 +395,8 @@ void UpdateEnemy(void)
 			}
 		}
 
-		CollisionToEnemy(nCntEnemy); // 敵と敵の当たり判定
+		// 敵と敵の当たり判定
+		CollisionToEnemy(nCntEnemy);
 
 		// 攻撃範囲に入った
 		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 20.0f) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
@@ -420,6 +411,11 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		}
 
+		//// 線分と球の当たり判定
+		//if (CollisionLine(&pPlayer->pos, &g_Enemy[nCntEnemy].pos) == true)
+		//{
+		//	g_Enemy[nCntEnemy].state = ENEMYSTATE_DAMAGE;
+		//}
 
 		// プレイヤーのモデルの情報を代入
 		D3DXVECTOR3 PlayerModel(pPlayer->Motion.aModel[0].mtxWorld._41,
@@ -1303,36 +1299,7 @@ void LoadEnemy(int nType)
 	fclose(pFile);
 
 }
-//==================================================================================================================
-// ホーミングの範囲にいるかどうか
-//==================================================================================================================
-bool AgentRange(float playerrange,float Agentrange,int nCntEnemy)
-{
-	Player* pPlayer = GetPlayer();
 
-	bool bHorming = false; // ホーミングしてくるかしないか
-
-	float fDistanceX = g_Enemy[nCntEnemy].pos.x - pPlayer->pos.x; // 距離Xを求める
-	float fDistanceY = g_Enemy[nCntEnemy].pos.y - pPlayer->pos.y; // 距離Yを求める
-	float fDistanceZ = g_Enemy[nCntEnemy].pos.z - pPlayer->pos.z; // 距離Zを求める
-
-	// 距離を求める
-	float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
-
-	// ホーミングしてくる半径
-	float Radius = Agentrange + playerrange;
-
-	// 半径を算出
-	Radius = Radius * Radius;
-
-	//範囲内に入った
-	if (fDistance <= Radius)
-	{
-		bHorming = true; // ホーミングしている
-	}
-
-	return bHorming;
-}
 //===============================================================================================================
 // 敵のホーミング処理
 //===============================================================================================================
@@ -1388,4 +1355,104 @@ void CollisionToEnemy(int nCntEnemy)
 			}
 		}
 	}
+}
+//===============================================================================================================
+// 線と球の当たり判定
+//===============================================================================================================
+bool CollisionLine(D3DXVECTOR3* pFirstPos, D3DXVECTOR3* pEndPos)
+{
+	BLOCK* pBlock = GetBlock();
+	Camera* pCamera = GetCamera();
+
+	// 球の半径
+	float radius = 10.0f;
+
+	// 球の半径を求める
+	float Radius = radius * radius;
+
+	// ブロックの最大数分回す
+	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++, pBlock++)
+	{
+		// ブロックが使われていなければ
+		if (pBlock->bUse == false)
+		{
+			// 処理を読み飛ばす
+			continue;
+		}
+
+		// 線分の終点から球体の中心点までのベクトル
+		D3DXVECTOR3 pvEnd = *pFirstPos - pBlock->Obb.CenterPos;
+
+		// 線分の終点から球体の中心点までのベクトル
+		D3DXVECTOR3 pvFirst = *pEndPos - pBlock->Obb.CenterPos;
+
+		// 始点～終点までのベクトル
+		D3DXVECTOR3 sv = *pFirstPos - *pEndPos;
+
+		// 長さX
+		float LengthX = pFirstPos->x - pEndPos->x;
+		// 長さY
+		float LengthY = pFirstPos->y - pEndPos->y;
+		// 長さZ
+		float LengthZ = pFirstPos->z - pEndPos->z;
+
+		// 線分の長さを求める
+		float Length = sqrtf((LengthX * LengthX) + (LengthY * LengthY) + (LengthZ * LengthZ));
+
+		// 正規化する
+		D3DXVec3Normalize(&sv, &sv);
+
+		// ベクトルの終点と円の中心との内積
+		float DotEnd = D3DXVec3Dot(&sv, &pvEnd);
+
+		// ベクトルの始点と円の中心との内積
+		float DotFirst = D3DXVec3Dot(&sv, &pvFirst);
+
+		// 交差した
+		if (D3DXVec3Length(&pvEnd) < Radius)
+		{
+			pCamera->nBlockIdx = nCntBlock;
+			return true;
+		}
+		// 交差した
+		else if (D3DXVec3Length(&pvFirst) < Radius)
+		{
+			pCamera->nBlockIdx = nCntBlock;
+			return true;
+		}
+
+		// 内積の値が0より大きく線分のベクトルの大きさより小さいなら
+		if (0 < DotEnd && DotEnd < Length)
+		{
+			// svを長さDotのベクトルにする
+			sv *= DotEnd;
+
+			// ベクトルの引き算でpvを[線分から球体の中心点までの最短ベクトルにする]
+			pvEnd -= sv;
+
+			// 交差した
+			if (D3DXVec3Length(&pvEnd) < Radius)
+			{
+				pCamera->nBlockIdx = nCntBlock;
+				return true;
+			}
+		}
+		// 内積の値が0より大きく線分のベクトルの大きさより小さいなら
+		else if (0 < DotFirst && DotFirst < Length)
+		{
+			// svを長さDotのベクトルにする
+			sv *= DotFirst;
+
+			// ベクトルの引き算でpvを[線分から球体の中心点までの最短ベクトルにする]
+			pvFirst -= sv;
+
+			// 交差した
+			if (D3DXVec3Length(&pvEnd) < Radius)
+			{
+				pCamera->nBlockIdx = nCntBlock;
+				return true;
+			}
+		}
+	}
+	return false;
 }
