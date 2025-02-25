@@ -502,7 +502,7 @@ END_ITEMSET
 BLOCKSET
 EDITCATEGORY = 0			# [ カテゴリー0 ] 
    BLOCKTYPE = 39			# [ ブロックの種類 ]
-   POS = 856.5 0.0 523.6			# [ 位置 ]
+   POS = 856.5 0.0 623.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
    SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET

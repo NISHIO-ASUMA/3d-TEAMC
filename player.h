@@ -219,4 +219,5 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 bool sphererange(D3DXVECTOR3* pPos1,D3DXVECTOR3 *pPos2, float radius1, float radius2); // 円の当たり判定
 void MotionChange(int itemtype, int LoadPlayer);													 // モーション変更
 void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage);							 // プレイヤーのステータス変更
+bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int startFrame, int EndFrame); // モーションの開始判定処理
 #endif

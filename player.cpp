@@ -636,19 +636,22 @@ void UpdatePlayer(void)
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
 	if (g_player.bDisp && !bNohand && !g_player.AttackSp && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{
-		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && g_AttackState <= 30)
+		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // コンボ1
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK1 && g_AttackState <= 30)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motionType == MOTIONTYPE_ACTION
+			&& CheckMotionBounds(g_player.Motion.nKey,g_player.Motion.nCountMotion,2,5,0,30) ==true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // コンボ2
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK2 && g_AttackState <= 30)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motionType == MOTIONTYPE_ACTION2
+			&& CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 2, 6, 0, 30) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // コンボ3
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_ATTACK3 && g_AttackState <= 30)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motionType == MOTIONTYPE_ACTION3
+			&& CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 3, 8, 0, 30) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 45, 40, COMBO_ATTACK4); // コンボ4
 		}
@@ -664,13 +667,13 @@ void UpdatePlayer(void)
 	if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 	{
 		// キ一1番目かつカウントが5
-		if (g_player.Motion.nKey == 1 && g_player.Motion.nCountMotion == 5)
+		if (CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 1, 1, 5, 5) == true)
 		{
 			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[14].mtxWorld._41, g_player.Motion.aModel[14].mtxWorld._42, g_player.Motion.aModel[14].mtxWorld._43),
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
 		}
 		// キ一3番目かつカウントが5
-		else if (g_player.Motion.nKey == 3 && g_player.Motion.nCountMotion == 5)
+		else if (CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 3, 3, 5, 5) == true)
 		{
 			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[11].mtxWorld._41, g_player.Motion.aModel[11].mtxWorld._42, g_player.Motion.aModel[11].mtxWorld._43),
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
@@ -1920,7 +1923,25 @@ void MotionChange(int itemtype,int LoadPlayer)
 	}
 	
 }
+//===============================================================================================================
+// モーションの判定設定処理
+//===============================================================================================================
+bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int startFrame, int EndFrame)
+{
+	// 判定用変数
+	bool bFlag = false;
 
+
+	if (nKey >= StartKey && nKey <= EndKey &&
+		nCountFrame >= startFrame && nCountFrame <= EndFrame)
+	{
+		// 判定開始
+		bFlag = true;
+	}
+
+	// 判定を返す
+	return bFlag;
+}
 //===============================================================================================================
 // プレイヤーのモーションのロード
 //===============================================================================================================
