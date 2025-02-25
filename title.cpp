@@ -18,7 +18,6 @@
 //**************************************************************************************************************
 //マクロ定義
 //**************************************************************************************************************
-#define NUM_TITLE (2) // タイトルのテクスチャの数
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -32,7 +31,7 @@ void TitleMenuFlash(int nSelect);				   // タイトルメニューの点滅
 //**************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureTitle[TITLETYPE_MAX] = {}; // テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;			// 頂点バッファへのポインタ
-TITLE g_Title[NUM_TITLE];								// 構造体変数
+TITLE g_Title[TITLETYPE_MAX];							// 構造体変数
 int g_nTitleCount;										// 画面遷移カウント
 
 //==============================================================================================================
@@ -55,7 +54,7 @@ void InitTitle(void)
 	}
 
 	// 頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * NUM_TITLE,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * TITLETYPE_MAX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -66,7 +65,7 @@ void InitTitle(void)
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 構造体変数の初期化
-	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
 	{
 		g_Title[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 座標
 		g_Title[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 角度
@@ -110,8 +109,9 @@ void InitTitle(void)
 	g_nTitleCount = 0;
 
 	// タイトルをセット
-	SetTitle(D3DXVECTOR3(640.0f, 450.0f, 0.0f), TITLETYPE_TITLE, 200.0f, 50.0f);
-	SetTitle(D3DXVECTOR3(640.0f, 600.0f, 0.0f), TITLETYPE_TUTO, 200.0f, 50.0f);
+	SetTitle(D3DXVECTOR3(640.0f, 350.0f, 0.0f), TITLETYPE_TITLE, 200.0f, 40.0f);
+	SetTitle(D3DXVECTOR3(640.0f, 500.0f, 0.0f), TITLETYPE_TUTO, 200.0f, 40.0f);
+	SetTitle(D3DXVECTOR3(640.0f, 650.0f, 0.0f), TITLETYPE_RANKING, 200.0f, 40.0f);
 
 	// 頂点バッファをアンロック
 	g_pVtxBuffTitle->Unlock();
@@ -147,7 +147,7 @@ void UninitTitle(void)
 //==============================================================================================================
 void UpdateTitle(void)
 {
-	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
 	{
 		switch (g_Title[nCnt].TitleMenu)
 		{
@@ -161,6 +161,14 @@ void UpdateTitle(void)
 				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO; // メニューチュートリアル
 
 			}
+			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP))
+			{
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SELECT_SE);
+
+				g_Title[nCnt].TitleMenu = TITLESELECT_RANKING; // メニューゲーム
+			}
+
 			if (g_Title[nCnt].state != TITLESTATE_FLASH)
 			{
 				TitleMenuFlash(TITLESELECT_GAME); // チュートリアル点滅
@@ -178,9 +186,17 @@ void UpdateTitle(void)
 			}
 			// 点滅
 			FlashGameUI(TITLESELECT_GAME);
-
 			break;
+
 		case TITLESELECT_TUTO:
+			if (KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN))
+			{
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SELECT_SE);
+
+				g_Title[nCnt].TitleMenu = TITLESELECT_RANKING; // メニューチュートリアル
+			}
+
 			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP))
 			{
 				// 音楽再生
@@ -207,6 +223,44 @@ void UpdateTitle(void)
 			// 点滅
 			FlashGameUI(TITLESELECT_TUTO);
 			break;
+
+		case TITLESELECT_RANKING:
+			if (KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN))
+			{
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SELECT_SE);
+
+				g_Title[nCnt].TitleMenu = TITLESELECT_GAME; // メニューチュートリアル
+
+			}
+
+			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP))
+			{
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SELECT_SE);
+
+				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO; // メニューゲーム
+			}
+
+			if (g_Title[nCnt].state != TITLESTATE_FLASH)
+			{
+				TitleMenuFlash(TITLESELECT_RANKING); // メニューチュートリアル
+			}
+
+			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))
+			{//Enterキーを押したら
+				//ランキング画面へ
+				SetFade(MODE_RANKING);
+
+				// 音楽再生
+				PlaySound(SOUND_LABEL_ENTER_SE);
+
+				g_Title[nCnt].state = TITLESTATE_FLASH; // ゲーム点滅
+			}
+			// 点滅
+			FlashGameUI(TITLESELECT_RANKING);
+			break;
+
 		default:
 			break;
 		}
@@ -238,7 +292,7 @@ void DrawTitle(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
 	{
 		// テクスチャの設定
 		pDevice->SetTexture(0, g_pTextureTitle[g_Title[nCnt].nType]);
@@ -258,7 +312,7 @@ void SetTitle(D3DXVECTOR3 pos, int nType,float fWidth, float fHeight)
 	// 頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
 	{
 		// 未使用だったら
 		if (!g_Title[nCnt].bUse)
@@ -293,7 +347,7 @@ void SelectTitle(int select)
 	// 頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
 	{
 		if (nCnt == select)
 		{
@@ -333,7 +387,7 @@ void TitleFlash(int state,int nSelect,int nIdx)
 	// 頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
 	{
 		if (state != TITLESTATE_FLASH)
 		{
@@ -412,7 +466,7 @@ void TitleMenuFlash(int nSelect)
 	//頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < NUM_TITLE; nCnt++)
+	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
 	{
 		if (nSelect == nCnt)
 		{
