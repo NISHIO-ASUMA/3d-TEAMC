@@ -254,6 +254,12 @@ void UpdatePlayer(void)
 		/*StickPad();*/
 	bUsePad = false;
 
+	// 体力の現在値が最大値を超えてたら最大値にする
+	if (g_player.nMaxLife < g_player.nLife)
+	{
+		g_player.nLife = g_player.nMaxLife;
+	}
+
 	// フィーバーモードなら
 	if (g_player.FeverMode)
 	{
@@ -688,6 +694,8 @@ void UpdatePlayer(void)
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
 
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+
 		// 素手の時のモーション情報を代入
 		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
 		{
@@ -716,7 +724,7 @@ void UpdatePlayer(void)
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
 
-		StatusChange(3.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 素手の時のモーション情報を代入
 		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
@@ -827,6 +835,7 @@ void UpdatePlayer(void)
 		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
 		g_player.Motion.nNumModel = 15;		// 武器を消す
 		g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //能力値を戻す
 		g_player.AttackSp = false;
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
 	}
@@ -1084,6 +1093,8 @@ void HitPlayer(int nDamage)
 		// プレイヤーの体力が0になったら
 		if (g_player.nLife <= 0 && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 		{
+			// マイナスでも0にする
+			g_player.nLife = 0;
 			// モーションを上書き
 			g_player.Motion = g_LoadPlayer[0].Motion;
 			g_player.Motion.motionType = MOTIONTYPE_DEATH;

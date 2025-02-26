@@ -60,7 +60,7 @@ void InitMeshSword(void)
 		&g_pTextureMeshSword[4]);
 	// テクスチャの読み込み(水属性)
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\Orbits\\OrbitFreeze.png",
+		"data\\TEXTURE\\Orbits\\OrbitAqua.png",
 		&g_pTextureMeshSword[5]);
 	// テクスチャの読み込み(闇属性)
 	D3DXCreateTextureFromFile(pDevice,
