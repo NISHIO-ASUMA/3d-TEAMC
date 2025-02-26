@@ -473,6 +473,16 @@ void UpdateEnemy(void)
 			{
 				// 左から場所、ベクトル、方向、寿命、威力、大きさ、速度
 				SetBullet(g_Enemy[nCntEnemy].pos, dest, D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
+
+				// こっちはショットガン化する為の処理
+				/*float fRand[3];
+				for (int nCount = 0; nCount < 10; nCount++)
+				{
+					fRand[0] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+					fRand[1] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+					fRand[2] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+					SetBullet(g_Enemy[nCntEnemy].pos, D3DXVECTOR3(dest.x + fRand[0], dest.y + fRand[1], dest.z + fRand[2]), D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
+				}*/
 				g_Enemy[nCntEnemy].nCountAction = 0;
 			}
 		}
