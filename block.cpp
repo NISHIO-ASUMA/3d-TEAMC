@@ -253,6 +253,7 @@ void UpdateBlock(void)
 				//pPlayer->bLandingOBB = false;
 			}
 		}
+		collisionObbEnemy(nCntBlock); // “G—p‚Ì”»’è(•ª‚¯‚È‚¢‚Æ‚¤‚Ü‚­‚¢‚©‚È‚©‚Á‚½)
 
 		collisionObbBoss(nCntBlock); // ƒ{ƒX—p‚Ì”»’è(•ª‚¯‚È‚¢‚Æ‚¤‚Ü‚­‚¢‚©‚È‚©‚Á‚½)
 
@@ -1259,7 +1260,7 @@ bool collisionObbBoss(int nCntBlock)
 //===========================================================================
 // OBB‚Ì”»’è“G
 //===========================================================================
-bool collisionObbEnemy(int nCntEnemy)
+bool collisionObbEnemy(int nCntBlock)
 {
 	bool bHit = false;
 
@@ -1268,9 +1269,9 @@ bool collisionObbEnemy(int nCntEnemy)
 	
 	float EnemyLength[3];
 
-	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
+	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		if (g_Block[nCntBlock].bUse == false)
+		if (pEnemy[nCntEnemy].bUse == false)
 		{
 			continue;
 		}

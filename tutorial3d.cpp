@@ -106,7 +106,7 @@ void InitTutorial3d(void)
 	SetBlock(D3DXVECTOR3(140.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 47);
 
 	// アイテムをセット
-	SetItem(D3DXVECTOR3(40.0f, 0.0f, -90.0f), 29, D3DXVECTOR3(1.5f, 1.5f, 1.5f));
+	SetItem(D3DXVECTOR3(40.0f, 0.0f, -90.0f), 29);
 	//-------------------------------------------------
 	
 	// UIをセット

@@ -136,7 +136,7 @@ void InitItem(void);
 void UninitItem(void);
 void UpdateItem(void);
 void DrawItem(void);
-void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal);
+void SetItem(D3DXVECTOR3 pos, int nType);
 bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius);
 void Itemchange(int nType);
 Item* GetItem(void);

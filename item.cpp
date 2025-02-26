@@ -406,6 +406,10 @@ void UpdateItem(void)
 
 		if (g_Item[nCntItem].durability <= 0)
 		{
+			int nType = g_Item[nCntItem].nType;
+
+			pPlayer->Itembreak[pPlayer->ItemIdx] = true;
+			g_Item[nCntItem].durability = g_TexItem[nType].durability;
 			g_Item[nCntItem].bUse = false; // 消す
 		}
 	}
@@ -445,10 +449,6 @@ void DrawItem(void)
 			// ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&g_Item[nCntItem].mtxWorldItem);
 
-			// 大きさを反映
-			D3DXMatrixScaling(&mtxScal, g_Item[nCntItem].Scal.y, g_Item[nCntItem].Scal.x, g_Item[nCntItem].Scal.z);
-			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxScal);
-
 			// 向きを反映
 			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
 			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxRot);
@@ -483,7 +483,7 @@ void DrawItem(void)
 //=========================================================================================================
 //ブロックの設定処理
 //=========================================================================================================
-void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal)
+void SetItem(D3DXVECTOR3 pos, int nType)
 {
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
@@ -494,7 +494,6 @@ void SetItem(D3DXVECTOR3 pos, int nType,D3DXVECTOR3 Scal)
 
 			g_Item[nCntItem].pos = pos;			 // 座標
 			g_Item[nCntItem].nType = nType;		 // 種類
-			g_Item[nCntItem].Scal = Scal;		 // 拡大率
 			g_Item[nCntItem].bUse = true;		 // 使用判定
 
 			break;
@@ -559,7 +558,7 @@ void Itemchange(int nType)
 	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].ItemTex[nType].g_pBuffMatModel; // アイテムのバッファの情報を代入
 	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].ItemTex[nType].g_pMeshModel;       // アイテムのメッシュの情報を代入
 	pPlayer->nElement = g_TexItem[nType].nElement; // アイテムの属性情報を代入
-
+	
 	//if (g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
 	//{
 	//	g_Item[pPlayer->ItemIdx].nType = nType;
@@ -831,12 +830,23 @@ void CraftItem(void)
 
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
+			if (g_Item[nCnt].nType == WEPONTYPE_WOOD && g_Item[pPlayer->ItemIdx].nType == WEPONTYPE_LIGHT &&
+				g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+			{
+				CraftMixItem(nCnt, ITEMTYPE_LIGHTWOOD, MOTION_KATANA);
+
+				// ステータスの変更
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
+
+				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
+			}
 		}
 
 		// クラフトアイコンを表示するかしないか
 		EnableCraftIcon(nCnt, WEPONTYPE_STONE, WEPONTYPE_BAT, WEPONTYPE_STONEBAT);
 		EnableCraftIcon(nCnt, ITEMTYPE_ICEBLOCK, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCKSOWRD);
 		EnableCraftIcon(nCnt, ITEMTYPE_TORCH, ITEMTYPE_KATANA, ITEMTYPE_TORCHSWORD);
+		EnableCraftIcon(nCnt, ITEMTYPE_WOOD, ITEMTYPE_LIGHT, ITEMTYPE_LIGHTWOOD);
 	}
 }
 //==============================================================================================================
@@ -881,6 +891,7 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 
 	// アイテムの見た目を変える
 	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem].ItemTex[MixItem];
+	g_Item[pPlayer->ItemIdx].durability = g_TexItem[MixItem].durability;
 
 	// 手に持ってるアイテムの種類を石バットにする
 	g_Item[pPlayer->ItemIdx].nType = MixItem;
