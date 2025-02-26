@@ -723,6 +723,8 @@ void UpdatePlayer(void)
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
 
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+
 		// 素手の時のモーション情報を代入
 		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
 		{
@@ -751,7 +753,7 @@ void UpdatePlayer(void)
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
 
-		StatusChange(3.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 素手の時のモーション情報を代入
 		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
@@ -862,6 +864,7 @@ void UpdatePlayer(void)
 		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
 		g_player.Motion.nNumModel = 15;		// 武器を消す
 		g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //能力値を戻す
 		g_player.AttackSp = false;
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
 	}
