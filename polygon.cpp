@@ -304,5 +304,13 @@ void SetMtxPolygon(int nCntPolygon)
 			//ƒ|ƒŠƒSƒ“‚Ì•`‰æ
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPolygon * 4, 2);
 		}
+		else if (pBoss->Motion.motionType == MOTIONTYPE_ACTION2)
+		{
+			//ƒeƒNƒXƒ`ƒƒ‚ÌÝ’è
+			pDevice->SetTexture(0, g_pTexturePolygon[nType]);
+
+			//ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPolygon * 4, 2);
+		}
 	}
 }
