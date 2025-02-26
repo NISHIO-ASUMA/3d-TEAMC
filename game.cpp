@@ -408,19 +408,6 @@ void UpdateGame(void)
 		break;
 	}
 
-	if ((KeyboardTrigger(DIK_P) == true || JoypadTrigger(JOYKEY_START) == true) && g_bCraft == false)
-	{//ポーズキー(Pキー)が押された
-		g_bPause = g_bPause ? false : true;
-	}
-	if (g_bPause == true)
-	{//ポーズ中
-		//ポーズ中の更新処理
-		UpdatePause();
-
-		// カーソルを出現
-		SetCursorVisibility(true);
-	}
-
 	int nNumObj = GetNumobj(); // オブジェクトの数を取得
 
 	// エディットモードだったら
@@ -557,6 +544,18 @@ void UpdateGame(void)
 
 #endif // _DEBUG
 
+	if ((KeyboardTrigger(DIK_P) == true || JoypadTrigger(JOYKEY_START) == true) && g_bCraft == false)
+	{//ポーズキー(Pキー)が押された
+		g_bPause = g_bPause ? false : true;
+	}
+	if (g_bPause == true)
+	{//ポーズ中
+		//ポーズ中の更新処理
+		UpdatePause();
+
+		// カーソルを出現
+		SetCursorVisibility(true);
+	}
 }
 //=========================================================================================================
 //ゲーム画面の描画処理

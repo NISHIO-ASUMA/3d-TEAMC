@@ -506,7 +506,7 @@ void MouseView(void)
 		float X = (float)cursorPos.x - prevCursorPos.x;
 		float Y = (float)cursorPos.y - prevCursorPos.y;
 
-		const float mouseSensitivity = 0.00025f;
+		const float mouseSensitivity = 0.00045f;
 
 		X *= mouseSensitivity;
 		Y *= mouseSensitivity;

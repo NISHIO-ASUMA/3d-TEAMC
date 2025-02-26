@@ -12,6 +12,7 @@
 #include"input.h"
 #include"game.h"
 #include"fade.h"
+#include "mouse.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -156,8 +157,8 @@ void UpdatePause(void)
 		break;
 	}
 
-	if (KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true)
-	{// Enterキー or Aボタン
+	if (KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true || OnMouseTriggerDown(LEFT_MOUSE) == true)
+	{// Enterキー or Aボタン or 左クリック
 		switch (g_PauseMenu)
 		{
 		case PAUSE_MENU_CONTINUE:
@@ -202,7 +203,6 @@ void SelectPause(int nNumSelect)
 {
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
-
 
 	// 頂点バッファのロック
 	g_pVtxBuffPause->Lock(0, 0, (void**)&pVtx, 0);
