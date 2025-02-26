@@ -452,10 +452,6 @@ void DrawEdit(void)
 		D3DXMatrixIdentity(&g_Edit[nCntBlock].mtxWorld);
 
 		//Œü‚«‚ð”½‰f
-		D3DXMatrixScaling(&mtxScal, g_Edit[nCntBlock].Scal.x, g_Edit[nCntBlock].Scal.y, g_Edit[nCntBlock].Scal.z);
-		D3DXMatrixMultiply(&g_Edit[nCntBlock].mtxWorld, &g_Edit[nCntBlock].mtxWorld, &mtxScal);
-
-		//Œü‚«‚ð”½‰f
 		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Edit[nCntBlock].rot.y, g_Edit[nCntBlock].rot.x, g_Edit[nCntBlock].rot.z);
 		D3DXMatrixMultiply(&g_Edit[nCntBlock].mtxWorld, &g_Edit[nCntBlock].mtxWorld, &mtxRot);
 
@@ -540,8 +536,6 @@ void SaveEdit(void)
 
 				fprintf(pFile, "   ROT = %.3f %.3f %.3f			# [ Œü‚« ]\n", g_Edit[nCnt].rot.x, g_Edit[nCnt].rot.y, g_Edit[nCnt].rot.z);
 
-				fprintf(pFile, "   SIZE = %.1f %.1f %.1f		# [ ‘å‚«‚³ ]\n", g_Edit[nCnt].Scal.x, g_Edit[nCnt].Scal.y, g_Edit[nCnt].Scal.z);
-
 				fprintf(pFile, "END_BLOCKSET\n\n");
 			}
 			else if (g_Edit[nCnt].bUse && g_Edit[nCnt].EditCategory == EDITMODE_ITEM)
@@ -553,8 +547,6 @@ void SaveEdit(void)
 				fprintf(pFile, "   ITEMTYPE = %d			# [ ƒAƒCƒeƒ€‚ÌŽí—Þ ]\n", g_Edit[nCnt].nType);
 
 				fprintf(pFile, "   POS = %.1f %.1f %.1f			# [ ˆÊ’u ]\n", g_Edit[nCnt].pos.x, g_Edit[nCnt].pos.y, g_Edit[nCnt].pos.z);
-
-				fprintf(pFile, "   SIZE = %.1f %.1f %.1f		# [ ‘å‚«‚³ ]\n", g_Edit[nCnt].Scal.x, g_Edit[nCnt].Scal.y, g_Edit[nCnt].Scal.z);
 
 				fprintf(pFile, "END_ITEMSET\n\n");
 			}
@@ -661,7 +653,7 @@ void LoadEdit(void)
 					}
 					else if (strcmp(aString, "END_ITEMSET") == 0)
 					{
-						SetItem(pos, nType, Scal);
+						SetItem(pos, nType);
 						break;
 					}
 				}

@@ -16,7 +16,7 @@
 // マクロ定義
 //***************************
 #define MAX_TEX (32)
-#define MAX_BLOCK (256)
+#define MAX_BLOCK (356)
 #define INDXPARENT (5)
 
 //***************************
@@ -157,7 +157,7 @@ BLOCK* GetBlock();	// ブロック情報の取得
 void tutoload(void);// チュートリアルでの読み込み処理
 void CreateObb(int nCnt);
 bool collisionObb(int nCnt);
-bool collisionObbEnemy(int nCntEnemy);
+bool collisionObbEnemy(int nCntBlock);
 bool collisionObbBoss(int nCntBlock);
 float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D3DXVECTOR3* e3);
 void CraftRange(BLOCK* pBlock);

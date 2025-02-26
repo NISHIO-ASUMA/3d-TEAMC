@@ -377,9 +377,11 @@ void SetRanking(int nScore)
 
 		g_nRankUpdate = MAX_RANK - 1;
 	}
-
+	
+	// Œ…”•ª‰ñ‚·
 	for (int nCntRank = 0; nCntRank < MAX_DIGIT; nCntRank++)
 	{
+		// ‡ˆÊ•¶
 		for (int nCntScore = nCntRank + 1; nCntScore < MAX_RANK; nCntScore++)
 		{
 			if (g_RankScore[nCntRank].nScore <= g_RankScore[nCntScore].nScore)

@@ -316,8 +316,6 @@ void UpdateEnemy(void)
 		// 位置の更新
 		g_Enemy[nCntEnemy].pos += g_Enemy[nCntEnemy].move;
 
-		collisionObbEnemy(nCntEnemy); // 敵用の判定(分けないとうまくいかなかった)
-
 		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
 		{
 			g_Enemy[nCntEnemy].pos.y = 200.0f;
@@ -667,6 +665,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 		int nSpawner = rand() % 4;
 
+		// 敵をスポーンさせる
 		SpawnEnemy(nSpawner);
 
 		if (pPlayer->nElement == WEPONELEMENT_DARK)

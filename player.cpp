@@ -266,8 +266,6 @@ void UpdatePlayer(void)
 		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	}
 
-	StickPad(); // パッドの移動処理
-
 	// パッドを使っていないかつ攻撃モーションじゃない
 	if (!bUsePad &&
 		g_player.Motion.motionType != MOTIONTYPE_ACTION &&
@@ -398,6 +396,8 @@ void UpdatePlayer(void)
 			}
 		}
 	}
+
+	StickPad(); // パッドの移動処理
 
 	D3DXVECTOR3 SwordPos(
 		g_player.SwordMtx._41, // X方向
@@ -742,7 +742,7 @@ void UpdatePlayer(void)
 		// プレイヤーの状態を何も持っていない状態にする
 		g_player.HandState = PLAYERHOLD_NO;
 
-		SetItem(g_player.pos, pItem[g_player.ItemIdx].nType, D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		SetItem(g_player.pos, pItem[g_player.ItemIdx].nType);
 
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
 	}
@@ -869,7 +869,8 @@ void UpdatePlayer(void)
 	}	//モーションの更新
 
 	// アイテムのストック
-	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)))
+	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) &&
+		g_player.AttackSp == false && g_player.Motion.nNumModel == 16)
 	{// Fキー or RBボタン
 
 		// アイテムの状態をストックにする
@@ -993,7 +994,6 @@ void DrawPlayer(void)
 			pDevice->SetTransform(D3DTS_WORLD,
 				&g_player.Motion.aModel[nCntModel].mtxWorld);
 
-
 			for (int nCntMat = 0; nCntMat < (int)g_player.Motion.aModel[nCntModel].dwNumMat; nCntMat++)
 			{
 				//マテリアルのデータへのポインタを取得
@@ -1027,6 +1027,7 @@ void DrawPlayer(void)
 			}
 
 			nCnt++;
+
 			if (nCnt == 15)
 			{
 				SetMtxPos(); // 剣のワールドマトリックスを設定
@@ -1180,6 +1181,8 @@ void StickPad(void)
 				// プレイヤーのモーションが歩きだったら
 				if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 				{
+					bUsePad = false;
+
 					// モーションをニュートラルに戻す
 					SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40);
 				}
@@ -1252,15 +1255,15 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 				// 敵に当たった
 				HitEnemy(nCntEnemy, (pPlayer->nDamage * 5));
 
-				// 耐久絵欲を減らす
+				//// 耐久絵欲を減らす
 				pItem[g_player.ItemIdx].durability--;
 
-				// アイテムの耐久力が0になったら
-				if (pItem[g_player.ItemIdx].durability <= 0)
-				{
-					// 0になったアイテムを消す
-					g_player.Itembreak[g_player.ItemIdx] = true;
-				}
+				//// アイテムの耐久力が0になったら
+				//if (pItem[g_player.ItemIdx].durability <= 0)
+				//{
+				//	// 0になったアイテムを消す
+				//	g_player.Itembreak[g_player.ItemIdx] = true;
+				//}
 				break;
 			}
 		}
@@ -1594,6 +1597,12 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 			
 			pItem[nIdx].bUse = false;      // 消す
+
+			if (g_player.Itembreak[pItem[nIdx].nType] == true)
+			{
+				// アイテムが壊れた判定をリセット
+				g_player.Itembreak[pItem[nIdx].nType] = false;
+			}
 
 			if (g_player.Motion.nNumModel == 16)
 			{

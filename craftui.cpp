@@ -254,6 +254,9 @@ void UpdateCraftUI(void)
 			case WEPONTYPE_TORCHSWORD:
 				g_MixUI[nCnt].bUse = false;
 				break;
+			case WEPONTYPE_LIGHTWOOD:
+				g_MixUI[nCnt].bUse = false;
+				break;
 			default:
 				break;
 			}
@@ -415,6 +418,11 @@ void SetMixItemUI(int nCnt)
 		{
 			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_TORCHSWORD, 80.0f, 80.0f, 0);
 		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_LIGHTWOOD] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_LIGHTWOOD, 80.0f, 80.0f, 0);
+		}
+
 	}
 }
 //==============================================================================================================
