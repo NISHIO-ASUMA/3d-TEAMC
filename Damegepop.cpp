@@ -108,7 +108,7 @@ void InitDamege(void)
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 		pVtx[3].tex = D3DXVECTOR2(0.1f, 1.0f);*/
 
-		// テクスチャ、今は１１パターンのやつなので１０パターンなら11を10にする事
+		// テクスチャ、今は10パターンのやつなので10にしている
 		pVtx[0].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f + (1.0f / 10.0f), 0.0f);
 		pVtx[2].tex = D3DXVECTOR2(g_aPosTexU[nCnt] / 10.0f, 1.0f);
