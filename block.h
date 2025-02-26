@@ -148,7 +148,7 @@ void InitBlock(void);			// ブロックの初期化処理
 void UninitBlock(void);			// ブロックの終了処理
 void UpdateBlock(void);			// ブロックの更新処理
 void DrawBlock(void);			// ブロックの描画処理
-void SetBlock(D3DXVECTOR3 pos, D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal);	// ブロックの設定処理
+void SetBlock(D3DXVECTOR3 pos, D3DXVECTOR3 rot,int nType);	// ブロックの設定処理
 bool CollisionBlock(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld,D3DXVECTOR3 *pMove,D3DXVECTOR3 *pSize);	// 当たり判定
 bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, D3DXVECTOR3* pSize);// アイテムとの当たり判定
 int NumBlock(void);	// ブロック数の取得
@@ -157,7 +157,7 @@ BLOCK* GetBlock();	// ブロック情報の取得
 void tutoload(void);// チュートリアルでの読み込み処理
 void CreateObb(int nCnt);
 bool collisionObb(int nCnt);
-bool collisionObbEnemy(int nCntBlock);
+bool collisionObbEnemy(int nCntEnemy);
 bool collisionObbBoss(int nCntBlock);
 float LenSegOnSeparateAxis(D3DXVECTOR3* Sep, D3DXVECTOR3* e1, D3DXVECTOR3* e2, D3DXVECTOR3* e3);
 void CraftRange(BLOCK* pBlock);

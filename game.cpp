@@ -51,6 +51,11 @@
 #include "effectEdit.h"
 
 //**************************************************************************************************************
+// マクロ定義
+//**************************************************************************************************************
+#define SPAWN_ENEMY (15) // 敵のスポーン数
+
+//**************************************************************************************************************
 //グローバル変数
 //**************************************************************************************************************
 GAMESTATE g_gameState = GAMESTATE_NONE;//ゲームの状態
@@ -152,6 +157,9 @@ void InitGame(void)
 	// ポリゴンの初期化処理
 	InitPolygon();
 
+	//弾の初期化処理
+	InitBullet();
+
 #ifdef _DEBUG
 
 	//エディットの初期化処理
@@ -163,11 +171,12 @@ void InitGame(void)
 	LoadEdit();
 	LoadEdit2d();
 
-	//弾の初期化処理
-	InitBullet();
 
-	WaveEnemy(2); // 敵を出す処理
-	WaveEnemy(3); // 敵を出す処理
+	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
+	{
+		SpawnEnemy(2); // 敵を出す処理
+		SpawnEnemy(3); // 敵を出す処理
+	}
 
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(80.0f,550.0f,0.0f),UITYPE_ICONFRAME,80.0f,80.0f,0);
@@ -342,7 +351,7 @@ void UpdateGame(void)
 
 		if (Spawn_randvalue <= 10)
 		{
-			int nSpawner = rand() % 2; // どこから出すか
+			int nSpawner = rand() % 3; // どこから出すか
 
 			switch (nSpawner)
 			{
@@ -359,18 +368,22 @@ void UpdateGame(void)
 				break;
 			}
 		}
-	}
-	// 敵が出てくるまでの時間
-	if ((g_EnemyWaveTime >= 900 || nNumEnemy <= 0) && nNumEnemy < MAX_ENEMY * 0.5f)
-	{// カウントが900 or 場に出ている敵が0体以下の時
-		int nSpawner = rand() % 4;
-
-		// 敵を出す処理
-		WaveEnemy(nSpawner);
-
-		// タイムを初期化する
 		g_EnemyWaveTime = 0;
 	}
+	// 敵が出てくるまでの時間
+	//if ((g_EnemyWaveTime >= 900 || nNumEnemy <= 0))
+	//{// カウントが900 or 場に出ている敵が0体以下の時
+
+	//	int nSpawner = rand() % 4;
+
+	//	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
+	//	{
+	//		// 敵を出す処理
+	//		WaveEnemy(nSpawner);
+	//	}
+
+	//	// タイムを初期化する
+	//}
 
 	if (TimeMinute <= 0 && TimeSecond <= 0)
 	{// 敵が全滅 or タイマーが0秒以下

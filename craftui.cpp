@@ -240,6 +240,7 @@ void UpdateCraftUI(void)
 			continue;
 		}
 
+		// アイコンの非表示
 		if (pPlayer->HandState != PLAYERHOLD_HOLD)
 		{
 			switch (g_MixUI[nCnt].nIconType)
@@ -248,6 +249,9 @@ void UpdateCraftUI(void)
 				g_MixUI[nCnt].bUse = false;
 				break;
 			case WEPONTYPE_ICEBLOCKSOWRD:
+				g_MixUI[nCnt].bUse = false;
+				break;
+			case WEPONTYPE_TORCHSWORD:
 				g_MixUI[nCnt].bUse = false;
 				break;
 			default:

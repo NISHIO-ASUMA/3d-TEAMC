@@ -183,12 +183,14 @@ void UpdateSPgauge(void)
 		else
 		{
 			// フレームの溜まったゲージの数値を決定
-			g_SPgauge[nCnt].nType = g_SPgauge[1].SpGauge / 100;
+			g_SPgauge[nCnt].nType = g_SPgauge[1].SpGauge / 100.0f;
+
 			// 頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(900.0f, 40.0f, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
 			pVtx[3].pos = D3DXVECTOR3(900.0f, 70.0f, 0.0f);
+
 			if (g_SPgauge[1].SpGauge >= 100)
 			{
 				// フレーム用変数

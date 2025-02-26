@@ -17,7 +17,7 @@
 //**************************************************************************************************************
 //ƒ}ƒNƒ’è‹`
 //**************************************************************************************************************
-#define MAX_ENEMY (256)
+#define MAX_ENEMY (100)
 #define ENEMYFILE001 ("data\\enemy.txt")
 #define ENEMYFILE002 ("data\\enemy2.txt")
 #define ENEMYFILE003 ("data\\enemy3.txt")
@@ -108,7 +108,7 @@ void DrawEnemy(void);//“G‚Ì•`‰æˆ—
 ENEMY* GetEnemy(void);//“G‚Ìæ“¾ˆ—
 void HitEnemy(int nCnt,int nDamage);//“G‚Ìƒqƒbƒgˆ—
 void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed);//“G‚Ìİ’èˆ—
-void WaveEnemy(int nSpawner);
+void SpawnEnemy(int nSpawner);
 int GetNumEnemy(void);//“G‚Ì‘”æ“¾ˆ—
 bool CollisionView(D3DXVECTOR3* pPos, D3DXVECTOR3* pRot, float fRange, float viewAngle); // ‹ŠE‚Ì”»’è
 float SetAngle(D3DXVECTOR3* pRot, D3DXVECTOR3* pPos);

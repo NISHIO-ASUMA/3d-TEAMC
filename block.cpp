@@ -254,7 +254,6 @@ void UpdateBlock(void)
 			}
 		}
 
-		collisionObbEnemy(nCntBlock); // 敵用の判定(分けないとうまくいかなかった)
 		collisionObbBoss(nCntBlock); // ボス用の判定(分けないとうまくいかなかった)
 
 		CraftRange(&g_Block[nCntBlock]);
@@ -312,9 +311,9 @@ void DrawBlock(void)
 		// ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_Block[nCntBlock].mtxWorldBlock);
 
-		// 大きさを反映
-		D3DXMatrixScaling(&mtxScal, g_Block[nCntBlock].Scal.y, g_Block[nCntBlock].Scal.x, g_Block[nCntBlock].Scal.z);
-		D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxScal);
+		//// 大きさを反映
+		//D3DXMatrixScaling(&mtxScal, g_Block[nCntBlock].Scal.y, g_Block[nCntBlock].Scal.x, g_Block[nCntBlock].Scal.z);
+		//D3DXMatrixMultiply(&g_Block[nCntBlock].mtxWorldBlock, &g_Block[nCntBlock].mtxWorldBlock, &mtxScal);
 
 		// 向きを反映
 		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Block[nCntBlock].rot.y, g_Block[nCntBlock].rot.x, g_Block[nCntBlock].rot.z);
@@ -353,7 +352,7 @@ void DrawBlock(void)
 //=======================
 // ブロックの設定処理
 //=======================
-void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
+void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType)
 {
 	MODE mode = GetMode();
 
@@ -365,7 +364,6 @@ void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType, D3DXVECTOR3 Scal)
 
 			g_Block[nCntBlock].pos = pos;	  // 座標
 			g_Block[nCntBlock].rot = rot;	  // 座標
-			g_Block[nCntBlock].Scal = Scal;	  // 拡大率
 			g_Block[nCntBlock].nType = nType; // 種類
 			g_Block[nCntBlock].bUse = true;   // 使用状態
 
@@ -647,7 +645,7 @@ void LoadTitleState(void)
 					else if (strcmp(aString, "END_BLOCKSET") == 0)
 					{// END_BLOCKSETを読み取った
 						// ブロックにセットする
-						SetBlock(pos,rot, nType, Scal);
+						SetBlock(pos,rot, nType);
 						nIdx++;
 						break;
 					}
@@ -805,7 +803,7 @@ void tutoload(void)
 					}
 					else if (strcmp(aString, "END_BLOCKSET") == 0)
 					{// END_BLOCKSETを読み取った
-						SetBlock(pos, rot,nType, Scal);
+						SetBlock(pos, rot,nType);
 						nIdx++;
 						break;
 					}
@@ -855,13 +853,13 @@ void CreateObb(int nCnt)
 	float Length[3] = {};
 
 	// 長さ取得
-	Length[0] = fabsf(g_Block[nCnt].Size.x *g_Block[nCnt].Scal.x); // 長さX
-	Length[1] = fabsf(g_Block[nCnt].Size.y *g_Block[nCnt].Scal.y); // 長さY
-	Length[2] = fabsf(g_Block[nCnt].Size.z *g_Block[nCnt].Scal.z); // 長さZ
+	Length[0] = fabsf(g_Block[nCnt].Size.x); // 長さX
+	Length[1] = fabsf(g_Block[nCnt].Size.y); // 長さY
+	Length[2] = fabsf(g_Block[nCnt].Size.z); // 長さZ
 
-	g_Block[nCnt].Obb.Length[0] = fabsf(Length[0]) * 0.6f; // 長さX
-	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.60f; // 長さY
-	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.65f; // 長さZ
+	g_Block[nCnt].Obb.Length[0] = fabsf(Length[0]) * 0.5f; // 長さX
+	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.6f; // 長さY
+	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.5f; // 長さZ
 
 }
 //=======================
@@ -1261,18 +1259,18 @@ bool collisionObbBoss(int nCntBlock)
 //===========================================================================
 // OBBの判定敵
 //===========================================================================
-bool collisionObbEnemy(int nCntBlock)
+bool collisionObbEnemy(int nCntEnemy)
 {
 	bool bHit = false;
 
 	ENEMY* pEnemy = GetEnemy();
 	D3DXMATRIX mtxRot; // 計算用マトリックス
-
+	
 	float EnemyLength[3];
 
-	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
+	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
-		if (!pEnemy[nCnt].bUse)
+		if (g_Block[nCntBlock].bUse == false)
 		{
 			continue;
 		}
@@ -1287,16 +1285,13 @@ bool collisionObbEnemy(int nCntBlock)
 		D3DXVECTOR3 Nbe2(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 Nbe3(0.0f, 0.0f, 0.0f);
 
-		D3DXVECTOR3 Max(pEnemy[nCnt].Motion.aModel[0].vtxMax.x, pEnemy[nCnt].Motion.aModel[0].vtxMax.y, pEnemy[nCnt].Motion.aModel[0].vtxMax.z);
-		D3DXVECTOR3 Min(pEnemy[nCnt].Motion.aModel[0].vtxMin.x, pEnemy[nCnt].Motion.aModel[0].vtxMin.y, pEnemy[nCnt].Motion.aModel[0].vtxMin.z);
-
 		//D3DXVECTOR3 Max(1000.0f,1000.0f,1000.0f);
 		//D3DXVECTOR3 Min(10.0f,0.0f,10.0f);
 
 		// Player
-		EnemyLength[0] = fabsf(Max.x - Min.x);
-		EnemyLength[1] = fabsf(Max.y - Min.y);
-		EnemyLength[2] = fabsf(Max.z - Min.z);
+		EnemyLength[0] = fabsf(pEnemy[nCntEnemy].Size.x);
+		EnemyLength[1] = fabsf(pEnemy[nCntEnemy].Size.y);
+		EnemyLength[2] = fabsf(pEnemy[nCntEnemy].Size.z);
 
 		// Player
 		D3DXVECTOR3 NBe1 = Nbe1 * EnemyLength[0];
@@ -1307,7 +1302,7 @@ bool collisionObbEnemy(int nCntBlock)
 		//D3DXVECTOR3 Model(pPlayer->Motion.aModel[2].mtxWorld._41, pPlayer->Motion.aModel[2].mtxWorld._42, pPlayer->Motion.aModel[2].mtxWorld._43);
 
 		// 中心からプレイヤーの位置を求める
-		D3DXVECTOR3 Interval = pEnemy[nCnt].pos - g_Block[nCntBlock].Obb.CenterPos;
+		D3DXVECTOR3 Interval = pEnemy[nCntEnemy].pos - g_Block[nCntBlock].Obb.CenterPos;
 
 		// 分離軸を求める
 		float VecL = fabsf(D3DXVec3Dot(&Interval, &NAe1));
@@ -1460,7 +1455,7 @@ bool collisionObbEnemy(int nCntBlock)
 		bHit = true;
 
 		// 当たったブロックのインデックスと当たった敵のインデックス番号を渡すs
-		PushEnemy(nCntBlock, nCnt);
+		PushEnemy(nCntBlock, nCntEnemy);
 	}
 	return bHit; // 当たっている
 }

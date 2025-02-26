@@ -58,6 +58,7 @@ int LoadFilename(FILE* pFile, int nNumModel, char* aString, int nType);							 /
 void LoadCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);					 // プレイヤーのパーツの設定処理
 void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);						 // プレイヤーのモーションのロード処理
 void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);							 // プレイヤーのモーションのキーの読み込み処理
+void SetElementEffect(void);
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -392,6 +393,12 @@ void UpdatePlayer(void)
 		}
 	}
 
+	D3DXVECTOR3 SwordPos(
+		g_player.SwordMtx._41, // X方向
+		g_player.SwordMtx._42, // Y方向
+		g_player.SwordMtx._43  // Z方向
+	);
+
 	switch (g_player.Motion.motionType)
 	{
 	case MOTIONTYPE_NEUTRAL:
@@ -399,26 +406,24 @@ void UpdatePlayer(void)
 	case MOTIONTYPE_MOVE:
 		break;
 	case MOTIONTYPE_ACTION:
+		SetElementEffect();
 		break;
 	case MOTIONTYPE_JUMP:
 		break;
 	case MOTIONTYPE_LANDING:
 		break;
 	case MOTIONTYPE_ACTION2:
+		SetElementEffect();
 		break;
 	case MOTIONTYPE_ACTION3:
+		SetElementEffect();
 		break;
 	case MOTIONTYPE_ACTION4:
+		SetElementEffect();
 		break;
 	default:
 		break;
 	}
-
-	D3DXVECTOR3 SwordPos(
-		g_player.SwordMtx._41, // X方向
-		g_player.SwordMtx._42, // Y方向
-		g_player.SwordMtx._43  // Z方向
-	);
 
 	switch (g_player.state)
 	{
@@ -434,40 +439,6 @@ void UpdatePlayer(void)
 		break;
 	case PLAYERSTATE_ATTACK:
 		g_nCounterState--;
-
-		// 武器がないとき
-		if (g_player.Motion.nNumModel != 15)
-		{
-			if (g_player.nElement == WEPONELEMENT_STANDARD)
-			{
-				SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 1.0f, 2, 30, 10, 10.0f, 5.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-			else if (g_player.nElement == WEPONELEMENT_BLOOD)
-			{
-				SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 2.0f, 2, 30, 10, 10.0f, 5.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-			else if (g_player.nElement == WEPONELEMENT_FIRE)
-			{
-				SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-				SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-			}
-			else if (g_player.nElement == WEPONELEMENT_FREEZE)
-			{
-				SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 2, 60, 10, 1.0f, 5.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-			}
-			else if (g_player.nElement == WEPONELEMENT_SPARK)
-			{
-				SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(2.0f, 2.0f, 2.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 1.0f, 2, 15, 30, 30.0f, 5.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-			}
-			else if (g_player.nElement == WEPONELEMENT_AQUA)
-			{
-				SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 4.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
-			}
-			else if (g_player.nElement == WEPONELEMENT_DARK)
-			{
-				SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f), 4.0f, 2, 45, 10, 6.0f, 5.0f, false, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
-			}
-		}
 
 		if (g_nCounterState < 0)
 		{
@@ -2524,6 +2495,51 @@ void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
 			nCntPos = 0; // 位置のカウントをリセット
 			nCntRot = 0; // 角度のカウントをリセット
 			break;
+		}
+	}
+}
+//===============================================================================================================
+// プレイヤーのエフェクトの設定処理
+//===============================================================================================================
+void SetElementEffect(void)
+{
+	D3DXVECTOR3 SwordPos(
+		g_player.SwordMtx._41, // X方向
+		g_player.SwordMtx._42, // Y方向
+		g_player.SwordMtx._43  // Z方向
+	);
+
+	// 武器がないとき
+	if (g_player.Motion.nNumModel != 15)
+	{
+		if (g_player.nElement == WEPONELEMENT_STANDARD)
+		{
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 1.0f, 2, 30, 10, 10.0f, 5.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+		else if (g_player.nElement == WEPONELEMENT_BLOOD)
+		{
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 2.0f, 2, 30, 10, 10.0f, 5.0f, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+		else if (g_player.nElement == WEPONELEMENT_FIRE)
+		{
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+		}
+		else if (g_player.nElement == WEPONELEMENT_FREEZE)
+		{
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 2, 60, 10, 1.0f, 5.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+		}
+		else if (g_player.nElement == WEPONELEMENT_SPARK)
+		{
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(2.0f, 2.0f, 2.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 1.0f, 2, 15, 30, 30.0f, 5.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+		}
+		else if (g_player.nElement == WEPONELEMENT_AQUA)
+		{
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 4.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
+		}
+		else if (g_player.nElement == WEPONELEMENT_DARK)
+		{
+			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f), 4.0f, 2, 45, 10, 6.0f, 5.0f, false, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
 		}
 	}
 }

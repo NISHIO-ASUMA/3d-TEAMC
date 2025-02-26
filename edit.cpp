@@ -656,7 +656,7 @@ void LoadEdit(void)
 					}
 					else if (strcmp(aString, "END_BLOCKSET") == 0)
 					{
-						SetBlock(pos, rot,nType, Scal);
+						SetBlock(pos, rot,nType);
 						break;
 					}
 					else if (strcmp(aString, "END_ITEMSET") == 0)

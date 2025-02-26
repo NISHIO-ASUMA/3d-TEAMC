@@ -61,7 +61,7 @@ void InitPolygon(void)
 	for (int nCntPolygon = 0; nCntPolygon < MAX_POLYGON; nCntPolygon++)
 	{
 		g_Polygon[nCntPolygon].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Polygon[nCntPolygon].nType = 0.0f;
+		g_Polygon[nCntPolygon].nType = 0;
 		g_Polygon[nCntPolygon].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_Polygon[nCntPolygon].fWidth = 0.0f;
 		g_Polygon[nCntPolygon].fHeight = 0.0f;

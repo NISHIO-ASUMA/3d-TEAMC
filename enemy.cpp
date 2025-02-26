@@ -316,6 +316,8 @@ void UpdateEnemy(void)
 		// 位置の更新
 		g_Enemy[nCntEnemy].pos += g_Enemy[nCntEnemy].move;
 
+		collisionObbEnemy(nCntEnemy); // 敵用の判定(分けないとうまくいかなかった)
+
 		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
 		{
 			g_Enemy[nCntEnemy].pos.y = 200.0f;
@@ -652,6 +654,11 @@ void HitEnemy(int nCnt,int nDamage)
 
 	if (g_Enemy[nCnt].nLife <= 0)
 	{// 体力が0以下なら
+
+		int nSpawner = rand() % 4;
+
+		SpawnEnemy(nSpawner);
+
 		if (pPlayer->nElement == WEPONELEMENT_DARK)
 		{
 			LoadEffect(1,D3DXVECTOR3(g_Enemy[nCnt].pos.x,g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y,g_Enemy[nCnt].pos.z));
@@ -789,7 +796,7 @@ void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed)
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		if (!g_Enemy[nCntEnemy].bUse)
+		if (g_Enemy[nCntEnemy].bUse == false)
 		{
 			g_Enemy[nCntEnemy].Motion = g_LoadEnemy[nType]; // 情報を代入
 
@@ -821,26 +828,26 @@ void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed)
 //=========================================================================================================
 //敵の出現
 //=========================================================================================================
-void WaveEnemy(int nSpawner)
+void SpawnEnemy(int nSpawner)
 {
-	for (int nCnt = 0; nCnt < WAVE_ENEMY; nCnt++)
+	if (g_nNumEnemy < MAX_ENEMY * 0.75f)
 	{
 		// スポナー0
 		if (nSpawner == 0)
 		{
-			SetEnemy(D3DXVECTOR3(329.0f, 0.0f,1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 			SetEnemy(D3DXVECTOR3(1065.0f, 0.0f, 188.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー1
 		else if (nSpawner == 1)
 		{
-			SetEnemy(D3DXVECTOR3(1065.0f, 0.0f,188.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(1065.0f, 0.0f, 188.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー2
 		else if (nSpawner == 2)
 		{
-			SetEnemy(D3DXVECTOR3(-592.0f, 0.0f,-747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(-592.0f, 0.0f, -747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 			SetEnemy(D3DXVECTOR3(-196.0f, 0.0f, 130.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		else if (nSpawner == 3)
@@ -850,6 +857,7 @@ void WaveEnemy(int nSpawner)
 			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 	}
+	
 }
 //=========================================================================================================
 //敵の総数取得処理
