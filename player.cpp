@@ -889,7 +889,7 @@ void UpdatePlayer(void)
 	}	//モーションの更新
 
 	// アイテムのストック
-	if (g_player.PlayerType == PLAYERTYPE_NOHAND && g_player.HandState == PLAYERHOLD_HOLD && (KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)))
+	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)))
 	{// Fキー or RBボタン
 
 		// アイテムの状態をストックにする
@@ -1805,7 +1805,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	g_player.Motion.motionType = motiontype;  // モーションの種類を変更
 	g_nCounterState = nCounterState;		  // 状態カウンターを設定
 	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
-	//g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
+	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
 	g_player.Combostate = Combstate;		  // コンボの状態を設定
 	SetMotion(&g_player.Motion, motiontype, MOTIONTYPE_NEUTRAL, true, 28);
 

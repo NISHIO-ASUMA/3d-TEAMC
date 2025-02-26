@@ -328,7 +328,7 @@ void SetCraftUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUs
 
 	for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
 	{
-		if (!g_CraftUI[nCnt].bUse)
+		if (g_CraftUI[nCnt].bUse == false)
 		{
 			g_CraftUI[nCnt].pos = pos;
 			g_CraftUI[nCnt].nType = nType;
@@ -364,7 +364,7 @@ void SetMixUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUseT
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
-		if (!g_MixUI[nCnt].bUse)
+		if (g_MixUI[nCnt].bUse == false)
 		{
 			g_MixUI[nCnt].pos = pos;
 			g_MixUI[nCnt].nIconType = nType;
@@ -398,7 +398,7 @@ void SetMixItemUI(int nCnt)
 	// アイテムの最大数分回す
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		// 作れるアイテムが
+		// 作れるアイテムが石バット
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && g_MixUI[nCnt].bUse == false)
 		{
 			SetMixUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
@@ -406,6 +406,10 @@ void SetMixItemUI(int nCnt)
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_ICEBLOCKSOWRD] && g_MixUI[nCnt].bUse == false)
 		{
 			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_ICEBLOCKSOWRD, 80.0f, 80.0f, 0);
+		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_TORCHSWORD] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_TORCHSWORD, 80.0f, 80.0f, 0);
 		}
 	}
 }
