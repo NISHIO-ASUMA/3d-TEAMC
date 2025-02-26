@@ -253,6 +253,12 @@ void UpdatePlayer(void)
 		/*StickPad();*/
 	bUsePad = false;
 
+	// 体力の現在値が最大値を超えてたら最大値にする
+	if (g_player.nMaxLife < g_player.nLife)
+	{
+		g_player.nLife = g_player.nMaxLife;
+	}
+
 	// フィーバーモードなら
 	if (g_player.FeverMode)
 	{
@@ -1113,6 +1119,8 @@ void HitPlayer(int nDamage)
 		// プレイヤーの体力が0になったら
 		if (g_player.nLife <= 0 && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 		{
+			// マイナスでも0にする
+			g_player.nLife = 0;
 			// モーションを上書き
 			g_player.Motion = g_LoadPlayer[0].Motion;
 			g_player.Motion.motionType = MOTIONTYPE_DEATH;
