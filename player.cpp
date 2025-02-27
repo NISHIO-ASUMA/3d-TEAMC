@@ -2654,5 +2654,7 @@ void SetMotionCheck(void)
 	{
 		StartVibration(&vibrationState, 200);
 	}
+
+	// U“®‚ÌXVˆ—
 	UpdateVibration(&vibrationState);
 }
