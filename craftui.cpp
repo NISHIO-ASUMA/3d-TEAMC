@@ -257,6 +257,15 @@ void UpdateCraftUI(void)
 			case WEPONTYPE_LIGHTWOOD:
 				g_MixUI[nCnt].bUse = false;
 				break;
+			case WEPONTYPE_IRONBAT:
+				g_MixUI[nCnt].bUse = false;
+				break;
+			case WEPONTYPE_HEADSTATUTORSO:
+				g_MixUI[nCnt].bUse = false;
+				break;
+			case WEPONTYPE_SURFBOARDFISH:
+				g_MixUI[nCnt].bUse = false;
+				break;
 			default:
 				break;
 			}
@@ -421,6 +430,18 @@ void SetMixItemUI(int nCnt)
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_LIGHTWOOD] && g_MixUI[nCnt].bUse == false)
 		{
 			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_LIGHTWOOD, 80.0f, 80.0f, 0);
+		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_IRONBAT] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_IRONBAT, 80.0f, 80.0f, 0);
+		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_HEADSTATUTORSO] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_HEADSTATUTORSO, 80.0f, 80.0f, 0);
+		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_SURFBOARDFISH] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_SURFBOARDFISH, 80.0f, 80.0f, 0);
 		}
 
 	}

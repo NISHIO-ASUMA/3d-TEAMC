@@ -26,6 +26,7 @@
 #include "game.h"
 #include "polygon.h"
 #include "wall.h"
+#include "meshimpact.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -287,8 +288,8 @@ void UpdateBoss(void)
 			{
 				if (g_Boss[nCnt].Motion.nCountMotion == 1)// 最初は加速させて
 				{
-					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 70.0f;
-					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 70.0f;
+					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 40.0f;
+					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 40.0f;
 				}
 				else // その後はエフェクトを纏いながら移動する
 				{
@@ -398,6 +399,12 @@ void UpdateBoss(void)
 		// 壁との当たり判定
 		CollisionWall(&g_Boss[nCnt].pos, &g_Boss[nCnt].posOld, &g_Boss[nCnt].move, g_Boss[nCnt].Speed);
 
+		// インパクトの当たり判定
+		if (CollisionImpact(&g_Boss[nCnt].pos) == true)
+		{
+			HitBoss(nCnt, 20);
+		}
+
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 2000.0f))
 		{
@@ -484,13 +491,13 @@ void UpdateBoss(void)
 			pPlayer->state != PLAYERSTATE_DAMAGE &&
 			g_Boss[nCnt].Motion.nKey >= 3 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)
 		{
-			HitPlayer(60);
+			HitPlayer(40);
 		}
 		else if(sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20.0f) &&
 			pPlayer->state != PLAYERSTATE_DAMAGE &&
 			g_Boss[nCnt].Motion.nKey >= 2 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION2)
 		{
-			HitPlayer(40);
+			HitPlayer(30);
 		}
 
 		colisionSword(nCnt);   // 剣との当たり判定

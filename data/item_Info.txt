@@ -157,3 +157,8 @@ ITEMSET
 	DURABILITY = 100    # アイテムの耐久力
 END_ITEMSET
 
+ITEMSET		
+	ITEMTYPE = 31	    # アイテムの種類<< おにぎり >>
+	DURABILITY = 10    # アイテムの耐久力
+END_ITEMSET
+

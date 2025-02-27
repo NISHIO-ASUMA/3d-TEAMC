@@ -34,6 +34,7 @@
 #include "effectEdit.h"
 #include "icon.h"
 #include "effect2.h"
+#include "meshimpact.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -45,6 +46,7 @@
 #define MAX_MOVE (1.0f)			// プレイヤーの移動量
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
+#define HEAL_VALUE (200)		// 回復量
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -59,6 +61,7 @@ void LoadCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);				
 void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);						 // プレイヤーのモーションのロード処理
 void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);							 // プレイヤーのモーションのキーの読み込み処理
 void SetElementEffect(void);
+void SetMotionCheck(void);
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -72,6 +75,7 @@ bool bNohand; // 投げたか投げてないか
 bool bUsePad;
 //bool bFirstChange;
 int nCntMotion,nKey;
+int g_EaseCount;
 
 //===============================================================================================================
 //プレイヤーの初期化処理
@@ -118,6 +122,7 @@ void InitPlayer(void)
 	nKey = 0;
 	g_player.bCraft = false;
 	g_player.nElement = WEPONELEMENT_STANDARD;
+	g_EaseCount = 0;
 
 	// TODO : ここの処理考える
 
@@ -612,7 +617,7 @@ void UpdatePlayer(void)
 	//SetEffect(D3DXVECTOR3(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1, 20.0f);
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (g_player.bDisp && !bNohand && !g_player.AttackSp && g_player.Motion.motionType != MOTIONTYPE_DEATH)
+	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motionType != MOTIONTYPE_DEATH && pItem[g_player.ItemIdx].nType != ITEMTYPE_ONIGIRI)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
@@ -636,7 +641,7 @@ void UpdatePlayer(void)
 	}
 
 	// 投げ物を持っているときの攻撃
-	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand && !g_player.AttackSp)
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand && !g_player.AttackSp && pItem[g_player.ItemIdx].nType != ITEMTYPE_ONIGIRI)
 	{
 		PlayerComb(MOTIONTYPE_ACTION, 40, 20, COMBO_ATTACK1); // コンボ1
 	}
@@ -686,7 +691,7 @@ void UpdatePlayer(void)
 	}
 
 	// 武器を持っているかつプレイヤーの持っているアイテムが壊れた
-	if (g_player.Motion.nNumModel == 16 && g_player.Itembreak[g_player.ItemIdx])
+	if (g_player.Motion.nNumModel == 16 && g_player.Itembreak[g_player.ItemIdx] == true)
 	{
 		// モーションをニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
@@ -745,6 +750,13 @@ void UpdatePlayer(void)
 		SetItem(g_player.pos, pItem[g_player.ItemIdx].nType);
 
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
+
+		// 持ってるアイテムがおにぎりだったら
+		if (pItem[g_player.ItemIdx].nType == ITEMTYPE_ONIGIRI)
+		{
+			// 競合しないようにアイテムの種類を変える
+			pItem[g_player.ItemIdx].nType = -1;
+		}
 	}
 
 	// 大型武器モーションの時
@@ -788,19 +800,16 @@ void UpdatePlayer(void)
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_BIGWEPON:
-				WaveCamera(120); // カメラを揺らす
 				g_player.SwordOffpos.y = 100.0f;
 				MotionChange(MOTION_SPHAMMER, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_DBHAND:
-				WaveCamera(120); // カメラを揺らす
 				g_player.SwordOffpos.y = 250.0f;
 				MotionChange(MOTION_SPDOUBLE, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 240, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_ONE_HAND:
-				WaveCamera(120); // カメラを揺らす
 				g_player.SwordOffpos.y = 250.0f;
 				MotionChange(MOTION_ONEHANDBLOW, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
@@ -869,7 +878,7 @@ void UpdatePlayer(void)
 	}	//モーションの更新
 
 	// アイテムのストック
-	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) &&
+	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && pItem[g_player.ItemIdx].nType != ITEMTYPE_ONIGIRI &&
 		g_player.AttackSp == false && g_player.Motion.nNumModel == 16)
 	{// Fキー or RBボタン
 
@@ -913,7 +922,25 @@ void UpdatePlayer(void)
 		g_player.move.z = cosf(g_player.rot.y) * 50.0f;
 
 	}
+	
+	// マックスより50下
+	int DiffLife = g_player.nMaxLife - HEAL_VALUE;
 
+	// おにぎりのとき回復
+	if (pItem[g_player.ItemIdx].nType == ITEMTYPE_ONIGIRI && OnMouseTriggerDown(LEFT_MOUSE) == true && g_player.Motion.nNumModel == 16 && g_player.nLife <= DiffLife)
+	{
+		// HPを回復させる
+		g_player.nLife += HEAL_VALUE;
+
+		// アイテムを消す
+		g_player.Itembreak[g_player.ItemIdx] = true;
+
+		// 存在しないアイテムの種類にする
+		pItem[g_player.ItemIdx].nType = -1;
+	}
+
+	SetMotionCheck();
+	//D3DXVec3TransformCoord
 	// モーションの更新
 	UpdateMotion(&g_player.Motion);
 
@@ -1598,10 +1625,10 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			
 			pItem[nIdx].bUse = false;      // 消す
 
-			if (g_player.Itembreak[pItem[nIdx].nType] == true)
+			if (g_player.Itembreak[g_player.ItemIdx] == true)
 			{
 				// アイテムが壊れた判定をリセット
-				g_player.Itembreak[pItem[nIdx].nType] = false;
+				g_player.Itembreak[g_player.ItemIdx] = false;
 			}
 
 			if (g_player.Motion.nNumModel == 16)
@@ -1652,12 +1679,10 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			case ITEMTYPE_LIGHTWOOD:
 				MotionChange(MOTION_KATANA, 0);
 				StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
-
 				break;
 			case ITEMTYPE_HARISEN:
 				MotionChange(MOTION_ONE_HAND, 0);
 				StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
-
 				break;
 			case ITEMTYPE_ICEBLOCK:
 				MotionChange(MOTION_DBHAND, 1);
@@ -1767,6 +1792,10 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			case ITEMTYPE_KATANA:
 				MotionChange(MOTION_KATANA, 0);
 				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
+				break;
+			case ITEMTYPE_ONIGIRI:
+				MotionChange(MOTION_KATANA, 1);
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 10);
 				break;
 			default:
 				break;
@@ -2562,4 +2591,68 @@ void SetElementEffect(void)
 			SetParticle(SwordPos, D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f), 4.0f, 2, 45, 10, 6.0f, 5.0f, false, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
 		}
 	}
+}
+//===============================================================================================================
+// プレイヤーのモーションの演出設定
+//===============================================================================================================
+void SetMotionCheck(void)
+{
+	static VibrationState vibrationState = { 0, 0, 0, 0, 0 };  // 初期化
+
+	// 両手のスペシャル攻撃の時
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPDOUBLE &&
+		CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 2, 2, 5, 5) == true)
+	{
+		StartVibration(&vibrationState,200);
+
+		// 衝撃波を発生指せる
+		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER);
+
+		// カメラの揺れ
+		WaveCamera(25);
+	}
+
+	// 両手のスペシャル攻撃の時
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_ONEHANDBLOW &&
+		CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 4, 4, 5, 5) == true)
+	{
+		StartVibration(&vibrationState, 200);
+
+		// 衝撃波を発生指せる
+		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER);
+
+		// カメラの揺れ
+		WaveCamera(25);
+	}
+
+	// 両手のスペシャル攻撃の時
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPPIERCING &&
+		CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 21, 21, 5, 5) == true)
+	{
+		StartVibration(&vibrationState, 200);
+
+		// 衝撃波を発生指せる
+		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER);
+
+		// カメラの揺れ
+		WaveCamera(25);
+	}
+
+	// 槍のスペシャル攻撃の時
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPPIERCING &&
+		CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 0, 21, 1, 1) == true)
+	{
+		// 衝撃波を発生指せる
+		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 32, 30.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER);
+
+		// カメラの揺れ
+		WaveCamera(25);
+	}
+
+	// 大型武器のスペシャル
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPHAMMER)
+	{
+		StartVibration(&vibrationState, 200);
+	}
+	UpdateVibration(&vibrationState);
 }

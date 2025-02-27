@@ -95,7 +95,8 @@ void UpdateFade(void)
 		if (g_fade == FADE_IN)
 		{// フェードイン状態
 			// 透明にしていく
-			g_colorFade.a -= 0.03f;		
+			g_colorFade.a -= 0.03f;
+
 			if (g_colorFade.a <= 0.0f)
 			{
 				g_colorFade.a = 0.0f;
@@ -168,6 +169,7 @@ void UpdateFade(void)
 		{
 			// 透明にしていく
 			g_colorFade.a -= 0.02f;
+
 			if (g_colorFade.a <= 0.0f)
 			{
 				g_colorFade.a = 0.0f;

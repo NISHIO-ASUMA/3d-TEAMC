@@ -49,6 +49,7 @@
 #include "effect2.h"
 #include "particle2.h"
 #include "effectEdit.h"
+#include "meshimpact.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -90,6 +91,9 @@ void InitGame(void)
 
 	//メッシュフィールドの初期化処理
 	InitMeshField();
+
+	//メッシュインパクトの初期化処理
+	InitMeshImpact();
 
 	// メッシュドームの初期化処理
 	InitmeshFan();
@@ -243,6 +247,9 @@ void UninitGame(void)
 
 	//メッシュフィールドの終了処理
 	UninitMeshField();
+
+	//メッシュインパクトの終了処理
+	UninitMeshImpact();
 
 	// メッシュドームの終了処理
 	UninitmeshFan();
@@ -522,6 +529,9 @@ void UpdateGame(void)
 
 				// ミニマップの更新処理
 				UpdateMiniMap();
+
+				// メッシュインパクトの更新処理
+				UpdateMeshImpact();
 			}
 
 			// ビルボードの更新処理
@@ -614,6 +624,9 @@ void DrawGame(void)
 		//アイテムの描画処理
 		DrawItem();
 	}
+
+	//メッシュインパクトの描画処理
+	DrawMeshImpact();
 
 	// エフェクトの描画処理
 	DrawEffect();

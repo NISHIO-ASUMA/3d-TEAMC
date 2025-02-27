@@ -53,6 +53,18 @@ typedef enum
 	MOUSE_MAX
 }MOUSEBUTTON;
 
+//***************************
+// 振動状態を管理する構造体
+//***************************
+typedef struct 
+{
+	int controllerID;
+	WORD leftMotor;
+	WORD rightMotor;
+	DWORD startTime;
+	DWORD duration;
+} VibrationState;
+
 //********************
 // プロトタイプ宣言
 //********************
@@ -77,5 +89,7 @@ bool GetJoyStickRrepeat(void);						//ジョイパッドのスティック情報(R)
 void UpdateStick(void);								//Rスティック
 
 XINPUT_STATE* GetJoyStickAngle(void);				//スティックの角度情報
-
+void VibrateController(int ControllerID, WORD leftMotor, WORD rightMotor); // コントローラーの振動関数
+void UpdateVibration(VibrationState* vibrationState);
+void StartVibration(VibrationState* vibrationState, int VibrateTime);
 #endif

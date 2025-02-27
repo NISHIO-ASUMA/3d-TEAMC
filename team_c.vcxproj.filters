@@ -4,9 +4,6 @@
     <ClCompile Include="game.cpp">
       <Filter>ソースファイル\base</Filter>
     </ClCompile>
-    <ClCompile Include="fade.cpp">
-      <Filter>ソースファイル\base</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>ソースファイル\base</Filter>
     </ClCompile>
@@ -154,6 +151,12 @@
     <ClCompile Include="easing.cpp">
       <Filter>ソースファイル\efffect</Filter>
     </ClCompile>
+    <ClCompile Include="fade.cpp">
+      <Filter>ソースファイル\os</Filter>
+    </ClCompile>
+    <ClCompile Include="meshimpact.cpp">
+      <Filter>ソースファイル\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -193,9 +196,6 @@
       <Filter>ヘッダーファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="tutorial3d.h">
-      <Filter>ヘッダーファイル\base</Filter>
-    </ClInclude>
-    <ClInclude Include="fade.h">
       <Filter>ヘッダーファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
@@ -308,6 +308,12 @@
     </ClInclude>
     <ClInclude Include="easing.h">
       <Filter>ヘッダーファイル\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="fade.h">
+      <Filter>ヘッダーファイル\os</Filter>
+    </ClInclude>
+    <ClInclude Include="meshimpact.h">
+      <Filter>ヘッダーファイル\mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

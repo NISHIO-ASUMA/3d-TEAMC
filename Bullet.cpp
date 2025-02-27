@@ -34,7 +34,7 @@ void InitBullet(void)
 
 	// テクスチャ
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\BBBullet.png", &g_pTextureBullet);
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_BULLET * 500, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffBullet, NULL);
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_BULLET * 4, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffBullet, NULL);
 	VERTEX_3D* pVtx;
 	g_pVtxBuffBullet->Lock(0, 0, (void**)&pVtx, 0);
 	//左、手前、下がマイナス

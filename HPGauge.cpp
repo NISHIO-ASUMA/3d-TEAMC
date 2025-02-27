@@ -11,6 +11,7 @@
 #include "player.h"
 #include "HPGauge.h"
 #include "sound.h"
+#include "easing.h"
 
 //**********************************************************************************************************************
 // マクロ定義
@@ -36,6 +37,7 @@ float g_fLength;
 float g_fMaxLength;
 float g_fPer;
 float g_RedLength;
+float g_EaseCnt;
 // フィーバーゲージ用変数
 float g_fFeverCharge;
 bool g_bFeverON;
@@ -64,7 +66,19 @@ void InitGauge(void)
 	// 位置の調整、都合の良い場所探して下しあ(上からHP枠、HPゲージ、フィーバー枠、フィーバーゲージ)
 	g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
 
-	g_RedLength = MAX_HPLENGTH;
+	Player* pPlayer = GetPlayer();
+
+
+	float fLeftHP = (float)pPlayer->nLife;
+	float fMaxHP = (float)pPlayer->nMaxLife;
+
+	// そこからその割合を計算し長さにする
+	float fPer = fLeftHP / fMaxHP;
+
+	float fLength = fPer * MAX_HPLENGTH;
+
+	g_RedLength = fLength;
+	g_EaseCnt = 0;
 
 	// HPゲージ分回す
 	for (int nCnt = 0; nCnt < NUM_HPGAUGE; nCnt++)
@@ -221,8 +235,19 @@ void UpdateGauge(void)
 
 	g_fLength = g_fPer * MAX_HPLENGTH;
 
-	// 赤ゲージを緑ゲージに近づける
-	g_RedLength += (g_fLength - g_RedLength) * 0.05f;
+	if (pPlayer->state != PLAYERSTATE_DAMAGE)
+	{
+		g_EaseCnt++;
+
+		float t = SetEase(g_EaseCnt, 120.0f);
+
+		// 赤ゲージを緑ゲージに近づける
+		g_RedLength += (g_fLength - g_RedLength) * EaseInOutSine(t);
+	}
+	else
+	{
+		g_EaseCnt = 0;
+	}
 
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	

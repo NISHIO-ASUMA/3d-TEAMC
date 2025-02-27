@@ -1638,7 +1638,7 @@ bool PushPlayer(int nCntBlock)
 
 	}
 	// -X‚Ì–Ê‚©‚ç“–‚½‚Á‚½
-	if (DotXp <= DotXm && DotXp <= DotZp && DotXp <= DotZm)
+	else if (DotXp <= DotXm && DotXp <= DotZp && DotXp <= DotZm)
 	{
 		D3DXVECTOR3 Nor = VecRot[0];
 		D3DXVec3Normalize(&Nor, &Nor);

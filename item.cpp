@@ -404,12 +404,13 @@ void UpdateItem(void)
 			}
 		}
 
+		// 耐久力が0になったら
 		if (g_Item[nCntItem].durability <= 0)
 		{
 			int nType = g_Item[nCntItem].nType;
 
+			// アイテムを壊す
 			pPlayer->Itembreak[pPlayer->ItemIdx] = true;
-			g_Item[nCntItem].durability = g_TexItem[nType].durability;
 			g_Item[nCntItem].bUse = false; // 消す
 		}
 	}
@@ -793,13 +794,11 @@ void CraftItem(void)
 		if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_A))
 		{
 			// ストーンバットの材料がそろった
-			if ((g_Item[nCnt].nType == WEPONTYPE_STONE &&
-				g_Item[pPlayer->ItemIdx].nType == WEPONTYPE_BAT &&
-				g_Item[nCnt].state == ITEMSTATE_STOCK &&
-				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
+			if (((g_Item[nCnt].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCnt].nType == ITEMTYPE_BAT))
+				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
 				// クラフト後のアイテムの処理
-				CraftMixItem(nCnt, WEPONTYPE_STONEBAT, MOTION_DBHAND);
+				CraftMixItem(nCnt, ITEMTYPE_STONEBAT, MOTION_DBHAND);
 
 				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
@@ -807,12 +806,10 @@ void CraftItem(void)
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
 			// 氷の剣の材料がそろった
-			if ((g_Item[nCnt].nType == WEPONTYPE_ICEBLOCK &&
-				g_Item[pPlayer->ItemIdx].nType == WEPONTYPE_KATANA &&
-				g_Item[nCnt].state == ITEMSTATE_STOCK &&
-				g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
+			if (((g_Item[nCnt].nType == ITEMTYPE_ICEBLOCK && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_ICEBLOCK && g_Item[nCnt].nType == ITEMTYPE_KATANA))
+				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
-				CraftMixItem(nCnt, WEPONTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
+				CraftMixItem(nCnt, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
 
 				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
@@ -820,8 +817,8 @@ void CraftItem(void)
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
 			// 氷の剣の材料がそろった
-			if (g_Item[nCnt].nType == WEPONTYPE_TORCH && g_Item[pPlayer->ItemIdx].nType == WEPONTYPE_KATANA &&
-				g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+			if (((g_Item[nCnt].nType == ITEMTYPE_TORCH && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_TORCH && g_Item[nCnt].nType == ITEMTYPE_KATANA))
+				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
 				CraftMixItem(nCnt, ITEMTYPE_TORCHSWORD, MOTION_KATANA);
 
@@ -830,23 +827,56 @@ void CraftItem(void)
 
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
-			if (g_Item[nCnt].nType == WEPONTYPE_WOOD && g_Item[pPlayer->ItemIdx].nType == WEPONTYPE_LIGHT &&
-				g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+			if (((g_Item[nCnt].nType == ITEMTYPE_LIGHT && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_WOOD || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_LIGHT && g_Item[nCnt].nType == ITEMTYPE_WOOD))
+				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
-				CraftMixItem(nCnt, ITEMTYPE_LIGHTWOOD, MOTION_KATANA);
+				CraftMixItem(nCnt, ITEMTYPE_LIGHTWOOD, MOTION_DBHAND);
 
 				// ステータスの変更
 				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
 
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
+			if (((g_Item[nCnt].nType == ITEMTYPE_IRON && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_IRON && g_Item[nCnt].nType == ITEMTYPE_BAT))
+				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
+			{
+				CraftMixItem(nCnt, ITEMTYPE_IRONBAT, MOTION_DBHAND);
+
+				// ステータスの変更
+				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
+
+				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
+			}
+			if (((g_Item[nCnt].nType == ITEMTYPE_HEADSTATUE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_TORSO || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_HEADSTATUE && g_Item[nCnt].nType == ITEMTYPE_TORSO))
+				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
+			{
+				CraftMixItem(nCnt, ITEMTYPE_HEADSTATUTORSO, MOTION_BIGWEPON);
+
+				// ステータスの変更
+				StatusChange(2.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
+
+				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
+			}
+			if (((g_Item[nCnt].nType == ITEMTYPE_FISH && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_SURFBOARD || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_FISH && g_Item[nCnt].nType == ITEMTYPE_SURFBOARD))
+				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
+			{
+				CraftMixItem(nCnt, ITEMTYPE_SURFBOARDFISH, MOTION_BIGWEPON);
+
+				// ステータスの変更
+				StatusChange(2.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
+
+				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
+			}
 		}
 
 		// クラフトアイコンを表示するかしないか
-		EnableCraftIcon(nCnt, WEPONTYPE_STONE, WEPONTYPE_BAT, WEPONTYPE_STONEBAT);
+		EnableCraftIcon(nCnt, ITEMTYPE_STONE, ITEMTYPE_BAT, ITEMTYPE_STONEBAT);
 		EnableCraftIcon(nCnt, ITEMTYPE_ICEBLOCK, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCKSOWRD);
 		EnableCraftIcon(nCnt, ITEMTYPE_TORCH, ITEMTYPE_KATANA, ITEMTYPE_TORCHSWORD);
 		EnableCraftIcon(nCnt, ITEMTYPE_WOOD, ITEMTYPE_LIGHT, ITEMTYPE_LIGHTWOOD);
+		EnableCraftIcon(nCnt, ITEMTYPE_BAT, ITEMTYPE_IRON, ITEMTYPE_IRONBAT);
+		EnableCraftIcon(nCnt, ITEMTYPE_HEADSTATUE, ITEMTYPE_TORSO, ITEMTYPE_HEADSTATUTORSO);
+		EnableCraftIcon(nCnt, ITEMTYPE_FISH, ITEMTYPE_SURFBOARD, ITEMTYPE_SURFBOARDFISH);
 	}
 }
 //==============================================================================================================
@@ -864,6 +894,7 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 		D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
 		2.0f, 2, 40, 20, 5.0f, 2.0f, false,
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
@@ -871,6 +902,7 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 		D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
 		3.0f, 2, 40, 20, 3.0f, 2.0f, false,
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	
@@ -904,8 +936,8 @@ void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
 	Player* pPlayer = GetPlayer();
 
 	// 石バットの素材が範囲内にある時
-	if (g_Item[nCntItem].nType == Item1 && g_Item[pPlayer->ItemIdx].nType == Item2 && 
-		g_Item[nCntItem].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+	if (((g_Item[pPlayer->StockItemIdx].nType == Item1 && g_Item[pPlayer->ItemIdx].nType == Item2) || (g_Item[pPlayer->ItemIdx].nType == Item1 && g_Item[pPlayer->StockItemIdx].nType == Item2)) &&
+		g_Item[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
 	{
 		// アイコンを表示する
 		g_Item[nCntItem].bMixItem[MixItem] = true;

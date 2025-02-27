@@ -350,3 +350,46 @@ XINPUT_STATE* GetJoyStickAngle(void)
 {
 	return &g_joyKeyState;
 }
+//==========================================================================================================
+// コントローラーの振動処理
+//==========================================================================================================
+void VibrateController(int ControllerID, WORD leftMotor, WORD rightMotor)
+{
+	XINPUT_VIBRATION vibration;
+	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+
+	vibration.wLeftMotorSpeed = leftMotor;
+	vibration.wRightMotorSpeed = rightMotor;
+
+	// 振動開始
+	XInputSetState(ControllerID, &vibration);
+}
+//==========================================================================================================
+// ゲーム内での振動状態を管理する関数
+//==========================================================================================================
+void UpdateVibration(VibrationState* vibrationState) 
+{
+	DWORD currentTime = GetTickCount();
+
+	if (currentTime - vibrationState->startTime < vibrationState->duration) 
+	{
+		// 振動中
+		VibrateController(vibrationState->controllerID, vibrationState->leftMotor, vibrationState->rightMotor);
+	}
+	else 
+	{
+		// 振動終了
+		VibrateController(vibrationState->controllerID, 0,0);
+	}
+}
+//==========================================================================================================
+// 振動をスタートさせる変数
+//==========================================================================================================
+void StartVibration(VibrationState* vibrationState,int VibrateTime) 
+{
+	vibrationState->controllerID = 0;  // コントローラーID
+	vibrationState->leftMotor = 65535;  // 最大振動
+	vibrationState->rightMotor = 32767; // 半分の振動
+	vibrationState->startTime = GetTickCount();  // 開始時刻
+	vibrationState->duration = VibrateTime;  // 200ミリ秒（振動時間）
+}

@@ -32,6 +32,7 @@
 #include "Effect.h"
 #include "wall.h"
 #include "camera.h"
+#include "meshimpact.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -323,6 +324,11 @@ void UpdateEnemy(void)
 
 		// 壁との当たり判定
 		CollisionWall(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, g_Enemy[nCntEnemy].Speed);
+
+		if(CollisionImpact(&g_Enemy[nCntEnemy].pos) == true)
+		{
+			HitEnemy(nCntEnemy,1);
+		}
 
 		// アイテムが当たったか
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f)&& g_Enemy[nCntEnemy].state!=ENEMYSTATE_DAMAGE)
