@@ -130,7 +130,7 @@ void UpdateBullet(void)
 			else
 			{
 				// エフェクトを書き
-				SetEffect(g_Bullet[nCnt].pos, g_Bullet[nCnt].dir, 3, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, 3.0f);
+				SetEffect(g_Bullet[nCnt].pos, g_Bullet[nCnt].dir, 10, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, 3.0f);
 
 				// 当たり判定を纏わせる
 				if (sphererange(&g_Bullet[nCnt].pos, &pPlayer->pos, g_Bullet[nCnt].fSize, 30.0f))
