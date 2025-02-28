@@ -113,7 +113,7 @@ void UpdateMeshCylinder(void)
 		case CYLINDERTYPE_NORMAL:
 			break;
 		case CYLINDERTYPE_HEAL:
-			g_MeshCylinder[nCntCylinder].pos.y += 2.0f;
+			g_MeshCylinder[nCntCylinder].pos.y += g_MeshCylinder[nCntCylinder].Speed;
 
 			for (int nCntVtx = 0; nCntVtx < g_MeshCylinder[nCntCylinder].Vertex; nCntVtx++)
 			{

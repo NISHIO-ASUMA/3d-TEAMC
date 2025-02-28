@@ -2641,11 +2641,12 @@ void SetMotionCheck(void)
 		int SetKey = 4;
 
 		// î≠ê∂ÉLÅ[
-		if (g_player.Motion.nKey % SetKey== 0)
+		if (g_player.Motion.nKey % SetKey== 0 && g_player.Motion.nKey <= 16)
 		{
 			// è’åÇîgÇî≠ê∂éwÇπÇÈ
-			SetImpact(g_player.pos, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f), 32, 30.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 0);
+			SetImpact(g_player.pos, D3DCOLOR_RGBA(100,100,100,255), 32, 30.0f, 20.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 0);
 		}
+
 		if (CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 21, 21, 0, 0) == true)
 		{
 			// ÉJÉÅÉâÇÃóhÇÍ
@@ -2657,6 +2658,18 @@ void SetMotionCheck(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPHAMMER)
 	{
 		StartVibration(&vibrationState, 200);
+	}
+
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 0, 0, 0, 0) == true)
+	{
+		// è’åÇîgÇî≠ê∂éwÇπÇÈ
+		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 200.0f, 180.0f, 1.6f, 90, IMPACTTYPE_SPKATANA, 1);
+	}
+
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 4, 4, 1, 1) == true)
+	{
+		// è’åÇîgÇî≠ê∂éwÇπÇÈ
+		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 40.0f, 20.0f, 15.0f, 60, IMPACTTYPE_NORMAL, 1);
 	}
 
 	// êUìÆÇÃçXêVèàóù
