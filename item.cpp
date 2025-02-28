@@ -181,6 +181,9 @@ void InitItem(void)
 //===============================================================================================================
 void UninitItem(void)
 {
+	// 音楽を停止
+	StopSound();
+
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		// テクスチャの破棄
@@ -409,6 +412,9 @@ void UpdateItem(void)
 		{
 			int nType = g_Item[nCntItem].nType;
 
+			// 音楽再生
+			PlaySound(SPUND_LABEL_WEPONBREAK);
+
 			// アイテムを壊す
 			pPlayer->Itembreak[pPlayer->ItemIdx] = true;
 			g_Item[nCntItem].bUse = false; // 消す
@@ -485,8 +491,7 @@ void DrawItem(void)
 //ブロックの設定処理
 //=========================================================================================================
 void SetItem(D3DXVECTOR3 pos, int nType)
-{
-	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+{for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		if (!g_Item[nCntItem].bUse)
 		{// 未使用状態なら

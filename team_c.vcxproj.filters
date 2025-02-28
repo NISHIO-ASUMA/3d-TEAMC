@@ -157,6 +157,9 @@
     <ClCompile Include="meshimpact.cpp">
       <Filter>ソースファイル\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="itemgage.cpp">
+      <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -314,6 +317,9 @@
     </ClInclude>
     <ClInclude Include="meshimpact.h">
       <Filter>ヘッダーファイル\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="itemgage.h">
+      <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
