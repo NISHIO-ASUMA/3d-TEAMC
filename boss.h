@@ -63,6 +63,7 @@ typedef struct
 	int state;
 	int nCounterState;
 	int nIdxShadow;
+	int nIdxMap;
 	int AttackState; // 
 	int nAttackPattern; //ボスの攻撃パターン設定
 	float Speed; // 足の速さ
