@@ -178,26 +178,33 @@ void UpdateEffectX(void)
 		pVtx[2].col = g_EffectX[nCnt].col;
 		pVtx[3].col = g_EffectX[nCnt].col;
 
-		// アニメーションの設定
-		if (g_EffectX[nCnt].EffectType == EFFECT_SMORK)
+		switch (g_EffectX[nCnt].EffectType)
 		{
-			SetTextureAnim(nCnt, 8, 1,15);
-		}
-		if (g_EffectX[nCnt].EffectType == EFFECT_SOUL)
-		{
-			SetTextureAnim(nCnt, 4, 1, 5);
-		}
-		if (g_EffectX[nCnt].EffectType == EFFECT_WATER)
-		{
-			SetTextureAnim(nCnt, 5, 1, 5);
-		}
-		if(g_EffectX[nCnt].EffectType == EFFECT_NORMAL)
-		{
+		case EFFECT_NORMAL:
 			//テクスチャ座標の設定
 			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 			pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+			break;
+		case EFFECT_SMORK:
+			SetTextureAnim(nCnt, 8, 1, 15);
+			break;
+		case EFFECT_SOUL:
+			SetTextureAnim(nCnt, 4, 1, 5);
+			break;
+		case EFFECT_WATER:
+			SetTextureAnim(nCnt, 5, 1, 5);
+			break;
+		case EFFECT_HEAL:
+			//テクスチャ座標の設定
+			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+			break;
+		default:
+			break;
 		}
 
 		// 寿命が尽きたら消す
@@ -325,7 +332,7 @@ void SetEffectX(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, flo
 			g_EffectX[nCnt].move = move; // 移動量
 			g_EffectX[nCnt].col = col; // 色
 			g_EffectX[nCnt].nLife = nLife; // 寿命
-			g_EffectX[nCnt].decfAlv = decfAlv; // α値の減少値
+			g_EffectX[nCnt].decfAlv = 1.0f / nLife; // α値の減少値
 			g_EffectX[nCnt].EffectType = EffectType; // エフェクトの種類
 			g_EffectX[nCnt].bUse = true;// 使用状態にする
 
@@ -358,6 +365,13 @@ void SetEffectX(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, flo
 				pVtx[1].tex = D3DXVECTOR2(0.2f, 0.0f);
 				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 				pVtx[3].tex = D3DXVECTOR2(0.2f, 1.0f);
+				break;
+			case EFFECT_HEAL:
+				//テクスチャ座標の設定
+				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 				break;
 			default:
 				break;

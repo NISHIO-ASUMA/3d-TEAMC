@@ -200,6 +200,7 @@ typedef struct
 	bool bCraft;      // クラフト中かどうか
 	int nIdxMap;
 	int StockItemIdx; // ストックしているアイテムのインデックス
+	int nIdxCylinder;  // シリンダーのインデックス
 }Player;
 
 //**************************

@@ -104,9 +104,16 @@ void UpdateMeshImpact(void)
 
 		int nCntVertex = 0;
 
-		g_MeshImpact[nCnt].OutRadius += g_MeshImpact[nCnt].speed;
-		g_MeshImpact[nCnt].InRadius += g_MeshImpact[nCnt].speed;
-
+		if (g_MeshImpact[nCnt].nType != IMPACTTYPE_SPKATANA)
+		{
+			g_MeshImpact[nCnt].OutRadius += g_MeshImpact[nCnt].speed;
+			g_MeshImpact[nCnt].InRadius += g_MeshImpact[nCnt].speed;
+		}
+		else
+		{
+			g_MeshImpact[nCnt].OutRadius -= g_MeshImpact[nCnt].speed;
+			g_MeshImpact[nCnt].InRadius -= g_MeshImpact[nCnt].speed;
+		}
 		//頂点バッファをロック
 		g_MeshImpact[nCnt].g_pVtxBuffMeshImpact->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -381,7 +388,9 @@ bool CollisionImpact(D3DXVECTOR3* pPos)
 	// 判定を返す
 	return bHit;
 }
-
+//=================================================================================================================
+// インパクトのダメージ設定処理
+//=================================================================================================================
 int ImpactDamege(int nID)
 {
 	return g_MeshImpact[nID].nDamege;

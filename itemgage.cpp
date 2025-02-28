@@ -64,10 +64,10 @@ void InitItemGage(void)
 		pVtx[3].rhw = 1.0f;
 
 		// 頂点カラーの設定
-		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+		pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+		pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+		pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
 
 		// テクスチャ設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -157,6 +157,42 @@ void UpdateItemGage(void)
 			pVtx[1].pos = D3DXVECTOR3(pos.x + g_ItemGage[nCnt].fLength, pos.y - fHeight, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(pos.x, pos.y + fHeight, 0.0f);
 			pVtx[3].pos = D3DXVECTOR3(pos.x + g_ItemGage[nCnt].fLength, pos.y + fHeight, 0.0f);
+
+			if (RateGage > 0.8f)
+			{
+				pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
+			}
+			else if (RateGage > 0.6f)
+			{
+				pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+			}
+			else if (RateGage > 0.4f)
+			{
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+			}
+			else if (RateGage > 0.2f)
+			{
+				pVtx[0].col = D3DXCOLOR(1.0f, 0.4f, 0.0f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 0.4f, 0.0f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 0.4f, 0.0f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 0.4f, 0.0f, 1.0f);
+			}
+			else
+			{
+				pVtx[0].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			break;
 		default:
 			break;

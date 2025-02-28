@@ -28,7 +28,7 @@ typedef enum
 static const char* ITEMGAGE_INFO[ITEMGAGE_MAX] =
 {
 	"data\\TEXTURE\\lifebar_frame.png",
-	"data\\TEXTURE\\lifebar_gage.png",
+	"data\\TEXTURE\\Weapon_gage.png",
 };
 //**************************************************************************************************************
 // アイテムゲージの構造体

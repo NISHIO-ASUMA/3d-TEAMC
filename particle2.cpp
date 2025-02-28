@@ -94,9 +94,9 @@ void UpdateParticleX(void)
 			float fAngleY = (float)(rand() % MAX - MIN) * 0.01f;
 			float fAngleZ = (float)(rand() % MAX - MIN) * 0.01f;
 
-			float fMoveX = ((float)(rand() % 1) + 1.0f);
-			float fMoveY = ((float)(rand() % 1) + 1.0f);
-			float fMoveZ = ((float)(rand() % 1) + 1.0f);
+			//float fMoveX = ((float)(rand() % 1) + 1.0f);
+			//float fMoveY = ((float)(rand() % 1) + 1.0f);
+			//float fMoveZ = ((float)(rand() % 1) + 1.0f);
 
 			//à íuÇÃê›íËpos
 			pos.x = g_aParticle[nCntParticle].pos.x /*+ (float)(rand() % 50 - 50.0f)*/;
@@ -108,9 +108,9 @@ void UpdateParticleX(void)
 			//pos.z += (float)(rand() % 100 - 100.0f);
 
 			//à⁄ìÆó ÇÃê›íË
-			move.x = cosf(fAngleX) * g_aParticle[nCntParticle].dir.x * fMoveX;
-			move.y = sinf(fAngleY) * g_aParticle[nCntParticle].dir.y * fMoveY;
-			move.z = cosf(fAngleZ) * g_aParticle[nCntParticle].dir.z * fMoveZ;
+			move.x = cosf(fAngleX) * g_aParticle[nCntParticle].dir.x;
+			move.y = sinf(fAngleY) * g_aParticle[nCntParticle].dir.y;
+			move.z = cosf(fAngleZ) * g_aParticle[nCntParticle].dir.z;
 
 			//êFÇÃê›íËcol
 			col = g_aParticle[nCntParticle].col;

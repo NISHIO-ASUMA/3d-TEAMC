@@ -921,6 +921,9 @@ void UpdatePlayer(void)
 
 	}
 	
+	// シリンダーの位置設定処理
+	SetPotisionCylinder(g_player.nIdxCylinder, g_player.pos);
+
 	// モーションの演出処理
 	SetMotionCheck();
 
@@ -1602,11 +1605,16 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 		{
 			if (pItem[nIdx].nType == ITEMTYPE_ONIGIRI)
 			{
+				D3DXVECTOR3 pos(g_player.Motion.aModel[1].mtxWorld._41, g_player.Motion.aModel[1].mtxWorld._42, g_player.Motion.aModel[1].mtxWorld._43);
+
 				// シリンダーをセット
-				SetMeshCylinder(g_player.pos,1,120,50.0f,D3DCOLOR_RGBA(60,179,113,255),8,2,0.0f,15.0f);
+				g_player.nIdxCylinder = SetMeshCylinder(D3DXVECTOR3(g_player.pos.x, g_player.pos.y, g_player.pos.z),1,60,40.0f,D3DCOLOR_RGBA(59,255,0,255),16,1,2.0f,12.0f);
+
+				LoadEffect(2, pos);
 				g_player.nLife += HEAL_VALUE;
 				pItem[nIdx].bUse = false;
 
+				// 関数を抜ける
 				return false;
 			}
 			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
@@ -2628,20 +2636,40 @@ void SetMotionCheck(void)
 	}
 
 	// 槍のスペシャル攻撃の時
-	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPPIERCING &&
-		CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 0, 21, 1, 1) == true)
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPPIERCING && g_player.Motion.nKey != NULL)
 	{
-		// 衝撃波を発生指せる
-		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 32, 30.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 20);
+		int SetKey = 4;
 
-		// カメラの揺れ
-		WaveCamera(25);
+		// 発生キー
+		if (g_player.Motion.nKey % SetKey== 0 && g_player.Motion.nKey <= 16)
+		{
+			// 衝撃波を発生指せる
+			SetImpact(g_player.pos, D3DCOLOR_RGBA(100,100,100,255), 32, 30.0f, 20.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 0);
+		}
+
+		if (CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 21, 21, 0, 0) == true)
+		{
+			// カメラの揺れ
+			WaveCamera(25);
+		}
 	}
 
 	// 大型武器のスペシャル
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPHAMMER)
 	{
 		StartVibration(&vibrationState, 200);
+	}
+
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 0, 0, 0, 0) == true)
+	{
+		// 衝撃波を発生指せる
+		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 200.0f, 180.0f, 1.6f, 90, IMPACTTYPE_SPKATANA, 1);
+	}
+
+	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 4, 4, 1, 1) == true)
+	{
+		// 衝撃波を発生指せる
+		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 40.0f, 20.0f, 15.0f, 60, IMPACTTYPE_NORMAL, 1);
 	}
 
 	// 振動の更新処理
