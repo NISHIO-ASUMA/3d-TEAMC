@@ -134,7 +134,7 @@ void UpdateIcon()
 	{
 		if (g_Icon[nCnt].bUse && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD && g_Icon[nCnt].nIconType == ICONTYPE_HOLDITEM)// 使用されてるかつアイテム持ち
 		{
-			if (pItem[pPlayer->ItemIdx].durability < 15)// 更に耐久力が減ってたら赤く点滅
+			if ((float)pItem[pPlayer->ItemIdx].durability / (float)pItem[pPlayer->ItemIdx].Maxdurability < 0.3f)// 更に耐久力が減ってたら赤く点滅
 			{
 				if (bUP)
 				{

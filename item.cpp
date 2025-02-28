@@ -931,6 +931,7 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 	// アイテムの見た目を変える
 	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem].ItemTex[MixItem];
 	g_Item[pPlayer->ItemIdx].durability = g_TexItem[MixItem].durability;
+	g_Item[pPlayer->ItemIdx].Maxdurability = g_TexItem[MixItem].durability;
 
 	// 手に持ってるアイテムの種類を石バットにする
 	g_Item[pPlayer->ItemIdx].nType = MixItem;
