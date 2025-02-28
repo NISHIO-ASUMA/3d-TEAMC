@@ -360,7 +360,7 @@ void CraftRange(BLOCK* pBlock)
 		if (sphererange(&pBlock->pos, &pPlayer->pos, 20.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
 		{
 			// クラフト状態じゃなかったら
-			if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && !pPlayer->bCraft)
+			if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && !pPlayer->bCraft && pPlayer->AttackSp == false)
 			{
 				// クラフト状態
 				pPlayer->bCraft = true;
@@ -370,7 +370,7 @@ void CraftRange(BLOCK* pBlock)
 				break;
 			}
 			// クラフト状態だったら
-			else if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && pPlayer->bCraft)
+			else if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && pPlayer->bCraft && pPlayer->AttackSp == false)
 			{
 				// クラフト状態
 				pPlayer->bCraft = false;

@@ -634,7 +634,7 @@ void Draw(void)
 			// 描画終了
 			g_pD3DDevice->EndScene();
 
-			if (g_mode == MODE_TITLE || g_mode == MODE_TUTORIAL)
+			if (g_mode == MODE_TITLE)
 			{
 				break; // 一つ目をセットしたら抜ける
 			}

@@ -200,41 +200,46 @@ void UninitTutorial3d(void)
 //==============================================================================================================
 void UpdateTutorial3d(void)
 {
-	// カメラの更新処理
-	UpdateCamera();
+	Player* pPlayer = GetPlayer();
 
-	// 影の更新処理
-	UpdateShadow();
+	if (pPlayer->bCraft == false)
+	{
+		// カメラの更新処理
+		UpdateCamera();
 
-	// 壁の更新処理
-	UpdateWall();
+		// 影の更新処理
+		UpdateShadow();
 
-	// UIの更新処理
-	UpdateGameUI();
+		// 壁の更新処理
+		UpdateWall();
+
+		// UIの更新処理
+		UpdateGameUI();
+
+		// 爆発の更新処理
+		UpdateExplosion();
+
+		// 剣の軌跡の更新処理
+		UpdateMeshSword();
+
+		// プレイヤーの更新処理
+		UpdatePlayer();
+
+		// エフェクトの更新処理
+		UpdateEffect();
+
+		// アイテムゲージの更新
+		UpdateItemGage();
+
+		// アイコンの更新
+		UpdateIcon();
+	}
 
 	// ブロックの更新処理
 	UpdateBlock();
 
 	// アイテムの更新処理
 	UpdateItem();
-
-	// 爆発の更新処理
-	UpdateExplosion();
-
-	// 剣の軌跡の更新処理
-	UpdateMeshSword();
-
-	// プレイヤーの更新処理
-	UpdatePlayer();
-
-	// エフェクトの更新処理
-	UpdateEffect();
-
-	// アイコンの更新
-	UpdateIcon();
-
-	// アイテムゲージの更新
-	UpdateItemGage();
 
 	// ビルボードの更新
 	UpdateBillboard();
@@ -246,7 +251,6 @@ void UpdateTutorial3d(void)
 
 		// 音楽再生
 		PlaySound(SOUND_LABEL_ENTER_SE);
-
 	}
 }
 //==============================================================================================================

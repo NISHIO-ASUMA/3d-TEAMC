@@ -876,7 +876,7 @@ void UpdatePlayer(void)
 	}	//モーションの更新
 
 	// アイテムのストック
-	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && pItem[g_player.ItemIdx].nType != ITEMTYPE_ONIGIRI &&
+	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && g_player.Motion.motionType != MOTIONTYPE_DEATH &&
 		g_player.AttackSp == false && g_player.Motion.nNumModel == 16)
 	{// Fキー or RBボタン
 
@@ -1596,7 +1596,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	Radius = Radius * Radius;
 
 	// 範囲内に入った
-	if (fDistance <= Radius && pItem[nIdx].state == ITEMSTATE_NORMAL)
+	if (fDistance <= Radius && pItem[nIdx].state == ITEMSTATE_NORMAL && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{
 		bCollision = true;
 
@@ -2660,12 +2660,14 @@ void SetMotionCheck(void)
 		StartVibration(&vibrationState, 200);
 	}
 
+	// 刀のスペシャル
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 0, 0, 0, 0) == true)
 	{
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 200.0f, 180.0f, 1.6f, 90, IMPACTTYPE_SPKATANA, 1);
 	}
 
+	// 刀のスペシャル
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 4, 4, 1, 1) == true)
 	{
 		// 衝撃波を発生指せる

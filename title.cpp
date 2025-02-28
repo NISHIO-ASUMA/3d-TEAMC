@@ -33,6 +33,7 @@ LPDIRECT3DTEXTURE9 g_pTextureTitle[TITLETYPE_MAX] = {}; // ƒeƒNƒXƒ`ƒƒ‚Ö‚Ìƒ|ƒCƒ“ƒ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;			// ’¸“_ƒoƒbƒtƒ@‚Ö‚Ìƒ|ƒCƒ“ƒ^
 TITLE g_Title[TITLETYPE_MAX];							// \‘¢‘Ì•Ï”
 int g_nTitleCount;										// ‰æ–Ê‘JˆÚƒJƒEƒ“ƒg
+bool bModeSet;
 
 //==============================================================================================================
 //ƒ^ƒCƒgƒ‹‚Ì‰Šú‰»ˆ—
@@ -60,6 +61,9 @@ void InitTitle(void)
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffTitle,
 		NULL);
+
+	// Œˆ’èƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚©‚Ç‚¤‚©
+	bModeSet = false;
 
 	// ’¸“_ƒoƒbƒtƒ@‚ğƒƒbƒN
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
@@ -153,7 +157,7 @@ void UpdateTitle(void)
 		{
 		case TITLESELECT_GAME:
 
-			if (KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN))
+			if ((KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN)) && bModeSet == false)
 			{
 				// ‰¹ŠyÄ¶
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -161,7 +165,7 @@ void UpdateTitle(void)
 				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO; // ƒƒjƒ…[ƒ`ƒ…[ƒgƒŠƒAƒ‹
 
 			}
-			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP))
+			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
 			{
 				// ‰¹ŠyÄ¶
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -174,8 +178,9 @@ void UpdateTitle(void)
 				TitleMenuFlash(TITLESELECT_GAME); // ƒ`ƒ…[ƒgƒŠƒAƒ‹“_–Å
 			}
 
-			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))
+			if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE)) && bModeSet == false)
 			{//EnterƒL[‚ğ‰Ÿ‚µ‚½‚ç
+				bModeSet = true;
 				//ƒQ[ƒ€‰æ–Ê‚Ö
 				SetFade(MODE_GAME);
 
@@ -189,7 +194,7 @@ void UpdateTitle(void)
 			break;
 
 		case TITLESELECT_TUTO:
-			if (KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN))
+			if ((KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN)) && bModeSet == false)
 			{
 				// ‰¹ŠyÄ¶
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -197,7 +202,7 @@ void UpdateTitle(void)
 				g_Title[nCnt].TitleMenu = TITLESELECT_RANKING; // ƒƒjƒ…[ƒ`ƒ…[ƒgƒŠƒAƒ‹
 			}
 
-			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP))
+			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
 			{
 				// ‰¹ŠyÄ¶
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -210,8 +215,9 @@ void UpdateTitle(void)
 				TitleMenuFlash(TITLESELECT_TUTO); // ƒƒjƒ…[ƒ`ƒ…[ƒgƒŠƒAƒ‹
 			}
 
-			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))
+			if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE)) && bModeSet == false)
 			{//EnterƒL[‚ğ‰Ÿ‚µ‚½‚ç
+				bModeSet = true;
 				//ƒ`ƒ…[ƒgƒŠƒAƒ‹‰æ–Ê‚Ö
 				SetFade(MODE_TUTORIAL);
 
@@ -225,7 +231,7 @@ void UpdateTitle(void)
 			break;
 
 		case TITLESELECT_RANKING:
-			if (KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN))
+			if ((KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN)) && bModeSet == false)
 			{
 				// ‰¹ŠyÄ¶
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -234,7 +240,7 @@ void UpdateTitle(void)
 
 			}
 
-			if (KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP))
+			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
 			{
 				// ‰¹ŠyÄ¶
 				PlaySound(SOUND_LABEL_SELECT_SE);
@@ -247,10 +253,12 @@ void UpdateTitle(void)
 				TitleMenuFlash(TITLESELECT_RANKING); // ƒƒjƒ…[ƒ`ƒ…[ƒgƒŠƒAƒ‹
 			}
 
-			if (KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))
+			if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE)) && bModeSet == false)
 			{//EnterƒL[‚ğ‰Ÿ‚µ‚½‚ç
 				//ƒ‰ƒ“ƒLƒ“ƒO‰æ–Ê‚Ö
 				SetFade(MODE_RANKING);
+				// ƒ‚[ƒh‚ğŒˆ’è‚µ‚½
+				bModeSet = true;
 
 				// ‰¹ŠyÄ¶
 				PlaySound(SOUND_LABEL_ENTER_SE);
