@@ -833,6 +833,10 @@ void UpdatePlayer(void)
 	if (g_player.AttackSp == true && g_player.Motion.motionType != MOTIONTYPE_ACTION)
 	{
 		//SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
+
+		// 音楽再生
+		PlaySound(SPUND_LABEL_WEPONBREAK);
+
 		g_player.SwordOffpos.y = 65.0f;		// 判定の長さを戻す
 		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
 		g_player.Motion.nNumModel = 15;		// 武器を消す
