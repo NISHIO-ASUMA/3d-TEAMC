@@ -27,6 +27,7 @@
 #include "polygon.h"
 #include "wall.h"
 #include "meshimpact.h"
+#include "minimap.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -259,6 +260,7 @@ void UpdateBoss(void)
 
 		// 影の位置の更新
 		SetPositionShadow(g_Boss[nCnt].nIdxShadow, g_Boss[nCnt].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss[nCnt].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss[nCnt].pos.y / 30.0f));
+		SetMiniMapPotision(g_Boss[nCnt].nIdxMap, &g_Boss[nCnt].pos);
 
 		// ボスの攻撃モーション
 		if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)// ドス突きの状態で
@@ -402,7 +404,7 @@ void UpdateBoss(void)
 		// インパクトの当たり判定
 		if (CollisionImpact(&g_Boss[nCnt].pos) == true)
 		{
-			HitBoss(nCnt, 20);
+			HitEnemy(nCnt, ImpactDamege(0));
 		}
 
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
@@ -650,6 +652,7 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 
 			SetPolygon(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 20.0f, 100.0f, POLYGON_TYPE_FIVE);
 			g_Boss[nCnt].nIdxShadow = SetShadow(BossPos, D3DXVECTOR3(0.0f,0.0f,0.0f), 40.0f,1.0f);
+			g_Boss[nCnt].nIdxMap = SetMiniMap(BossPos, MINIMAPTEX_BOSS);
 
 			break;
 		}
@@ -690,6 +693,7 @@ void HitBoss(int nCntBoss,int nDamage)
 
 		// 影から消す
 		KillShadow(g_Boss[nCntBoss].nIdxShadow);
+		EnableMap(g_Boss[nCntBoss].nIdxMap);		// マップから消す
 
 		// 消す
 		g_Boss[nCntBoss].bUse = false;
