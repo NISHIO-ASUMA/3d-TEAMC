@@ -617,7 +617,7 @@ void UpdatePlayer(void)
 	//SetEffect(D3DXVECTOR3(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1, 20.0f);
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motionType != MOTIONTYPE_DEATH && pItem[g_player.ItemIdx].nType != ITEMTYPE_ONIGIRI)
+	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
@@ -641,7 +641,7 @@ void UpdatePlayer(void)
 	}
 
 	// 投げ物を持っているときの攻撃
-	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand && !g_player.AttackSp && pItem[g_player.ItemIdx].nType != ITEMTYPE_ONIGIRI)
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO && bNohand && !g_player.AttackSp)
 	{
 		PlayerComb(MOTIONTYPE_ACTION, 40, 20, COMBO_ATTACK1); // コンボ1
 	}
@@ -750,13 +750,6 @@ void UpdatePlayer(void)
 		SetItem(g_player.pos, pItem[g_player.ItemIdx].nType);
 
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
-
-		// 持ってるアイテムがおにぎりだったら
-		if (pItem[g_player.ItemIdx].nType == ITEMTYPE_ONIGIRI)
-		{
-			// 競合しないようにアイテムの種類を変える
-			pItem[g_player.ItemIdx].nType = -1;
-		}
 	}
 
 	// 大型武器モーションの時
@@ -923,23 +916,9 @@ void UpdatePlayer(void)
 
 	}
 	
-	// マックスより50下
-	int DiffLife = g_player.nMaxLife - HEAL_VALUE;
-
-	// おにぎりのとき回復
-	if (pItem[g_player.ItemIdx].nType == ITEMTYPE_ONIGIRI && OnMouseTriggerDown(LEFT_MOUSE) == true && g_player.Motion.nNumModel == 16 && g_player.nLife <= DiffLife)
-	{
-		// HPを回復させる
-		g_player.nLife += HEAL_VALUE;
-
-		// アイテムを消す
-		g_player.Itembreak[g_player.ItemIdx] = true;
-
-		// 存在しないアイテムの種類にする
-		pItem[g_player.ItemIdx].nType = -1;
-	}
-
+	// モーションの演出処理
 	SetMotionCheck();
+
 	//D3DXVec3TransformCoord
 	// モーションの更新
 	UpdateMotion(&g_player.Motion);
@@ -1616,6 +1595,12 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_LEFT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) &&
 			g_player.Combostate == COMBO_NO)
 		{
+			if (pItem[nIdx].nType == ITEMTYPE_ONIGIRI)
+			{
+				g_player.nLife += 100;
+				pItem[nIdx].bUse = false;
+				return false;
+			}
 			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
 
 			// 音楽再生
@@ -1792,10 +1777,6 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			case ITEMTYPE_KATANA:
 				MotionChange(MOTION_KATANA, 0);
 				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
-				break;
-			case ITEMTYPE_ONIGIRI:
-				MotionChange(MOTION_KATANA, 1);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 10);
 				break;
 			default:
 				break;
