@@ -327,7 +327,7 @@ void UpdateEnemy(void)
 
 		if(CollisionImpact(&g_Enemy[nCntEnemy].pos) == true)
 		{
-			HitEnemy(nCntEnemy,1);
+			HitEnemy(nCntEnemy, ImpactDamege(0));
 		}
 
 		// ƒAƒCƒeƒ€‚ª“–‚½‚Á‚½‚©

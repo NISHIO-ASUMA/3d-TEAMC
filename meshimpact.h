@@ -50,6 +50,7 @@ typedef struct
 	float decAlv;				// インパクトの透明化の速度
 	int nLife;                  // 寿命
 	bool bUse;                  // 使用状態
+	int nDamege;                // 攻撃力
 }MeshImpact;
 
 //**************************************************************************************************************
@@ -59,8 +60,9 @@ void InitMeshImpact(void);//メッシュインパクトの初期化処理
 void UninitMeshImpact(void);//メッシュインパクトの終了処理
 void UpdateMeshImpact(void);//メッシュインパクトの更新処理
 void DrawMeshImpact(void);//メッシュインパクトの描画処理
-void SetImpact(D3DXVECTOR3 pos, D3DXCOLOR col,int nImpactPosX,float OutRadius,float InRadius,float Speed,int nLife,int nType); // インパクトの設定処理(Out > In)
+void SetImpact(D3DXVECTOR3 pos, D3DXCOLOR col,int nImpactPosX,float OutRadius,float InRadius,float Speed,int nLife,int nType,int nDamege); // インパクトの設定処理(Out > In)
 void CreateImpact(int nCntImpact, int nImpactPosX, int Vertex, int Index);                                                     // インパクトの作成処理
 bool CollisionImpact(D3DXVECTOR3 *pPos);
+int ImpactDamege(int nID);
 #endif
 

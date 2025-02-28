@@ -328,4 +328,3 @@ void ResetMeshSword(void)
 {
 	g_nMeshSwordCount = 0;
 }
-

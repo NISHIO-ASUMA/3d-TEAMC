@@ -810,7 +810,7 @@ void UpdatePlayer(void)
 				PlayerComb(MOTIONTYPE_ACTION, 240, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_ONE_HAND:
-				g_player.SwordOffpos.y = 250.0f;
+				g_player.SwordOffpos.y = 100.0f;
 				MotionChange(MOTION_ONEHANDBLOW, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
@@ -2606,7 +2606,7 @@ void SetMotionCheck(void)
 		StartVibration(&vibrationState,200);
 
 		// 衝撃波を発生指せる
-		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER);
+		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER,20);
 
 		// カメラの揺れ
 		WaveCamera(25);
@@ -2619,7 +2619,7 @@ void SetMotionCheck(void)
 		StartVibration(&vibrationState, 200);
 
 		// 衝撃波を発生指せる
-		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER);
+		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 10.0f, 60, IMPACTTYPE_PLAYER, g_player.nDamage * 50);
 
 		// カメラの揺れ
 		WaveCamera(25);
@@ -2632,7 +2632,7 @@ void SetMotionCheck(void)
 		StartVibration(&vibrationState, 200);
 
 		// 衝撃波を発生指せる
-		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER);
+		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 20);
 
 		// カメラの揺れ
 		WaveCamera(25);
@@ -2643,7 +2643,7 @@ void SetMotionCheck(void)
 		CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 0, 21, 1, 1) == true)
 	{
 		// 衝撃波を発生指せる
-		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 32, 30.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER);
+		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 32, 30.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 20);
 
 		// カメラの揺れ
 		WaveCamera(25);
