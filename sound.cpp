@@ -50,7 +50,8 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/damageSe.wav", 0},	  // ダメージ音
 	{"data/SE/special_attack.wav",0},  // SP攻撃音
 	{"data/SE/craft.wav",0},  // 武器作成SE
-	{"data/SE/powerup.wav",0}  // フィーバー開始SE
+	{"data/SE/powerup.wav",0},  // フィーバー開始SE
+	{"data/SE/wepon_breakse.wav",0}, // 武器破壊SE
 };
 //=============================================================================
 // 初期化処理

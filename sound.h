@@ -33,6 +33,7 @@ typedef enum
 	SOUND_LABEL_SP_SE,			// SP攻撃SE
 	SOUND_LABEL_CRAFT,			// 武器作成SE
 	SOUND_LABEL_FEVER,			// フィーバー開始SE
+	SPUND_LABEL_WEPONBREAK,     // 武器破壊SE
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 
