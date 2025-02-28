@@ -51,6 +51,7 @@
 #include "effectEdit.h"
 #include "meshimpact.h"
 #include "itemgage.h"
+#include "meshcylinder.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -95,6 +96,9 @@ void InitGame(void)
 
 	//メッシュインパクトの初期化処理
 	InitMeshImpact();
+
+	//メッシュシリンダーの初期化処理
+	InitMeshCylinder();
 
 	// メッシュドームの初期化処理
 	InitmeshFan();
@@ -257,6 +261,9 @@ void UninitGame(void)
 
 	//メッシュインパクトの終了処理
 	UninitMeshImpact();
+
+	//メッシュシリンダーの終了処理
+	UninitMeshCylinder();
 
 	// メッシュドームの終了処理
 	UninitmeshFan();
@@ -542,6 +549,9 @@ void UpdateGame(void)
 
 				// アイテムゲージの更新処理
 				UpdateItemGage();
+
+				//メッシュシリンダーの更新処理
+				UpdateMeshCylinder();
 			}
 
 			// ビルボードの更新処理
@@ -600,6 +610,9 @@ void DrawGame(void)
 
 	// メッシュドームの描画処理
 	DrawmeshFan();
+
+	//メッシュシリンダーの描画処理
+	DrawMeshCylinder();
 
 	//プレイヤーの描画処理
 	DrawPlayer();

@@ -35,6 +35,7 @@
 #include "icon.h"
 #include "effect2.h"
 #include "meshimpact.h"
+#include "meshcylinder.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -46,7 +47,7 @@
 #define MAX_MOVE (1.0f)			// プレイヤーの移動量
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
-#define HEAL_VALUE (200)		// 回復量
+#define HEAL_VALUE (100)		// 回復量
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -1601,8 +1602,11 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 		{
 			if (pItem[nIdx].nType == ITEMTYPE_ONIGIRI)
 			{
-				g_player.nLife += 100;
+				// シリンダーをセット
+				SetMeshCylinder(g_player.pos,1,120,50.0f,D3DCOLOR_RGBA(60,179,113,255),8,2,0.0f,15.0f);
+				g_player.nLife += HEAL_VALUE;
 				pItem[nIdx].bUse = false;
+
 				return false;
 			}
 			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
