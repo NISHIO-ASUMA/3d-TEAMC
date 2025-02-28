@@ -246,6 +246,7 @@ void UpdateItem(void)
 			continue;
 		}
 
+		// ó‘Ô‚Ì‘JˆÚ
 		switch (g_Item[nCntItem].state)
 		{
 		case ITEMSTATE_NORMAL:

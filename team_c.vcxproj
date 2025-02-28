@@ -164,6 +164,7 @@
     <ClCompile Include="gameui.cpp" />
     <ClCompile Include="icon.cpp" />
     <ClCompile Include="itemgage.cpp" />
+    <ClCompile Include="meshcylinder.cpp" />
     <ClCompile Include="meshfan.cpp" />
     <ClCompile Include="meshimpact.cpp" />
     <ClCompile Include="minimap.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="icon.h" />
     <ClInclude Include="itemgage.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="meshcylinder.h" />
     <ClInclude Include="meshfan.h" />
     <ClInclude Include="meshimpact.h" />
     <ClInclude Include="minimap.h" />

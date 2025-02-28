@@ -160,6 +160,9 @@
     <ClCompile Include="itemgage.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="meshcylinder.cpp">
+      <Filter>ソースファイル\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -320,6 +323,9 @@
     </ClInclude>
     <ClInclude Include="itemgage.h">
       <Filter>ヘッダーファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="meshcylinder.h">
+      <Filter>ヘッダーファイル\mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
