@@ -50,6 +50,7 @@
 #include "particle2.h"
 #include "effectEdit.h"
 #include "meshimpact.h"
+#include "itemgage.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -139,6 +140,9 @@ void InitGame(void)
 
 	//壁の初期化処理
 	InitWall();
+	
+	// アイテムゲージの初期化
+	InitItemGage();
 
 	//HPゲージの初期化処理
 	InitGauge();
@@ -238,6 +242,9 @@ void UninitGame(void)
 
 	// ゲームのUIの終了処理
 	UninitGameUI();
+
+	// アイテムゲージの終了処理
+	UninitItemGage();
 
 	//影の終了処理
 	UninitShadow();
@@ -532,6 +539,9 @@ void UpdateGame(void)
 
 				// メッシュインパクトの更新処理
 				UpdateMeshImpact();
+
+				// アイテムゲージの更新処理
+				UpdateItemGage();
 			}
 
 			// ビルボードの更新処理
@@ -669,6 +679,9 @@ void DrawGame(void)
 
 	// ゲームのUIの描画処理
 	DrawGameUI();
+
+	// アイテムゲージの描画処理
+	DrawItemGage();
 
 	// タイマーの描画処理
 	DrawTime();

@@ -95,6 +95,7 @@ void InitItem(void)
 		ElementChange(nCntNum);
 		g_TexItem[nCntNum].bMixItem[nCntNum] = false;           // クラフト後のアイテム表示用フラグ
 		g_TexItem[nCntNum].grabity = 0.0f;           // クラフト後のアイテム表示用フラグ
+		g_TexItem[nCntNum].Maxdurability = g_TexItem[nCntNum].durability;           // アイテムの耐久力
 
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
@@ -221,6 +222,19 @@ void UpdateItem(void)
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
+		// 耐久力が0になったら
+		if (g_Item[nCntItem].durability <= 0 && g_Item[nCntItem].state == ITEMSTATE_HOLD)
+		{
+			int nType = g_Item[nCntItem].nType;
+
+			// 音楽再生
+			PlaySound(SPUND_LABEL_WEPONBREAK);
+
+			// アイテムを壊す
+			pPlayer->Itembreak[nCntItem] = true;
+			g_Item[nCntItem].bUse = false; // 消す
+		}
+
 		// プレイヤーがものを持っているかつ攻撃モーションのキーが3になったら
 		if (!pPlayer->AttackSp&&pPlayer->HandState == PLAYERHOLD_HOLD && pPlayer->Motion.nKey == 3 && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
 		{
@@ -405,19 +419,6 @@ void UpdateItem(void)
 			{
 				g_Item[nCntItem].bUse = false; // 消す
 			}
-		}
-
-		// 耐久力が0になったら
-		if (g_Item[nCntItem].durability <= 0)
-		{
-			int nType = g_Item[nCntItem].nType;
-
-			// 音楽再生
-			PlaySound(SPUND_LABEL_WEPONBREAK);
-
-			// アイテムを壊す
-			pPlayer->Itembreak[pPlayer->ItemIdx] = true;
-			g_Item[nCntItem].bUse = false; // 消す
 		}
 	}
 

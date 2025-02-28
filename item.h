@@ -128,6 +128,7 @@ typedef struct
 	bool bMixItem[ITEMTYPE_MAX]; // 完成品表示用フラグ
 	float grabity;
 	int nCounterState; // 状態カウンター
+	int Maxdurability; // 最大の耐久力
 }Item;
 
 //***************************
