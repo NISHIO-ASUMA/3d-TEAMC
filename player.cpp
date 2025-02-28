@@ -1611,6 +1611,23 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				g_player.nIdxCylinder = SetMeshCylinder(D3DXVECTOR3(g_player.pos.x, g_player.pos.y, g_player.pos.z),1,60,40.0f,D3DCOLOR_RGBA(59,255,0,255),16,1,2.0f,12.0f);
 
 				LoadEffect(2, pos);
+
+				SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + g_player.Size.y / 1.5f, g_player.pos.z),
+					D3DXVECTOR3(1.57f, g_player.rot.y, 1.57f),
+					D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f),
+					2.0f, 4, 40, 40, 4.0f, 40.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+				SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + g_player.Size.y / 1.5f, g_player.pos.z),
+					D3DXVECTOR3(g_player.rot.x, g_player.rot.y - D3DX_PI, g_player.rot.z),
+					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f),
+					2.0f, 4, 40, 20, 10.0f, 40.0f,
+					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+
 				g_player.nLife += HEAL_VALUE;
 				pItem[nIdx].bUse = false;
 
