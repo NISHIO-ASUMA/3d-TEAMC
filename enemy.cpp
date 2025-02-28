@@ -327,7 +327,7 @@ void UpdateEnemy(void)
 
 		if(CollisionImpact(&g_Enemy[nCntEnemy].pos) == true)
 		{
-			HitEnemy(nCntEnemy,1);
+			HitEnemy(nCntEnemy, ImpactDamege(0));
 		}
 
 		// アイテムが当たったか
@@ -1336,7 +1336,7 @@ void AgentEnemy(int nCntEnemy)
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
-	float fRotMove, fRotDest, fRotDiff;
+	float fRotDest, fRotDiff;
 
 	fRotDest = atan2f(g_Enemy[nCntEnemy].pos.x - pPlayer->pos.x, g_Enemy[nCntEnemy].pos.z - pPlayer->pos.z);//目標の移動方向(角度)
 

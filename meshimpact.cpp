@@ -381,10 +381,16 @@ bool CollisionImpact(D3DXVECTOR3* pPos)
 	// 判定を返す
 	return bHit;
 }
+
+int ImpactDamege(int nID)
+{
+	return g_MeshImpact[nID].nDamege;
+}
+
 //=================================================================================================================
 // インパクトの設定処理
 //=================================================================================================================
-void SetImpact(D3DXVECTOR3 pos, D3DXCOLOR col, int nImpactPosX, float OutRadius, float InRadius, float Speed, int nLife, int nType)
+void SetImpact(D3DXVECTOR3 pos, D3DXCOLOR col, int nImpactPosX, float OutRadius, float InRadius, float Speed, int nLife, int nType, int nDamege)
 {
 	// 衝撃波の最大数分回す
 	for (int nCntImpact = 0; nCntImpact < MAX_IMPACT; nCntImpact++)
@@ -402,6 +408,7 @@ void SetImpact(D3DXVECTOR3 pos, D3DXCOLOR col, int nImpactPosX, float OutRadius,
 			g_MeshImpact[nCntImpact].InRadius = InRadius;							// 内側の半径
 			g_MeshImpact[nCntImpact].speed = Speed;							        // 速さ
 			g_MeshImpact[nCntImpact].nLife = nLife;							        // 寿命
+			g_MeshImpact[nCntImpact].nDamege = nDamege;							    // 攻撃力
 			g_MeshImpact[nCntImpact].nType = nType;							        // 種類
 			g_MeshImpact[nCntImpact].col = col;										// 色
 			g_MeshImpact[nCntImpact].col.a = A_OFFSET;								// あらかじめ薄くしておく

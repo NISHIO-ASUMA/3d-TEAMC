@@ -786,7 +786,6 @@ void LoadBoss(void)
 
 	// ƒ[ƒJƒ‹•Ï”éŒ¾-----------------------------
 	int nCntMotion = 0;
-	char Skip[3];
 	int nCntKey = 0;
 	int nCntPosKey = 0;
 	int nCntRotkey = 0;

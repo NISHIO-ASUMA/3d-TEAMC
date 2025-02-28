@@ -21,6 +21,7 @@
 
 #define X (16) // X
 #define Z (1) // Z
+#define DIVI (4) // 1フレーム中の分割数
 
 #define ORBIT_VERTEX ((X + 1) * (Z + 1)) //頂点数
 #define ORBIT_INDEX (ORBIT_VERTEX) // インデックス
@@ -46,5 +47,7 @@ void InitMeshSword(void);//剣の軌道の初期化処理
 void UninitMeshSword(void);//剣の軌道の終了処理
 void UpdateMeshSword(void);//剣の軌道の更新処理
 void DrawMeshSword(void);//剣の軌道の描画処理
-void ResetMeshSword(void);
+void ResetMeshSword(void);//剣の軌跡の消去処理
+//D3DXVECTOR3 CatmullRomInterpolation(D3DXVECTOR3 p0, D3DXVECTOR3 p1, D3DXVECTOR3 p2, D3DXVECTOR3 p3, float t); // Catmull-Rom 補間を行う関数
+//void GenerateSmoothTrail(void);//剣の軌跡の中間点を生成
 #endif
