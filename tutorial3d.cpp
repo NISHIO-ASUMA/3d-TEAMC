@@ -100,13 +100,13 @@ void InitTutorial3d(void)
 
 	// ブロックをセット
 	// TODO : ここの配置情報を修正---------------------
-	SetBlock(D3DXVECTOR3(-160.0f, 0.0f, 0.0f),D3DXVECTOR3(0.0f,D3DX_PI * 0.5f,0.0f), 19);
-	SetBlock(D3DXVECTOR3( -60.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 20);
-	SetBlock(D3DXVECTOR3( 40.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 21);
-	SetBlock(D3DXVECTOR3(140.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 47);
+	SetBlock(D3DXVECTOR3(-70.0f, 0.0f, 120.0f),D3DXVECTOR3(0.0f,D3DX_PI * 0.5f,0.0f), 19);
+	SetBlock(D3DXVECTOR3(280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 20);
+	SetBlock(D3DXVECTOR3(-280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 21);
+	SetBlock(D3DXVECTOR3(-115.0f, 0.0f, -230.0f), D3DXVECTOR3(0.0f, -12.0f, 0.0f), 47);
 
 	// アイテムをセット
-	SetItem(D3DXVECTOR3(40.0f, 0.0f, -90.0f), 29);
+	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 29);
 	//-------------------------------------------------
 	
 	// UIをセット
