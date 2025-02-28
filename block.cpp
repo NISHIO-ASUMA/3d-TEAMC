@@ -330,19 +330,22 @@ void DrawBlock(void)
 		// 現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
-		for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
+		if (sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, (g_Block[nCntBlock].Size.x + g_Block[nCntBlock].Size.z) * 0.5f) == false)
 		{
-			// マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatModel->GetBufferPointer();
+			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
+			{
+				// マテリアルのデータへのポインタを取得
+				pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatModel->GetBufferPointer();
 
-			// マテリアルの設定
-			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-			
-			// テクスチャの設定
-			pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureModel[nCntMat]);
+				// マテリアルの設定
+				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
-			// ブロック(パーツ)の描画
-			g_Block[nCntBlock].BlockTex[nType].g_pMeshModel->DrawSubset(nCntMat);
+				// テクスチャの設定
+				pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureModel[nCntMat]);
+
+				// ブロック(パーツ)の描画
+				g_Block[nCntBlock].BlockTex[nType].g_pMeshModel->DrawSubset(nCntMat);
+			}
 		}
 		SetMtx(nCntBlock);
 	}

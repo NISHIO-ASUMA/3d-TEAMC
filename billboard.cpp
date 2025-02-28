@@ -13,6 +13,7 @@
 #include "game.h"
 #include "input.h"
 #include "player.h"
+#include "easing.h"
 
 //*****************************
 // グローバル変数宣言
@@ -20,6 +21,7 @@
 Billboard g_Billboard[MAX_BILLBOARD];				// 構造体変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBillboard = NULL;	// 頂点バッファのポインタ
 LPDIRECT3DTEXTURE9 g_apTextureBillboard[BILLBOARDTYPE_MAX] = {};// テクスチャのポインタ
+int EasingCount, EasingCount1;
 
 //=========================
 //　ビルボード初期化処理
@@ -36,6 +38,9 @@ void InitBillboard(void)
 			BILLBOARD_TEXTURE[nCnt],
 			&g_apTextureBillboard[nCnt]);
 	}
+
+	EasingCount = 0;
+	EasingCount1 = 0;
 
 	// 構造体変数の初期化
 	for (int nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
@@ -298,62 +303,46 @@ void CraftRange(BLOCK* pBlock)
 			// 見えるようにする
 			g_Billboard[nCnt].state = BILLBOARDSTATE_SET;
 
-			// 横幅が30以上かつ縦幅が20.0f以上になったら
-			if (g_Billboard[nCnt].fWidth >= 30.0f && g_Billboard[nCnt].fHeight >= 20.0f)
-			{
-				// 横幅の拡大を止める
-				g_Billboard[nCnt].fWidth = 30.0f;
-			}
-			// 横幅が30以下かつ縦幅が20.0f以上になったら
-			else if (g_Billboard[nCnt].fWidth <= 30.0f && g_Billboard[nCnt].fHeight >= 20.0f)
-			{
-				// 横幅を拡大
-				g_Billboard[nCnt].fWidth += 1.0f;
-			}
+			g_Billboard[nCnt].fHeight = 20.0f;
+			g_Billboard[nCnt].fWidth = 30.0f;
 
-			// 大きさが20.0f以上になったら
-			if (g_Billboard[nCnt].fHeight >= 20.0f)
-			{
-				// 高さの拡大を止める
-				g_Billboard[nCnt].fHeight = 20.0f;
-			}
-			else
-			{
-				// 高さを拡大する
-				g_Billboard[nCnt].fHeight += 1.0f;
-			}
-			
+			//EasingCount++;
+
+			//float t0 = SetEase(EasingCount, 120);
+
+			//// 横幅が30以上かつ縦幅が20.0f以上になったら
+			//if (g_Billboard[nCnt].fWidth >= 30.0f && g_Billboard[nCnt].fHeight >= 20.0f)
+			//{
+			//	// 横幅の拡大を止める
+			//	g_Billboard[nCnt].fWidth = 30.0f;
+			//}
+
+			//// 横幅が30以下かつ縦幅が20.0f以上になったら
+
+
+			//// 大きさが20.0f以上になったら
+			//if (g_Billboard[nCnt].fHeight >= 20.0f)
+			//{
+			//	EasingCount1++;
+
+			//	float t1 = SetEase(EasingCount1, 120);
+
+			//	// 横幅を拡大
+			//	g_Billboard[nCnt].fWidth += (30.0f - g_Billboard[nCnt].fWidth) * EaseInCubic(t1);
+
+			//	// 高さの拡大を止める
+			//	g_Billboard[nCnt].fHeight = 20.0f;
+			//}
+
+			//// 高さを拡大する
+			//g_Billboard[nCnt].fHeight += (20.0f - g_Billboard[nCnt].fHeight) * EaseInCubic(t0);
 		}
 		// 表示範囲から出た
 		else if (!sphererange(&pBlock->pos, &pPlayer->pos, 100.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
 		{
-			// 横幅が5.0fいかになったら
-			if (g_Billboard[nCnt].fWidth <= 5.0f)
-			{
-				// 横幅を固定
-				g_Billboard[nCnt].fWidth = 5.0f;
-			}
-			else
-			{
-				// 横幅を縮小
-				g_Billboard[nCnt].fWidth -= 1.0f;
-			}
 
-			// 高さが0.0f以下かつ横幅が5.0fいかになったら
-			if (g_Billboard[nCnt].fHeight <= 0.0f && g_Billboard[nCnt].fWidth <= 5.0f)
-			{
-				// 高さを固定
-				g_Billboard[nCnt].fHeight = 0.0f;
-
-				// 見えなくする
-				g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
-			}
-			// 高さが0.0f以上かつ横幅が5.0f以下だったら
-			else if(g_Billboard[nCnt].fHeight >= 0.0f && g_Billboard[nCnt].fWidth <= 5.0f)
-			{
-				// 高さを縮小する
-				g_Billboard[nCnt].fHeight -= 1.0f;
-			}
+			//// 見えなくする
+			//g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
 		}
 
 		// 拾える範囲に入った

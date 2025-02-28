@@ -235,19 +235,17 @@ void UpdateGauge(void)
 
 	g_fLength = g_fPer * MAX_HPLENGTH;
 
-	if (pPlayer->state != PLAYERSTATE_DAMAGE)
-	{
-		g_EaseCnt++;
+	//if (pPlayer->state == PLAYERSTATE_DAMAGE)
+	//{
+	//	g_EaseCnt = 0;
+	//}
 
-		float t = SetEase(g_EaseCnt, 120.0f);
+	//g_EaseCnt++;
 
-		// 赤ゲージを緑ゲージに近づける
-		g_RedLength += (g_fLength - g_RedLength) * EaseInOutSine(t);
-	}
-	else
-	{
-		g_EaseCnt = 0;
-	}
+	//float t = SetEase(g_EaseCnt, 120.0f);
+
+	// 赤ゲージを緑ゲージに近づける
+	g_RedLength += (g_fLength - g_RedLength) * 0.1f;
 
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	

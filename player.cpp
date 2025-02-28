@@ -164,7 +164,7 @@ void InitPlayer(void)
 			g_LoadPlayer[nCntPlayer].SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
 			g_LoadPlayer[nCntPlayer].SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
 			g_LoadPlayer[nCntPlayer].SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
-			g_LoadPlayer[nCntPlayer].WeponMotion = MOTION_KATANA;				   // 剣のオフセットの座標z
+			g_LoadPlayer[nCntPlayer].WeponMotion = MOTION_KATANA;				   
 			g_LoadPlayer[nCntPlayer].nStockDamage = 100;
 			g_LoadPlayer[nCntPlayer].fStockSpeed = 3.5f;
 			g_LoadPlayer[nCntPlayer].FeverMode = false;
@@ -261,7 +261,7 @@ void UpdatePlayer(void)
 	bUsePad = false;
 
 	// 体力の現在値が最大値を超えてたら最大値にする
-	if (g_player.nMaxLife < g_player.nLife)
+	if (g_player.nMaxLife <= g_player.nLife)
 	{
 		g_player.nLife = g_player.nMaxLife;
 	}
@@ -396,7 +396,7 @@ void UpdatePlayer(void)
 		}
 		else
 		{
-			if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
+			if (g_player.Motion.motionType == MOTIONTYPE_MOVE && bUsePad == false)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, false, 40); // モーションをニュートラルにする
 			}

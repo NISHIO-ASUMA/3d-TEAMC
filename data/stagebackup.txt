@@ -7,7 +7,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -321.0 0.0 -256.8			# [ 位置 ]
    ROT = 0.000 -1.570 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -15,7 +14,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -690.6 0.0 -247.2			# [ 位置 ]
    ROT = 0.000 -1.570 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -23,7 +21,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 2			# [ ブロックの種類 ]
    POS = -1100.2 0.0 -336.1			# [ 位置 ]
    ROT = 0.000 -1.570 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -31,7 +28,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -1138.2 0.0 -584.5			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -39,7 +35,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 1			# [ ブロックの種類 ]
    POS = -1178.0 0.0 -799.5			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -47,7 +42,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 1			# [ ブロックの種類 ]
    POS = -1191.6 0.0 -1019.7			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -55,7 +49,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -1190.2 0.0 -1303.1			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -63,7 +56,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -218.6 0.0 -593.9			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -71,7 +63,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 18			# [ ブロックの種類 ]
    POS = -261.0 0.0 -1087.7			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.8 1.8 1.8		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -79,7 +70,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 1			# [ ブロックの種類 ]
    POS = -274.1 0.0 -1242.6			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -87,7 +77,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 1			# [ ブロックの種類 ]
    POS = -994.4 0.0 -1392.8			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -95,7 +84,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 1			# [ ブロックの種類 ]
    POS = -703.0 0.0 -1357.5			# [ 位置 ]
    ROT = -0.000 -3.141 0.000			# [ 向き ]
-   SIZE = 2.3 2.3 2.3		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -103,287 +91,246 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = -154.8 0.0 179.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 144.1 0.0 -1460.7			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 139.1 0.0 -1310.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 134.1 0.0 -1160.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 137.9 0.0 -930.6			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 141.0 0.0 -751.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 143.0 0.0 -552.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 144.0 0.0 -320.6			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 18			# [ アイテムの種類 ]
    POS = 453.8 0.0 -871.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 19			# [ アイテムの種類 ]
    POS = 423.1 0.0 -947.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 0			# [ アイテムの種類 ]
    POS = 764.6 0.0 -1179.0			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 1			# [ アイテムの種類 ]
    POS = 694.9 0.0 -1179.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 2			# [ アイテムの種類 ]
    POS = 624.9 0.0 -1180.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = 554.9 0.0 -1181.7			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 4			# [ アイテムの種類 ]
    POS = 484.9 0.0 -1182.6			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 5			# [ アイテムの種類 ]
    POS = 424.9 0.0 -1183.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 6			# [ アイテムの種類 ]
    POS = 354.9 0.0 -1184.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 7			# [ アイテムの種類 ]
    POS = 305.0 0.0 -1184.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 8			# [ アイテムの種類 ]
    POS = 304.3 0.0 -1134.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 9			# [ アイテムの種類 ]
    POS = 364.3 0.0 -1134.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 10			# [ アイテムの種類 ]
    POS = 424.3 0.0 -1133.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 11			# [ アイテムの種類 ]
    POS = 513.4 0.0 -1062.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 11			# [ アイテムの種類 ]
    POS = 612.5 0.0 -1002.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 12			# [ アイテムの種類 ]
    POS = 700.9 0.0 -871.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 13			# [ アイテムの種類 ]
    POS = 770.8 0.0 -870.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 13			# [ アイテムの種類 ]
    POS = 872.1 0.0 -968.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 14			# [ アイテムの種類 ]
    POS = 1050.9 0.0 -889.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 16			# [ アイテムの種類 ]
    POS = 1058.5 0.0 -712.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 17			# [ アイテムの種類 ]
    POS = 1088.4 0.0 -568.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 18			# [ アイテムの種類 ]
    POS = 1089.4 0.0 -412.5			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 19			# [ アイテムの種類 ]
    POS = 1079.5 0.0 -272.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 20			# [ アイテムの種類 ]
    POS = 1169.2 0.0 -266.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 1278.9 0.0 -258.5			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 22			# [ アイテムの種類 ]
    POS = 1271.8 0.0 -158.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 23			# [ アイテムの種類 ]
    POS = 1332.9 0.0 -34.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 24			# [ アイテムの種類 ]
    POS = 1437.7 0.0 -96.7			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 26			# [ アイテムの種類 ]
    POS = 1543.9 0.0 -179.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 27			# [ アイテムの種類 ]
    POS = 1678.5 0.0 -239.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 28			# [ アイテムの種類 ]
    POS = 1773.3 0.0 -303.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 29			# [ アイテムの種類 ]
    POS = 1860.3 0.0 -397.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 29			# [ アイテムの種類 ]
    POS = 1722.2 0.0 -567.5			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 BLOCKSET
@@ -391,112 +338,96 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 30			# [ ブロックの種類 ]
    POS = -156.4 0.0 -192.3			# [ 位置 ]
    ROT = 0.000 2.461 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = 222.5 0.0 -151.0			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = 137.0 0.0 18.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = -12.6 0.0 -64.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = 99.6 0.0 -209.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 0			# [ アイテムの種類 ]
    POS = 83.7 0.0 -100.6			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 0			# [ アイテムの種類 ]
    POS = -7.0 0.0 -447.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 0			# [ アイテムの種類 ]
    POS = -52.9 0.0 -272.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 0			# [ アイテムの種類 ]
    POS = 185.3 0.0 -449.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 30			# [ アイテムの種類 ]
    POS = 170.4 0.0 -25.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 30			# [ アイテムの種類 ]
    POS = 224.7 0.0 0.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 30			# [ アイテムの種類 ]
    POS = 343.2 0.0 19.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 30			# [ アイテムの種類 ]
    POS = 365.1 0.0 -117.7			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 30			# [ アイテムの種類 ]
    POS = 273.6 0.0 -242.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 30			# [ アイテムの種類 ]
    POS = 490.6 0.0 -207.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 30			# [ アイテムの種類 ]
    POS = 509.9 0.0 -12.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 BLOCKSET
@@ -504,7 +435,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 39			# [ ブロックの種類 ]
    POS = 856.5 0.0 623.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -512,7 +442,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 40			# [ ブロックの種類 ]
    POS = -473.6 0.0 393.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -520,7 +449,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 45			# [ ブロックの種類 ]
    POS = -452.3 0.0 1011.4			# [ 位置 ]
    ROT = 0.000 -1.571 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -528,14 +456,12 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 34			# [ ブロックの種類 ]
    POS = -459.0 0.0 1371.8			# [ 位置 ]
    ROT = 0.000 -1.553 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = -178.2 0.0 1435.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 BLOCKSET
@@ -543,7 +469,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 35			# [ ブロックの種類 ]
    POS = -897.1 0.0 1370.1			# [ 位置 ]
    ROT = 0.000 -1.553 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -551,7 +476,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 31			# [ ブロックの種類 ]
    POS = -671.1 0.0 1382.1			# [ 位置 ]
    ROT = 0.000 -1.553 0.000			# [ 向き ]
-   SIZE = 0.8 0.8 0.8		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -559,7 +483,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 19			# [ ブロックの種類 ]
    POS = -1183.8 0.0 1417.1			# [ 位置 ]
    ROT = 0.000 -3.107 0.000			# [ 向き ]
-   SIZE = 0.8 0.8 0.8		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -567,7 +490,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = -1146.7 0.0 1068.5			# [ 位置 ]
    ROT = 0.000 -3.124 0.000			# [ 向き ]
-   SIZE = 1.2 1.2 1.2		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -575,7 +497,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 0			# [ ブロックの種類 ]
    POS = -1139.5 0.0 763.2			# [ 位置 ]
    ROT = 0.000 -3.124 0.000			# [ 向き ]
-   SIZE = 1.9 1.9 1.9		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -583,7 +504,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 0			# [ ブロックの種類 ]
    POS = -1143.0 0.0 504.1			# [ 位置 ]
    ROT = 0.000 -3.124 0.000			# [ 向き ]
-   SIZE = 1.9 1.9 1.9		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -591,7 +511,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 34			# [ ブロックの種類 ]
    POS = -979.8 0.0 259.0			# [ 位置 ]
    ROT = 0.000 1.571 0.000			# [ 向き ]
-   SIZE = 1.3 1.3 1.3		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -599,7 +518,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 46			# [ ブロックの種類 ]
    POS = 949.1 0.0 -1201.5			# [ 位置 ]
    ROT = 0.000 1.571 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -607,7 +525,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 24			# [ ブロックの種類 ]
    POS = 942.0 0.0 -621.5			# [ 位置 ]
    ROT = 0.000 -2.234 0.000			# [ 向き ]
-   SIZE = 1.2 1.2 1.2		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -615,7 +532,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 2			# [ ブロックの種類 ]
    POS = 304.9 0.0 -1333.9			# [ 位置 ]
    ROT = 0.000 -3.142 0.000			# [ 向き ]
-   SIZE = 1.3 1.3 1.3		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -623,7 +539,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 34			# [ ブロックの種類 ]
    POS = 323.1 0.0 -854.6			# [ 位置 ]
    ROT = 0.000 -3.142 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -631,7 +546,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = 307.1 155.4 -854.7			# [ 位置 ]
    ROT = 0.000 3.141 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -639,7 +553,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 29			# [ ブロックの種類 ]
    POS = 1020.6 0.0 -345.7			# [ 位置 ]
    ROT = 0.000 -1.240 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -647,7 +560,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 46			# [ ブロックの種類 ]
    POS = 460.2 1.8 -470.9			# [ 位置 ]
    ROT = 0.000 -1.554 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -655,245 +567,210 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 3			# [ ブロックの種類 ]
    POS = 315.6 0.0 -1141.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 25			# [ アイテムの種類 ]
    POS = 918.1 0.0 -238.0			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 25			# [ アイテムの種類 ]
    POS = 855.0 0.0 -363.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 25			# [ アイテムの種類 ]
    POS = 874.1 0.0 -519.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 26			# [ アイテムの種類 ]
    POS = 796.2 0.0 -480.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 26			# [ アイテムの種類 ]
    POS = 726.4 0.0 -207.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 26			# [ アイテムの種類 ]
    POS = 1212.8 0.0 -574.0			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 27			# [ アイテムの種類 ]
    POS = 694.2 0.0 -92.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 27			# [ アイテムの種類 ]
    POS = 815.3 0.0 49.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 142.0 0.0 -150.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 152.0 0.0 202.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 157.4 0.0 383.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = 145.7 0.0 664.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = -175.7 0.0 663.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 21			# [ アイテムの種類 ]
    POS = -165.0 0.0 369.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 0			# [ アイテムの種類 ]
    POS = -181.8 0.0 -66.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 0			# [ アイテムの種類 ]
    POS = -288.9 0.0 17.5			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 0			# [ アイテムの種類 ]
    POS = -399.0 0.0 -101.7			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 1			# [ アイテムの種類 ]
    POS = -456.1 0.0 -42.5			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 1			# [ アイテムの種類 ]
    POS = -498.4 0.0 44.6			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 2			# [ アイテムの種類 ]
    POS = -674.1 0.0 -61.8			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 1			# [ アイテムの種類 ]
    POS = -688.2 0.0 2.4			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = -666.3 0.0 49.5			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = -589.9 0.0 -16.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = -615.7 0.0 -145.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = -487.7 0.0 -412.6			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 3			# [ アイテムの種類 ]
    POS = -579.1 0.0 -426.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 4			# [ アイテムの種類 ]
    POS = -655.2 0.0 -432.5			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 6			# [ アイテムの種類 ]
    POS = -753.3 0.0 -376.0			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 13			# [ アイテムの種類 ]
    POS = -327.5 0.0 -447.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 14			# [ アイテムの種類 ]
    POS = -341.0 0.0 -400.3			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 17			# [ アイテムの種類 ]
    POS = -257.7 0.0 -405.2			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 17			# [ アイテムの種類 ]
    POS = -33.5 0.0 -530.9			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 14			# [ アイテムの種類 ]
    POS = 70.2 0.0 -629.7			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 8			# [ アイテムの種類 ]
    POS = -34.9 0.0 -893.1			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 BLOCKSET
@@ -901,7 +778,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 42			# [ ブロックの種類 ]
    POS = -778.6 0.0 -575.6			# [ 位置 ]
    ROT = 0.000 -1.570 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -909,7 +785,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 43			# [ ブロックの種類 ]
    POS = -531.1 0.0 -854.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -917,7 +792,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 44			# [ ブロックの種類 ]
    POS = -454.3 0.0 -726.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -925,7 +799,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 41			# [ ブロックの種類 ]
    POS = -831.5 0.0 -795.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -933,7 +806,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 41			# [ ブロックの種類 ]
    POS = -778.4 0.0 -796.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -941,14 +813,12 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 44			# [ ブロックの種類 ]
    POS = -453.4 0.0 -650.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 ITEMSET
 EDITCATEGORY = 1			# [ カテゴリー1 ]
    ITEMTYPE = 29			# [ アイテムの種類 ]
    POS = -658.9 0.0 -679.7			# [ 位置 ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_ITEMSET
 
 BLOCKSET
@@ -956,7 +826,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 1			# [ ブロックの種類 ]
    POS = -276.7 0.0 -876.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -964,7 +833,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 35			# [ ブロックの種類 ]
    POS = 295.3 0.0 453.8			# [ 位置 ]
    ROT = 0.000 3.142 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -972,7 +840,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 34			# [ ブロックの種類 ]
    POS = 291.0 0.0 854.4			# [ 位置 ]
    ROT = 0.000 3.142 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -980,7 +847,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 36			# [ ブロックの種類 ]
    POS = 323.0 0.0 1156.9			# [ 位置 ]
    ROT = 0.000 -2.601 0.000			# [ 向き ]
-   SIZE = 1.6 1.6 1.6		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -988,7 +854,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 19			# [ ブロックの種類 ]
    POS = 548.5 0.0 1251.5			# [ 位置 ]
    ROT = 0.000 3.124 0.000			# [ 向き ]
-   SIZE = 1.3 1.3 1.3		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -996,7 +861,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 20			# [ ブロックの種類 ]
    POS = 648.6 0.0 1250.8			# [ 位置 ]
    ROT = 0.000 3.124 0.000			# [ 向き ]
-   SIZE = 1.3 1.3 1.3		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1004,7 +868,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 21			# [ ブロックの種類 ]
    POS = 743.2 0.0 1257.7			# [ 位置 ]
    ROT = 0.000 3.124 0.000			# [ 向き ]
-   SIZE = 1.3 1.3 1.3		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1012,7 +875,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 22			# [ ブロックの種類 ]
    POS = 1099.0 0.0 1141.1			# [ 位置 ]
    ROT = 0.000 3.124 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1020,7 +882,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 22			# [ ブロックの種類 ]
    POS = 935.2 0.0 1137.2			# [ 位置 ]
    ROT = 0.000 3.037 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1028,7 +889,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 295.5 0.0 193.3			# [ 位置 ]
    ROT = 0.000 1.570 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1036,7 +896,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 515.5 0.0 190.6			# [ 位置 ]
    ROT = 0.000 1.570 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1044,7 +903,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 731.3 0.0 189.7			# [ 位置 ]
    ROT = 0.000 1.570 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1052,7 +910,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 940.6 0.0 188.8			# [ 位置 ]
    ROT = 0.000 1.570 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1060,7 +917,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 1227.6 0.0 1222.1			# [ 位置 ]
    ROT = 0.000 -0.000 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1068,7 +924,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 1189.0 0.0 1422.0			# [ 位置 ]
    ROT = 0.000 -0.786 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1076,7 +931,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 952.2 0.0 1462.3			# [ 位置 ]
    ROT = 0.000 -1.554 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1084,7 +938,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 722.3 0.0 1462.9			# [ 位置 ]
    ROT = 0.000 -1.554 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1092,7 +945,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 468.8 0.0 1466.9			# [ 位置 ]
    ROT = 0.000 -1.554 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1100,7 +952,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 211.4 0.0 1465.8			# [ 位置 ]
    ROT = 0.000 -1.554 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1108,7 +959,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 37			# [ ブロックの種類 ]
    POS = 171.5 0.0 1318.5			# [ 位置 ]
    ROT = 0.000 -3.124 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1116,7 +966,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -1299.3 0.0 2291.6			# [ 位置 ]
    ROT = 0.000 1.606 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1124,7 +973,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -349.3 0.0 2294.2			# [ 位置 ]
    ROT = 0.000 1.606 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1132,7 +980,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 420.6 0.0 2296.4			# [ 位置 ]
    ROT = 0.000 1.606 0.000			# [ 向き ]
-   SIZE = 1.2 1.2 1.2		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1140,7 +987,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 1359.4 0.0 2274.0			# [ 位置 ]
    ROT = 0.000 1.606 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1148,7 +994,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 2021.0 0.0 1824.3			# [ 位置 ]
    ROT = 0.000 2.478 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1156,7 +1001,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 2131.6 0.0 887.9			# [ 位置 ]
    ROT = 0.000 3.089 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1164,7 +1008,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 2158.9 0.0 84.4			# [ 位置 ]
    ROT = 0.000 3.089 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1172,7 +1015,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 2138.6 0.0 -224.9			# [ 位置 ]
    ROT = 0.000 3.089 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1180,7 +1022,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 2183.3 0.0 -1121.2			# [ 位置 ]
    ROT = 0.000 3.089 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1188,7 +1029,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 1973.0 0.0 -2121.0			# [ 位置 ]
    ROT = 0.000 -2.635 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1196,7 +1036,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 1148.1 0.0 -2494.7			# [ 位置 ]
    ROT = 0.000 -1.710 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1204,7 +1043,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = 689.3 0.0 -2486.3			# [ 位置 ]
    ROT = 0.000 -1.710 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1212,7 +1050,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -127.1 0.0 -2431.9			# [ 位置 ]
    ROT = 0.000 -1.710 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1220,7 +1057,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -1108.9 0.0 -2437.3			# [ 位置 ]
    ROT = 0.000 -1.710 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1228,7 +1064,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -1776.2 0.0 -2189.8			# [ 位置 ]
    ROT = 0.000 -0.716 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1236,7 +1071,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -2101.3 0.0 -1325.9			# [ 位置 ]
    ROT = 0.000 0.070 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1244,7 +1078,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -2105.1 0.0 -585.9			# [ 位置 ]
    ROT = 0.000 0.070 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1252,7 +1085,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -2110.1 0.0 384.1			# [ 位置 ]
    ROT = 0.000 0.070 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1260,7 +1092,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -2112.5 0.0 844.0			# [ 位置 ]
    ROT = 0.000 0.070 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1268,7 +1099,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 50			# [ ブロックの種類 ]
    POS = -2014.1 0.0 1794.2			# [ 位置 ]
    ROT = 0.000 0.070 0.000			# [ 向き ]
-   SIZE = 1.1 1.1 1.1		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1276,7 +1106,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1568.1 0.0 1993.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1284,7 +1113,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1418.1 0.0 1990.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1292,7 +1120,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1238.2 0.0 1986.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1300,7 +1127,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1028.2 0.0 1982.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1308,7 +1134,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -868.2 0.0 1979.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1316,7 +1141,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -678.3 0.0 1975.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1324,7 +1148,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -428.3 0.0 1970.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1332,7 +1155,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -188.4 0.0 1965.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1340,7 +1162,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -18.4 0.0 1962.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1348,7 +1169,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 151.6 0.0 1959.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1356,7 +1176,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 401.5 0.0 1954.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1364,7 +1183,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 631.5 0.0 1949.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1372,7 +1190,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 851.4 0.0 1945.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1380,7 +1197,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1052.4 0.0 1990.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1388,7 +1204,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1292.3 0.0 1986.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1396,7 +1211,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1512.1 0.0 1971.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1404,7 +1218,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1651.7 0.0 1653.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1412,7 +1225,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1731.2 0.0 1282.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1420,7 +1232,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1764.6 0.0 839.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1428,7 +1239,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1747.7 0.0 559.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1436,7 +1246,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1728.7 0.0 269.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1444,7 +1253,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1779.2 0.0 -26.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1452,7 +1260,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1799.4 0.0 -216.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1460,7 +1267,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1734.3 0.0 -435.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1468,7 +1274,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1769.9 0.0 -601.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1476,7 +1281,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1739.8 0.0 -1003.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1484,7 +1288,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1725.3 0.0 -825.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1492,7 +1295,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1761.7 0.0 -1273.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1500,7 +1302,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1722.8 0.0 -1537.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1508,7 +1309,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1708.8 0.0 -1777.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1516,7 +1316,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1573.1 0.0 -1999.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1524,7 +1323,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1280.6 0.0 -2096.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1532,7 +1330,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1073.2 0.0 -1975.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1540,7 +1337,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 806.8 0.0 -2047.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1548,7 +1344,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 570.2 0.0 -2031.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1556,7 +1351,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 390.6 0.0 -1980.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1564,7 +1358,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 160.2 0.0 -2050.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1572,7 +1365,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -81.1 0.0 -1984.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1580,7 +1372,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 954.6 0.0 -1977.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1588,7 +1379,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1729.1 0.0 -1412.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1596,7 +1386,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -345.7 0.0 -2026.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1604,7 +1393,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -594.8 0.0 -2001.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1612,7 +1400,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -875.4 0.0 -1994.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1620,7 +1407,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1141.1 0.0 -2038.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1628,7 +1414,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1472.9 0.0 -2053.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1636,7 +1421,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1574.3 0.0 -1965.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1644,7 +1428,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1638.0 0.0 -1840.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1652,7 +1435,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1677.7 0.0 -1652.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1660,7 +1442,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1733.8 0.0 -1378.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1668,7 +1449,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1663.1 0.0 -1058.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1676,7 +1456,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1710.5 0.0 -719.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1684,7 +1463,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1716.4 0.0 -459.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1692,7 +1470,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1672.4 0.0 -188.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1700,7 +1477,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1685.5 0.0 21.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1708,7 +1484,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1741.0 0.0 608.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1716,7 +1491,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1822.2 0.0 326.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1724,7 +1498,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1696.4 0.0 885.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1732,7 +1505,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1727.8 0.0 1131.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1740,7 +1512,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1748.5 0.0 1445.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1748,7 +1519,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1708.6 0.0 1783.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1756,7 +1526,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -171.4 290.0 2252.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1764,7 +1533,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 8.3 180.0 2254.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1772,7 +1540,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 138.3 260.0 2256.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1780,7 +1547,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 349.4 300.0 2179.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1788,7 +1554,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 677.1 300.0 2231.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1796,7 +1561,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 852.2 160.0 2209.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1804,7 +1568,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1127.1 250.0 2259.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1812,7 +1575,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1545.8 250.0 2247.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1820,7 +1582,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1817.8 190.0 2034.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1828,7 +1589,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1950.9 190.0 1711.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1836,7 +1596,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2144.9 190.0 1564.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1844,7 +1603,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2023.7 190.0 1101.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1852,7 +1610,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2038.5 190.0 741.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1860,7 +1617,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2067.6 190.0 379.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1868,7 +1624,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2093.0 150.0 497.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1876,7 +1631,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2132.8 370.0 157.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1884,7 +1638,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2085.7 300.0 44.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1892,7 +1645,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2086.3 300.0 -98.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1900,7 +1652,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2131.1 370.0 -303.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1908,7 +1659,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2105.7 300.0 -421.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1916,7 +1666,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2004.4 180.0 -239.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1924,7 +1673,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1993.0 180.0 188.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1932,7 +1680,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2138.8 160.0 -661.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1940,7 +1687,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2037.2 160.0 -540.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1948,7 +1694,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2040.1 160.0 -903.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1956,7 +1701,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2132.3 280.0 -925.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1964,7 +1708,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2143.5 280.0 -1306.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1972,7 +1715,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2033.4 160.0 -1170.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1980,7 +1722,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 2100.8 130.0 -1501.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1988,7 +1729,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 2098.9 160.0 -1731.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -1996,7 +1736,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1815.0 160.0 -2078.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2004,7 +1743,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1956.5 260.0 -1960.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2012,7 +1750,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1787.8 210.0 -2215.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2020,7 +1757,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1457.8 210.0 -2382.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2028,7 +1764,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1614.5 40.0 -2350.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2036,7 +1771,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = 1176.2 210.0 -2367.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2044,7 +1778,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1005.2 140.0 -2331.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2052,7 +1785,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1103.0 290.0 -2476.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2060,7 +1792,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 1324.8 260.0 -2403.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2068,7 +1799,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 817.5 260.0 -2398.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2076,7 +1806,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 620.8 200.0 -2349.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2084,7 +1813,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 692.8 410.0 -2452.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2092,7 +1820,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 242.4 180.0 -2339.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2100,7 +1827,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = 22.5 350.0 -2389.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2108,7 +1834,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -237.6 230.0 -2350.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2116,7 +1841,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -797.4 230.0 -2401.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2124,7 +1848,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -507.4 140.0 -2401.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2132,7 +1855,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -819.4 140.0 -2270.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2140,7 +1862,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -50.6 260.0 -2343.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2148,7 +1869,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1079.2 260.0 -2335.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2156,7 +1876,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1269.4 260.0 -2354.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2164,7 +1883,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1116.4 160.0 -2278.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2172,7 +1890,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1534.9 160.0 -2288.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2180,7 +1897,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1751.4 360.0 -2122.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2188,7 +1904,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1678.1 210.0 -2090.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2196,7 +1911,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -2019.5 210.0 -1603.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2204,7 +1918,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1890.7 210.0 -1971.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2212,7 +1925,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -2067.4 80.0 -1819.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2220,7 +1932,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -2050.1 310.0 -1405.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2228,7 +1939,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1984.4 200.0 -1167.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2236,7 +1946,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1939.7 120.0 -1404.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2244,7 +1953,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1949.4 120.0 -1003.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2252,7 +1960,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -2111.2 220.0 -875.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2260,7 +1967,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -2032.6 220.0 -774.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2268,7 +1974,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -2075.1 380.0 -584.8			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2276,7 +1981,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1995.1 240.0 -583.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2284,7 +1988,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1953.0 110.0 -743.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2292,7 +1995,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1963.4 150.0 -344.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2300,7 +2002,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -2161.9 150.0 -250.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2308,7 +2009,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -2026.7 150.0 52.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2316,7 +2016,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1980.7 190.0 327.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2324,7 +2023,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -2103.0 350.0 488.7			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2332,7 +2030,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -2095.3 350.0 248.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2340,7 +2037,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -2067.5 300.0 673.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2348,7 +2044,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1991.5 250.0 846.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2356,7 +2051,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -2051.4 250.0 1120.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2364,7 +2058,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -2113.2 400.0 919.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2372,7 +2065,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -2002.8 230.0 1531.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2380,7 +2072,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1898.7 170.0 1572.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2388,7 +2079,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1949.4 330.0 1882.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2396,7 +2086,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1892.4 190.0 1932.3			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2404,7 +2093,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1503.6 190.0 2207.0			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2412,7 +2100,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -1334.2 250.0 2224.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2420,7 +2107,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1177.5 190.0 2182.6			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2428,7 +2114,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -1001.2 190.0 2327.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2436,7 +2121,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -927.9 140.0 2255.5			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2444,7 +2128,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -661.0 140.0 2221.1			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2452,7 +2135,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -501.0 280.0 2270.9			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2460,7 +2142,6 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 48			# [ ブロックの種類 ]
    POS = -355.6 250.0 2201.2			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
 BLOCKSET
@@ -2468,8 +2149,43 @@ EDITCATEGORY = 0			# [ カテゴリー0 ]
    BLOCKTYPE = 49			# [ ブロックの種類 ]
    POS = -504.3 190.0 2198.4			# [ 位置 ]
    ROT = 0.000 0.000 0.000			# [ 向き ]
-   SIZE = 1.0 1.0 1.0		# [ 大きさ ]
 END_BLOCKSET
 
-BLOCK_COUNT = 320    # [ ブロックの配置数 ]
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 6			# [ アイテムの種類 ]
+   POS = -17.2 0.0 263.8			# [ 位置 ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 31			# [ アイテムの種類 ]
+   POS = -30.1 0.0 544.0			# [ 位置 ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 31			# [ アイテムの種類 ]
+   POS = 61.5 0.0 359.5			# [ 位置 ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 31			# [ アイテムの種類 ]
+   POS = 30.6 0.0 788.4			# [ 位置 ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 31			# [ アイテムの種類 ]
+   POS = -148.9 0.0 775.5			# [ 位置 ]
+END_ITEMSET
+
+ITEMSET
+EDITCATEGORY = 1			# [ カテゴリー1 ]
+   ITEMTYPE = 31			# [ アイテムの種類 ]
+   POS = -130.3 0.0 516.2			# [ 位置 ]
+END_ITEMSET
+
+BLOCK_COUNT = 326    # [ ブロックの配置数 ]
 END_SCRIPT          # この行は消さないでください
