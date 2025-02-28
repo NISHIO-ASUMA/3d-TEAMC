@@ -22,6 +22,7 @@ typedef enum
 	EFFECT_SMORK,
 	EFFECT_SOUL,
 	EFFECT_WATER,
+	EFFECT_HEAL,
 	EFFECT_MAX
 }EFFECTTEX;
 
@@ -31,6 +32,7 @@ static const char* EFFECT_TEXTURE[EFFECT_MAX] =
 	"data\\TEXTURE\\smoke000.png",
 	"data\\TEXTURE\\souleffect.png",
 	"data\\TEXTURE\\water.png",
+	"data\\TEXTURE\\heal.png",
 };
 //****************************
 //エフェクト種類の列挙型

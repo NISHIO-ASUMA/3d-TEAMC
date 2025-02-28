@@ -611,9 +611,6 @@ void DrawGame(void)
 	// メッシュドームの描画処理
 	DrawmeshFan();
 
-	//メッシュシリンダーの描画処理
-	DrawMeshCylinder();
-
 	//プレイヤーの描画処理
 	DrawPlayer();
 
@@ -683,6 +680,9 @@ void DrawGame(void)
 
 	// 軌跡の描画処理
 	DrawMeshSword();
+
+	//メッシュシリンダーの描画処理
+	DrawMeshCylinder();
 
 	//HPゲージの描写処理
 	DrawGauge();

@@ -4,17 +4,17 @@
 PARTICLESET
     POS = 0.00 100.00 0.00					# 位置
     MOVE = 0.00 0.00 0.00					# 移動量
-    LIFE = 42								# 寿命
+    LIFE = 53								# 寿命
     COLOR = 1.00 1.00 1.00 1.00				# 色
     TYPE = 0								# パーティクルの種類
-    SIZE = 30.00						# パーティクルの大きさ
+    SIZE = 14.00						# パーティクルの大きさ
     NUM_PARTICLE = 1						# パーティクルの粒子の数
-    ANGLE_MAX = 628							# パーティクルの角度のMAX
-    ANGLE_MIN = -314							# パーティクルの角度のMIN
+    ANGLE_MAX = 251							# パーティクルの角度のMAX
+    ANGLE_MIN = -2							# パーティクルの角度のMIN
     SPEED = 1.00							# パーティクルの速さ
-    DIR = 1.00 1.18 1.00					# パーティクルの重力XYZ
+    DIR = 1.00 2.30 1.00					# パーティクルの重力XYZ
     DECREMENT = 0.020000							# パーティクルのアルファ値の減少の速さ
-    EFFECT_TEXTPE = 1						# パーティクルのテクスチャの種類
+    EFFECT_TEXTPE = 4						# パーティクルのテクスチャの種類
     BLIFE = 0								# パーティクルの寿命をつけるかつけないか
  END_PARTICLESET
 
