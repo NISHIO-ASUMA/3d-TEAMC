@@ -516,8 +516,6 @@ void DrawTime(void)
 	//デバイスの習得
 	pDevice = GetDevice();
 
-	int nCntTime;
-
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffTimeMinute, 0, sizeof(VERTEX_2D));
 
