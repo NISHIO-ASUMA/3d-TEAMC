@@ -29,6 +29,8 @@
 #include "Effect.h"
 #include "Particle.h"
 #include "item.h"
+#include "icon.h"
+#include "itemgage.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -91,6 +93,12 @@ void InitTutorial3d(void)
 	// パーチくる
 	InitParticle();
 
+	// アイコンの初期化
+	InitIcon();
+
+	// アイテムゲージ
+	InitItemGage();
+
 	// ステージの読み込み
 	LoadEdit();
 	LoadEdit2d();
@@ -99,7 +107,6 @@ void InitTutorial3d(void)
 	//tutoload();
 
 	// ブロックをセット
-	// TODO : ここの配置情報を修正---------------------
 	SetBlock(D3DXVECTOR3(-70.0f, 0.0f, 120.0f),D3DXVECTOR3(0.0f,D3DX_PI * 0.5f,0.0f), 19);
 	SetBlock(D3DXVECTOR3(280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 20);
 	SetBlock(D3DXVECTOR3(-280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 21);
@@ -107,10 +114,14 @@ void InitTutorial3d(void)
 
 	// アイテムをセット
 	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 29);
-	//-------------------------------------------------
 	
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f, 0);
+	SetGameUI(D3DXVECTOR3(80.0f, 540.0f, 0.0f), UITYPE_ICONFRAME, 80.0f, 100.0f, 0);
+	SetGameUI(D3DXVECTOR3(235.0f, 560.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 75.0f, 80.0f, 0);
+
+	// ストックアイテムのアイコン
+	SetIcon(D3DXVECTOR3(80.0f, 550.0f, 0.0f), 80.0f, 80.0f, 0, ICONTYPE_HOLDITEM);
 
 	// グローバル変数の初期化
 	g_bEditMode2 = false;
@@ -168,6 +179,12 @@ void UninitTutorial3d(void)
 	// エフェクトの終了
 	UninitEffect();
 
+	// アイコンの終了
+	UninitIcon();
+
+	// アイテムゲージの終了
+	UninitItemGage();
+
 	//// エディター画面の終了処理
 	//UninitEdit();
 }
@@ -205,6 +222,12 @@ void UpdateTutorial3d(void)
 
 	// エフェクトの更新処理
 	UpdateEffect();
+
+	// アイコンの更新
+	UpdateIcon();
+
+	// アイテムゲージの更新
+	UpdateItemGage();
 
 	if ((KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true))
 	{//Enterキー or Startボタンが押された
@@ -253,6 +276,12 @@ void DrawTutorial3d(void)
 
 	// UIの描画処理
 	DrawGameUI();
+
+	// アイコンの描画処理
+	DrawIcon();
+
+	// アイテムゲージ
+	DrawItemGage();
 
 	if (g_bEditMode2)
 	{// g_bEditMode2がtrue
