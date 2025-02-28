@@ -31,6 +31,7 @@
 #include "item.h"
 #include "icon.h"
 #include "itemgage.h"
+#include "billboard.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -98,6 +99,9 @@ void InitTutorial3d(void)
 
 	// アイテムゲージ
 	InitItemGage();
+
+	// ビルボードの初期化
+	InitBillboard();
 
 	// ステージの読み込み
 	LoadEdit();
@@ -185,6 +189,9 @@ void UninitTutorial3d(void)
 	// アイテムゲージの終了
 	UninitItemGage();
 
+	// ビルボードの終了
+	UninitBillboard();
+
 	//// エディター画面の終了処理
 	//UninitEdit();
 }
@@ -229,7 +236,10 @@ void UpdateTutorial3d(void)
 	// アイテムゲージの更新
 	UpdateItemGage();
 
-	if ((KeyboardTrigger(DIK_RETURN) == true||JoypadTrigger(JOYKEY_START)==true))
+	// ビルボードの更新
+	UpdateBillboard();
+
+	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_START)==true))
 	{//Enterキー or Startボタンが押された
 		//ゲーム画面へ
 		SetFade(MODE_GAME);
@@ -261,6 +271,9 @@ void DrawTutorial3d(void)
 
 	// ブロックの描画処理
 	DrawBlock();
+
+	// ビルボードの描画
+	DrawBillboard();
 
 	// アイテムの描画処理
 	DrawItem();

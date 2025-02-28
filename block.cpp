@@ -376,7 +376,7 @@ void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType)
 			}
 
 			// ブロックの種類がクラフトベンチだったら
-			if (g_Block[nCntBlock].nType == BLOCKTYPE_WORKBENCH && mode == MODE_GAME)
+			if (g_Block[nCntBlock].nType == BLOCKTYPE_WORKBENCH && (mode == MODE_GAME || mode == MODE_TUTORIAL))
 			{
 				// ビルボードを設定
 				SetBillboard(D3DXVECTOR3(g_Block[nCntBlock].pos.x,g_Block[nCntBlock].pos.y + 80.0f,g_Block[nCntBlock].pos.z),
