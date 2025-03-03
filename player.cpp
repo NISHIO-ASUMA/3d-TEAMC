@@ -889,7 +889,7 @@ void UpdatePlayer(void)
 		StatusChange(3.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 持っているアイテムのアイコン
-		SetIcon(D3DXVECTOR3(240.0f, 580.0f, 0.0f), 40.0f, 40.0f, pItem[g_player.StockItemIdx].nType, ICONTYPE_STOCKITEM);
+		SetIcon(D3DXVECTOR3(200.0f, 630.0f, 0.0f), 40.0f, 40.0f, pItem[g_player.StockItemIdx].nType, ICONTYPE_STOCKITEM);
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
