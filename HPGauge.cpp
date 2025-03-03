@@ -38,6 +38,7 @@ float g_fMaxLength;
 float g_fPer;
 float g_RedLength;
 float g_EaseCnt;
+
 // フィーバーゲージ用変数
 float g_fFeverCharge;
 bool g_bFeverON;
@@ -130,19 +131,19 @@ void InitGauge(void)
 		if (nCnt == FRAME)
 		{
 			// FRAMEの頂点座標
-			pVtx[0].pos = D3DXVECTOR3(5.0f, 650.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(1275.0f, 650.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(5.0f, 700.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(1275.0f, 700.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(0.0f, 690.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(1280.0f, 690.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, 720.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(1280.0f, 720.0f, 0.0f);
 		}
 		// gauge
 		else if (nCnt != FRAME)
 		{
 			// GAUGEの頂点座標
-			pVtx[0].pos = D3DXVECTOR3(10.0f, 650.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(1270.0f, 650.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(10.0f, 700.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(1270.0f, 700.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(3.0f, 690.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(1270.0f, 690.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(3.0f, 720.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(1270.0f, 720.0f, 0.0f);
 
 		}
 
@@ -286,11 +287,13 @@ void UpdateGauge(void)
 	g_fPer = g_fFeverCharge / 100.0f;
 	g_fLength = g_fPer * 1270;
 
-	// それを描写し直す
-	pVtx[4].pos = D3DXVECTOR3(5.0f, 650.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(g_fLength + 5.0f, 650.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(5.0f, 700.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(g_fLength + 5.0f, 700.0f, 0.0f);
+	// 頂点座標の設定 (それを描写し直す)
+	pVtx[4].pos = D3DXVECTOR3(3.0f, 690.0f, 0.0f);
+	pVtx[5].pos = D3DXVECTOR3(g_fLength + 3.0f, 690.0f, 0.0f);
+	pVtx[6].pos = D3DXVECTOR3(3.0f, 720.0f, 0.0f);
+	pVtx[7].pos = D3DXVECTOR3(g_fLength + 3.0f, 720.0f, 0.0f);
+
+	// テクスチャ座標
 	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
 	pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);

@@ -121,11 +121,11 @@ void InitTutorial3d(void)
 	
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f, 0);
-	SetGameUI(D3DXVECTOR3(80.0f, 540.0f, 0.0f), UITYPE_ICONFRAME, 80.0f, 100.0f, 0);
-	SetGameUI(D3DXVECTOR3(235.0f, 560.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 75.0f, 80.0f, 0);
+	SetGameUI(D3DXVECTOR3(70.0f, 610.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, 0);
+	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, 0);
 
 	// ストックアイテムのアイコン
-	SetIcon(D3DXVECTOR3(80.0f, 550.0f, 0.0f), 80.0f, 80.0f, 0, ICONTYPE_HOLDITEM);
+	SetIcon(D3DXVECTOR3(70.0f, 610.0f, 0.0f), 60.0f, 60.0f, 0, ICONTYPE_HOLDITEM);
 
 	// グローバル変数の初期化
 	g_bEditMode2 = false;
