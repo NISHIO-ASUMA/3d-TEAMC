@@ -163,7 +163,7 @@ void InitCraftUI(void)
 	//’¸“_ƒƒbƒN‰ðœ
 	g_pVtxBuffItemIcon->Unlock();
 
-	SetCraftUI(D3DXVECTOR3(625.0f, 400.0f, 0.0f), CRAFTUITYPE_BACKGROUND, 325.0f, 200.0f, 0);
+	SetCraftUI(D3DXVECTOR3(625.0f, 350.0f, 0.0f), CRAFTUITYPE_BACKGROUND, 500.0f, 250.0f, 0);
 	SetCraftUI(D3DXVECTOR3(625.0f, 550.0f, 0.0f), CRAFTUITYPE_CRAFT, 100.0f, 50.0f, -1);
 }
 //==============================================================================================================

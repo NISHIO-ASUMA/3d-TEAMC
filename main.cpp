@@ -402,9 +402,6 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	// フェードの初期化
 	InitFade(g_mode);
 
-	// クラフトUIの初期化
-	InitCraftUI();
-
 	// モードの設定
 	SetMode(g_mode);
 
@@ -430,9 +427,6 @@ void Uninit(void)
 
 	// サウンドの終了
 	UninitSound();
-
-	// クラフトの終了処理
-	UninitCraftUI();
 
 	// フェードの終了
 	UninitFade();
@@ -517,9 +511,6 @@ void Update(void)
 
 #endif // !_DEBUG
 
-	// クラフトの更新処理
-	UpdateCraftUI();
-
 	// フェードの更新
 	UpdateFade();
 
@@ -533,112 +524,83 @@ void Draw(void)
 	Camera* pCamera = GetCamera();
 	Player* pPlayer = GetPlayer();
 
-	for (int nCnt = 0; nCnt < CAMERATYPE_MAX; nCnt++)
+	//画面クリア(バックバッファ&Zバッファのクリア)
+	g_pD3DDevice->Clear(0,
+		NULL,
+		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
+		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+
+	//描画開始
+	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{
-		if (!pPlayer->bCraft && nCnt == 1)
+		SetCamera(); // カメラをセット
+
+		// 描画成功時
+		//==================================================================================================
+		// 描画処理
+		//==================================================================================================
+		// 現在の画面の終了
+		switch (g_mode)
 		{
-			continue;
+		case MODE_TITLE:   // タイトル画面(ここにデバック表示のDraw書かないでください)
+			DrawTitle3d();
+			break;
+		case MODE_TUTORIAL:// チュートリアル画面(ここにデバック表示のDraw書かないでください)
+			DrawTutorial3d();
+			break;
+		case MODE_GAME:	   // ゲーム画面(ここにデバック表示のDraw書かないでください)
+			DrawGame();
+			break;
+		case MODE_RESULT:  // リザルト画面(ここにデバック表示のDraw書かないでください)
+			DrawResult();
+			break;
+		case MODE_RANKING: // ランキング画面(ここにデバック表示のDraw書かないでください)
+			DrawRanking();
+			break;
+		case MODE_EFFECT: // エフェクト編集画面
+			DrawEffectEdit();
+			break;
 		}
-
-		g_pD3DDevice->SetViewport(&pCamera[nCnt].viewport); // ビューポートの設定
-
-		//画面クリア(バックバッファ&Zバッファのクリア)
-		g_pD3DDevice->Clear(0,
-			NULL,
-			(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-			D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
-
-		//描画開始
-		if (SUCCEEDED(g_pD3DDevice->BeginScene()))
-		{
-			SetCamera(nCnt); // カメラをセット
-
-			// 描画成功時
-			//==================================================================================================
-			// 描画処理
-			//==================================================================================================
-			// 現在の画面の終了
-			switch (g_mode)
-			{
-			case MODE_TITLE:   // タイトル画面(ここにデバック表示のDraw書かないでください)
-				DrawTitle3d();
-				break;
-
-			case MODE_TUTORIAL:// チュートリアル画面(ここにデバック表示のDraw書かないでください)
-				DrawTutorial3d();
-				break;
-
-			case MODE_GAME:	   // ゲーム画面(ここにデバック表示のDraw書かないでください)
-				DrawGame();
-				break;
-			case MODE_RESULT:  // リザルト画面(ここにデバック表示のDraw書かないでください)
-				DrawResult();
-				break;
-
-			case MODE_RANKING: // ランキング画面(ここにデバック表示のDraw書かないでください)
-				DrawRanking();
-				break;
-
-			case MODE_EFFECT: // エフェクト編集画面
-				DrawEffectEdit();
-				break;
-			}
 
 #ifdef _DEBUG
 
-			// デバッグ表示はこの下に書いてください
-			if (GetEditState()==false && GetEdit2d()==false && pCamera->bEditMode==false)
+		// デバッグ表示はこの下に書いてください
+		if (GetEditState()==false && GetEdit2d()==false && pCamera->bEditMode==false && g_mode == MODE_GAME)
+		{
+			// 現在の画面の表示
+			DrawMode();
+
+			// プレイヤーの情報
+			DrawPlayerInfo();
+
+			// カメラの位置表示用デバッグフォント
+			DrawCameraPos();
+
+		}
+		else if (GetEditState())
+		{
+			if (!GetEdit2d())
 			{
-				// 現在の画面の表示
-				DrawMode();
-
-				// プレイヤーの情報
-				DrawPlayerInfo();
-
-				// カメラの位置表示用デバッグフォント
-				DrawCameraPos();
-
+				// エディター画面の描画3d
+				DrawEditMode();
 			}
-			else if (GetEditState())
+			else if (GetEdit2d())
 			{
-				if (!GetEdit2d())
-				{
-					// エディター画面の描画3d
-					DrawEditMode();
-				}
-				else if (GetEdit2d())
-				{
-					DrawEditmode2d(); // エディター2dの描画
-				}
-			}
-
-			if (g_mode == MODE_EFFECT)
-			{
-				DrawEffectEditMode();
-			}
-			// プレイヤーの座標表示
-			//DrawDebugPlayerPos();
-			if (pCamera[0].bEditMode == true)
-			{
-				DrawCameraEdit();
-			}
-#endif
-			if (nCnt == 1)
-			{
-				DrawCraftUI();
-			}
-
-			// フェードの描画
-			DrawFade();
-
-			// 描画終了
-			g_pD3DDevice->EndScene();
-
-			if (g_mode == MODE_TITLE)
-			{
-				break; // 一つ目をセットしたら抜ける
+				DrawEditmode2d(); // エディター2dの描画
 			}
 		}
+
+		if (g_mode == MODE_EFFECT)
+		{
+			DrawEffectEditMode();
+		}
+		// プレイヤーの座標表示
+#endif
+		// フェードの描画
+		DrawFade();
+
+		// 描画終了
+		g_pD3DDevice->EndScene();
 	}
 		// バックバッファとフロントバッファの入れ替え
 		g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
@@ -1142,12 +1104,14 @@ void DrawCameraEdit(void)
 	wsprintf(&aStrBlockComent1[0], "+*******************************************************************+\n"
 								   "+                       アニメーションの設定                        +\n"
 								   "+*******************************************************************+\n");
+	int nType = pCamera->AnimType;
+	int nKey = pCamera->nAnimKey;
 
-	if (pCamera->bTracking == true)
+	if (pCamera->aAnimInfo[nType].bTracking == true)
 	{
 		wsprintf(&aStrTracking[0], "[カメラ追従]:[F3]【オン】\n");
 	}
-	else if (pCamera->bTracking == false)
+	else if (pCamera->aAnimInfo[nType].bTracking == false)
 	{
 		wsprintf(&aStrTracking[0], "[カメラ追従]:[F3]【オフ】\n");
 	}
@@ -1156,8 +1120,6 @@ void DrawCameraEdit(void)
 
 	wsprintf(&aStrType[0], "種類選択:[ 1 / 2 ]  タイプ【 %d / %d 】", pCamera->AnimType, CAMERAANIM_MAX);
 
-	int nType = pCamera->AnimType;
-	int nKey = pCamera->nAnimKey;
 
 	wsprintf(&aStrKey[0], "[ キー変更 ]:[ ← / → ]【 %d / %d 】\n", pCamera->nAnimKey, pCamera->aAnimInfo[nType].nNumKey);
 

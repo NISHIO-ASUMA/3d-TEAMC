@@ -781,7 +781,6 @@ void UpdatePlayer(void)
 			!g_player.AttackSp &&              // SP‹Z‚ğ”­“®‚µ‚Ä‚¢‚È‚¢
 			g_player.SpMode)                   // SPƒQ[ƒW‚ª‚½‚Ü‚Á‚½
 		{
-
 			g_player.AttackSp = true;          // SP‹Z‚ğ”­“®‚µ‚Ä‚¢‚é
 
 			switch (g_player.WeponMotion)

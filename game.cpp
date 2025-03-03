@@ -154,6 +154,9 @@ void InitGame(void)
 	// タイマーの初期化
 	InitTime();
 
+	// クラフト画面の初期化処理
+	InitCraftUI();
+
 	// 軌跡の初期化処理
 	InitMeshSword();
 
@@ -271,6 +274,9 @@ void UninitGame(void)
 	// 軌跡の終了処理
 	UninitMeshSword();
 
+	// クラフト画面の終了処理
+	UninitCraftUI();
+
 	// 煙の終了処理
 	UninitExplosion();
 
@@ -340,7 +346,6 @@ void UninitGame(void)
 
 	// 弾の終了処理
 	UninitBullet();
-
 }
 //=========================================================================================================
 //ゲーム画面の更新処理
@@ -470,7 +475,7 @@ void UpdateGame(void)
 		if (!g_bEditMode && pCamera->bEditMode == false)
 		{// 編集モードじゃなかったら
 
-			if (!g_bCraft)
+			if (g_bCraft == false)
 			{
 				//カメラの更新処理
 				UpdateCamera();
@@ -554,6 +559,9 @@ void UpdateGame(void)
 				UpdateMeshCylinder();
 			}
 
+			// クラフト画面の更新処理
+			UpdateCraftUI();
+
 			// ビルボードの更新処理
 			UpdateBillboard();
 
@@ -622,7 +630,7 @@ void DrawGame(void)
 
 #ifdef _DEBUG
 
-	if (g_bEditMode)
+	if (g_bEditMode == true)
 	{
 		//エディットの描画処理
 		DrawEdit();
@@ -704,6 +712,12 @@ void DrawGame(void)
 
 	// ミニマップの描画処理
 	DarwMinimap();
+
+	if (g_bCraft == true)
+	{
+		// クラフト画面の描画処理
+		DrawCraftUI();
+	}
 
 	if (g_bPause == true)
 	{//ポーズ中

@@ -43,6 +43,7 @@ typedef enum
 typedef enum
 {
 	CAMERAANIM_ONE = 0,
+	CAMERAANIM_SP,
 	CAMERAANIM_MAX
 }CAMERAANIM;
 
@@ -63,6 +64,7 @@ typedef struct
 	float fRotY; // 向きY
 	float fRotZ; // 向きZ
 	int nAnimFrame; // アニメーションのフレーム
+	float fDistance;         // 距離
 }Anim_Key;
 
 //**************************************************************************************************************
@@ -114,7 +116,7 @@ typedef struct
 void InitCamera(void);		// カメラの初期化
 void UninitCamera(void);	// カメラの終了
 void UpdateCamera(void);	// カメラの更新
-void SetCamera(int nCnt);		// カメラの設定
+void SetCamera(void);		// カメラの設定
 Camera* GetCamera();		// カメラの取得
 void StickCamera(void);		// 右スティックのカメラ処理
 void MouseWheel(int zDelta);// マウスホイール
