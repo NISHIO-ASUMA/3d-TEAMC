@@ -194,11 +194,11 @@ void InitGame(void)
 	}
 
 	// UIをセット
-	SetGameUI(D3DXVECTOR3(80.0f,540.0f,0.0f),UITYPE_ICONFRAME,80.0f,100.0f,0);
-	SetGameUI(D3DXVECTOR3(235.0f, 560.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 75.0f, 80.0f, 0);
+	SetGameUI(D3DXVECTOR3(70.0f,610.0f,0.0f),UITYPE_ICONFRAME,70.0f, 80.0f,0);
+	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, 0);
 
 	// ストックアイテムのアイコン
-	SetIcon(D3DXVECTOR3(80.0f, 550.0f, 0.0f), 80.0f, 80.0f, 0,ICONTYPE_HOLDITEM);
+	SetIcon(D3DXVECTOR3(70.0f, 610.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);
 
 	// テスト用 : 　ビルボードのセット
 	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);
@@ -673,9 +673,6 @@ void DrawGame(void)
 
 	// ダメージの描画処理
 	DrawDamege();
-
-	// スコアの描画処理
-	DrawScore();
 
 	// 影の描画処理
 	DrawShadow();

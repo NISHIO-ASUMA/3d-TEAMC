@@ -34,7 +34,7 @@ void InitRankingSet(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\rankingback.png",
+		"data\\TEXTURE\\rankingback.jpg",
 		&g_pTextureRankSet);
 
 	//頂点バッファの生成

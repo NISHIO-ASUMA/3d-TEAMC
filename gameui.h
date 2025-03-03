@@ -46,7 +46,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\title_katana.png",
 	"data\\TEXTURE\\hpred.png",
 	"data\\TEXTURE\\icon_frame.png",
-	"data\\TEXTURE\\icon_framestock.png",
+	"data\\TEXTURE\\icon_framestoku.png",
 };
 
 //**************************************************************************************************************

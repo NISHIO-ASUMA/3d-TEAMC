@@ -50,7 +50,7 @@ void InitRankingScore(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\score000.png",
+		"data\\TEXTURE\\score001.png",
 		&g_pTextureRankScore);
 	
 	// グローバル変数の初期化
@@ -74,7 +74,7 @@ void InitRankingScore(void)
 	for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
 	{
 		// 構造体変数の初期化
-		g_RankScore[nCntRank].pos = D3DXVECTOR3(400.0f, 150.0f + (MAX_HEIGHT * nCntRank) + (20.0f * nCntRank), 0.0f);
+		g_RankScore[nCntRank].pos = D3DXVECTOR3(400.0f, 165.0f + (MAX_HEIGHT * nCntRank) + (20.0f * nCntRank), 0.0f);
 		g_RankScore[nCntRank].nScore = 0;
 
 		// 桁数分回す(8)
