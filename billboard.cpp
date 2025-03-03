@@ -300,15 +300,17 @@ void CraftRange(BLOCK* pBlock)
 		// •\Ž¦”ÍˆÍ“à‚É“ü‚Á‚½
 		if (sphererange(&pBlock->pos, &pPlayer->pos, 100.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
 		{
+			EasingCount++;
+
 			// Œ©‚¦‚é‚æ‚¤‚É‚·‚é
 			g_Billboard[nCnt].state = BILLBOARDSTATE_SET;
 
-			g_Billboard[nCnt].fHeight = 20.0f;
-			g_Billboard[nCnt].fWidth = 30.0f;
+			//g_Billboard[nCnt].fHeight = 20.0f;
+			//g_Billboard[nCnt].fWidth = 30.0f;
 
-			//EasingCount++;
+			float t0 = SetEase(EasingCount, 240);
 
-			//float t0 = SetEase(EasingCount, 120);
+			g_Billboard[nCnt].fHeight += (20.0f - g_Billboard[nCnt].fHeight) * EaseOutQuad(t0);
 
 			//// ‰¡•‚ª30ˆÈã‚©‚Âc•‚ª20.0fˆÈã‚É‚È‚Á‚½‚ç
 			//if (g_Billboard[nCnt].fWidth >= 30.0f && g_Billboard[nCnt].fHeight >= 20.0f)

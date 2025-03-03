@@ -356,9 +356,9 @@ void UpdatePlayer(void)
 			//プレイヤーの移動(右)
 			else
 			{
-				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motionType != MOTIONTYPE_MOVE)
 				{
-					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+					SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_MOVE, true, 10);
 				}
 
 				g_player.move.z -= sinf(pCamera->rot.y) * g_player.speed;
@@ -398,7 +398,7 @@ void UpdatePlayer(void)
 		{
 			if (g_player.Motion.motionType == MOTIONTYPE_MOVE && bUsePad == false)
 			{
-				SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, false, 40); // モーションをニュートラルにする
+				SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
 			}
 		}
 	}
@@ -624,7 +624,7 @@ void UpdatePlayer(void)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // コンボ1
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motionType == MOTIONTYPE_ACTION
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X) && g_player.Motion.motionType == MOTIONTYPE_ACTION)
 			&& CheckMotionBounds(g_player.Motion.nKey,g_player.Motion.nCountMotion,2,5,0,30) ==true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // コンボ2
@@ -927,6 +927,7 @@ void UpdatePlayer(void)
 	SetMotionCheck();
 
 	//D3DXVec3TransformCoord
+	
 	// モーションの更新
 	UpdateMotion(&g_player.Motion);
 
@@ -1833,14 +1834,12 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	bool bFirst = true;
 	int nIdxEnemy = 0;
 
-	g_player.Motion.nKey = 0;                 // キーを0から始める
-	g_player.Motion.nCountMotion = 0;	      // モーションカウントを0から始める
-	g_player.Motion.motionType = motiontype;  // モーションの種類を変更
+	//g_player.Motion.motionType = motiontype;  // モーションの種類を変更
 	g_nCounterState = nCounterState;		  // 状態カウンターを設定
 	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
 	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
 	g_player.Combostate = Combstate;		  // コンボの状態を設定
-	SetMotion(&g_player.Motion, motiontype, MOTIONTYPE_NEUTRAL, true, 28);
+	SetMotion(&g_player.Motion, motiontype, motiontype, true, 28);
 
 	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
@@ -2687,7 +2686,7 @@ void SetMotionCheck(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 4, 4, 1, 1) == true)
 	{
 		// 衝撃波を発生指せる
-		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 40.0f, 20.0f, 15.0f, 60, IMPACTTYPE_NORMAL, 1);
+		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 40.0f, 20.0f, 35.0f, 60, IMPACTTYPE_NORMAL, 1);
 	}
 
 	// 振動の更新処理

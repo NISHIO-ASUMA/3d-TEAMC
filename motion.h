@@ -98,11 +98,13 @@ typedef struct
 	int nNumKey;								// キーの総数
 	int nKey;									// 現在のキーNo.
 	int nCountMotion;							// モーションのカウンター
+	int nextKey;                                // 次のキー
 
 	MOTIONTYPE motiontypeBlend;					// ブレンドの種類
 	bool bBlendMotion;							// ブレンドがあるかどうか
 	bool bLoopMotionBlend;						// ループするかどうか
 	bool bFinishMotion;							// モーションが終わったかどうか
+	bool bFirstMotion;                          // モーションが始まったフラグ
 	int nNumKeyBlend;							// ブレンドモーションの最大のキー
 	int nKeyBlend;								// ブレンドモーションの現在のキー
 	int nNextKeyBlend;							// ブレンドモーションの次のキー
@@ -118,4 +120,5 @@ typedef struct
 //**************************************************************************************************************
 void UpdateMotion(MOTION* pMotion);
 void SetMotion(MOTION* pMotion, MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend);
+void NormalizeRotation(D3DXVECTOR3 *OutRot,D3DXVECTOR3 Rot);
 #endif
