@@ -30,29 +30,31 @@ void UpdateBlendMotion(MOTION* pMotion,int nCntModel, int nextKey);
 //=========================================================================================================
 void UpdateMotion(MOTION *pMotion)
 {
-	// 情報がなかったら
-	if (pMotion->aMotionInfo[pMotion->motionType].nNumkey == NULL || pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey == NULL)
-	{
-		//SetMotion(pMotion, MOTIONTYPE_NEUTRAL, true, 10);
-		// 関数を抜ける
-		return;
-	}
-
 	for (int nCntModel = 0; nCntModel < pMotion->nNumModel; nCntModel++)
-	{
-		// 次のキー
-		pMotion->nextKey = (pMotion->nKey + 1) % pMotion->aMotionInfo[pMotion->motionType].nNumkey;
+	{	
+		if (pMotion->aMotionInfo[pMotion->motionType].nNumkey != NULL)
+		{
+			// 次のキー
+			pMotion->nextKey = (pMotion->nKey + 1) % pMotion->aMotionInfo[pMotion->motionType].nNumkey;
+		}
+		else if (pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey != NULL)
+		{
+			// ブレンドモーションの次のキー
+			pMotion->nNextKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey;
+		}
+		else
+		{
+			SetMotion(pMotion, MOTIONTYPE_NEUTRAL, true, 10);
+		}
 
-		// ブレンドモーションの次のキー
-		pMotion->nNextKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey;
-
+		// モーションブレンドが終了したら
 		if (pMotion->bFinishMotion == false)
 		{
 			// 現在のモーションの更新処理
-			UpdateCurrentMotion(pMotion,nCntModel);
+			UpdateCurrentMotion(pMotion, nCntModel);
 		}
 		if ((pMotion->bFinishMotion == true || pMotion->bFirstMotion == true) && pMotion->bBlendMotion == true)
-		{		
+		{
 			// ブレンドモーションの更新処理
 			UpdateBlendMotion(pMotion, nCntModel, pMotion->nextKey);
 		}
@@ -62,6 +64,7 @@ void UpdateMotion(MOTION *pMotion)
 
 		// オフセットを考慮した位置設定
 		pMotion->aModel[nCntModel].pos += pMotion->aModel[nCntModel].offpos;
+		
 	}
 
 	int LastKey = pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1;
@@ -92,7 +95,7 @@ void UpdateMotion(MOTION *pMotion)
 
 		// ブレンドしたフレームから開始
 		pMotion->nCountMotion = pMotion->nFrameBlend;
-		
+
 	}
 
 	// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった
@@ -112,9 +115,18 @@ void UpdateMotion(MOTION *pMotion)
 	// モーションカウントの設定
 	if (pMotion->nCountMotion >= pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame)
 	{
-		//モーションカウントが最大になったら0に戻す
-		pMotion->nKey = (pMotion->nKey + 1) % pMotion->aMotionInfo[pMotion->motionType].nNumkey;
+		// 情報がなかったら
+		if (pMotion->aMotionInfo[pMotion->motionType].nNumkey != NULL)
+		{
+			//モーションカウントが最大になったら0に戻す
+			pMotion->nKey = (pMotion->nKey + 1) % pMotion->aMotionInfo[pMotion->motionType].nNumkey;
+		}
+		else
+		{
+			
+		}
 		pMotion->nCountMotion = 0;
+		
 	}
 
 	// モーションカウンターの更新
@@ -136,6 +148,7 @@ void UpdateMotion(MOTION *pMotion)
 		pMotion->nCountMotion--;
 		pMotion->nCounterBlend--;
 	}
+	
 }
 //================================================================================================================
 // モーションの設定処理
@@ -164,10 +177,10 @@ void SetMotion(MOTION* pMotion, MOTIONTYPE motiontype, bool Blend, int nFrameBle
 	// モーションブレンドがない
 	else
 	{
-		//pMotion->nKeyBlend = 0;							// 0から始める
-		//pMotion->nCounterBlend = 0;						// 0から
-		//pMotion->motionType = motiontype;				// モーションのタイプを代入
-		//pMotion->bFinishMotion = false;					// もとに戻す
+		
+		pMotion->bBlendMotion = Blend;					// ブレンドがあるかどうか
+		pMotion->motionType = motiontype;			// ブレンドするモーションのタイプを代入
+		pMotion->bFinishMotion = false;
 	}
 }
 //================================================================================================================

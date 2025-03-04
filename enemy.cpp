@@ -449,7 +449,7 @@ void UpdateEnemy(void)
 		}
 
 		// 6番目の敵以外 && 7番目の敵以外
-		if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX)
+		if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
 		{
 			//モーションの更新
 			UpdateMotion(&g_Enemy[nCntEnemy].Motion);
