@@ -89,9 +89,9 @@ void InitGauge(void)
 		{
 			// FRAMEの頂点座標
 			pVtx[0].pos = D3DXVECTOR3(5.0f, 9.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(MAX_HPLENGTH + 15.0f, 9.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(MAX_HPLENGTH + 5.0f, 9.0f, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(5.0f, 30.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(MAX_HPLENGTH + 15.0f, 30.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(MAX_HPLENGTH + 5.0f, 30.0f, 0.0f);
 		}
 		// gauge
 		else if(nCnt != FRAME)
@@ -233,20 +233,27 @@ void UpdateGauge(void)
 
 	// そこからその割合を計算し長さにする
 	g_fPer = fLeftHP / fMaxHP;
-
 	g_fLength = g_fPer * MAX_HPLENGTH;
 
-	//if (pPlayer->state == PLAYERSTATE_DAMAGE)
-	//{
-	//	g_EaseCnt = 0;
-	//}
+	if (pPlayer->state == PLAYERSTATE_DAMAGE)
+	{
+		g_EaseCnt = 0;
+	}
+	else
+	{
+		g_EaseCnt++;
+	}
 
-	//g_EaseCnt++;
+	// テクスチャ座標の割合
+	static float fDestPer = g_fPer;
 
-	//float t = SetEase(g_EaseCnt, 120.0f);
+	float t = SetEase(g_EaseCnt, 120.0f);
 
 	// 赤ゲージを緑ゲージに近づける
-	g_RedLength += (g_fLength - g_RedLength) * 0.1f;
+	g_RedLength += (g_fLength - g_RedLength) * EaseInCubic(t);
+
+	// 赤ゲージを緑ゲージに近づける
+	fDestPer += (g_fPer - fDestPer) * EaseInCubic(t);
 
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	
@@ -262,15 +269,15 @@ void UpdateGauge(void)
 
 	// 赤ゲージテクスチャ座標の更新
 	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[5].tex = D3DXVECTOR2(g_fPer, 0.0f);
+	pVtx[5].tex = D3DXVECTOR2(fDestPer, 0.0f);
 	pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[7].tex = D3DXVECTOR2(g_fPer, 1.0f);
+	pVtx[7].tex = D3DXVECTOR2(fDestPer, 1.0f);
 
 	// ゲージの頂点座標の更新
 	pVtx[8].pos = D3DXVECTOR3(10.0f, 15.0f, 0.0f);
-	pVtx[9].pos = D3DXVECTOR3(g_fLength + 10.0f, 15.0f, 0.0f);
+	pVtx[9].pos = D3DXVECTOR3(g_fLength, 15.0f, 0.0f);
 	pVtx[10].pos = D3DXVECTOR3(10.0f, 26.0f, 0.0f);
-	pVtx[11].pos = D3DXVECTOR3(g_fLength + 10.0f, 26.0f, 0.0f);
+	pVtx[11].pos = D3DXVECTOR3(g_fLength, 26.0f, 0.0f);
 
 	// ゲージのテクスチャ座標の更新
 	pVtx[8].tex = D3DXVECTOR2(0.0f, 0.0f);

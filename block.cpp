@@ -23,7 +23,7 @@
 //**************************************************************************************************************
 #define MAX_WORD (256)	  // 最大の文字数
 #define HALF_VALUE (0.6f) // 割る数
-#define PLAYERJUMPHEIGHT (40.0f) // プレイヤーのジャンプ量
+#define PLAYERJUMPHEIGHT (20.0f) // プレイヤーのジャンプ量
 #define RADIUS (15.0f)
 
 //**************************************************************************************************************
@@ -384,8 +384,8 @@ void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType)
 				// ビルボードを設定
 				SetBillboard(D3DXVECTOR3(g_Block[nCntBlock].pos.x,g_Block[nCntBlock].pos.y + 80.0f,g_Block[nCntBlock].pos.z),
 					BILLBOARDTYPE_FIRST,
-					5.0f, 0.0f,
-					BILLBOARDSTATE_NOSET);
+					30.0f, 20.0f,
+					BILLBOARDSTATE_SET);
 			}
 
 			g_NumBlock++; // インクリメント

@@ -247,7 +247,7 @@ void AddSpgauge(float fValue)
 	// ƒvƒŒƒCƒ„[‚Ìæ“¾
 	Player* pPlayer = GetPlayer();
 
-	if (g_SPgauge[1].SpGauge < 300.0f && !pPlayer->AttackSp)
+	if (g_SPgauge[1].SpGauge <= 300.0f && pPlayer->AttackSp == false)
 	{
 		// ‰ÁZˆ—
 		g_SPgauge[1].SpGauge += fValue;

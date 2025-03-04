@@ -59,7 +59,6 @@ MODEL_FILENAME = data/MODEL/OBJ/wood001.x				# [48]木２
 MODEL_FILENAME = data/MODEL/OBJ/wood002.x				# [49]木３
 MODEL_FILENAME = data/MODEL/OBJ/mount000.x				# [50]山
 
-
 # もしやり方わかるならBLOCK.hの列挙型追加頼む
 
 END_SCRIPT #この行は消さないでください

@@ -37,6 +37,7 @@
 #include "meshimpact.h"
 #include "meshcylinder.h"
 #include "billboard.h"
+#include "mark.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -190,6 +191,8 @@ void InitPlayer(void)
 		//最初に描画したいプレイヤーの情報を代入
 		g_player = g_LoadPlayer[0];
 	}
+
+	SetMark(g_player.pos, g_player.rot);
 }
 //===============================================================================================================
 //プレイヤーの終了処理
@@ -1452,15 +1455,15 @@ bool sphererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float ra
 {
 	bool bRange = false;
 
-	D3DXVECTOR3 DisPos; // 計算用
+	D3DXVECTOR3 DiffPos; // 計算用
 
 	// 距離XYZを求める
-	DisPos.x = pPos1->x - pPos2->x;
-	DisPos.y = pPos1->y - pPos2->y;
-	DisPos.z = pPos1->z - pPos2->z;
+	DiffPos.x = pPos1->x - pPos2->x;
+	DiffPos.y = pPos1->y - pPos2->y;
+	DiffPos.z = pPos1->z - pPos2->z;
 
 	// 距離を求める
-	float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z);
+	float fDistance = (DiffPos.x * DiffPos.x) + (DiffPos.y * DiffPos.y) + (DiffPos.z * DiffPos.z);
 
 	// 半径を求める
 	float fRadius = radius1 + radius2;

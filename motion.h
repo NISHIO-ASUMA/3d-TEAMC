@@ -120,6 +120,6 @@ typedef struct
 //**************************************************************************************************************
 void UpdateMotion(MOTION* pMotion);
 void SetMotion(MOTION* pMotion,MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend);
-void NormalizeRotation(D3DXVECTOR3 *OutRot,D3DXVECTOR3 Rot);
+void NormalizeRotation(float *pRotX, float* pRotY, float* pRotZ);
 bool CheckActionMotion(MOTION* pMotion);																	 // モーションがアクションかじゃないか
 #endif

@@ -489,13 +489,13 @@ void UpdateBoss(void)
 		// UŒ‚”ÍˆÍ‚É“ü‚Á‚½
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20.0f) &&
 			pPlayer->state != PLAYERSTATE_DAMAGE &&
-			g_Boss[nCnt].Motion.nKey >= 3 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)
+			g_Boss[nCnt].Motion.nKey >= 3 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motiontypeBlend == MOTIONTYPE_ACTION)
 		{
 			HitPlayer(40);
 		}
 		else if(sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20.0f) &&
 			pPlayer->state != PLAYERSTATE_DAMAGE &&
-			g_Boss[nCnt].Motion.nKey >= 2 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION2)
+			g_Boss[nCnt].Motion.nKey >= 2 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motiontypeBlend == MOTIONTYPE_ACTION2)
 		{
 			HitPlayer(30);
 		}

@@ -74,11 +74,11 @@ void UpdateMotion(MOTION *pMotion)
 	if (pMotion->aMotionInfo[pMotion->motionType].bLoop == false && pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1 &&
 		pMotion->bBlendMotion == true && pMotion->bFinishMotion == false && pMotion->bFirstMotion == false)
 	{
-		pMotion->nFrameBlend = nBlendFrame;
 		pMotion->nCounterBlend = 0;
-		pMotion->nKeyBlend = 0;
+		pMotion->nFrameBlend = nBlendFrame;
 		pMotion->bFinishMotion = true;
 		pMotion->motiontypeBlend = MOTIONTYPE_NEUTRAL; // モーションタイプをニュートラルにする
+		//SetMotion(pMotion, MOTIONTYPE_NEUTRAL, true, nBlendFrame);
 	}
 
 	// モーションの出だしのブレンドが終了した
@@ -95,8 +95,24 @@ void UpdateMotion(MOTION *pMotion)
 
 		// ブレンドしたフレームから開始
 		pMotion->nCountMotion = pMotion->nFrameBlend;
-
 	}
+
+	//// モーションカウントの設定
+	//if (pMotion->nCounterBlend >= pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].nFrame)
+	//{
+	//	// 情報がなかったら
+	//	if (pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey != NULL)
+	//	{
+	//		//モーションカウントが最大になったら0に戻す
+	//		pMotion->nKeyBlend = (pMotion->nKeyBlend + 1) % pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey;
+	//	}
+	//	else
+	//	{
+
+	//	}
+	//	pMotion->nCounterBlend = 0;
+
+	//}
 
 	// モーションが終わるかつキーが最大かつブレンドのカウントが最大になった
 	if (pMotion->nCounterBlend >= nBlendFrame && pMotion->bBlendMotion == true && pMotion->bFinishMotion == true && pMotion->bFirstMotion == false)
@@ -130,7 +146,7 @@ void UpdateMotion(MOTION *pMotion)
 	}
 
 	// モーションカウンターの更新
-	if (pMotion->bFirstMotion == false && pMotion->bFinishMotion == false)
+	if (pMotion->bFirstMotion == false)
 	{
 		//モーションカウントを加算
 		pMotion->nCountMotion++;
@@ -186,40 +202,34 @@ void SetMotion(MOTION* pMotion, MOTIONTYPE motiontype, bool Blend, int nFrameBle
 //================================================================================================================
 // 角度の正規化
 //================================================================================================================
-void NormalizeRotation(D3DXVECTOR3* OutRot, D3DXVECTOR3 Rot)
+void NormalizeRotation(float* pRotX, float* pRotY, float* pRotZ)
 {
 	// 角度の正規化
-	if (Rot.x > D3DX_PI)
+	if (*pRotX > D3DX_PI)
 	{
-		Rot.x += -D3DX_PI * 2.0f;
-		OutRot->x = Rot.x;
+		*pRotX += -D3DX_PI * 2.0f;
 	}
-	else if (Rot.x < -D3DX_PI)
+	else if (*pRotX < -D3DX_PI)
 	{
-		Rot.x += D3DX_PI * 2.0f;
-		OutRot->x = Rot.x;
+		*pRotX += D3DX_PI * 2.0f;
 	}
 
-	if (Rot.y > D3DX_PI)
+	if (*pRotY > D3DX_PI)
 	{
-		Rot.y += -D3DX_PI * 2.0f;
-		OutRot->y = Rot.y;
+		*pRotY += -D3DX_PI * 2.0f;
 	}
-	else if (Rot.y < -D3DX_PI)
+	else if (*pRotY < -D3DX_PI)
 	{
-		Rot.y += D3DX_PI * 2.0f;
-		OutRot->y = Rot.y;
+		*pRotY += D3DX_PI * 2.0f;
 	}
 
-	if (Rot.z > D3DX_PI)
+	if (*pRotZ > D3DX_PI)
 	{
-		Rot.z += -D3DX_PI * 2.0f;
-		OutRot->z = Rot.z;
+		*pRotZ += -D3DX_PI * 2.0f;
 	}
-	else if (Rot.z < -D3DX_PI)
+	else if (*pRotZ < -D3DX_PI)
 	{
-		Rot.z += D3DX_PI * 2.0f;
-		OutRot->z = Rot.z;
+		*pRotZ += D3DX_PI * 2.0f;
 	}
 }
 //================================================================================================================
@@ -274,11 +284,8 @@ void UpdateCurrentMotion(MOTION* pMotion, int nCntModel)
 	float DiffRotY = fNextRotY - fCurrentRotY;
 	float DiffRotZ = fNextRotZ - fCurrentRotZ;
 
-	// 正規化用変数
-	D3DXVECTOR3 fDiffRot = D3DXVECTOR3(DiffRotX, DiffRotY, DiffRotZ);
-
 	// 差分の角度を正規化
-	NormalizeRotation(&fDiffRot, fDiffRot);
+	NormalizeRotation(&DiffRotX,&DiffRotY,&DiffRotZ);
 
 	// フレームの相対値
 	float fRateMotion = (float)pMotion->nCountMotion / (float)pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].nFrame;
@@ -289,9 +296,9 @@ void UpdateCurrentMotion(MOTION* pMotion, int nCntModel)
 	float fPosZ = fCurrentPosZ + DiffPosZ * fRateMotion;
 
 	// 向きを求める
-	float fRotX = fCurrentRotX + fDiffRot.x * fRateMotion;
-	float fRotY = fCurrentRotY + fDiffRot.y * fRateMotion;
-	float fRotZ = fCurrentRotZ + fDiffRot.z * fRateMotion;
+	float fRotX = fCurrentRotX + DiffRotX * fRateMotion;
+	float fRotY = fCurrentRotY + DiffRotY * fRateMotion;
+	float fRotZ = fCurrentRotZ + DiffRotZ * fRateMotion;
 
 	// 現在の位置を設定
 	pMotion->aModel[nCntModel].pos = D3DXVECTOR3(fPosX, fPosY, fPosZ);
@@ -319,13 +326,7 @@ void UpdateBlendMotion(MOTION* pMotion, int nCntModel,int nextKey)
 	float fDiffMotionRZ = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[nextKey].aKey[nCntModel].fRotZ -
 		pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotZ;
 
-	// 角度の正規化
-	D3DXVECTOR3 fDiffMotionRot(fDiffMotionRX, fDiffMotionRY, fDiffMotionRZ);
-	NormalizeRotation(&fDiffMotionRot, fDiffMotionRot);
-
-	fDiffMotionRX = fDiffMotionRot.x;
-	fDiffMotionRY = fDiffMotionRot.y;
-	fDiffMotionRZ = fDiffMotionRot.z;
+	NormalizeRotation(&fDiffMotionRX, &fDiffMotionRY,&fDiffMotionRZ);
 
 	// 向きX
 	float fRotXCurrent = pMotion->aMotionInfo[pMotion->motionType].aKeyInfo[pMotion->nKey].aKey[nCntModel].fRotX + (fDiffMotionRX * fRateMotion);
@@ -348,13 +349,7 @@ void UpdateBlendMotion(MOTION* pMotion, int nCntModel,int nextKey)
 	float fDiffMotionBlendRZ = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nNextKeyBlend].aKey[nCntModel].fRotZ -
 		pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotZ;
 
-	// 角度の正規化
-	D3DXVECTOR3 fDiffBlendRot(fDiffMotionBlendRX, fDiffMotionBlendRY, fDiffMotionBlendRZ);
-	NormalizeRotation(&fDiffBlendRot, fDiffBlendRot);
-
-	fDiffMotionBlendRX = fDiffBlendRot.x;
-	fDiffMotionBlendRY = fDiffBlendRot.y;
-	fDiffMotionBlendRZ = fDiffBlendRot.z;
+	NormalizeRotation(&fDiffMotionBlendRX, &fDiffMotionBlendRY, &fDiffMotionBlendRZ);
 
 	// ブレンドモーションの回転X
 	float fRotXBlend = pMotion->aMotionInfo[pMotion->motiontypeBlend].aKeyInfo[pMotion->nKeyBlend].aKey[nCntModel].fRotX + (fDiffMotionBlendRX * fRateBlend);

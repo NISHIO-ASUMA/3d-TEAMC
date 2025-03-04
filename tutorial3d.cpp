@@ -32,6 +32,7 @@
 #include "icon.h"
 #include "itemgage.h"
 #include "billboard.h"
+#include "craftui.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -78,6 +79,9 @@ void InitTutorial3d(void)
 
 	// 影の初期化処理
 	InitShadow();
+
+	// クラフト画面の初期化処理
+	InitCraftUI();
 
 	// ブロックの初期化処理
 	InitBlock();
@@ -165,6 +169,9 @@ void UninitTutorial3d(void)
 	// 壁の終了処理
 	UninitWall();
 
+	// クラフト画面の終了処理
+	UninitCraftUI();
+
 	// ミニマップの終了処理
 	UninitMinMap();
 
@@ -235,6 +242,9 @@ void UpdateTutorial3d(void)
 		UpdateIcon();
 	}
 
+	// クラフト画面の更新処理
+	UpdateCraftUI();
+
 	// ブロックの更新処理
 	UpdateBlock();
 
@@ -299,6 +309,14 @@ void DrawTutorial3d(void)
 
 	// アイテムゲージ
 	DrawItemGage();
+
+	Player* pPlayer = GetPlayer();
+
+	if (pPlayer->bCraft == true)
+	{
+		// クラフト画面の描画処理
+		DrawCraftUI();
+	}
 
 	if (g_bEditMode2)
 	{// g_bEditMode2がtrue

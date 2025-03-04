@@ -163,6 +163,9 @@
     <ClCompile Include="meshcylinder.cpp">
       <Filter>ソースファイル\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="mark.cpp">
+      <Filter>ソースファイル\obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -326,6 +329,9 @@
     </ClInclude>
     <ClInclude Include="meshcylinder.h">
       <Filter>ヘッダーファイル\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="mark.h">
+      <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

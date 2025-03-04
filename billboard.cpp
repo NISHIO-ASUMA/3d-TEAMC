@@ -225,7 +225,7 @@ void DrawBillboard(void)
 		// 頂点フォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		if (g_Billboard[nCnt].state != BILLBOARDSTATE_NOSET)
+		if (g_Billboard[nCnt].state == BILLBOARDSTATE_SET)
 		{
 			//テクスチャの設定
 			pDevice->SetTexture(0, g_apTextureBillboard[g_Billboard[nCnt].nType]);
@@ -298,21 +298,18 @@ void CraftRange(BLOCK* pBlock)
 	for (int nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
 	{
 		// 使用状態じゃなかったらかつ種類が
-		if (g_Billboard[nCnt].bUse == false || g_Billboard[nCnt].nType != BILLBOARDTYPE_FIRST)
+		if (g_Billboard[nCnt].bUse == false || g_Billboard[nCnt].nType != BILLBOARDTYPE_FIRST || pBlock->nType != BLOCKTYPE_WORKBENCH)
 		{
 			continue;
 		}
 
 		// 表示範囲内に入った
-		if (sphererange(&pBlock->pos, &pPlayer->pos, 100.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
+		if (sphererange(&pBlock->Obb.CenterPos, &pPlayer->pos, 200.0f, 1000.0f) == true)
 		{
 			EasingCount++;
 
-			// 見えるようにする
-			g_Billboard[nCnt].state = BILLBOARDSTATE_SET;
-
-			g_Billboard[nCnt].fHeight = 80.0f;
-			g_Billboard[nCnt].fWidth = 80.0f;
+			//g_Billboard[nCnt].fHeight = 80.0f;
+			//g_Billboard[nCnt].fWidth = 80.0f;
 
 			//float t0 = SetEase(EasingCount, 240);
 
@@ -346,10 +343,10 @@ void CraftRange(BLOCK* pBlock)
 			//g_Billboard[nCnt].fHeight += (20.0f - g_Billboard[nCnt].fHeight) * EaseInCubic(t0);
 		}
 		// 表示範囲から出た
-		else if (!sphererange(&pBlock->pos, &pPlayer->pos, 150.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
+		else
 		{
-			// 見えなくする
-			g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
+			//// 見えなくする
+			//g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
 		}
 
 		// 拾える範囲に入った

@@ -52,6 +52,7 @@
 #include "meshimpact.h"
 #include "itemgage.h"
 #include "meshcylinder.h"
+#include "mark.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -112,6 +113,9 @@ void InitGame(void)
 	//敵の初期化処理
 	InitEnemy();
 
+	// 矢印の初期化処理
+	InitMark();
+
 	//プレイヤーの初期化処理
 	InitPlayer();
 
@@ -133,6 +137,9 @@ void InitGame(void)
 	// スコアの初期化処理
 	InitScore();
 
+	// クラフト画面の初期化処理
+	InitCraftUI();
+
 	// ビルボードの初期化処理
 	InitBillboard();
 
@@ -153,9 +160,6 @@ void InitGame(void)
 
 	// タイマーの初期化
 	InitTime();
-
-	// クラフト画面の初期化処理
-	InitCraftUI();
 
 	// 軌跡の初期化処理
 	InitMeshSword();
@@ -330,6 +334,9 @@ void UninitGame(void)
 
 	// ポリゴンの終了処理
 	UninitPolygon();
+
+	// 矢印の終了処理
+	UninitMark();
 
 	// ミニマップの終了処理
 	UninitMinMap();
@@ -570,6 +577,9 @@ void UpdateGame(void)
 
 				//メッシュシリンダーの更新処理
 				UpdateMeshCylinder();
+
+				// 矢印の更新処理
+				UpdateMark();
 			}
 
 			// クラフト画面の更新処理
@@ -639,6 +649,9 @@ void DrawGame(void)
 
 	// ボスの描画処理
 	DrawBoss();
+
+	// 矢印の描画処理
+	DrawMark();
 
 #ifdef _DEBUG
 
