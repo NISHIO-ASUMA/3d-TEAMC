@@ -506,8 +506,7 @@ void SetItem(D3DXVECTOR3 pos, int nType)
 			g_Item[nCntItem].nType = nType;		 // Ží—Þ
 			g_Item[nCntItem].bUse = true;		 // Žg—p”»’è
 
-			g_Item[nCntItem].nIdxBillboardCount = SetBillboard(pos, BILLBOARDTYPE_SECOND, 30.0f, 30.0f, BILLBOARDSTATE_NOSET);
-
+			g_Item[nCntItem].nIdxBillboardCount = SetBillboard(D3DXVECTOR3(pos.x,pos.y + 100.0f,pos.z), BILLBOARDTYPE_SECOND, 40.0f, 20.0f, BILLBOARDSTATE_NOSET);
 			break;
 		}
 	}

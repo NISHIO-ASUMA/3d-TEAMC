@@ -825,6 +825,7 @@ void UpdatePlayer(void)
 	SetMotionCheck();
 
 	//D3DXVec3TransformCoord
+	// getactivewindow
 	
 	// モーションの更新
 	UpdateMotion(&g_player.Motion);
@@ -1485,21 +1486,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 	bool bCollision = false; // 当たっているかどうか
 
-	float fDistanceX = g_player.pos.x - pItem[nIdx].pos.x; // 距離Xを計算
-	float fDistanceY = g_player.pos.y - pItem[nIdx].pos.y; // 距離Yを計算
-	float fDistanceZ = g_player.pos.z - pItem[nIdx].pos.z; // 距離Zを計算
-
-	//距離を算出
-	float fDistance = (fDistanceX * fDistanceX) + (fDistanceY * fDistanceY) + (fDistanceZ * fDistanceZ);
-
-	// 半径を計算
-	float Radius = Itemrange + plrange;
-
-	// 半径を算出
-	Radius = Radius * Radius;
-
 	// 範囲内に入った
-	if (fDistance <= Radius && pItem[nIdx].state == ITEMSTATE_NORMAL && g_player.Motion.motionType != MOTIONTYPE_DEATH)
+	if (sphererange(&g_player.pos,&pItem[nIdx].pos, Itemrange, plrange) == true && pItem[nIdx].state == ITEMSTATE_NORMAL && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{
 		bCollision = true;
 		
@@ -1510,9 +1498,13 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			pBillboard[nIdxBillboard].state = BILLBOARDSTATE_SET;
 		}
 
+
 		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_LEFT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) &&
 			g_player.Combostate == COMBO_NO)
 		{
+			// インデックス番号のビルボードを非表示
+			DeletIdxBillboard(pItem[nIdx].nIdxBillboardCount);
+
 			if (pItem[nIdx].nType == ITEMTYPE_ONIGIRI)
 			{
 				D3DXVECTOR3 pos(g_player.Motion.aModel[1].mtxWorld._41, g_player.Motion.aModel[1].mtxWorld._42, g_player.Motion.aModel[1].mtxWorld._43);
@@ -1554,9 +1546,6 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 			
 			pItem[nIdx].bUse = false;      // 消す
-
-			// インデックス番号のビルボードを非表示
-			DeletIdxBillboard(pItem[nIdx].nIdxBillboardCount);
 
 			if (g_player.Itembreak[g_player.ItemIdx] == true)
 			{
@@ -1732,6 +1721,15 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 		}
+	}
+
+	// 範囲外だったら
+	if (sphererange(&g_player.pos, &pItem[nIdx].pos, Itemrange, plrange) == false)
+	{
+		int nIdxBillboard = pItem[nIdx].nIdxBillboardCount;
+
+		// ビルボードを消す
+		pBillboard[nIdxBillboard].state = BILLBOARDSTATE_NOSET;
 	}
 
 	return bCollision;

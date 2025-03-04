@@ -298,7 +298,7 @@ void CraftRange(BLOCK* pBlock)
 	for (int nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
 	{
 		// 使用状態じゃなかったらかつ種類が
-		if (!g_Billboard[nCnt].bUse && g_Billboard[nCnt].nType != BILLBOARDTYPE_FIRST)
+		if (g_Billboard[nCnt].bUse == false || g_Billboard[nCnt].nType != BILLBOARDTYPE_FIRST)
 		{
 			continue;
 		}
@@ -311,12 +311,12 @@ void CraftRange(BLOCK* pBlock)
 			// 見えるようにする
 			g_Billboard[nCnt].state = BILLBOARDSTATE_SET;
 
-			//g_Billboard[nCnt].fHeight = 20.0f;
-			//g_Billboard[nCnt].fWidth = 30.0f;
+			g_Billboard[nCnt].fHeight = 80.0f;
+			g_Billboard[nCnt].fWidth = 80.0f;
 
-			float t0 = SetEase(EasingCount, 240);
+			//float t0 = SetEase(EasingCount, 240);
 
-			g_Billboard[nCnt].fHeight += (20.0f - g_Billboard[nCnt].fHeight) * EaseOutQuad(t0);
+			////g_Billboard[nCnt].fHeight += (20.0f - g_Billboard[nCnt].fHeight) * EaseOutQuad(t0);
 
 			//// 横幅が30以上かつ縦幅が20.0f以上になったら
 			//if (g_Billboard[nCnt].fWidth >= 30.0f && g_Billboard[nCnt].fHeight >= 20.0f)
@@ -346,11 +346,10 @@ void CraftRange(BLOCK* pBlock)
 			//g_Billboard[nCnt].fHeight += (20.0f - g_Billboard[nCnt].fHeight) * EaseInCubic(t0);
 		}
 		// 表示範囲から出た
-		else if (!sphererange(&pBlock->pos, &pPlayer->pos, 100.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
+		else if (!sphererange(&pBlock->pos, &pPlayer->pos, 150.0f, 50.0f) && pBlock->nType == BLOCKTYPE_WORKBENCH)
 		{
-
-			//// 見えなくする
-			//g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
+			// 見えなくする
+			g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
 		}
 
 		// 拾える範囲に入った
@@ -364,7 +363,6 @@ void CraftRange(BLOCK* pBlock)
 
 				// クラフト状態にする
 				EnableCraft(true);
-				break;
 			}
 			// クラフト状態だったら
 			else if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && pPlayer->bCraft && pPlayer->AttackSp == false)
@@ -374,7 +372,6 @@ void CraftRange(BLOCK* pBlock)
 
 				// クラフト状態にしない
 				EnableCraft(false);
-				break;
 			}
 		}
 	}

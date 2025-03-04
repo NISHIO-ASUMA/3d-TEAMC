@@ -21,7 +21,12 @@
 #include "meshsword.h"
 
 //**************************************************************************************************************
-//グローバル変数
+// マクロ定義
+//**************************************************************************************************************
+#define SPGAUGE_LENGTH (390.0f) // スペシャルゲージの横幅
+
+//**************************************************************************************************************
+// グローバル変数
 //**************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureSPgauge[SPGAUGE_MAX] = {}; // テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffSPgauge = NULL;       // 頂点バッファへのポインタ
@@ -145,7 +150,7 @@ void UpdateSPgauge(void)
 			float fDest = g_SPgauge[nCnt].SpGauge / 300.0f;
 
 			// 横幅
-			float fWidth = fDest * 900.0f;
+			float fWidth = fDest * SPGAUGE_LENGTH;
 
 			// 100.0fたまったら発動可能
 			if (g_SPgauge[nCnt].SpGauge >= 100.0f)
@@ -163,8 +168,8 @@ void UpdateSPgauge(void)
 			// 頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(fWidth, 40.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(fWidth, 70.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, 60.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(fWidth, 60.0f, 0.0f);
 		}
 		else
 		{
@@ -173,9 +178,9 @@ void UpdateSPgauge(void)
 
 			// 頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(900.0f, 40.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(900.0f, 70.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(SPGAUGE_LENGTH, 40.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, 60.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(SPGAUGE_LENGTH, 60.0f, 0.0f);
 
 			if (g_SPgauge[1].SpGauge >= 100)
 			{

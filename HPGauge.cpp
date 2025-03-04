@@ -18,7 +18,7 @@
 //**********************************************************************************************************************
 #define NUM_HPGAUGE (3) // HPゲージのUIの数
 #define NUM_FEVERGAUGE (2) // FEVERGAUGEの数
-#define MAX_HPLENGTH (790.0f) // HPゲージの横幅
+#define MAX_HPLENGTH (390.0f) // HPゲージの横幅
 #define FRAME (0)             // フレームのカウント
 
 //**********************************************************************************************************************
@@ -89,18 +89,18 @@ void InitGauge(void)
 		{
 			// FRAMEの頂点座標
 			pVtx[0].pos = D3DXVECTOR3(5.0f, 9.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(805.0f, 9.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(MAX_HPLENGTH + 15.0f, 9.0f, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(5.0f, 30.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(805.0f, 30.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(MAX_HPLENGTH + 15.0f, 30.0f, 0.0f);
 		}
 		// gauge
 		else if(nCnt != FRAME)
 		{
 			// GAUGEの頂点座標
 			pVtx[0].pos = D3DXVECTOR3(10.0f, 15.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(800.0f, 15.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(fLength, 15.0f, 0.0f);
 			pVtx[2].pos = D3DXVECTOR3(10.0f, 26.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(800.0f, 26.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(fLength, 26.0f, 0.0f);
 		}
 
 		// rhwの設定

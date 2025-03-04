@@ -231,10 +231,10 @@ void UpdateMeshSword(void)
 	// 頂点バッファをロック
 	g_pVtxBuffMeshSword->Lock(0, 0, (void**)&pVtx, 0);
 
-	if (pPlayer->Motion.motionType == MOTIONTYPE_ACTION||
-		pPlayer->Motion.motionType == MOTIONTYPE_ACTION2||
-		pPlayer->Motion.motionType == MOTIONTYPE_ACTION3||
-		pPlayer->Motion.motionType == MOTIONTYPE_ACTION4)
+	if (pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION2||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION3||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION4)
 	{
 		g_MeshSword.oldvtx[0] = pVtx[0].pos;
 		g_MeshSword.oldvtx[1] = pVtx[1].pos;
@@ -275,10 +275,10 @@ void DrawMeshSword(void)
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
 
-	if ((pPlayer->Motion.motionType == MOTIONTYPE_ACTION ||
-		pPlayer->Motion.motionType == MOTIONTYPE_ACTION2 ||
-		pPlayer->Motion.motionType == MOTIONTYPE_ACTION3 ||
-		pPlayer->Motion.motionType == MOTIONTYPE_ACTION4) &&
+	if ((pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION ||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION2 ||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION3 ||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION4) &&
 		pPlayer->Motion.nNumModel != 15 &&
 		pPlayer->HandState != PLAYERHOLD_HOLD)
 	{
