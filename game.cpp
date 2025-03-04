@@ -372,34 +372,45 @@ void UpdateGame(void)
 	int TimeSecond = GetTimeSecond(); // 秒
 
 	int nNumKill = GetNumKill(); // キル数
-	
-	if (nNumEnemy >= 400)
+
+	//// 百の位、十の位、一の位
+	//int HandredPlace = nNumKill / 100 % 10;
+	//int tenPlace = nNumKill / 10 % 10;
+	//int onePlace = nNumKill % 10;
+
+	//static bool bSet = false;
+
+	//int nSetSpawn = (HandredPlace * 100) + (tenPlace * 10) + onePlace;
+
+	if (g_EnemyWaveTime >= 1800)
 	{
 		int Spawn_randvalue = rand() % 100; // 出るか出ないか
+		int nSpawner = rand() % 3; // どこから出すか
 
-		if (Spawn_randvalue <= 10)
+		switch (nSpawner)
 		{
-			int nSpawner = rand() % 3; // どこから出すか
-
-			switch (nSpawner)
-			{
-			case 0:
-				SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
-				break;
-			case 1:
-				SetBoss(D3DXVECTOR3(-526.0f, 0.0f, -455.0f), 3.0f, 10000); // ボスをセット
-				break;
-			case 2:
-				SetBoss(D3DXVECTOR3(-506.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
-				break;
-			default:
-				break;
-			}
+		case 0:
+			SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+			break;
+		case 1:
+			SetBoss(D3DXVECTOR3(-526.0f, 0.0f, -455.0f), 3.0f, 10000); // ボスをセット
+			break;
+		case 2:
+			SetBoss(D3DXVECTOR3(-506.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+			break;
+		default:
+			break;
 		}
+
 		g_EnemyWaveTime = 0;
 	}
-	// 敵が出てくるまでの時間
-	//if ((g_EnemyWaveTime >= 900 || nNumEnemy <= 0))
+	//else if ((nSetSpawn % 40 != 0))
+	//{
+	//	bSet = false;
+	//}
+
+	//// 敵が出てくるまでの時間
+	//if (g_EnemyWaveTime >= 900)
 	//{// カウントが900 or 場に出ている敵が0体以下の時
 
 	//	int nSpawner = rand() % 4;
@@ -407,7 +418,7 @@ void UpdateGame(void)
 	//	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
 	//	{
 	//		// 敵を出す処理
-	//		WaveEnemy(nSpawner);
+	//		Enemy(nSpawner);
 	//	}
 
 	//	// タイムを初期化する
@@ -587,7 +598,6 @@ void UpdateGame(void)
 			UpdateCamera();
 		}
 	}
-
 #ifdef _DEBUG
 
 	if (KeyboardTrigger(DIK_F10))

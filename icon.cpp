@@ -209,7 +209,7 @@ void DrawIcon()
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
 		}
 		// ストックしているアイテムのアイコン
-		if (g_Icon[nCnt].bUse == true && pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && g_Icon[nCnt].nIconType == ICONTYPE_STOCKITEM)
+		if (g_Icon[nCnt].bUse == true && pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && g_Icon[nCnt].nIconType != ICONTYPE_HOLDITEM)
 		{// アイコンが使用状態 かつ アイテムの状態がホールドなら
 
 			// 種類
