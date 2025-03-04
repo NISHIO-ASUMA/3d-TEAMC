@@ -714,11 +714,11 @@ void UpdatePlayer(void)
 		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	}
 
-	// スペシャルモーションからもとに戻す
-	if (g_player.AttackSp == true && g_player.Motion.motionType != MOTIONTYPE_ACTION)
-	{
-		//SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
+	int LastKey = g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION].nNumkey - 1;
 
+	// スペシャルモーションからもとに戻す
+	if (g_player.AttackSp == true && g_player.Motion.nKey >= LastKey)
+	{
 		// 音楽再生
 		PlaySound(SPUND_LABEL_WEPONBREAK);
 

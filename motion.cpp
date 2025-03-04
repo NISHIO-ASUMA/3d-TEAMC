@@ -31,8 +31,9 @@ void UpdateBlendMotion(MOTION* pMotion,int nCntModel, int nextKey);
 void UpdateMotion(MOTION *pMotion)
 {
 	// î•ñ‚ª‚È‚©‚Á‚½‚ç
-	if (pMotion->aMotionInfo[pMotion->motionType].nNumkey == NULL)
+	if (pMotion->aMotionInfo[pMotion->motionType].nNumkey == NULL || pMotion->aMotionInfo[pMotion->motiontypeBlend].nNumkey == NULL)
 	{
+		//SetMotion(pMotion, MOTIONTYPE_NEUTRAL, true, 10);
 		// ŠÖ”‚ğ”²‚¯‚é
 		return;
 	}
