@@ -36,6 +36,7 @@
 #include "effect2.h"
 #include "meshimpact.h"
 #include "meshcylinder.h"
+#include "billboard.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -1476,6 +1477,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 {
 	Item* pItem = GetItem();
 
+	Billboard* pBillboard = GetBillBoard();
+
 	bool bCollision = false; // 当たっているかどうか
 
 	float fDistanceX = g_player.pos.x - pItem[nIdx].pos.x; // 距離Xを計算
@@ -1495,6 +1498,13 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	if (fDistance <= Radius && pItem[nIdx].state == ITEMSTATE_NORMAL && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{
 		bCollision = true;
+		
+		if (pItem[nIdx].state == ITEMSTATE_NORMAL)
+		{
+			int nIdxBillboard = pItem[nIdx].nIdxBillboardCount;
+			// ビルボードセット
+			pBillboard[nIdxBillboard].state = BILLBOARDSTATE_SET;
+		}
 
 		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_LEFT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) &&
 			g_player.Combostate == COMBO_NO)
@@ -1540,6 +1550,9 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			Itemchange(pItem[nIdx].nType); // アイテムを拾う
 			
 			pItem[nIdx].bUse = false;      // 消す
+
+			// インデックス番号のビルボードを非表示
+			DeletIdxBillboard(pItem[nIdx].nIdxBillboardCount);
 
 			if (g_player.Itembreak[g_player.ItemIdx] == true)
 			{

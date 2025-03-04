@@ -53,6 +53,7 @@ void InitBillboard(void)
 		g_Billboard[nCnt].fWidth = 0.0f;						// 横幅
 		g_Billboard[nCnt].state = BILLBOARDSTATE_NOSET;
 		g_Billboard[nCnt].bUse = false;							// 使用判定
+
 	}
 
 	// 頂点バッファの生成
@@ -244,15 +245,18 @@ void DrawBillboard(void)
 //=========================
 //　ビルボード設定処理
 //=========================
-void SetBillboard(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight,int state)
+int SetBillboard(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight,int state)
 {
+	// インデックスカウント用
+	int nCnt = 0;
+
 	// 頂点情報のポインタ
 	VERTEX_3D* pVtx;
 
 	// 頂点バッファをロックし,頂点情報へのポインタを取得
 	g_pVtxBuffBillboard->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
+	for (nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
 	{
 		if (!g_Billboard[nCnt].bUse)
 		{// falseだったら
@@ -280,6 +284,8 @@ void SetBillboard(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight,int st
 	// アンロック
 	g_pVtxBuffBillboard->Unlock();
 
+	// インデックス番号を返す
+	return nCnt;
 }
 //=========================================
 //　ビルボードの表示
@@ -372,4 +378,19 @@ void CraftRange(BLOCK* pBlock)
 			}
 		}
 	}
+}
+//=============================================
+// 指定したインデックス番号のビルボードを消す
+//=============================================
+void DeletIdxBillboard(int nIdx)
+{
+	// インデックス番号に応じたビルボードの非表示
+	g_Billboard[nIdx].bUse = false;
+}
+//=============================================
+// ビルボード情報の取得
+//=============================================
+Billboard* GetBillBoard()
+{
+	return &g_Billboard[0];
 }

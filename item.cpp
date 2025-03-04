@@ -22,6 +22,7 @@
 #include "craftui.h"
 #include "sound.h"
 #include "Effect.h"
+#include "billboard.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -493,7 +494,8 @@ void DrawItem(void)
 //ブロックの設定処理
 //=========================================================================================================
 void SetItem(D3DXVECTOR3 pos, int nType)
-{for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+{
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		if (!g_Item[nCntItem].bUse)
 		{// 未使用状態なら
@@ -503,6 +505,8 @@ void SetItem(D3DXVECTOR3 pos, int nType)
 			g_Item[nCntItem].pos = pos;			 // 座標
 			g_Item[nCntItem].nType = nType;		 // 種類
 			g_Item[nCntItem].bUse = true;		 // 使用判定
+
+			g_Item[nCntItem].nIdxBillboardCount = SetBillboard(pos, BILLBOARDTYPE_SECOND, 30.0f, 30.0f, BILLBOARDSTATE_NOSET);
 
 			break;
 		}

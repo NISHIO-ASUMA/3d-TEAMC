@@ -129,6 +129,7 @@ typedef struct
 	float grabity;
 	int nCounterState; // 状態カウンター
 	int Maxdurability; // 最大の耐久力
+	int nIdxBillboardCount;
 }Item;
 
 //***************************
