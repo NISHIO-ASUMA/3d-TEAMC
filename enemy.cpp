@@ -408,7 +408,7 @@ void UpdateEnemy(void)
 		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 20.0f) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
 		{
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_ATTACK;
-			SetMotion(&g_Enemy[nCntEnemy].Motion, MOTIONTYPE_ACTION, MOTIONTYPE_NEUTRAL, true, 20); // モーションをニュートラルにする
+			SetMotion(&g_Enemy[nCntEnemy].Motion,MOTIONTYPE_ACTION, true, 20); // モーションをニュートラルにする
 		}
 
 		// 攻撃状態だったら動きを止める

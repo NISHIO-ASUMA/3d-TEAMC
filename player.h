@@ -148,6 +148,16 @@ typedef enum
 	WEPONELEMENT_MAX
 }WEPONELEMENT;
 
+//***************************
+// プレイヤーの攻撃状態
+//***************************
+typedef enum
+{
+	PLAYERATTACKSTATE_NO,
+	PLAYERATTACKSTATE_ATTACK,
+	PLAYERATTACKSTATE_MAX
+}PLAYERATTACKSTATE;
+
 //**************************
 //プレイヤー構造体
 //**************************
@@ -201,6 +211,8 @@ typedef struct
 	int nIdxMap;
 	int StockItemIdx; // ストックしているアイテムのインデックス
 	int nIdxCylinder;  // シリンダーのインデックス
+	int AttackState;   // プレイヤーの攻撃状態
+	int nCounterAttack; // 攻撃状態の状態カウンター
 }Player;
 
 //**************************

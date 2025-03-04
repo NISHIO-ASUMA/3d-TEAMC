@@ -245,7 +245,7 @@ void UpdateBlock(void)
 				//pPlayer->bJump = true;
 				if (pPlayer->Motion.motionType == MOTIONTYPE_JUMP)
 				{
-					SetMotion(&pPlayer->Motion, MOTIONTYPE_LANDING, MOTIONTYPE_NEUTRAL, true, 10);
+					SetMotion(&pPlayer->Motion, MOTIONTYPE_NEUTRAL, true, 10);
 				}
 			}
 			else

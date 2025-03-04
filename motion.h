@@ -119,6 +119,7 @@ typedef struct
 //プロトタイプ宣言
 //**************************************************************************************************************
 void UpdateMotion(MOTION* pMotion);
-void SetMotion(MOTION* pMotion, MOTIONTYPE motiontype, MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend);
+void SetMotion(MOTION* pMotion,MOTIONTYPE motiontypeBlend, bool Blend, int nFrameBlend);
 void NormalizeRotation(D3DXVECTOR3 *OutRot,D3DXVECTOR3 Rot);
+bool CheckActionMotion(MOTION* pMotion);																	 // モーションがアクションかじゃないか
 #endif

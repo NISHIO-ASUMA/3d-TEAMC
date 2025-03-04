@@ -470,8 +470,7 @@ void UpdateBoss(void)
 			{
 				// モーションを攻撃にする
 				SetMotion(&g_Boss[nCnt].Motion, // モーション構造体のアドレス
-					MOTIONTYPE_ACTION,    // モーションタイプ
-					MOTIONTYPE_NEUTRAL,   // ブレンドモーションタイプ
+					MOTIONTYPE_ACTION,   // ブレンドモーションタイプ
 					true,                 // ブレンドするかしないか
 					10);				  // ブレンドのフレーム
 			}
@@ -479,8 +478,7 @@ void UpdateBoss(void)
 			{
 				// モーションを攻撃にする
 				SetMotion(&g_Boss[nCnt].Motion, // モーション構造体のアドレス
-					MOTIONTYPE_ACTION2,    // モーションタイプ
-					MOTIONTYPE_NEUTRAL,   // ブレンドモーションタイプ
+					MOTIONTYPE_ACTION2,   // ブレンドモーションタイプ
 					true,                 // ブレンドするかしないか
 					10);				  // ブレンドのフレーム
 			}

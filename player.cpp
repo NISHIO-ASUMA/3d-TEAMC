@@ -63,6 +63,7 @@ void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);						 
 void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);							 // プレイヤーのモーションのキーの読み込み処理
 void SetElementEffect(void);
 void SetMotionCheck(void);
+void PlayerMove(void);																			 // プレイヤーの移動処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -172,6 +173,8 @@ void InitPlayer(void)
 			g_LoadPlayer[nCntPlayer].AttackSp = false;
 			g_LoadPlayer[nCntPlayer].bLandingOBB = false;
 			g_LoadPlayer[nCntPlayer].bCraft = false;
+			g_LoadPlayer[nCntPlayer].AttackState = PLAYERATTACKSTATE_NO;
+			g_LoadPlayer[nCntPlayer].nCounterAttack = 0;
 
 			// アイテム分回す
 			for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -273,134 +276,9 @@ void UpdatePlayer(void)
 	}
 
 	// パッドを使っていないかつ攻撃モーションじゃない
-	if (!bUsePad &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION2 &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION3 &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION4 &&
-		g_player.Motion.motionType != MOTIONTYPE_DEATH)
+	if (bUsePad == false && CheckActionMotion(&g_player.Motion) == true)
 	{
-		if (GetKeyboardPress(DIK_A))
-		{
-			//プレイヤーの移動(上)
-			if (GetKeyboardPress(DIK_W) == true)
-			{
-				//g_player.Motion.motionType = MOTIONTYPE_MOVE;
-
-				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
-				{
-					g_player.Motion.motionType = MOTIONTYPE_MOVE;
-				}
-
-				g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
-				g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
-
-				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
-			}
-			//プレイヤーの移動(下)
-			else if (GetKeyboardPress(DIK_S))
-			{
-				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
-				{
-					g_player.Motion.motionType = MOTIONTYPE_MOVE;
-				}
-
-				g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
-				g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
-
-				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.25f;
-			}
-			//プレイヤーの移動(左)
-			else
-			{
-				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
-				{
-					g_player.Motion.motionType = MOTIONTYPE_MOVE;
-				}
-
-				g_player.move.z += sinf(pCamera->rot.y) * g_player.speed;
-				g_player.move.x -= cosf(pCamera->rot.y) * g_player.speed;
-
-				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.5f;
-			}
-		}
-		//プレイヤーの移動(右)
-		else if (GetKeyboardPress(DIK_D))
-		{
-			//プレイヤーの移動(上)
-			if (GetKeyboardPress(DIK_W))
-			{
-				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
-				{
-					g_player.Motion.motionType = MOTIONTYPE_MOVE;
-				}
-
-				g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
-				g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
-
-				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
-			}
-			//プレイヤーの移動(下)
-			else if (GetKeyboardPress(DIK_S))
-			{
-				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
-				{
-					g_player.Motion.motionType = MOTIONTYPE_MOVE;
-				}
-
-				g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
-				g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
-
-				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.25f;
-			}
-			//プレイヤーの移動(右)
-			else
-			{
-				if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motionType != MOTIONTYPE_MOVE)
-				{
-					SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, MOTIONTYPE_MOVE, true, 10);
-				}
-
-				g_player.move.z -= sinf(pCamera->rot.y) * g_player.speed;
-				g_player.move.x += cosf(pCamera->rot.y) * g_player.speed;
-
-				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.5f;
-			}
-
-		}
-		//プレイヤーの移動(上)
-		else if (GetKeyboardPress(DIK_W) == true)
-		{
-			if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
-			{
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
-			}
-
-			g_player.move.x += sinf(pCamera->rot.y) * g_player.speed;
-			g_player.move.z += cosf(pCamera->rot.y) * g_player.speed;
-
-			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
-		}
-		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S) == true)
-		{
-			if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
-			{
-				g_player.Motion.motionType = MOTIONTYPE_MOVE;
-			}
-
-			g_player.move.x -= sinf(pCamera->rot.y) * g_player.speed;
-			g_player.move.z -= cosf(pCamera->rot.y) * g_player.speed;
-
-			g_player.rotDestPlayer.y = pCamera->rot.y;
-		}
-		else
-		{
-			if (g_player.Motion.motionType == MOTIONTYPE_MOVE && bUsePad == false)
-			{
-				SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
-			}
-		}
+		PlayerMove(); // プレイヤーの移動処理
 	}
 
 	StickPad(); // パッドの移動処理
@@ -411,6 +289,20 @@ void UpdatePlayer(void)
 		g_player.SwordMtx._43  // Z方向
 	);
 
+	switch (g_player.AttackState)
+	{
+	case PLAYERATTACKSTATE_NO:
+		break;
+	case PLAYERATTACKSTATE_ATTACK:
+		g_player.nCounterAttack--;
+		if (g_player.nCounterAttack <= 0)
+		{
+			g_player.AttackState = PLAYERATTACKSTATE_NO;
+		}
+		break;
+	default:
+		break;
+	}
 	switch (g_player.Motion.motionType)
 	{
 	case MOTIONTYPE_NEUTRAL:
@@ -568,7 +460,7 @@ void UpdatePlayer(void)
 			//	g_player.pos.y = 0.0f;
 			//}
 			LoadEffect(0, g_player.pos);
-			SetMotion(&g_player.Motion, MOTIONTYPE_LANDING, MOTIONTYPE_NEUTRAL, true, 10); // モーションを着地にする
+			SetMotion(&g_player.Motion,MOTIONTYPE_LANDING, true, 10); // モーションを着地にする
 		}
 		g_player.bJump = true; // ジャンプを可能にする
 	}
@@ -594,12 +486,7 @@ void UpdatePlayer(void)
 	//CollisionWall();
 
 	// 
-	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION2 &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION3 &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION4 &&
-		g_player.Motion.motionType != MOTIONTYPE_DEATH)
+	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) && g_player.Motion.motionType != MOTIONTYPE_DEATH)
 	{//aボタン or Enterキーが押された
 
 		// 音楽再生
@@ -608,9 +495,7 @@ void UpdatePlayer(void)
 		if (g_player.bJump == true && g_player.Motion.motionType != MOTIONTYPE_LANDING && g_player.AttackSp == false)
 		{
 			g_player.bJump = false;						 // ジャンプをできなくする
-			g_player.Motion.nKey = 0;					 // キーを0から始める
-			g_player.Motion.nCountMotion = 0;            // モーションカウントを0から始める
-			g_player.Motion.motionType = MOTIONTYPE_JUMP;// モーションタイプをジャンプにする
+			SetMotion(&g_player.Motion, MOTIONTYPE_JUMP, true, 10);
 			g_player.move.y = 12.0f;					 // 頒布量		
 		}
 	}
@@ -618,23 +503,23 @@ void UpdatePlayer(void)
 	//SetEffect(D3DXVECTOR3(g_player.Motion.aModel[5].mtxWorld._41, g_player.Motion.aModel[5].mtxWorld._42, g_player.Motion.aModel[5].mtxWorld._43), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 10, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1, 20.0f);
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motionType != MOTIONTYPE_DEATH)
+	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // コンボ1
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X) && g_player.Motion.motionType == MOTIONTYPE_ACTION)
-			&& CheckMotionBounds(g_player.Motion.nKey,g_player.Motion.nCountMotion,2,5,0,30) ==true)
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION &&
+			CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 1, 5, 0, 30) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // コンボ2
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motionType == MOTIONTYPE_ACTION2
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION2
 			&& CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 2, 6, 0, 30) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // コンボ3
 		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motionType == MOTIONTYPE_ACTION3
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION3
 			&& CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 3, 8, 0, 30) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 45, 40, COMBO_ATTACK4); // コンボ4
@@ -695,7 +580,7 @@ void UpdatePlayer(void)
 	if (g_player.Motion.nNumModel == 16 && g_player.Itembreak[g_player.ItemIdx] == true)
 	{
 		// モーションをニュートラルにする
-		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
+		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 40); // モーションをニュートラルにする
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -1198,7 +1083,7 @@ void StickPad(void)
 					bUsePad = false;
 
 					// モーションをニュートラルに戻す
-					SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, MOTIONTYPE_NEUTRAL, true, 40);
+					SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 40);
 				}
 			}
 		}
@@ -1634,7 +1519,9 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				// 関数を抜ける
 				return false;
 			}
-			g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;
+
+			// モーションをニュートラルに戻す
+			SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 10);
 
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
@@ -1814,6 +1701,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			default:
 				break;
 			}
+
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 		}
 	}
@@ -1834,12 +1722,11 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	bool bFirst = true;
 	int nIdxEnemy = 0;
 
-	//g_player.Motion.motionType = motiontype;  // モーションの種類を変更
-	g_nCounterState = nCounterState;		  // 状態カウンターを設定
-	g_AttackState = AttackState;			  // 攻撃状態カウンターを設定
-	g_player.state = PLAYERSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
-	g_player.Combostate = Combstate;		  // コンボの状態を設定
-	SetMotion(&g_player.Motion, motiontype, motiontype, true, 28);
+	g_player.nCounterAttack = 30;						  // 状態カウンターを設定
+	g_AttackState = AttackState;                          // コンボの状態
+	g_player.AttackState = PLAYERATTACKSTATE_ATTACK;	  // プレイヤーの状態を攻撃にする	
+	g_player.Combostate = Combstate;					  // コンボの状態を設定
+	SetMotion(&g_player.Motion, motiontype, true,10);
 
 	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
@@ -1887,7 +1774,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 				// 角度を求める
 				float fAngle = atan2f(pBoss[nCnt].pos.x - g_player.pos.x, pBoss[nCnt].pos.z - g_player.pos.z);
 				g_player.rotDestPlayer.y = fAngle + D3DX_PI;
-				break;
+				return;
 			}
 
 			// ボスの場所を向く
@@ -1895,7 +1782,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 			{
 				g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
 				g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
-				break;
+				return;
 			}
 		}
 		else
@@ -1912,7 +1799,7 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 			{
 				g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 80.0f;
 				g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 80.0f;
-				break;
+				return;
 			}
 		}
 	}
@@ -2691,4 +2578,132 @@ void SetMotionCheck(void)
 
 	// 振動の更新処理
 	UpdateVibration(&vibrationState);
+}
+//===============================================================================================================
+// プレイヤーの移動処理
+//===============================================================================================================
+void PlayerMove(void)
+{
+	Camera* pCamera = GetCamera();
+
+	if (GetKeyboardPress(DIK_A))
+	{
+		//プレイヤーの移動(上)
+		if (GetKeyboardPress(DIK_W) == true)
+		{
+			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			{
+				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
+			}
+
+			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.25f) * g_player.speed;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
+		}
+		//プレイヤーの移動(下)
+		else if (GetKeyboardPress(DIK_S))
+		{
+			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			{
+				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
+			}
+
+			g_player.move.x += sinf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y - D3DX_PI * 0.75f) * g_player.speed;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.25f;
+		}
+		//プレイヤーの移動(左)
+		else
+		{
+			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			{
+				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
+			}
+
+			g_player.move.z += sinf(pCamera->rot.y) * g_player.speed;
+			g_player.move.x -= cosf(pCamera->rot.y) * g_player.speed;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.5f;
+		}
+	}
+	//プレイヤーの移動(右)
+	else if (GetKeyboardPress(DIK_D))
+	{
+		//プレイヤーの移動(上)
+		if (GetKeyboardPress(DIK_W))
+		{
+			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			{
+				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
+			}
+
+			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.25f) * g_player.speed;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
+		}
+		//プレイヤーの移動(下)
+		else if (GetKeyboardPress(DIK_S))
+		{
+			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			{
+				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
+			}
+
+			g_player.move.x += sinf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
+			g_player.move.z += cosf(pCamera->rot.y + D3DX_PI * 0.75f) * g_player.speed;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.25f;
+		}
+		//プレイヤーの移動(右)
+		else
+		{
+			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			{
+				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
+			}
+
+			g_player.move.z -= sinf(pCamera->rot.y) * g_player.speed;
+			g_player.move.x += cosf(pCamera->rot.y) * g_player.speed;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.5f;
+		}
+
+	}
+	//プレイヤーの移動(上)
+	else if (GetKeyboardPress(DIK_W) == true)
+	{
+		if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+		{
+			SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
+		}
+
+		g_player.move.x += sinf(pCamera->rot.y) * g_player.speed;
+		g_player.move.z += cosf(pCamera->rot.y) * g_player.speed;
+
+		g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
+	}
+	//プレイヤーの移動(下)
+	else if (GetKeyboardPress(DIK_S) == true)
+	{
+		if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+		{
+			SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
+		}
+
+		g_player.move.x -= sinf(pCamera->rot.y) * g_player.speed;
+		g_player.move.z -= cosf(pCamera->rot.y) * g_player.speed;
+
+		g_player.rotDestPlayer.y = pCamera->rot.y;
+	}
+	else
+	{
+		if (g_player.Motion.motionType == MOTIONTYPE_MOVE && bUsePad == false)
+		{
+			SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 5); // モーションをニュートラルにする
+		}
+	}
+
 }

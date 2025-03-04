@@ -573,8 +573,8 @@ void Draw(void)
 			// プレイヤーの情報
 			DrawPlayerInfo();
 
-			// カメラの位置表示用デバッグフォント
-			DrawCameraPos();
+			//// カメラの位置表示用デバッグフォント
+			//DrawCameraPos();
 
 		}
 		else if (GetEditState())
@@ -926,19 +926,27 @@ void DrawPlayerInfo(void)
 	RECT rectPos = { 0, 160, SCREEN_WIDTH, SCREEN_HEIGHT };
 	RECT rectState = { 0, 180, SCREEN_WIDTH, SCREEN_HEIGHT };
 	RECT rectMotion = { 0, 200, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectBlend = { 0, 220, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectmotiontype = { 0, 240, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 	char aStrPos[256] = {};
 	char aStrState[256] = {};
 	char aStrMotion[256] = {};
+	char aStrBlend[256] = {};
+	char aStrmotiontype[256] = {};
 
 	sprintf(&aStrPos[0], "プレイヤーの位置X:[ %3.2f ] Y:[ %3.2f ] Z:[ %3.2f ]\n", pPlayer->pos.x,pPlayer->pos.y,pPlayer->pos.z);
 
 	wsprintf(&aStrState[0], "プレイヤーの状態[%d]", pPlayer->state);
 	wsprintf(&aStrMotion[0], "モーションのキー[ %d ]:モーションのフレーム:[ %d ]", pPlayer->Motion.nKey, pPlayer->Motion.nCountMotion);
+	wsprintf(&aStrBlend[0], "モーションブレンドのキー[ %d ]:モーションブレンドのフレーム:[ %d ]", pPlayer->Motion.nKeyBlend, pPlayer->Motion.nCounterBlend);
+	wsprintf(&aStrmotiontype[0], "現在のモーション:[ %d ] / ブレンドモーション:[ %d ]", pPlayer->Motion.motionType, pPlayer->Motion.motiontypeBlend);
 
 	g_pFont->DrawText(NULL, &aStrPos[0], -1, &rectPos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrState[0], -1, &rectState, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrMotion[0], -1, &rectMotion, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrBlend[0], -1, &rectBlend, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrmotiontype[0], -1, &rectmotiontype, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 
 }
 //==============================================================================================================
