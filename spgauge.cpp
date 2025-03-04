@@ -153,20 +153,6 @@ void UpdateSPgauge(void)
 				pPlayer->SpMode = true; // 発動可能
 			}
 
-			// 発動可能だったら
-			if (pPlayer->SpMode)
-			{
-				// 発動した瞬間
-				if (pPlayer->AttackSp &&
-					pPlayer->Motion.motionType == MOTIONTYPE_ACTION &&
-					pPlayer->Motion.nKey == 0 &&
-					pPlayer->Motion.nCountMotion == 1)
-				{
-					ResetMeshSword(); //剣の軌跡のリセット
-					g_SPgauge[nCnt].SpGauge -= 100.0f; // ゲージを100.0f消費
-				}
-			}
-
 			// 300.0f以上になったら
 			if (g_SPgauge[nCnt].SpGauge >= 300.0f)
 			{

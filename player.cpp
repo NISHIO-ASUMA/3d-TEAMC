@@ -671,6 +671,9 @@ void UpdatePlayer(void)
 			g_player.AttackSp == false &&              // SP技を発動していない
 			g_player.SpMode == true)                   // SPゲージがたまった
 		{
+			ResetMeshSword(); //剣の軌跡のリセット
+			AddSpgauge(-100);
+
 			g_player.AttackSp = true;          // SP技を発動している
 
 			// ブレンドなしでニュートラルにする
