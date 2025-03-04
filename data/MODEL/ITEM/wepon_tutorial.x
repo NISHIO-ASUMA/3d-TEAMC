@@ -305,7 +305,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "data\\TEXTURE\\tutoirial004_360.png";
+    "data\\TEXTURE\\tutoirial004.png";
    }
   }
   Material {
