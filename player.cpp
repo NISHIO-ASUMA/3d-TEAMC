@@ -276,7 +276,7 @@ void UpdatePlayer(void)
 	}
 
 	// パッドを使っていないかつ攻撃モーションじゃない
-	if (bUsePad == false && CheckActionMotion(&g_player.Motion) == true && g_player.AttackSp == false)
+	if (bUsePad == false && CheckActionMotion(&g_player.Motion) == true && g_player.AttackSp == false && g_player.nLife > 0)
 	{
 		PlayerMove(); // プレイヤーの移動処理
 	}
@@ -486,7 +486,7 @@ void UpdatePlayer(void)
 	//CollisionWall();
 
 	// 
-	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) && g_player.Motion.motionType != MOTIONTYPE_DEATH)
+	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 	{//aボタン or Enterキーが押された
 
 		// 音楽再生
@@ -714,7 +714,6 @@ void UpdatePlayer(void)
 
 			// 音楽を再生
 			PlaySound(SOUND_LABEL_SP_SE);
-
 		}
 	}
 
@@ -811,12 +810,11 @@ void UpdatePlayer(void)
 	}
 
 	// 死亡モーションだったら
-	if (g_player.Motion.motionType == MOTIONTYPE_DEATH && g_player.Motion.nKey <= 0)
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_DEATH && g_player.Motion.nKey <= 0)
 	{
 		g_player.move.x = sinf(g_player.rot.y) * 50.0f;
 		g_player.move.y = 10.0f;
 		g_player.move.z = cosf(g_player.rot.y) * 50.0f;
-
 	}
 	
 	// シリンダーの位置設定処理
@@ -1005,18 +1003,21 @@ void HitPlayer(int nDamage)
 		g_player.nLife -= nDamage;
 
 		// プレイヤーの体力が0になったら
-		if (g_player.nLife <= 0 && g_player.Motion.motionType != MOTIONTYPE_DEATH)
+		if (g_player.nLife <= 0 && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 		{
 			// マイナスでも0にする
 			g_player.nLife = 0;
+
 			// モーションを上書き
 			g_player.Motion = g_LoadPlayer[0].Motion;
-			g_player.Motion.motionType = MOTIONTYPE_DEATH;
+
+			// モーションの設定
+			SetMotion(&g_player.Motion, MOTIONTYPE_DEATH, false, 10);
 
 			D3DXVECTOR3 HeadPos(g_player.Motion.aModel[2].mtxWorld._41, g_player.Motion.aModel[2].mtxWorld._42, g_player.Motion.aModel[2].mtxWorld._43);
 
-			// 魂
-			LoadEffect(1, HeadPos);
+			//// 魂
+			//LoadEffect(1, HeadPos);
 
 			// プレイヤーを消す
 			EnableMap(g_player.nIdxMap);    // マップから消す
@@ -2616,7 +2617,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(上)
 		if (GetKeyboardPress(DIK_W) == true)
 		{
-			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2629,7 +2630,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(下)
 		else if (GetKeyboardPress(DIK_S))
 		{
-			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2642,7 +2643,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(左)
 		else
 		{
-			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2659,7 +2660,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(上)
 		if (GetKeyboardPress(DIK_W))
 		{
-			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2672,7 +2673,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(下)
 		else if (GetKeyboardPress(DIK_S))
 		{
-			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2685,7 +2686,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(右)
 		else
 		{
-			if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2700,7 +2701,7 @@ void PlayerMove(void)
 	//プレイヤーの移動(上)
 	else if (GetKeyboardPress(DIK_W) == true)
 	{
-		if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+		if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 		{
 			SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 		}
@@ -2713,7 +2714,7 @@ void PlayerMove(void)
 	//プレイヤーの移動(下)
 	else if (GetKeyboardPress(DIK_S) == true)
 	{
-		if (g_player.Motion.motionType != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+		if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 		{
 			SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 		}

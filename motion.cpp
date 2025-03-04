@@ -143,7 +143,7 @@ void UpdateMotion(MOTION *pMotion)
 	}
 
 	// ƒ‚[ƒVƒ‡ƒ“‚ªŽ€–S‚¾‚Á‚½‚ç
-	if (pMotion->motionType == MOTIONTYPE_DEATH && pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
+	if (pMotion->motiontypeBlend == MOTIONTYPE_DEATH && pMotion->nKey >= pMotion->aMotionInfo[pMotion->motionType].nNumkey - 1)
 	{
 		pMotion->nCountMotion--;
 		pMotion->nCounterBlend--;

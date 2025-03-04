@@ -330,7 +330,7 @@ void DrawBlock(void)
 		// Œ»Ý‚Ìƒ}ƒeƒŠƒAƒ‹‚ðŽæ“¾
 		pDevice->GetMaterial(&matDef);
 
-		if (sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, (g_Block[nCntBlock].Size.x + g_Block[nCntBlock].Size.z) * 0.5f) == false)
+		if ((sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, (g_Block[nCntBlock].Size.x + g_Block[nCntBlock].Size.z) * 0.5f) == false) || mode == MODE_TITLE)
 		{
 			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
 			{
