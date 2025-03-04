@@ -177,9 +177,9 @@ void SetMotion(MOTION* pMotion, MOTIONTYPE motiontype, bool Blend, int nFrameBle
 	// モーションブレンドがない
 	else
 	{
-		
 		pMotion->bBlendMotion = Blend;					// ブレンドがあるかどうか
 		pMotion->motionType = motiontype;			// ブレンドするモーションのタイプを代入
+		pMotion->motiontypeBlend = motiontype;			// ブレンドするモーションのタイプを代入
 		pMotion->bFinishMotion = false;
 	}
 }

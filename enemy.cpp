@@ -63,6 +63,7 @@ ENEMY g_Enemy[MAX_ENEMY];		  // 構造体変数
 MOTION g_LoadEnemy[ENEMYTYPE_MAX]; // 読み込み
 int g_nNumEnemy;				  // 敵の総数カウント
 bool g_bSound;
+int g_nNumKill;
 
 //===============================================================================================================
 //ブロックの初期化処理
@@ -94,7 +95,8 @@ void InitEnemy(void)
 	}
 
 	//グローバル変数の初期化
-	g_nNumEnemy = 0;
+	g_nNumEnemy = 0; // 敵の数
+	g_nNumKill = 0;  // キル数
 
 	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
 	{
@@ -669,6 +671,7 @@ void HitEnemy(int nCnt,int nDamage)
 	if (g_Enemy[nCnt].nLife <= 0)
 	{// 体力が0以下なら
 
+		g_nNumKill++;
 		int nSpawner = rand() % 4;
 
 		// 敵をスポーンさせる
@@ -756,7 +759,7 @@ void HitEnemy(int nCnt,int nDamage)
 			g_bSound = true;
 
 		}
-
+		return;
 	}
 	else
 	{
@@ -1483,4 +1486,11 @@ bool CollisionLine(D3DXVECTOR3* pFirstPos, D3DXVECTOR3* pEndPos,float fRadius)
 		}
 	}
 	return false;
+}
+//===============================================================================================================
+// キル数の取得処理
+//===============================================================================================================
+int GetNumKill(void)
+{
+	return g_nNumKill;
 }

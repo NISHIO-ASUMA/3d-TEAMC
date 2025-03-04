@@ -371,7 +371,9 @@ void UpdateGame(void)
 	int TimeMinute = GetTimeMinute(); // •ª
 	int TimeSecond = GetTimeSecond(); // •b
 
-	if (g_EnemyWaveTime >= 900)
+	int nNumKill = GetNumKill(); // ƒLƒ‹”
+	
+	if (nNumEnemy >= 400)
 	{
 		int Spawn_randvalue = rand() % 100; // o‚é‚©o‚È‚¢‚©
 
