@@ -29,6 +29,7 @@
 #include "meshimpact.h"
 #include "minimap.h"
 #include "billboard.h"
+#include "bosslife.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -661,6 +662,8 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].nIdxShadow = SetShadow(BossPos, D3DXVECTOR3(0.0f,0.0f,0.0f), 40.0f,1.0f);
 			g_Boss[nCnt].nIdxMap = SetMiniMap(BossPos, MINIMAPTEX_BOSS);
 
+			// ボスのライフゲージの設定
+			g_Boss[nCnt].nLifeBarIdx = SetBossLife(pos,0);
 			break;
 		}
 	}
