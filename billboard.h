@@ -11,6 +11,7 @@
 // インクルードファイル宣言
 //***************************
 #include "main.h"
+#include "boss.h"
 
 //***************************
 // マクロ定義
@@ -44,7 +45,6 @@ static const char* BILLBOARD_TEXTURE[BILLBOARDTYPE_MAX] =
 {
 	"data\\TEXTURE\\billboard_wepon.png",
 	"data\\TEXTURE\\billboard_GetItem.png",
-
 };
 
 //***************************

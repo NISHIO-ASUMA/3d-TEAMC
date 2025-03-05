@@ -119,19 +119,7 @@ void UpdateCamera(void)
 		MouseEditMode();	//編集モード中のカメラ移動
 	}
 
-	if (mode == MODE_TITLE)
-	{
-		//g_camera.posV.z = -1500.0f;
-		//g_camera.posV.y = 1500.0f;
-		//
-		//g_camera.rot.y += 0.005f;		// カメラの視点の情報
-
-		//g_camera.posV.x = g_camera.posR.x - sinf(g_camera.rot.x) * sinf(g_camera.rot.y) * 1800.0f;
-		//g_camera.posV.y = g_camera.posR.y - cosf(g_camera.rot.x) * 1800.0f;
-		//g_camera.posV.z = g_camera.posR.z - sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * 1800.0f;
-
-	}
-		// ゲームの時のカメラの更新
+	// ゲームの時のカメラの更新
 	if (mode != MODE_TITLE && !GetEditState() &&!GetEditStatetuto() && g_camera.bEditMode == false)
 	{
 		g_camera.fDistance = g_camera.oldDistance; // 距離をリセット
@@ -152,15 +140,6 @@ void UpdateCamera(void)
 		g_camera.posR.x += ((g_camera.posRDest.x - g_camera.posR.x) * 0.3f);
 		g_camera.posR.y += ((g_camera.posRDest.y - g_camera.posR.y) * 0.3f);
 		g_camera.posR.z += ((g_camera.posRDest.z - g_camera.posR.z) * 0.3f);
-
-//=============================================================================================================================
-
-		//g_camera.posVDest.x = pPlayer->pos.x - sinf(g_camera.rot.y) * g_camera.fDistance;
-		//g_camera.posVDest.y = pPlayer->pos.y - cosf(g_camera.rot.y) * g_camera.fDistance;
-		//g_camera.posVDest.z = pPlayer->pos.z - cosf(g_camera.rot.y) * g_camera.fDistance;
-
-		//g_camera.posV.x += ((g_camera.posVDest.x - g_camera.posV.x) * 0.3f);
-		//g_camera.posV.z += ((g_camera.posVDest.z - g_camera.posV.z) * 0.3f);
 
 	}
 	// カメラの編集モードがオンだったら
@@ -199,136 +178,12 @@ void UpdateCamera(void)
 		g_camera.posV.z -= sinf(g_camera.rot.y)+ n;
 		g_camera.posV.x += cosf(g_camera.rot.y)+ n;
 
-		//g_camera.posR.x = sinf(g_camera.rot.y) * g_camera.fDistance;
-		//g_camera.posR.z = cosf(g_camera.rot.y) * g_camera.fDistance;
 	}
 	else
 	{
 		g_camera.WaveTIme = -1;
 		bWaveCamera = false;
 	}
-
-#if 0
-	//******************
-	// 視点の旋回
-	//******************
-	if (GetKeyboardPress(DIK_LEFT) == true || JoypadPress(JOYKEY_LEFT_B))
-	{// LEFTキーが押された
-
-		// カメラの回転
-		g_camera.rot.y -= 0.03f;
-
-		// 角度の正規化
-		if (g_camera.rot.y < -D3DX_PI)
-		{// D3DX_PIより小さくなったら
-			g_camera.rot.y += D3DX_PI * 2.0f;
-		}
-	}
-
-	if (GetKeyboardPress(DIK_RIGHT) == true || JoypadPress(JOYKEY_RIGHT_B))
-	{// RIGHTキーが押された
-		// カメラの回転
-		g_camera.rot.y += 0.03f;
-
-		// 角度の正規化
-		if (g_camera.rot.y > D3DX_PI)
-		{// D3DX_PIより大きくなったら
-			g_camera.rot.y -= D3DX_PI * 2.0f;
-		}
-
-	}
-
-#ifdef _DEBUG
-
-	if (GetKeyboardPress(DIK_UP))
-	{// UPキーが押された
-		// カメラの回転
-		g_camera.rot.x += 0.03f;
-
-		// 角度の正規化
-		if (g_camera.rot.x > D3DX_PI)
-		{// D3DX_PIより小さくなったら
-			g_camera.rot.x -= D3DX_PI * 2.0f;
-		}
-
-	}
-	if (GetKeyboardPress(DIK_DOWN))
-	{// DOWNキーが押された
-		// カメラの回転
-		g_camera.rot.x -= 0.03f;
-
-		// 角度の正規化
-		if (g_camera.rot.x < -D3DX_PI)
-		{// D3DX_PIより小さくなったら
-			g_camera.rot.x += D3DX_PI * 2.0f;
-		}
-	}
-
-#endif // DEBUG
-
-	
-	if (g_camera.rot.x <= D3DX_PI * 0.55f)
-	{// カメラの下限
-
-		g_camera.rot.x = D3DX_PI * 0.55f;
-	}
-	else if (g_camera.rot.x >= D3DX_PI * 0.9f)
-	{// カメラの上限
-
-		g_camera.rot.x = D3DX_PI * 0.9f;
-	}
-#endif
-#if 0
-
-		// カメラの視点の情報
-		g_camera.posV.x = g_camera.posR.x - sinf(g_camera.rot.x) * sinf(g_camera.rot.y) * g_camera.fDistance;
-		g_camera.posV.y = g_camera.posR.y - cosf(g_camera.rot.x) * g_camera.fDistance;
-		g_camera.posV.z = g_camera.posR.z - sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * g_camera.fDistance;
-
-
-
-		switch (g_camera.g_CameraMode)
-		{// モード切替
-		case CAMERAMODE_NONE:
-			break;
-
-		case CAMERAMODE_PLAYER:
-			// プレイヤーに追従させる
-			g_camera.posRDest.x = pPlayer->pos.x + sinf(pPlayer->rotDestPlayer.y) * 1.0f;
-			g_camera.posRDest.y = pPlayer->pos.y + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
-			g_camera.posRDest.z = pPlayer->pos.z + cosf(pPlayer->rotDestPlayer.y) * 1.0f;
-
-			g_camera.posVDest.x = pPlayer->pos.x - sinf(g_camera.rot.y) * g_camera.fDistance;
-			g_camera.posVDest.y = pPlayer->pos.y - cosf(g_camera.rot.y) * g_camera.fDistance;
-			g_camera.posVDest.z = pPlayer->pos.z - cosf(g_camera.rot.y) * g_camera.fDistance;
-
-			g_camera.posR.x += ((g_camera.posRDest.x - g_camera.posR.x) * 0.3f);
-			g_camera.posR.z += ((g_camera.posRDest.z - g_camera.posR.z) * 0.3f);
-			g_camera.posR.y += ((g_camera.posRDest.y - g_camera.posR.y) * 0.3f);
-
-			g_camera.posV.x += ((g_camera.posVDest.x - g_camera.posV.x) * 0.3f);
-			g_camera.posV.z += ((g_camera.posVDest.z - g_camera.posV.z) * 0.3f);
-			
-			break;
-
-		default:
-			break;
-		}
-	
-
-	if (KeyboardTrigger(DIK_F2))
-	{// モード切替
-		if (g_camera.g_CameraMode == CAMERAMODE_NONE)
-		{// 追従モード
-			g_camera.g_CameraMode = CAMERAMODE_PLAYER;
-		}
-		else if (g_camera.g_CameraMode == CAMERAMODE_PLAYER)
-		{// 通常状態
-			g_camera.g_CameraMode = CAMERAMODE_NONE;
-		}
-	}
-
-#endif // !_DEBUG
 }
 //===========================================================================================================
 // カメラの設定処理
@@ -392,24 +247,24 @@ void StickCamera(void)
 			if (pStick->Gamepad.sThumbRX < -10920.0f)
 			{// 左右移動
 				// 角度
-				g_camera.rot.y -= 0.03f;
+				g_camera.rot.y += 0.04f;
 
 			}
 			else if (pStick->Gamepad.sThumbRX > 10920.0f)
 			{// 左右移動
 				// 角度
-				g_camera.rot.y += 0.03f;
+				g_camera.rot.y -= 0.04f;
 			}
 
 			if (pStick->Gamepad.sThumbRY < -10920.0f)
 			{// 上下移動
 				// 角度
-				g_camera.rot.x -= 0.03f;
+				g_camera.rot.x -= 0.04f;
 			}
 			else if (pStick->Gamepad.sThumbRY > 10920.0f)
 			{// 上下移動
 				// 角度
-				g_camera.rot.x += 0.03f;
+				g_camera.rot.x += 0.04f;
 			}
 
 
