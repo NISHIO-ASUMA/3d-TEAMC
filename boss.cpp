@@ -28,6 +28,7 @@
 #include "wall.h"
 #include "meshimpact.h"
 #include "minimap.h"
+#include "billboard.h"
 #include "Effect.h"
 
 //**************************************************************************************************************
@@ -158,6 +159,9 @@ void InitBoss(void)
 		// 頂点バッファのアンロック
 		g_LoadBoss.aModel[nCntModel].pMesh->UnlockVertexBuffer();
 	}
+
+	InitBillboard();
+
 }
 //===============================================================================================================
 // ボスの終了処理
@@ -219,6 +223,8 @@ void UninitBoss(void)
 			}
 		}
 	}
+
+	UninitBillboard();
 
 }
 //===============================================================================================================
@@ -472,6 +478,7 @@ void UpdateBoss(void)
 					2.0f, 4, 20, 12, 2.0f, 5.0f,
 					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 			}
+
 		}
 
 		// 移動量の減衰
@@ -604,6 +611,8 @@ void UpdateBoss(void)
 //===============================================================================================================
 void DrawBoss(void)
 {
+	DrawBillboard();
+
 	// デバイスのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 

@@ -147,6 +147,7 @@
     <ClCompile Include="billboard.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="boss.cpp" />
+    <ClCompile Include="bosslife.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="craftui.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="billboard.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="boss.h" />
+    <ClInclude Include="bosslife.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="craftui.h" />

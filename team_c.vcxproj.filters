@@ -166,6 +166,7 @@
     <ClCompile Include="mark.cpp">
       <Filter>ソースファイル\obj</Filter>
     </ClCompile>
+    <ClCompile Include="bosslife.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -333,6 +334,7 @@
     <ClInclude Include="mark.h">
       <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
+    <ClInclude Include="bosslife.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ソースファイル">
