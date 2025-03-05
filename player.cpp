@@ -509,21 +509,29 @@ void UpdatePlayer(void)
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // コンボ1
+			g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
+			g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION &&
 			CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 1, 5, 0, 30) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // コンボ2
+			g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
+			g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION2
 			&& CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 2, 6, 0, 30) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // コンボ3
+			g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
+			g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION3
 			&& CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 3, 8, 0, 30) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 45, 40, COMBO_ATTACK4); // コンボ4
+			g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
+			g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 	}
 
@@ -596,7 +604,7 @@ void UpdatePlayer(void)
 			g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].Motion.aMotionInfo[nCntMotion];
 		}
 
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+		StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 投げた後に武器を消す
 		g_player.Motion.nNumModel -= 1;
@@ -621,7 +629,7 @@ void UpdatePlayer(void)
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
 
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+		StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 素手の時のモーション情報を代入
 		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
@@ -737,7 +745,7 @@ void UpdatePlayer(void)
 		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
 		g_player.Motion.nNumModel = 15;		// 武器を消す
 		g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //能力値を戻す
+		StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //能力値を戻す
 		g_player.AttackSp = false;
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
 	}
@@ -785,7 +793,7 @@ void UpdatePlayer(void)
 		g_player.StockItemIdx = g_player.ItemIdx;
 
 		// プレイヤーの速度をリセット
-		StatusChange(3.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 持っているアイテムのアイコン
 		SetIcon(D3DXVECTOR3(200.0f, 630.0f, 0.0f), 40.0f, 40.0f, pItem[g_player.StockItemIdx].nType, ICONTYPE_STOCKITEM);
@@ -1559,153 +1567,153 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			{
 			case ITEMTYPE_BAT:
 				MotionChange(MOTION_DBHAND, 0); // アイテムにあったモーションタイプを入れる(素手の場合は引数2に1を入れる)
-				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 70);
+				StatusChange(4.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 70);
 				break;
 			case ITEMTYPE_GOLF:
 				MotionChange(MOTION_KATANA, 0);
-				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 60);
+				StatusChange(4.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_HUNMER:
 				MotionChange(MOTION_BIGWEPON, 0);
-				StatusChange(2.8f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
+				StatusChange(3.3f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
 
 				break;
 			case ITEMTYPE_STONE:
 				MotionChange(MOTION_BIGWEPON, 1);
-				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
+				StatusChange(4.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 
 				break;
 			case ITEMTYPE_WOOD:
 				MotionChange(MOTION_DBHAND, 0);
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 60);
+				StatusChange(3.6f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 60);
 
 				break;
 			case ITEMTYPE_STONEBAT:
 				MotionChange(MOTION_DBHAND, 0);
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+				StatusChange(3.6f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
 
 				break;
 			case ITEMTYPE_LIGHT:
 				MotionChange(MOTION_ONE_HAND, 0);
-				StatusChange(3.7f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
+				StatusChange(4.2f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 
 				break;
 			case ITEMTYPE_LIGHTWOOD:
 				MotionChange(MOTION_KATANA, 0);
-				StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
+				StatusChange(3.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_HARISEN:
 				MotionChange(MOTION_ONE_HAND, 0);
-				StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
+				StatusChange(3.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 				break;
 			case ITEMTYPE_ICEBLOCK:
 				MotionChange(MOTION_DBHAND, 1);
-				StatusChange(3.4f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
+				StatusChange(3.9f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 
 				break;
 			case ITEMTYPE_ICEBLOCKSOWRD:
 				MotionChange(MOTION_KATANA, 0);
-				StatusChange(2.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
+				StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
 
 				break;
 			case ITEMTYPE_IRON:
 				MotionChange(MOTION_ONE_HAND, 0);
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+				StatusChange(3.6f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
 
 				break;
 			case ITEMTYPE_IRONBAT:
 				MotionChange(MOTION_DBHAND, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 90);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 90);
 
 				break;
 			case ITEMTYPE_SURFBOARD:
 				MotionChange(MOTION_DBHAND, 0);
-				StatusChange(2.8f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
+				StatusChange(3.3f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
 
 				break;
 			case ITEMTYPE_TORCH:
 				MotionChange(MOTION_ONE_HAND, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 
 				break;
 			case ITEMTYPE_TORCHSWORD:
 				MotionChange(MOTION_KATANA, 0);
-				StatusChange(2.9f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 100);
+				StatusChange(3.4f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 100);
 
 				break;
 			case ITEMTYPE_BAR:
 				MotionChange(MOTION_DBHAND, 0);
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 90);
+				StatusChange(3.6f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 90);
 
 				break;
 			case ITEMTYPE_HEADSTATUE:
 				MotionChange(MOTION_BIGWEPON, 1);
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
+				StatusChange(3.6f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
 
 				break;
 			case ITEMTYPE_HEADSTATUTORSO:
 				MotionChange(MOTION_BIGWEPON, 0);
-				StatusChange(2.9f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
+				StatusChange(3.4f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
 
 				break;
 			case ITEMTYPE_MEGAPHONE:
 				MotionChange(MOTION_ONE_HAND, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
 
 				break;
 			case ITEMTYPE_RUBBERCUP:
 				MotionChange(MOTION_PIERCING, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
 
 				break;
 			case ITEMTYPE_TELEPHONEPOLE:
 				MotionChange(MOTION_DBHAND, 0);
-				StatusChange(2.5f, D3DXVECTOR3(0.0f, 150.0f, 0.0f), 120);
+				StatusChange(3.0f, D3DXVECTOR3(0.0f, 150.0f, 0.0f), 120);
 
 				break;
 			case ITEMTYPE_TORSO:
 				MotionChange(MOTION_DBHAND, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 70);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 70);
 
 				break;
 			case ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE:
 				MotionChange(MOTION_DBHAND, 1);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
 
 				break;
 			case ITEMTYPE_BONESPEAR:
 				MotionChange(MOTION_PIERCING, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 100);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 100);
 
 				break;
 			case ITEMTYPE_FISH:
 				MotionChange(MOTION_ONE_HAND, 0);
-				StatusChange(2.8f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
+				StatusChange(3.3f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
 
 				break;
 			case ITEMTYPE_HEX:
 				MotionChange(MOTION_DBHAND, 1);
-				StatusChange(1.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 300);
+				StatusChange(1.8f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 300);
 
 				break;
 			case ITEMTYPE_HEXMANDOLIN:
 				MotionChange(MOTION_ONE_HAND, 0);
-				StatusChange(2.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 100);
+				StatusChange(2.8f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 100);
 
 				break;
 			case ITEMTYPE_SURFBOARDFISH:
 				MotionChange(MOTION_BIGWEPON, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
 
 				break;
 			case ITEMTYPE_TUTORIAL:
 				MotionChange(MOTION_DBHAND, 1);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
 
 				break;
 			case ITEMTYPE_KATANA:
 				MotionChange(MOTION_KATANA, 0);
-				StatusChange(3.0f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
+				StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
 				break;
 			default:
 				break;
