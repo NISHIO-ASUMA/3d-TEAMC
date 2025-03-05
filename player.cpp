@@ -457,7 +457,7 @@ void UpdatePlayer(void)
 		{
 			g_player.bJump = false;						 // ジャンプをできなくする
 			SetMotion(&g_player.Motion, MOTIONTYPE_JUMP, true, 10);
-			g_player.move.y = 12.0f;					 // 頒布量		
+			g_player.move.y = 18.0f;					 // ジャンプ量		
 		}
 	}
 
