@@ -321,7 +321,7 @@ void UpdateEnemy(void)
 
 		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
 		{
-			g_Enemy[nCntEnemy].pos.y = 200.0f;
+			g_Enemy[nCntEnemy].pos.y = 170.0f;
 		}
 
 		// •Ç‚Æ‚Ì“–‚½‚è”»’è
