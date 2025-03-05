@@ -38,6 +38,7 @@
 #include "meshcylinder.h"
 #include "billboard.h"
 #include "mark.h"
+#include "game.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -63,9 +64,10 @@ int LoadFilename(FILE* pFile, int nNumModel, char* aString, int nType);							 /
 void LoadCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);					 // プレイヤーのパーツの設定処理
 void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);						 // プレイヤーのモーションのロード処理
 void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);							 // プレイヤーのモーションのキーの読み込み処理
-void SetElementEffect(void);
-void SetMotionCheck(void);																		 // 
+void SetElementEffect(void);																	 // 属性ごとのエフェクト
+void SetMotionCheck(void);																		 // モーションの設定処理
 void PlayerMove(void);																			 // プレイヤーの移動処理
+void UpdatePlayerCraft(void);                                                                    // プレイヤーのクラフト
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -133,7 +135,6 @@ void InitPlayer(void)
 	// タイトルでロードをすると重くなるので
 	if (mode != MODE_TITLE)
 	{
-
 		// 切り替わるモーションの数だけ
 		for (int nCnt = 0; nCnt < MOTION_MAX; nCnt++)
 		{
@@ -268,6 +269,14 @@ void UpdatePlayer(void)
 	if (g_player.nMaxLife <= g_player.nLife)
 	{
 		g_player.nLife = g_player.nMaxLife;
+	}
+
+	// プレイヤーのクラフトの設定
+	UpdatePlayerCraft();
+
+	if (g_player.bCraft == true)
+	{
+		return;
 	}
 
 	// フィーバーモードなら
@@ -734,7 +743,7 @@ void UpdatePlayer(void)
 	}
 
 	int LastKey = g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION].nNumkey - 1;
-
+	
 	// スペシャルモーションからもとに戻す
 	if (g_player.AttackSp == true && g_player.Motion.nKey >= LastKey && g_player.Motion.bFinishMotion == true && g_player.Motion.nCounterBlend >= g_player.Motion.nFrameBlend - 2)
 	{
@@ -1876,7 +1885,6 @@ bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int 
 	// 判定用変数
 	bool bFlag = false;
 
-
 	if (nKey >= StartKey && nKey <= EndKey &&
 		nCountFrame >= startFrame && nCountFrame <= EndFrame)
 	{
@@ -2542,7 +2550,7 @@ void SetMotionCheck(void)
 		StartVibration(&vibrationState,200);
 
 		// 衝撃波を発生指せる
-		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER,20);
+		SetImpact(g_player.pos, COLOR_ORANGERED, 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER,20);
 
 		// カメラの揺れ
 		WaveCamera(25);
@@ -2743,4 +2751,28 @@ void PlayerMove(void)
 		}
 	}
 
+}
+//===============================================================================================================
+// プレイヤーのクラフト処理
+//===============================================================================================================
+void UpdatePlayerCraft(void)
+{
+	// クラフト状態じゃなかったら
+	if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && g_player.bCraft == false && g_player.AttackSp == false)
+	{
+		// クラフト状態
+		g_player.bCraft = true;
+
+		// クラフト状態にする
+		EnableCraft(true);
+	}
+	// クラフト状態だったら
+	else if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && g_player.bCraft == true && g_player.AttackSp == false)
+	{
+		// クラフト状態
+		g_player.bCraft = false;
+
+		// クラフト状態にしない
+		EnableCraft(false);
+	}
 }

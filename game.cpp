@@ -517,9 +517,6 @@ void UpdateGame(void)
 
 				// 煙の更新処理
 				UpdateExplosion();
-
-				//プレイヤーの更新処理
-				UpdatePlayer();
 				
 				// ダメージの更新処理
 				UpdateDamege();
@@ -585,14 +582,14 @@ void UpdateGame(void)
 				UpdateMark();
 			}
 
+			//プレイヤーの更新処理
+			UpdatePlayer();
+
 			// クラフト画面の更新処理
 			UpdateCraftUI();
 
 			// ビルボードの更新処理
 			UpdateBillboard();
-
-			//ブロックの更新処理
-			UpdateBlock();
 
 			//アイテムの更新処理
 			UpdateItem();
