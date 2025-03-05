@@ -39,7 +39,7 @@ void InitCraftUI(void)
 	//デバイスを取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	InitIcon();
+	//InitIcon();
 
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
@@ -178,7 +178,7 @@ void InitCraftUI(void)
 //==============================================================================================================
 void UninitCraftUI(void)
 {
-	UninitIcon();
+	//UninitIcon();
 
 	//テクスチャの破棄
 	for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
@@ -234,8 +234,8 @@ void UpdateCraftUI(void)
 		}
 	}
 
-	// 頂点ロック
-	g_pVtxBuffItemIcon->Lock(0, 0, (void**)&pVtx, 0);
+	//// 頂点ロック
+	//g_pVtxBuffItemIcon->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
@@ -287,8 +287,8 @@ void UpdateCraftUI(void)
 
 		//pVtx += 4;
 	}
-	//頂点ロック解除
-	g_pVtxBuffItemIcon->Unlock();
+	////頂点ロック解除
+	//g_pVtxBuffItemIcon->Unlock();
 }
 //==============================================================================================================
 // UIの描画処理
@@ -336,7 +336,7 @@ void DrawCraftUI(void)
 		}
 	}
 
-	DrawIcon();
+	//DrawIcon();
 }
 //==============================================================================================================
 // UIの設定処理
