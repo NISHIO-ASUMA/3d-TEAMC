@@ -20,6 +20,7 @@
 LPDIRECT3DTEXTURE9 g_apTexturePause[PAUSE_MENU_MAX] = {};//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPause = NULL;//頂点バッファへのポインタ
 PAUSE_MENU g_PauseMenu;//ポーズメニュー
+bool bSelect;
 
 //=====================================================================================================
 //ポーズの初期化処理
@@ -54,6 +55,8 @@ void InitPause(void)
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffPause,
 		NULL);
+
+	bSelect = false;
 
 	// 頂点バッファのロック
 	g_pVtxBuffPause->Lock(0, 0, (void**)&pVtx, 0);
@@ -121,22 +124,22 @@ void UpdatePause(void)
 	{
 	case PAUSE_MENU_CONTINUE:
 		
-		if (KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN)==true || KeyboardTrigger(DIK_S) == true)
+		if ((KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN)==true || KeyboardTrigger(DIK_S) == true) && bSelect == false)
 		{
 			g_PauseMenu = PAUSE_MENU_RETRY; // リトライ選択
 		}
-		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true)
+		else if ((KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true) && bSelect == false)
 		{
 			g_PauseMenu = PAUSE_MENU_QUIT; // やめる選択
 		}
 		SelectPause(0);
 		break;
 	case PAUSE_MENU_RETRY:
-		if (KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true || KeyboardTrigger(DIK_S) == true)
+		if ((KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true || KeyboardTrigger(DIK_S) == true && bSelect == false))
 		{
 			g_PauseMenu = PAUSE_MENU_QUIT; // やめる選択
 		}
-		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true)
+		else if ((KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true && bSelect == false))
 		{
 			g_PauseMenu = PAUSE_MENU_CONTINUE; // 続ける選択	
 		}
@@ -145,11 +148,11 @@ void UpdatePause(void)
 
 	case PAUSE_MENU_QUIT:
 		
-		if (KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true || KeyboardTrigger(DIK_S) == true)
+		if ((KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true || KeyboardTrigger(DIK_S) == true) && bSelect == false)
 		{
 			g_PauseMenu = PAUSE_MENU_CONTINUE; // 続ける選択
 		}
-		else if (KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true)
+		else if ((KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true) && bSelect == false)
 		{
 			g_PauseMenu = PAUSE_MENU_RETRY; // リトライ選択
 		}
@@ -157,17 +160,21 @@ void UpdatePause(void)
 		break;
 	}
 
-	if (KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true || OnMouseTriggerDown(LEFT_MOUSE) == true)
+	// 決定したら
+	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true || OnMouseTriggerDown(LEFT_MOUSE) == true) && bSelect == false)
 	{// Enterキー or Aボタン or 左クリック
 		switch (g_PauseMenu)
 		{
 		case PAUSE_MENU_CONTINUE:
+			bSelect = false;
 			SetEnablePause(false);
 			break;
 		case PAUSE_MENU_RETRY:
+			bSelect = true; // 選択した
 			SetFade(MODE_GAME);
 			break;
 		case PAUSE_MENU_QUIT:
+			bSelect = true; // 選択した
 			SetFade(MODE_TITLE);
 			break;
 		}

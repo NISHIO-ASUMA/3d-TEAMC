@@ -64,7 +64,7 @@ void LoadCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);				
 void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);						 // プレイヤーのモーションのロード処理
 void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);							 // プレイヤーのモーションのキーの読み込み処理
 void SetElementEffect(void);
-void SetMotionCheck(void);
+void SetMotionCheck(void);																		 // 
 void PlayerMove(void);																			 // プレイヤーの移動処理
 
 //**************************************************************************************************************
@@ -263,9 +263,6 @@ void UpdatePlayer(void)
 {
 	Camera* pCamera = GetCamera();
 	Item* pItem = GetItem();
-
-		/*StickPad();*/
-	bUsePad = false;
 
 	// 体力の現在値が最大値を超えてたら最大値にする
 	if (g_player.nMaxLife <= g_player.nLife)
@@ -1051,10 +1048,7 @@ void StickPad(void)
 
 	Camera* pCamera = GetCamera();
 
-	if (g_player.Motion.motionType != MOTIONTYPE_ACTION &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION2 &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION3 &&
-		g_player.Motion.motionType != MOTIONTYPE_ACTION4)
+	if (CheckActionMotion(&g_player.Motion) == true && g_player.nLife > 0 && g_player.AttackSp == false)
 	{
 		if (GetJoyStick() == true)
 		{
@@ -1071,9 +1065,6 @@ void StickPad(void)
 			// 動かせる
 			if (magnitude > deadzone)
 			{
-				// パッドを使っている
-				bUsePad = true;
-
 				// アングルを正規化
 				float normalizeX = (LStickAngleX / magnitude);
 				float normalizeY = (LStickAngleY / magnitude);
@@ -1089,22 +1080,20 @@ void StickPad(void)
 				// プレイヤーの目的の角度を決める
 				g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
 
+				bUsePad = true;
 				// プレイヤーを歩きモーションにする
-				if (g_player.Motion.motionType != MOTIONTYPE_JUMP)
+				if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
 				{
-					g_player.Motion.motionType = MOTIONTYPE_MOVE;
+					SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 				}
 			}
 			else
 			{
-				// プレイヤーのモーションが歩きだったら
 				if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 				{
-					bUsePad = false;
-
-					// モーションをニュートラルに戻す
-					SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 40);
+					SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 5); // モーションをニュートラルにする
 				}
+				bUsePad = false;
 			}
 		}
 	}
