@@ -30,6 +30,7 @@
 #include "minimap.h"
 #include "billboard.h"
 #include "bosslife.h"
+#include "Effect.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -71,6 +72,11 @@ void InitBoss(void)
 		g_Boss[nCnt].Speed = 5.0f;						 // 足の速さ
 		g_Boss[nCnt].AttackState = BOSSATTACK_NO;			 // 攻撃状態
 		g_Boss[nCnt].nHitStopCount = 0;                  // ヒットストップのカウント
+		for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
+		{
+			g_Boss[nCnt].nStateCharge[nCnt2] = 0;
+			g_Boss[nCnt].nStateCount[nCnt2] = 0;
+		}
 	}
 
 	LoadBoss(); // ボスのロード
@@ -239,6 +245,86 @@ void UpdateBoss(void)
 			continue;
 		}
 
+		// 状態異常出血の処理
+		if (g_Boss[nCnt].nStateCount[0] > 0)
+		{
+			if (g_Boss[nCnt].nStateCount[0] % 60 == 0)
+			{
+				HitBoss(nCnt, g_Boss[nCnt].nLife / 20);
+			}
+			g_Boss[nCnt].nStateCount[0]--;
+			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
+			D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
+			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+			2.0f, 2, 30, 6, 10.0f, 20.0f, true, D3DXVECTOR3(0.0f, -1.0f, 0.0f));
+		}
+
+		// 状態異常炎の処理
+		if (g_Boss[nCnt].nStateCount[1] > 0)
+		{
+			if (g_Boss[nCnt].nStateCount[1] % 60 == 0)
+			{
+				HitBoss(nCnt, g_Boss[nCnt].nLife / 20);
+			}
+			g_Boss[nCnt].nStateCount[1]--;
+			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y, g_Boss[nCnt].pos.z),
+				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+				2.0f, 2, 30, 7, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 2.0f, 0.0f));
+			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y, g_Boss[nCnt].pos.z),
+				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
+				2.0f, 2, 30, 7, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 2.0f, 0.0f));
+		}
+
+		// 状態異常氷の処理
+		if (g_Boss[nCnt].nStateCount[2] > 0)
+		{
+			g_Boss[nCnt].nStateCount[2]--;
+			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
+				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+				1.0f, 2, 60, 7, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
+				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(0.0f, 0.6f, 1.0f, 1.0f),
+				1.0f, 2, 60, 7, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+		}
+
+		// 状態異常雷の処理
+		if (g_Boss[nCnt].nStateCount[3] > 0)
+		{
+			g_Boss[nCnt].nStateCount[3]--;
+			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
+				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+				1.0f, 2, 120, 6, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+		}
+
+		// 状態異常水の処理
+		if (g_Boss[nCnt].nStateCount[4] > 0)
+		{
+			g_Boss[nCnt].nStateCount[4]--;
+			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
+				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f),
+				2.0f, 2, 30, 6, 10.0f, 20.0f, true, D3DXVECTOR3(0.0f, -1.0f, 0.0f));
+		}
+
 		switch (g_Boss[nCnt].state)
 		{
 		case BOSSSTATE_NORMAL:
@@ -345,7 +431,7 @@ void UpdateBoss(void)
 				}
 				else
 				{
-					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
+					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 2.0f, g_Boss[nCnt].pos.z),
 						g_Boss[nCnt].rot,
 						D3DXVECTOR3(1.0f, 1.0f, 1.0f),
 						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
@@ -412,7 +498,7 @@ void UpdateBoss(void)
 		// インパクトの当たり判定
 		if (CollisionImpact(&g_Boss[nCnt].pos) == true)
 		{
-			HitEnemy(nCnt, ImpactDamege(0));
+			HitBoss(nCnt, ImpactDamege(0));
 		}
 
 		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
@@ -654,6 +740,14 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].nLife = nLife; // 体力を挿入
 			g_Boss[nCnt].state = BOSSSTATE_NORMAL;			 // 状態
 			g_Boss[nCnt].AttackState = BOSSATTACK_NO;			 // 攻撃状態
+			
+			// 状態異常関係
+			for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
+			{
+				g_Boss[nCnt].nStateCharge[nCnt2] = 0;
+				g_Boss[nCnt].nStateCount[nCnt2] = 0;
+			}
+
 			g_Boss[nCnt].bUse = true;   // 使用状態にする
 
 			D3DXVECTOR3 BossPos(g_Boss[nCnt].mtxWorld._41, g_Boss[nCnt].mtxWorld._42, g_Boss[nCnt].mtxWorld._43);
@@ -679,14 +773,28 @@ void HitBoss(int nCntBoss,int nDamage)
 	// アイテムの取得
 	Item* pItem = GetItem();
 
-	// ダメージを減らす
-	g_Boss[nCntBoss].nLife -= nDamage;
+	if (g_Boss[nCntBoss].nStateCount[4] > 0)
+	{
+		// HPを減らす
+		g_Boss[nCntBoss].nLife -= nDamage * 1.5f;
 
-	// ダメージを設定
-	SetDamege(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z), // 位置
-		nDamage,	// ダメージ																								
-		20,			// 寿命
-		false);
+		// ダメージを設定
+		SetDamege(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z), // 位置
+			nDamage * 1.5f,	// ダメージ																								
+			20,			// 寿命
+			false);
+	}
+	else
+	{
+		// HPを減らす
+		g_Boss[nCntBoss].nLife -= nDamage;
+
+		// ダメージを設定
+		SetDamege(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z), // 位置
+			nDamage,	// ダメージ																								
+			20,			// 寿命
+			false);
+	}
 
 	GAMESTATE gamestate = GetGameState();
 
@@ -782,6 +890,56 @@ void HitBoss(int nCntBoss,int nDamage)
 		g_Boss[nCntBoss].nCounterState = 20;
 		g_Boss[nCntBoss].nHitStopCount = 8;
 		AddSpgauge(1.0f);   // SPゲージを取得
+
+		// 属性ゾーン
+		if (pItem[pPlayer->ItemIdx].nType == 5) //石バットなら出血特殊効果を与える
+		{
+			if (g_Boss[nCntBoss].nStateCount[0] <= 0)
+			{
+				g_Boss[nCntBoss].nStateCharge[0] += 25;
+				if (g_Boss[nCntBoss].nStateCharge[0] >= 100)
+				{
+					g_Boss[nCntBoss].nStateCount[0] = 300;
+					g_Boss[nCntBoss].nStateCharge[0] = 0;
+				}
+			}
+		}
+		else if (pItem[pPlayer->ItemIdx].nType == 15) //猛火剣なら炎特殊効果を与える
+		{
+			if (g_Boss[nCntBoss].nStateCount[1] <= 0)
+			{
+				g_Boss[nCntBoss].nStateCharge[1] += 25;
+				if (g_Boss[nCntBoss].nStateCharge[1] >= 100)
+				{
+					g_Boss[nCntBoss].nStateCount[1] = 300;
+					g_Boss[nCntBoss].nStateCharge[1] = 0;
+				}
+			}
+		}
+		else if (pItem[pPlayer->ItemIdx].nType == 10) //凍結剣なら氷特殊効果を与える
+		{
+			if (g_Boss[nCntBoss].nStateCount[2] <= 0)
+			{
+				g_Boss[nCntBoss].nStateCharge[2] += 25;
+				if (g_Boss[nCntBoss].nStateCharge[2] >= 100)
+				{
+					g_Boss[nCntBoss].nStateCount[2] = 300;
+					g_Boss[nCntBoss].nStateCharge[2] = 0;
+				}
+			}
+		}
+		else if (pItem[pPlayer->ItemIdx].nType == 7) //雷撃剣なら雷特殊効果を与える
+		{
+			if (g_Boss[nCntBoss].nStateCount[3] <= 0)
+			{
+				g_Boss[nCntBoss].nStateCharge[3] += 25;
+				if (g_Boss[nCntBoss].nStateCharge[3] >= 100)
+				{
+					g_Boss[nCntBoss].nStateCount[3] = 300;
+					g_Boss[nCntBoss].nStateCharge[3] = 0;
+				}
+			}
+		}
 	}
 }
 //===============================================================================================================
