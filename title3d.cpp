@@ -57,9 +57,6 @@ void InitTitle3d(void)
 	// ƒQ[ƒ€UI‚Ì‰Šú‰»ˆ—
 	InitGameUI();
 
-	// ‰e‚Ì‰Šú‰»ˆ—
-	InitShadow();
-
 	// •Ç‚Ì‰Šú‰»ˆ—
 	InitWall();
 

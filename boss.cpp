@@ -777,7 +777,7 @@ void HitBoss(int nCntBoss,int nDamage)
 
 		g_Boss[nCntBoss].state = ENEMYSTATE_DAMAGE;
 		g_Boss[nCntBoss].nCounterState = 20;
-		g_Boss[nCntBoss].nHitStopCount = 10;
+		g_Boss[nCntBoss].nHitStopCount = 8;
 		AddSpgauge(1.0f);   // SPÉQÅ[ÉWÇéÊìæ
 	}
 }

@@ -77,9 +77,6 @@ void InitTutorial3d(void)
 	// プレイヤーの初期化処理
 	InitPlayer();
 
-	// 影の初期化処理
-	InitShadow();
-
 	// クラフト画面の初期化処理
 	InitCraftUI();
 

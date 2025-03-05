@@ -186,6 +186,7 @@ void UninitItem(void)
 	// 音楽を停止
 	StopSound();
 
+	// 種類分回す
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		// テクスチャの破棄
@@ -210,6 +211,32 @@ void UninitItem(void)
 		{
 			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel->Release();
 			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel = NULL;
+		}
+	}
+
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+	{
+		int nType = g_Item[nCntItem].nType;
+
+		// テクスチャの破棄
+		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
+		{
+			if (g_Item[nCntItem].ItemTex[nType].g_apTextureModel[nCntTex] != NULL)
+			{
+				g_Item[nCntItem].ItemTex[nType].g_apTextureModel[nCntTex] = NULL;
+			}
+		}
+
+		// メッシュの破棄
+		if (g_Item[nCntItem].ItemTex[nType].g_pMeshModel != NULL)
+		{
+			g_Item[nCntItem].ItemTex[nType].g_pMeshModel = NULL;
+		}
+
+		// マテリアルの破棄
+		if (g_Item[nCntItem].ItemTex[nType].g_pBuffMatModel != NULL)
+		{
+			g_Item[nCntItem].ItemTex[nType].g_pBuffMatModel = NULL;
 		}
 	}
 }
