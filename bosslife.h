@@ -49,9 +49,8 @@ typedef struct
 //***************************
 void InitBossLife(); // 体力バーの初期化処理
 void UninitBossLife(); // 体力バーの終了処理
-void UpdateBossLife(); // 体力バーの更新処理
+void UpdateBossLife(Boss* pBoss); // 体力バーの更新処理
 void DrawBossLife(); // 体力バーの描画処理
 int SetBossLife(D3DXVECTOR3 pos, int nType); // 体力バーの設定処理
-
-
+void SetPositionLifeBar(int nIdx,D3DXVECTOR3 pos); // 
 #endif

@@ -58,6 +58,8 @@ MOTION g_LoadBoss;
 //===============================================================================================================
 void InitBoss(void)
 {
+	InitBossLife();
+
 	// デバイスのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
@@ -169,6 +171,8 @@ void InitBoss(void)
 //===============================================================================================================
 void UninitBoss(void)
 {
+	UninitBossLife();
+
 	for (int nCntModel = 0; nCntModel < g_LoadBoss.nNumModel; nCntModel++)
 	{
 		// テクスチャの破棄
@@ -244,6 +248,9 @@ void UpdateBoss(void)
 		{
 			continue;
 		}
+
+		// ボスのHPゲージの更新
+		UpdateBossLife(&g_Boss[nCnt]);
 
 		// 状態異常出血の処理
 		if (g_Boss[nCnt].nStateCount[0] > 0)
@@ -354,6 +361,7 @@ void UpdateBoss(void)
 		// 影の位置の更新
 		SetPositionShadow(g_Boss[nCnt].nIdxShadow, g_Boss[nCnt].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss[nCnt].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss[nCnt].pos.y / 30.0f));
 		SetMiniMapPotision(g_Boss[nCnt].nIdxMap, &g_Boss[nCnt].pos);
+		SetPositionLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].pos);
 
 		// ボスの攻撃モーション
 		if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)// ドス突きの状態で
@@ -613,6 +621,8 @@ void UpdateBoss(void)
 void DrawBoss(void)
 {
 	DrawBillboard();
+
+	DrawBossLife();
 
 	// デバイスのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
