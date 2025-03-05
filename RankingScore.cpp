@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include"Score.h"
 #include "game.h"
+#include "mouse.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -36,6 +37,7 @@ int g_nTimerRanking;	// ランキング画面表示タイマー
 int Avalue;
 int Rank;
 bool bFlash;
+int g_nRankingCount;
 
 //==========================================================================================================
 //ランキングスコアの初期化
@@ -58,7 +60,8 @@ void InitRankingScore(void)
 	Avalue = 0;
 	Rank = MAX_RANK - 1;
 	bFlash = false;
-	
+	g_nRankingCount = 0;
+
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_POLYGON,
 		D3DUSAGE_WRITEONLY,
@@ -148,6 +151,15 @@ void UninitRankingScore(void)
 //==========================================================================================================
 void UpdateRankingScore(void)
 {
+	// カウントを加算
+	g_nRankingCount++;
+
+	if ((g_nRankingCount >= 600 || KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE)) && bFlash == true)
+	{// 10秒経過 or Enterキー or Aボタン or 左クリック
+		// タイトル画面に遷移
+		SetFade(MODE_TITLE);
+	}
+
 	// フラッシュできない
 	if (bFlash == false)
 	{
@@ -214,6 +226,36 @@ void UpdateRankingScore(void)
 		g_pVtxBuffRankScore->Unlock();
 	}
 
+	// スキップ
+	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true) && bFlash == false)
+	{
+		VERTEX_2D* pVtx{};       // 頂点情報のポインタ
+
+		// 頂点バッファをロックし,頂点情報へのポインタを取得
+		g_pVtxBuffRankScore->Lock(0, 0, (void**)&pVtx, 0);
+
+
+		// 順位分回す
+		for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
+		{
+			// 桁数分回す
+			for (int nCnt1 = 0; nCnt1 < MAX_DIGIT; nCnt1++)
+			{
+				// 色をもとに戻しておく
+				pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+				pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+				pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+				pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+
+				pVtx += 4;
+			}
+		}
+
+		bFlash = true; // フラッシュできる
+
+		// 頂点バッファをアンロック
+		g_pVtxBuffRankScore->Unlock();
+	}
 	// ローカル変数
 	static int nCounter{};
 

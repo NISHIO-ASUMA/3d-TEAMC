@@ -69,15 +69,6 @@ void UpdateRanking(void)
 
 	// スコアの更新処理
 	UpdateRankingScore();
-
-	// カウントを加算
-	nRankingCount++;
-
-	if (nRankingCount >= 600 || KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE))
-	{// 10秒経過 or Enterキー or Aボタン or 左クリック
-		// タイトル画面に遷移
-		SetFade(MODE_TITLE);
-	}
 }
 //===============================================================================================================
 //ランキングの描画処理
