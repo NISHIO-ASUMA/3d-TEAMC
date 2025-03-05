@@ -194,7 +194,7 @@ void InitGame(void)
 	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
 	{
 		SpawnEnemy(2); // “G‚ðo‚·ˆ—
-		SpawnEnemy(3); // “G‚ðo‚·ˆ—
+		SpawnEnemy(1); // “G‚ðo‚·ˆ—
 	}
 
 	// UI‚ðƒZƒbƒg

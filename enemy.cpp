@@ -866,11 +866,11 @@ void SpawnEnemy(int nSpawner)
 		else if (nSpawner == 2)
 		{
 			SetEnemy(D3DXVECTOR3(-592.0f, 0.0f, -747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3(-196.0f, 0.0f, 130.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(-899.0f, 0.0f, 182.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		else if (nSpawner == 3)
 		{
-			SetEnemy(D3DXVECTOR3(-196.0f, 0.0f, 130.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(D3DXVECTOR3(-899.0f, 0.0f, 182.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 			SetEnemy(D3DXVECTOR3(-592.0f, 0.0f, -747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
