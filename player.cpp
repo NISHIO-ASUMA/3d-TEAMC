@@ -51,7 +51,6 @@
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
 #define HEAL_VALUE (100)		// 回復量
-#define MAX_MODEL (16)          // モデルの最大数
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -1646,6 +1645,7 @@ void LoadPlayer(int nType)
 	int nNumModel = 0;
 	int nLoadCnt = 0;
 	int nNumParts = 0;
+	int nScanData = 0;
 
 	switch (nType)
 	{
@@ -1666,7 +1666,7 @@ void LoadPlayer(int nType)
 		while (1)
 		{
 			// 文字列を読み込む
-			fscanf(pFile, "%s", &aStr[0]);
+			int nData = fscanf(pFile, "%s", &aStr[0]);
 
 			if (strcmp(&aStr[0], "#") == 0)
 			{//コメントが来たら
@@ -1677,9 +1677,9 @@ void LoadPlayer(int nType)
 			// NUM_MODELを読み取ったら
 			if (strcmp(&aStr[0], "NUM_MODEL") == 0)
 			{
-				fscanf(pFile, "%s", &Skip[0]);						// [=]を読み飛ばす
-				fscanf(pFile, "%d", &nNumModel);					// モデルの最大数を代入
-				g_LoadPlayer[nType].nNumModel = nNumModel;	// モデルの最大数を代入
+				nScanData = fscanf(pFile, "%s", &Skip[0]);						// [=]を読み飛ばす
+				nScanData = fscanf(pFile, "%d", &nNumModel);					// モデルの最大数を代入
+				g_LoadPlayer[nType].nNumModel = nNumModel;			// モデルの最大数を代入
 			}
 
 			// モデルの読み込みがまだ終わっていなかったら
@@ -1704,7 +1704,7 @@ void LoadPlayer(int nType)
 			}
 
 			// END_SCRIPTを読み取ったら
-			if (strcmp(&aStr[0], "END_SCRIPT") == 0)
+			if (nData == EOF)
 			{
 				nCntMotion = 0; // モーションのカウントをリセットする
 				break;          // While文を抜ける
@@ -1739,18 +1739,19 @@ int LoadFilename(FILE* pFile, int nNumModel, char* aString, int nType)
 	char Skip[3] = {}; // [=]読み飛ばしよう変数
 
 	int nCntLoadModel = 0; // モデルのロードのカウンター
+	int nScanData = 0; // 返り値代入用
 
 	// カウントがモデル数より下だったら
 	while (nCntLoadModel < nNumModel)
 	{
 		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
+		nScanData = fscanf(pFile, "%s", aString);
 
 		// MODEL_FILENAMEを読み取ったら
 		if (strcmp(aString, "MODEL_FILENAME") == 0)
 		{
-			fscanf(pFile, "%s", &Skip[0]); // [=]を読み飛ばす
-			fscanf(pFile, "%s", aString);  // ファイル名を読み取る
+			nScanData = fscanf(pFile, "%s", &Skip[0]); // [=]を読み飛ばす
+			nScanData = fscanf(pFile, "%s", aString);  // ファイル名を読み取る
 
 			const char* FILE_NAME = {};    // ファイル名代入用変数
 
@@ -1854,49 +1855,50 @@ void LoadCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType)
 {
 	int nIdx = 0; // インデックス格納変数
 	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nScanData = 0; // 返り値を代入する変数
 
 	// END_CHARACTERSETを読み取ってなかったら
 	while (strcmp(aString, "END_CHARACTERSET") != 0)
 	{
 		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
+		nScanData = fscanf(pFile, "%s", aString);
 
 		// INDEXを読み取ったら
 		if (strcmp(aString, "INDEX") == 0)
 		{
-			fscanf(pFile, "%s", &Skip[0]); // [=]読み飛ばす
-			fscanf(pFile, "%d", &nIdx);    // インデックスを代入
+			nScanData = fscanf(pFile, "%s", &Skip[0]); // [=]読み飛ばす
+			nScanData = fscanf(pFile, "%d", &nIdx);    // インデックスを代入
 		}
 		// PARENTを読み取ったら
 		else if (strcmp(aString, "PARENT") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// 親のインデックスを保存
-			fscanf(pFile, "%d", &g_LoadPlayer[nType].aModel[nIdx].nIdxModelParent);
+			nScanData = fscanf(pFile, "%d", &g_LoadPlayer[nType].aModel[nIdx].nIdxModelParent);
 		}
 		// POSを読み取ったら
 		else if (strcmp(aString, "POS") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// モデルのオフセットを代入
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offpos.x);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offpos.y);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offpos.z);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offpos.x);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offpos.y);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offpos.z);
 		}
 		// ROTを読み取ったら
 		else if (strcmp(aString, "ROT") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// モデルのオフセットを代入
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offrot.x);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offrot.y);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offrot.z);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offrot.x);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offrot.y);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aModel[nIdx].offrot.z);
 		}
 	}
 }
@@ -1907,34 +1909,35 @@ void LoadWeponOffSet(FILE* pFile, char* aString, int nWepontype)
 {
 	int nIdx = 15; // インデックス格納変数
 	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nScanData = 0; // 返り値代入用
 
 	// END_CHARACTERSETを読み取ってなかったら
 	while (strcmp(aString, "END_PARTSSET") != 0)
 	{
 		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
+		nScanData = fscanf(pFile, "%s", aString);
 
 		// POSを読み取ったら
 		if (strcmp(aString, "POS") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// モデルのオフセットを代入
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offpos.x);
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offpos.y);
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offpos.z);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offpos.x);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offpos.y);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offpos.z);
 		}
 		// ROTを読み取ったら
 		else if (strcmp(aString, "ROT") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// モデルのオフセットを代入
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offrot.x);
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offrot.y);
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offrot.z);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offrot.x);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offrot.y);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aModel[nIdx].offrot.z);
 		}
 	}
 }
@@ -1944,11 +1947,12 @@ void LoadWeponOffSet(FILE* pFile, char* aString, int nWepontype)
 void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType)
 {
 	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nScanData = 0; // 返り値代入用
 
 	while (1)
 	{
 		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
+		nScanData = fscanf(pFile, "%s", aString);
 
 		if (strcmp(aString, "#") == 0 || strcmp(aString, "<<") == 0)
 		{// コメントが来たら
@@ -1960,19 +1964,19 @@ void LoadMotionSet(FILE* pFile, char* aString, int nNumModel, int nType)
 		if (strcmp(aString, "LOOP") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// ループするかしないか
-			fscanf(pFile, "%d", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].bLoop);
+			nScanData = fscanf(pFile, "%d", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].bLoop);
 		}
 		// NUM_KEYを読み通ったら
 		else if (strcmp(aString, "NUM_KEY") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// キーの最大数を代入
-			fscanf(pFile, "%d", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].nNumkey);
+			nScanData = fscanf(pFile, "%d", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].nNumkey);
 		}
 		// KEYSETを読み通ったら
 		if (strcmp(aString, "KEYSET") == 0)
@@ -1997,11 +2001,12 @@ void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
 	char Skip[3] = {}; // [=]読み飛ばし変数
 	int nCntPos = 0;   // 位置のカウント
 	int nCntRot = 0;   // 角度のカウント
+	int nScanData = 0; // 返り値代入用
 
 	while (1)
 	{
 		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
+		nScanData = fscanf(pFile, "%s", aString);
 
 		if (strcmp(aString, "#") == 0)
 		{// コメントが来たら
@@ -2013,34 +2018,34 @@ void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
 		if (strcmp(aString, "FRAME") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// フレームを読み込む
-			fscanf(pFile, "%d", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].nFrame);
+			nScanData = fscanf(pFile, "%d", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].nFrame);
 		}
 
 		// POSを読み通ったら
 		if (strcmp(aString, "POS") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// 位置を読み込む
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosX);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosY);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosZ);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosX);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosY);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosZ);
 			nCntPos++;
 		}
 		// ROTを読み通ったら
 		else if (strcmp(aString, "ROT") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// 角度を読み込む
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotX);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotY);
-			fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotZ);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotX);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotY);
+			nScanData = fscanf(pFile, "%f", &g_LoadPlayer[nType].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotZ);
 			nCntRot++;
 		}
 		// END_KEYSETを読み通ったら
@@ -2059,11 +2064,12 @@ void LoadKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
 void LoadWeponMotionSet(FILE* pFile, char* aString, int nNumModel, int nWepontype)
 {
 	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nScanData = 0; // 返り値代入用
 
 	while (1)
 	{
 		// 文字を読み取る
-		fscanf(pFile, "%s", aString);
+		nScanData = fscanf(pFile, "%s", aString);
 
 		if (strcmp(aString, "#") == 0 || strcmp(aString, "<<") == 0)
 		{// コメントが来たら
@@ -2075,19 +2081,19 @@ void LoadWeponMotionSet(FILE* pFile, char* aString, int nNumModel, int nWepontyp
 		if (strcmp(aString, "LOOP") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// ループするかしないか
-			fscanf(pFile, "%d", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].bLoop);
+			nScanData = fscanf(pFile, "%d", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].bLoop);
 		}
 		// NUM_KEYを読み通ったら
 		else if (strcmp(aString, "NUM_KEY") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// キーの最大数を代入
-			fscanf(pFile, "%d", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].nNumkey);
+			nScanData = fscanf(pFile, "%d", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].nNumkey);
 		}
 		// KEYSETを読み通ったら
 		if (strcmp(aString, "KEYSET") == 0)
@@ -2113,6 +2119,7 @@ void LoadWeponKeySet(FILE* pFile, char* aString, int nWepontype, int nCntMotion)
 	char Skip[3] = {}; // [=]読み飛ばし変数
 	int nCntPos = 0;   // 位置のカウント
 	int nCntRot = 0;   // 角度のカウント
+	int nScanData = 0; // 返り値代入用
 
 	while (1)
 	{
@@ -2129,22 +2136,22 @@ void LoadWeponKeySet(FILE* pFile, char* aString, int nWepontype, int nCntMotion)
 		if (strcmp(aString, "FRAME") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// フレームを読み込む
-			fscanf(pFile, "%d", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].nFrame);
+			nScanData = fscanf(pFile, "%d", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].nFrame);
 		}
 
 		// POSを読み通ったら
 		if (strcmp(aString, "POS") == 0)
 		{
 			// [=]読み飛ばす
-			fscanf(pFile, "%s", &Skip[0]);
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
 
 			// 位置を読み込む
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosX);
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosY);
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosZ);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosX);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosY);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntPos].fPosZ);
 			nCntPos++;
 		}
 		// ROTを読み通ったら
@@ -2154,9 +2161,9 @@ void LoadWeponKeySet(FILE* pFile, char* aString, int nWepontype, int nCntMotion)
 			fscanf(pFile, "%s", &Skip[0]);
 
 			// 角度を読み込む
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotX);
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotY);
-			fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotZ);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotX);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotY);
+			nScanData = fscanf(pFile, "%f", &g_LoadMotion[nWepontype].aMotionInfo[nCntMotion].aKeyInfo[nKey].aKey[nCntRot].fRotZ);
 			nCntRot++;
 		}
 		// END_KEYSETを読み通ったら
