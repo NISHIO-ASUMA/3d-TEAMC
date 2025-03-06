@@ -468,6 +468,7 @@ void UpdatePlayer(void)
 			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // ƒRƒ“ƒ{1
 			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
 			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
+			ResetMeshSword();
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION &&
 			CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 1, 5, 0, 30) == true)
