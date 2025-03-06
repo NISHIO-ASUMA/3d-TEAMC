@@ -70,7 +70,7 @@ int nKeyBoss, nCntMotionBoss;
 //===============================================================================================================
 void InitBoss(void)
 {
-	InitBossLife();
+	//InitBossLife();
 
 	// デバイスのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
@@ -102,7 +102,7 @@ void InitBoss(void)
 //===============================================================================================================
 void UninitBoss(void)
 {
-	UninitBossLife();
+	//UninitBossLife();
 
 	for (int nCntModel = 0; nCntModel < g_LoadBoss.nNumModel; nCntModel++)
 	{
@@ -217,7 +217,7 @@ void UpdateBoss(void)
 		SetMiniMapPotision(g_Boss[nCnt].nIdxMap, &g_Boss[nCnt].pos);
 
 		// HPゲージの位置設定処理
-		SetPositionLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].nLifeFrame,g_Boss[nCnt].pos);
+		SetPositionLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].nLifeFrame,g_Boss[nCnt].nLifeDelayIdx,g_Boss[nCnt].pos);
 
 		// 敵の攻撃の設定
 		switch (g_Boss[nCnt].Motion.motionType)
@@ -443,7 +443,7 @@ void DrawBoss(void)
 		}
 	}
 
-	DrawBossLife();
+	//DrawBossLife();
 }
 //===============================================================================================================
 // ボスの設定処理
@@ -484,8 +484,10 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].nIdxMap = SetMiniMap(BossPos, MINIMAPTEX_BOSS);
 
 			// ボスのライフゲージの設定
+			g_Boss[nCnt].nLifeDelayIdx = SetBossLife(pos, BOSSTEX_DELAY);
 			g_Boss[nCnt].nLifeBarIdx = SetBossLife(pos,BOSSTEX_LIFE);
 			g_Boss[nCnt].nLifeFrame = SetBossLife(pos, BOSSTEX_FRAME);
+
 			break;
 		}
 	}
@@ -529,7 +531,7 @@ void HitBoss(int nCntBoss,int nDamage)
 	if (g_Boss[nCntBoss].nLife <= 0)
 	{
 		// ゲージを消す
-		DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame);
+		DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
 
 		// 死んだらパーティクルを出す(雑魚より派手に)
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z),

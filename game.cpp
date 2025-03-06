@@ -51,6 +51,7 @@
 #include "itemgage.h"
 #include "meshcylinder.h"
 #include "mark.h"
+#include "bosslife.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -107,6 +108,9 @@ void InitGame(void)
 
 	// ミニマップの初期化処理
 	InitMiniMap();
+
+	// ボスの体力ゲージの初期化処理
+	InitBossLife();
 
 	//敵の初期化処理
 	InitEnemy();
@@ -275,6 +279,9 @@ void UninitGame(void)
 
 	//メッシュシリンダーの終了処理
 	UninitMeshCylinder();
+
+	// ボスの体力ゲージ終了処理
+	UninitBossLife();
 
 	// メッシュドームの終了処理
 	UninitmeshFan();
@@ -654,6 +661,9 @@ void DrawGame(void)
 	// 矢印の描画処理
 	DrawMark();
 
+	// ボスの描画処理
+	DrawBoss();
+
 #ifdef _DEBUG
 
 	if (g_bEditMode == true)
@@ -709,8 +719,8 @@ void DrawGame(void)
 	//壁の描画処理
 	DrawWall();
 
-	// ボスの描画処理
-	DrawBoss();
+	// ボスの体力ゲージ描画処理
+	DrawBossLife();
 
 	// 軌跡の描画処理
 	DrawMeshSword();
