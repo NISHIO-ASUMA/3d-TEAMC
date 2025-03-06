@@ -14,6 +14,7 @@
 #include "input.h"
 #include "player.h"
 #include "easing.h"
+#include "math.h"
 
 //*****************************
 // ƒ}ƒNƒ’è‹`

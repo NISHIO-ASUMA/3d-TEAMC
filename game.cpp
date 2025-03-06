@@ -56,7 +56,7 @@
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define SPAWN_ENEMY (15) // 敵のスポーン数
+#define SPAWN_ENEMY (10) // 敵のスポーン数
 
 //**************************************************************************************************************
 //グローバル変数
@@ -214,8 +214,8 @@ void InitGame(void)
 
 	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 6, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
-	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
-	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+	//SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+	//SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 
 #endif // _DEBUG
 
@@ -692,20 +692,8 @@ void DrawGame(void)
 	//メッシュインパクトの描画処理
 	DrawMeshImpact();
 
-	// エフェクトの描画処理
-	DrawEffect();
-
-	// パーティクルの描画処理
-	DrawParticle();
-
 	// 煙の描画処理
 	DrawExplosion();
-
-	// エフェクトの描画処理
-	DrawEffectX();
-
-	// パーティクルの描画処理
-	DrawParticleX();
 
 	// ダメージの描画処理
 	DrawDamege();
@@ -718,6 +706,18 @@ void DrawGame(void)
 
 	//壁の描画処理
 	DrawWall();
+
+	// エフェクトの描画処理
+	DrawEffect();
+
+	// パーティクルの描画処理
+	DrawParticle();
+
+	// エフェクトの描画処理
+	DrawEffectX();
+
+	// パーティクルの描画処理
+	DrawParticleX();
 
 	// ボスの体力ゲージ描画処理
 	DrawBossLife();
@@ -734,6 +734,9 @@ void DrawGame(void)
 	// SPゲージの描画処理
 	DrawSPgauge();
 
+	//弾の描画処理
+	DrawBullet();
+
 	// ゲームのUIの描画処理
 	DrawGameUI();
 
@@ -742,9 +745,6 @@ void DrawGame(void)
 
 	// タイマーの描画処理
 	DrawTime();
-
-	//弾の描画処理
-	DrawBullet();
 
 	// ミニマップの描画処理
 	DarwMinimap();

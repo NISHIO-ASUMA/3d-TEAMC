@@ -169,6 +169,9 @@
     <ClCompile Include="bosslife.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="math.cpp">
+      <Filter>ソースファイル\os</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -273,9 +276,6 @@
     <ClInclude Include="spgauge.h">
       <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
-    <ClInclude Include="mouse.h">
-      <Filter>ヘッダーファイル\os</Filter>
-    </ClInclude>
     <ClInclude Include="Shadow.h">
       <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
@@ -338,6 +338,12 @@
     </ClInclude>
     <ClInclude Include="bosslife.h">
       <Filter>ヘッダーファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>ヘッダーファイル\os</Filter>
+    </ClInclude>
+    <ClInclude Include="mouse.h">
+      <Filter>ヘッダーファイル\os</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

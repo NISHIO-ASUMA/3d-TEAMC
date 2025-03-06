@@ -23,6 +23,9 @@
 #include "sound.h"
 #include "Effect.h"
 #include "billboard.h"
+#include "math.h"
+#include "easing.h"
+#include "meshimpact.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -38,13 +41,14 @@ void CraftItem(void);
 void CraftMixItem(int nCntItem,int MixItem,int motionchange);
 void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem);
 void LoadDurability(void); // アイテムの耐久力のロード処理
+void PickUpItemAnimation(int nCntItem); // アイテムを拾える時の演出
 
 //**************************************************************************************************************
 //グローバル変数宣言
 //**************************************************************************************************************
 Item g_Item[MAX_ITEM];			// 構造体変数
 int g_ItemTypeMax;				// 種類数
-Item g_TexItem[ITEMTYPE_MAX];	// テクスチャ関係
+TEXTURE_INFO g_TexItem[ITEMTYPE_MAX];	// テクスチャ関係
 bool bFIrstCraftItem = false;
 
 //===============================================================================================================
@@ -64,13 +68,17 @@ void InitItem(void)
 		g_Item[nCntItem].nType = ITEMTYPE_BAT;				   // 種類
 		g_Item[nCntItem].nElement = ITEMELEMENT_STANDARD;	   // 種類
 		g_Item[nCntItem].bUse = false;						   // 未使用判定
-		g_Item[nCntItem].nLife = 20;						   // 体力
+		g_Item[nCntItem].nLife = 120;						   // 体力
 		g_Item[nCntItem].state = ITEMSTATE_NORMAL;			   // 状態
 		g_Item[nCntItem].fRadius = 100.0f;					   // 半径
 		g_Item[nCntItem].nLife = 180;						   // 体力
 		g_Item[nCntItem].durability = 0;		   // 耐久力
 		g_Item[nCntItem].EnableCraft = false;				   // クラフトできるか否か
 		g_Item[nCntItem].grabity = 0.0f;				   // クラフトできるか否か
+		g_Item[nCntItem].nEasingCnt = 0;
+		g_Item[nCntItem].nImpactCount = 110;
+		g_Item[nCntItem].Maxdurability = 0;
+
 
 		for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
 		{
@@ -85,25 +93,19 @@ void InitItem(void)
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
-		//g_TexItem[nCntNum].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//g_TexItem[nCntNum].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//g_TexItem[nCntNum].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_TexItem[nCntNum].Scal = D3DXVECTOR3(1.0f, 1.0f, 1.0f);// 拡大率
-		g_TexItem[nCntNum].nLife = 120;							// 体力
-		g_TexItem[nCntNum].state = ITEMSTATE_NORMAL;			// 状態
 		g_TexItem[nCntNum].nType = nCntNum;			            // 番号
 		g_TexItem[nCntNum].nElement = ITEMELEMENT_STANDARD;     // 初期化
+		g_TexItem[nCntNum].Maxdurability = 0;     // 初期化
+
 		ElementChange(nCntNum);
-		g_TexItem[nCntNum].bMixItem[nCntNum] = false;           // クラフト後のアイテム表示用フラグ
-		g_TexItem[nCntNum].grabity = 0.0f;           // クラフト後のアイテム表示用フラグ
-		g_TexItem[nCntNum].Maxdurability = g_TexItem[nCntNum].durability;           // アイテムの耐久力
+		g_TexItem[nCntNum].Maxdurability = g_TexItem[nCntNum].durability;
 
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
 		// マテリアルのデータへのポインタを取得
-		pMat = (D3DXMATERIAL*)g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel->GetBufferPointer();
+		pMat = (D3DXMATERIAL*)g_TexItem[nCntNum].g_pBuffMatModel->GetBufferPointer();
 
-		for (int nCntMat = 0; nCntMat < (int)g_TexItem[nCntNum].ItemTex[nCntNum].g_dwNumMatModel; nCntMat++)
+		for (int nCntMat = 0; nCntMat < (int)g_TexItem[nCntNum].g_dwNumMatModel; nCntMat++)
 		{
 			if (pMat[nCntMat].pTextureFilename != NULL)
 			{
@@ -111,7 +113,7 @@ void InitItem(void)
 				//テクスチャの読み込み
 				D3DXCreateTextureFromFile(pDevice,
 					pMat[nCntMat].pTextureFilename,
-					&g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureModel[nCntMat]);
+					&g_TexItem[nCntNum].g_apTextureModel[nCntMat]);
 			}
 		}
 	}
@@ -124,13 +126,13 @@ void InitItem(void)
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		// 頂点数の取得
-		nNumVtx = g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->GetNumVertices();
+		nNumVtx = g_TexItem[nCntNum].g_pMeshModel->GetNumVertices();
 
 		// 頂点フォーマットのサイズ取得
-		sizeFVF = D3DXGetFVFVertexSize(g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->GetFVF());
+		sizeFVF = D3DXGetFVFVertexSize(g_TexItem[nCntNum].g_pMeshModel->GetFVF());
 
 		// 頂点バッファのロック
-		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+		g_TexItem[nCntNum].g_pMeshModel->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
 		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 		{
@@ -138,42 +140,42 @@ void InitItem(void)
 			D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
 
 			// 頂点座標を比較してブロックの最小値,最大値を取得
-			if (vtx.x < g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.x)
+			if (vtx.x < g_TexItem[nCntNum].vtxMin.x)
 			{
-				g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.x = vtx.x;
+				g_TexItem[nCntNum].vtxMin.x = vtx.x;
 			}
-			else if (vtx.y < g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.y)
+			else if (vtx.y < g_TexItem[nCntNum].vtxMin.y)
 			{
-				g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.y = vtx.y;
+				g_TexItem[nCntNum].vtxMin.y = vtx.y;
 			}
-			else if (vtx.z < g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.z)
+			else if (vtx.z < g_TexItem[nCntNum].vtxMin.z)
 			{
-				g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.z = vtx.z;
+				g_TexItem[nCntNum].vtxMin.z = vtx.z;
 			}
-			else if (vtx.x > g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.x)
+			else if (vtx.x > g_TexItem[nCntNum].vtxMax.x)
 			{
-				g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.x = vtx.x;
+				g_TexItem[nCntNum].vtxMax.x = vtx.x;
 			}
-			else if (vtx.y > g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.y)
+			else if (vtx.y > g_TexItem[nCntNum].vtxMax.y)
 			{
-				g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.y = vtx.y;
+				g_TexItem[nCntNum].vtxMax.y = vtx.y;
 			}
-			else if (vtx.z > g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.z)
+			else if (vtx.z > g_TexItem[nCntNum].vtxMax.z)
 			{
-				g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.z = vtx.z;
+				g_TexItem[nCntNum].vtxMax.z = vtx.z;
 			}
 
 			// 頂点フォーマットのサイズ分ポインタを進める
 			pVtxBuff += sizeFVF;
 
 			// サイズを代入
-			g_TexItem[nCntNum].Size.x = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.x - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.x;
-			g_TexItem[nCntNum].Size.y = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.y - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.y;
-			g_TexItem[nCntNum].Size.z = g_TexItem[nCntNum].ItemTex[nCntNum].vtxMax.z - g_TexItem[nCntNum].ItemTex[nCntNum].vtxMin.z;
+			g_TexItem[nCntNum].Size.x = g_TexItem[nCntNum].vtxMax.x - g_TexItem[nCntNum].vtxMin.x;
+			g_TexItem[nCntNum].Size.y = g_TexItem[nCntNum].vtxMax.y - g_TexItem[nCntNum].vtxMin.y;
+			g_TexItem[nCntNum].Size.z = g_TexItem[nCntNum].vtxMax.z - g_TexItem[nCntNum].vtxMin.z;
 		}
 
 		// 頂点バッファのアンロック
-		g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->UnlockVertexBuffer();
+		g_TexItem[nCntNum].g_pMeshModel->UnlockVertexBuffer();
 	}
 
 	Player* pPlayer = GetPlayer();
@@ -192,25 +194,25 @@ void UninitItem(void)
 		// テクスチャの破棄
 		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
 		{
-			if (g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureModel[nCntTex] != NULL)
+			if (g_TexItem[nCntNum].g_apTextureModel[nCntTex] != NULL)
 			{
-				g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureModel[nCntTex]->Release();
-				g_TexItem[nCntNum].ItemTex[nCntNum].g_apTextureModel[nCntTex] = NULL;
+				g_TexItem[nCntNum].g_apTextureModel[nCntTex]->Release();
+				g_TexItem[nCntNum].g_apTextureModel[nCntTex] = NULL;
 			}
 		}
 
 		// メッシュの破棄
-		if (g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel != NULL)
+		if (g_TexItem[nCntNum].g_pMeshModel != NULL)
 		{
-			g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel->Release();
-			g_TexItem[nCntNum].ItemTex[nCntNum].g_pMeshModel = NULL;
+			g_TexItem[nCntNum].g_pMeshModel->Release();
+			g_TexItem[nCntNum].g_pMeshModel = NULL;
 		}
 
 		// マテリアルの破棄
-		if (g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel != NULL)
+		if (g_TexItem[nCntNum].g_pBuffMatModel != NULL)
 		{
-			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel->Release();
-			g_TexItem[nCntNum].ItemTex[nCntNum].g_pBuffMatModel = NULL;
+			g_TexItem[nCntNum].g_pBuffMatModel->Release();
+			g_TexItem[nCntNum].g_pBuffMatModel = NULL;
 		}
 	}
 
@@ -299,7 +301,7 @@ void UpdateItem(void)
 		if (bFIrstCraftItem == false && g_Item[nCntItem].nType == ITEMTYPE_KATANA)
 		{
 			// アイテム変更
-			Itemchange(g_Item[nCntItem].nType);
+			Itemchange(nCntItem,g_Item[nCntItem].nType);
 
 			// モーションの変更
 			MotionChange(MOTION_KATANA, 0);
@@ -309,7 +311,7 @@ void UpdateItem(void)
 			g_Item[nCntItem].state = ITEMSTATE_HOLD;
 
 			// ステータス変更
-			StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
+			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCntItem].Size.y, 0.0f), 100);
 
 			// 最初に切り替えた
 			bFIrstCraftItem = true;
@@ -429,12 +431,45 @@ void UpdateItem(void)
 			SetExplosion(g_Item[nCntItem].pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), 60, 30.0f, 30.0f, EXPLOSION_HIT);
 		}
 
-		CollisionItem(nCntItem,// アイテムのインデックスを渡す
-			20.0f,  // アイテムの半径
-			20.0f); // プレイヤーの半径
+		if (g_Item[nCntItem].state == ITEMSTATE_NORMAL || g_Item[nCntItem].state == ITEMSTATE_RELEASE)
+		{
+			// アイテムを拾える範囲に入った
+			if (CollisionItem(nCntItem, 20.0f, 20.0f) == true)
+			{
+				// 拾えるアイテムの更新
+				PickUpItemAnimation(nCntItem);
+			}
+			else
+			{
+				g_Item[nCntItem].nEasingCnt = 0;
+				g_Item[nCntItem].pos.y += SetSmoothAprroach(0.0f, g_Item[nCntItem].pos.y, 0.1f);
+				g_Item[nCntItem].rot.x += SetSmoothAprroach(0.0f, g_Item[nCntItem].rot.x, 0.1f);;
+				g_Item[nCntItem].rot.y += SetSmoothAprroach(0.0f, g_Item[nCntItem].rot.y, 0.1f);;
+			}
+		}
+
+		//// 角度の正規化X
+		//if (g_Item[nCntItem].rot.x > D3DX_PI)
+		//{
+		//	g_Item[nCntItem].rot.x += -D3DX_PI * 2.0f;
+		//}
+		//else if (g_Item[nCntItem].rot.x < D3DX_PI)
+		//{
+		//	g_Item[nCntItem].rot.x += D3DX_PI * 2.0f;
+		//}
+
+		//// 角度の正規化Y
+		//if (g_Item[nCntItem].rot.y > D3DX_PI)
+		//{
+		//	g_Item[nCntItem].rot.y += -D3DX_PI * 2.0f;
+		//}
+		//else if (g_Item[nCntItem].rot.y < D3DX_PI)
+		//{
+		//	g_Item[nCntItem].rot.y += D3DX_PI * 2.0f;
+		//}
 
 		// プレイヤーがクラフト状態だったら
-		if (pPlayer->bCraft)
+		if (pPlayer->bCraft == true)
 		{
 			CraftItem();
 		}
@@ -527,8 +562,7 @@ void SetItem(D3DXVECTOR3 pos, int nType)
 		if (!g_Item[nCntItem].bUse)
 		{// 未使用状態なら
 
-			g_Item[nCntItem] = g_TexItem[nType]; // 必要な情報を代入
-
+			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType]; // 必要な情報を代入
 			g_Item[nCntItem].pos = pos;			 // 座標
 			g_Item[nCntItem].nType = nType;		 // 種類
 			g_Item[nCntItem].bUse = true;		 // 使用判定
@@ -587,20 +621,25 @@ bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius)
 //===========================================================================================================
 //アイテムのテクスチャ取得
 //===========================================================================================================
-void Itemchange(int nType)
+void Itemchange(int nIdx, int nType)
 {
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
-	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].ItemTex[nType].g_dwNumMatModel; // アイテムのマテリアルの情報を代入
-	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].ItemTex[nType].g_pBuffMatModel; // アイテムのバッファの情報を代入
-	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].ItemTex[nType].g_pMeshModel;       // アイテムのメッシュの情報を代入
+	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].g_dwNumMatModel; // アイテムのマテリアルの情報を代入
+	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].g_pBuffMatModel; // アイテムのバッファの情報を代入
+	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].g_pMeshModel;       // アイテムのメッシュの情報を代入
 	pPlayer->nElement = g_TexItem[nType].nElement; // アイテムの属性情報を代入
-	
-	//if (g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
-	//{
-	//	g_Item[pPlayer->ItemIdx].nType = nType;
-	//}
+
+	// 同じインデックスじゃないかつ耐久値が減っていないなら
+	if (nIdx != pPlayer->ItemIdx && g_Item[nIdx].durability == g_Item[nIdx].Maxdurability)
+	{
+		// 耐久力を代入
+		g_Item[nIdx].durability = g_TexItem[nType].durability;
+		g_Item[nIdx].Maxdurability = g_TexItem[nType].Maxdurability;
+	}
+	// 大きさを代入
+	g_Item[nIdx].Size = g_TexItem[nType].Size;
 }
 //=========================================================================================================
 //アイテムの取得
@@ -656,10 +695,10 @@ void LoadItemModel(void)
 					D3DXMESH_SYSTEMMEM,
 					pDevice,
 					NULL,
-					&g_TexItem[nType].ItemTex[nType].g_pBuffMatModel,
+					&g_TexItem[nType].g_pBuffMatModel,
 					NULL,
-					&g_TexItem[nType].ItemTex[nType].g_dwNumMatModel,
-					&g_TexItem[nType].ItemTex[nType].g_pMeshModel);
+					&g_TexItem[nType].g_dwNumMatModel,
+					&g_TexItem[nType].g_pMeshModel);
 
 				nType++;
 			}
@@ -813,7 +852,7 @@ void ElementChange(int nTypeItem)
 //==============================================================================================================
 // アイテムの取得
 //==============================================================================================================
-Item* GetItemOrigin(void)
+TEXTURE_INFO* GetItemOrigin(void)
 {
 	return &g_TexItem[0];
 }
@@ -951,7 +990,7 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 	PlaySound(SOUND_LABEL_CRAFT);
 
 	// 持っているアイテムを変更
-	Itemchange(MixItem);
+	Itemchange(nCntItem,MixItem);
 
 	// クラフトに使ったアイテムを消す
 	g_Item[nCntItem].bUse = false;
@@ -963,7 +1002,7 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 	int nType = g_Item[pPlayer->ItemIdx].nType;
 
 	// アイテムの見た目を変える
-	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem].ItemTex[MixItem];
+	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem];
 	g_Item[pPlayer->ItemIdx].durability = g_TexItem[MixItem].durability;
 	g_Item[pPlayer->ItemIdx].Maxdurability = g_TexItem[MixItem].durability;
 
@@ -1050,4 +1089,37 @@ void LoadDurability(void)
 
 	// ファイルを閉じる
 	fclose(pFile);
+}
+//==============================================================================================================
+// アイテムを拾える時の演出
+//==============================================================================================================
+void PickUpItemAnimation(int nCntItem)
+{
+	// インクリメント
+	g_Item[nCntItem].nEasingCnt++;
+	
+	float time = SetEase(g_Item[nCntItem].nEasingCnt,120);
+
+	// 目的の値に近づける
+	g_Item[nCntItem].pos.y += SetSmoothAprroach(20.0f, g_Item[nCntItem].pos.y, EaseInOutCubic(time));
+
+	// 目的の値に近づける
+	g_Item[nCntItem].rot.x += SetSmoothAprroach(D3DX_PI * 0.15f, g_Item[nCntItem].rot.x, EaseInOutCubic(time));
+
+	// 目的の値に近づける
+	g_Item[nCntItem].rot.y += 0.01f;
+
+	// 長尾ここに頼む
+	//SetParticle();
+	if (g_Item[nCntItem].nImpactCount >= 120)
+	{
+		SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x,0.0f, g_Item[nCntItem].pos.z),COLOR_GOLD,20,10.0f,7.0f,1.0f,60,IMPACTTYPE_NORMAL,0);
+		SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x, 0.0f, g_Item[nCntItem].pos.z), COLOR_GOLD, 20, 1.0f, 0.0f, 1.0f, 60, IMPACTTYPE_NORMAL, 0);
+		g_Item[nCntItem].nImpactCount = 0;
+	}
+	else
+	{
+		// 120になるまでインクリメント
+		g_Item[nCntItem].nImpactCount++;
+	}
 }

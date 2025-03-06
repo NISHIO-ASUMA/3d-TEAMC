@@ -30,6 +30,7 @@ typedef enum
 	UITYPE_ICONFRAME,
 	UITYPE_ICONFRAMESTOCK,
 	UITYPE_KEY,
+	UITYPE_DESTORY,
 	UITYPE_MAX
 }UITYPE;
 
@@ -49,6 +50,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\icon_frame.png",
 	"data\\TEXTURE\\icon_framestoku.png",
 	"data\\TEXTURE\\tutoirial005.png",
+	"data\\TEXTURE\\ui_weponbreak.png",
 };
 
 //**************************************************************************************************************
@@ -63,6 +65,7 @@ typedef struct
 	int nType;			// 種類
 	float fWidth, fHeight; // 幅、高さ
 	bool bUse;			// 使用状態
+	D3DXCOLOR col;      // 色
 }Gameui;
 
 //**************************************************************************************************************

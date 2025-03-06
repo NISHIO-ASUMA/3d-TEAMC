@@ -71,7 +71,7 @@ void InitEdit(void)
 
 	// アイテムとブロックのテクスチャ情報を取得
 	BLOCK* BlockOrigin = GetBlockOrigin();
-	Item* ItemOrigin = GetItemOrigin();
+	TEXTURE_INFO* ItemOrigin = GetItemOrigin();
 
 	// ブロックの種類
 	for (int nCntBlock = 0; nCntBlock < BLOCKTYPE_MAX; nCntBlock++)
@@ -84,7 +84,7 @@ void InitEdit(void)
 	for (int nCntItem = 0; nCntItem < ITEMTYPE_MAX; nCntItem++)
 	{
 		// テクスチャ情報を取得
-		g_BlockTexInfo[1].pModel[nCntItem] = ItemOrigin[nCntItem].ItemTex[nCntItem];
+		g_BlockTexInfo[1].pModel[nCntItem] = ItemOrigin[nCntItem];
 	}
 
 	// ブロック最大数を代入

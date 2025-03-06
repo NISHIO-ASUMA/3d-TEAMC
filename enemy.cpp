@@ -33,6 +33,7 @@
 #include "wall.h"
 #include "camera.h"
 #include "meshimpact.h"
+#include "math.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -1444,7 +1445,7 @@ void UpdateDroneEnemy(int nCntEnemy)
 		if (g_Enemy[nCntEnemy].nCountAction >= 120)
 		{
 			// 左から場所、ベクトル、方向、寿命、威力、大きさ、速度
-			SetBullet(g_Enemy[nCntEnemy].pos, dest, D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
+			SetBullet(g_Enemy[nCntEnemy].pos, dest, D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 50.0f, 3.0f, true);
 
 			// こっちはショットガン化する為の処理
 			/*float fRand[3];

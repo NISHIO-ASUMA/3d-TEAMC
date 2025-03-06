@@ -567,9 +567,6 @@ void Draw(void)
 		// デバッグ表示はこの下に書いてください
 		if (GetEditState()==false && GetEdit2d()==false && pCamera->bEditMode==false && g_mode == MODE_GAME)
 		{
-			// 現在の画面の表示
-			DrawMode();
-
 			// プレイヤーの情報
 			DrawPlayerInfo();
 

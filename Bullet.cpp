@@ -16,6 +16,7 @@
 #include "Player.h"
 #include "block.h"
 #include "explosion.h"
+#include "math.h"
 
 //***************************
 // グローバル変数達
@@ -46,7 +47,7 @@ void InitBullet(void)
 		g_Bullet[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// ベクトル
 		g_Bullet[nCnt].bUse = false;// 使用の有無
 		g_Bullet[nCnt].nLife = 0;// 寿命
-		g_Bullet[nCnt].fSize = 2.0f;// 大きさ
+		g_Bullet[nCnt].fSize = 3.0f;// 大きさ
 		g_Bullet[nCnt].fSpeed = 1.0f;// 速度
 		g_Bullet[nCnt].bEnemy = true;// 敵の弾かどうか
 
@@ -61,10 +62,10 @@ void InitBullet(void)
 		pVtx[2].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 		pVtx[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[0].col = COLOR_WHITE;
+		pVtx[1].col = COLOR_WHITE;
+		pVtx[2].col = COLOR_WHITE;
+		pVtx[3].col = COLOR_WHITE;
 
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
@@ -100,8 +101,6 @@ void UpdateBullet(void)
 {
 	Player* pPlayer = GetPlayer();
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	VERTEX_3D* pVtx;
-	g_pVtxBuffBullet->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 全て見回し
 	for (int nCnt = 0; nCnt < MAX_BULLET; nCnt++)
@@ -148,9 +147,9 @@ void UpdateBullet(void)
 				g_Bullet[nCnt].bUse = false;
 				KillShadow(g_Bullet[nCnt].nIdxShadow);
 			}
+
 		}
 	}
-	g_pVtxBuffBullet->Unlock();
 }
 
 //==========================
@@ -162,15 +161,17 @@ void DrawBullet(void)
 	//デバイス取得
 	pDevice = GetDevice();
 	D3DXMATRIX mtxRot, mtxTrans;
+
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
 	for (int nCnt = 0; nCnt < MAX_BULLET; nCnt++)
 	{
 		if (g_Bullet[nCnt].bUse == true)
 		{
+			D3DXMatrixIdentity(&g_Bullet[nCnt].mtxWorld);
+
 			D3DXMATRIX mtxView;
 			pDevice->GetTransform(D3DTS_VIEW, &mtxView);
-
-			D3DXMatrixIdentity(&g_Bullet[nCnt].mtxWorld);
 
 			g_Bullet[nCnt].mtxWorld._11 = mtxView._11;
 			g_Bullet[nCnt].mtxWorld._12 = mtxView._21;
@@ -182,16 +183,16 @@ void DrawBullet(void)
 			g_Bullet[nCnt].mtxWorld._32 = mtxView._23;
 			g_Bullet[nCnt].mtxWorld._33 = mtxView._33;
 
-			g_Bullet[nCnt].mtxWorld._41 = g_Bullet[nCnt].pos.x;
-			g_Bullet[nCnt].mtxWorld._42 = g_Bullet[nCnt].pos.y;
-			g_Bullet[nCnt].mtxWorld._43 = g_Bullet[nCnt].pos.z;
-			mtxView._14 = g_Bullet[nCnt].mtxWorld._41;
-			mtxView._24 = g_Bullet[nCnt].mtxWorld._42;
-			mtxView._34 = g_Bullet[nCnt].mtxWorld._43;
+			//g_Bullet[nCnt].mtxWorld._41 = g_Bullet[nCnt].pos.x;
+			//g_Bullet[nCnt].mtxWorld._42 = g_Bullet[nCnt].pos.y;
+			//g_Bullet[nCnt].mtxWorld._43 = g_Bullet[nCnt].pos.z;
+			//mtxView._14 = g_Bullet[nCnt].mtxWorld._41;
+			//mtxView._24 = g_Bullet[nCnt].mtxWorld._42;
+			//mtxView._34 = g_Bullet[nCnt].mtxWorld._43;
 
-			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Bullet[nCnt].rot.y, g_Bullet[nCnt].rot.x, g_Bullet[nCnt].rot.z);
-			D3DXMatrixMultiply(&g_Bullet[nCnt].mtxWorld, &g_Bullet[nCnt].mtxWorld, &mtxRot);
-			D3DXMatrixTranslation(&mtxTrans, g_Bullet[nCnt].rot.x, g_Bullet[nCnt].rot.y, g_Bullet[nCnt].rot.z);
+			//D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Bullet[nCnt].rot.y, g_Bullet[nCnt].rot.x, g_Bullet[nCnt].rot.z);
+			//D3DXMatrixMultiply(&g_Bullet[nCnt].mtxWorld, &g_Bullet[nCnt].mtxWorld, &mtxRot);
+			D3DXMatrixTranslation(&mtxTrans, g_Bullet[nCnt].pos.x, g_Bullet[nCnt].pos.y, g_Bullet[nCnt].pos.z);
 			D3DXMatrixMultiply(&g_Bullet[nCnt].mtxWorld, &g_Bullet[nCnt].mtxWorld, &mtxTrans);
 			pDevice->SetTransform(D3DTS_WORLD, &g_Bullet[nCnt].mtxWorld);
 			pDevice->SetStreamSource(0, g_pVtxBuffBullet, 0, sizeof(VERTEX_3D));
@@ -214,8 +215,7 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 dir, int nLife, in
 {
 	int nCntBullet;
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	VERTEX_3D* pVtx;
-	g_pVtxBuffBullet->Lock(0, 0, (void**)&pVtx, 0);
+
 	// 全て見回して
 	for (nCntBullet = 0; nCntBullet < MAX_BULLET; nCntBullet++)
 	{
@@ -233,11 +233,10 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 dir, int nLife, in
 			g_Bullet[nCntBullet].bEnemy = Enemy;
 			g_Bullet[nCntBullet].move = move * fSpeed;
 			g_Bullet[nCntBullet].bUse = true;
+
 			break;
 		}
-		pVtx += 4;
 	}
-	g_pVtxBuffBullet->Unlock();
 }
 
 //==========================

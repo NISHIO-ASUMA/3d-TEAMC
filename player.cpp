@@ -39,6 +39,7 @@
 #include "billboard.h"
 #include "mark.h"
 #include "game.h"
+#include "math.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -76,7 +77,7 @@ void DestroyWepon(void);																		 // アイテムの破壊処理
 void DropItem(void);                                                                             // アイテムのドロップ処理
 void HandleSpecialAttack(void);																	 // スペシャルアタックの処理
 void UpdateItemStock(void);																		 // プレイヤーのアイテムのストック処理
-void SetPlayerWepon(int nType);																	 // アイテムを変更する処理
+void SetPlayerWepon(int nType,float SwordLength);																	 // アイテムを変更する処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -1239,36 +1240,6 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 	}
 }
 //===============================================================================================================
-// 円の判定
-//===============================================================================================================
-bool sphererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float radius2) // 円の当たり判定
-{
-	bool bRange = false;
-
-	D3DXVECTOR3 DiffPos; // 計算用
-
-	// 距離XYZを求める
-	DiffPos.x = pPos1->x - pPos2->x;
-	DiffPos.y = pPos1->y - pPos2->y;
-	DiffPos.z = pPos1->z - pPos2->z;
-
-	// 距離を求める
-	float fDistance = (DiffPos.x * DiffPos.x) + (DiffPos.y * DiffPos.y) + (DiffPos.z * DiffPos.z);
-
-	// 半径を求める
-	float fRadius = radius1 + radius2;
-
-	// 半径を求める
-	fRadius = fRadius * fRadius;
-
-	if (fDistance <= fRadius)
-	{
-		bRange = true;
-	}
-	return bRange;
-}
-
-//===============================================================================================================
 // プレイヤーとアイテムの判定
 //===============================================================================================================
 bool CollisionItem(int nIdx, float Itemrange, float plrange)
@@ -1335,7 +1306,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
 
-			Itemchange(pItem[nIdx].nType); // アイテムを拾う
+			Itemchange(nIdx,pItem[nIdx].nType); // アイテムを拾う
 			
 			pItem[nIdx].bUse = false;      // 消す
 
@@ -1356,7 +1327,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			pItem[nIdx].state = ITEMSTATE_HOLD;
 
 			// アイテムを変更する
-			SetPlayerWepon(pItem[nIdx].nType);
+			SetPlayerWepon(pItem[nIdx].nType,pItem[nIdx].Size.y);
 
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 		}
@@ -2527,6 +2498,8 @@ void DestroyWepon(void)
 	// 武器を持っているかつプレイヤーの持っているアイテムが壊れた
 	if (g_player.Motion.nNumModel == MAX_MODEL && g_player.Itembreak[g_player.ItemIdx] == true)
 	{
+		SetGameUI(D3DXVECTOR3(625.0f, 500.0f, 0.0f), UITYPE_DESTORY, 150.0f, 50.0f, 120);
+
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
 
@@ -2717,10 +2690,11 @@ void HandleSpecialAttack(void)
 		PlaySound(SPUND_LABEL_WEPONBREAK);
 
 		g_player.SwordOffpos.y = 65.0f;		// 判定の長さを戻す
-		MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
-		g_player.Motion.nNumModel = 15;		// 武器を消す
-		g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
-		StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //能力値を戻す
+		g_player.Itembreak[g_player.ItemIdx] = true;
+		//MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
+		//g_player.Motion.nNumModel = 15;		// 武器を消す
+		//g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
+		//StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //能力値を戻す
 		g_player.AttackSp = false;
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
 	}
@@ -2786,159 +2760,155 @@ void UpdateItemStock(void)
 //===============================================================================================================
 // プレイヤーのアイテムを変更する処理
 //===============================================================================================================
-void SetPlayerWepon(int nType)
+void SetPlayerWepon(int nType,float SwordLength)
 {
+	Item* pItem = GetItem();
+
 	switch (nType)
 	{
 	case ITEMTYPE_BAT:
 		MotionChange(MOTION_DBHAND, 0); // アイテムにあったモーションタイプを入れる(素手の場合は引数2に1を入れる)
-		StatusChange(4.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 70);
+		StatusChange(4.0f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 70);
 		break;
 	case ITEMTYPE_GOLF:
 		MotionChange(MOTION_KATANA, 0);
-		StatusChange(4.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 60);
+		StatusChange(4.0f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
 		break;
 	case ITEMTYPE_HUNMER:
 		MotionChange(MOTION_BIGWEPON, 0);
-		StatusChange(3.3f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
+		StatusChange(3.3f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
 
 		break;
 	case ITEMTYPE_STONE:
 		MotionChange(MOTION_BIGWEPON, 1);
-		StatusChange(4.0f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
+		StatusChange(4.0f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
 
 		break;
 	case ITEMTYPE_WOOD:
 		MotionChange(MOTION_DBHAND, 0);
-		StatusChange(3.6f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 60);
+		StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
 
 		break;
 	case ITEMTYPE_STONEBAT:
 		MotionChange(MOTION_DBHAND, 0);
-		StatusChange(3.6f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+		StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 90);
 
 		break;
 	case ITEMTYPE_LIGHT:
 		MotionChange(MOTION_ONE_HAND, 0);
-		StatusChange(4.2f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
+		StatusChange(4.2f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
 
 		break;
 	case ITEMTYPE_LIGHTWOOD:
 		MotionChange(MOTION_KATANA, 0);
-		StatusChange(3.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
+		StatusChange(3.9f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
 		break;
 	case ITEMTYPE_HARISEN:
 		MotionChange(MOTION_ONE_HAND, 0);
-		StatusChange(3.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
+		StatusChange(3.9f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
 		break;
 	case ITEMTYPE_ICEBLOCK:
 		MotionChange(MOTION_DBHAND, 1);
-		StatusChange(3.9f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
+		StatusChange(3.9f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
 
 		break;
 	case ITEMTYPE_ICEBLOCKSOWRD:
 		MotionChange(MOTION_KATANA, 0);
-		StatusChange(3.4f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
+		StatusChange(3.4f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
 
 		break;
 	case ITEMTYPE_IRON:
 		MotionChange(MOTION_ONE_HAND, 0);
-		StatusChange(3.6f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 90);
+		StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 90);
 
 		break;
 	case ITEMTYPE_IRONBAT:
 		MotionChange(MOTION_DBHAND, 0);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 90);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 90);
 
 		break;
 	case ITEMTYPE_SURFBOARD:
 		MotionChange(MOTION_DBHAND, 0);
-		StatusChange(3.3f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
+		StatusChange(3.3f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
 
 		break;
 	case ITEMTYPE_TORCH:
 		MotionChange(MOTION_ONE_HAND, 0);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
 
 		break;
 	case ITEMTYPE_TORCHSWORD:
 		MotionChange(MOTION_KATANA, 0);
-		StatusChange(3.4f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 100);
+		StatusChange(3.4f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
 
 		break;
 	case ITEMTYPE_BAR:
 		MotionChange(MOTION_DBHAND, 0);
-		StatusChange(3.6f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 90);
+		StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 90);
 
 		break;
 	case ITEMTYPE_HEADSTATUE:
 		MotionChange(MOTION_BIGWEPON, 1);
-		StatusChange(3.6f, D3DXVECTOR3(0.0f, 65.0f, 0.0f), 50);
+		StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
 
 		break;
 	case ITEMTYPE_HEADSTATUTORSO:
 		MotionChange(MOTION_BIGWEPON, 0);
-		StatusChange(3.4f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
+		StatusChange(3.4f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
 
 		break;
 	case ITEMTYPE_MEGAPHONE:
 		MotionChange(MOTION_ONE_HAND, 0);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 60);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
 
 		break;
 	case ITEMTYPE_RUBBERCUP:
 		MotionChange(MOTION_PIERCING, 0);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
 
 		break;
 	case ITEMTYPE_TELEPHONEPOLE:
 		MotionChange(MOTION_DBHAND, 0);
-		StatusChange(3.0f, D3DXVECTOR3(0.0f, 150.0f, 0.0f), 120);
+		StatusChange(3.0f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 120);
 
 		break;
 	case ITEMTYPE_TORSO:
 		MotionChange(MOTION_DBHAND, 0);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 70);
-
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 70);
 		break;
 	case ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE:
 		MotionChange(MOTION_DBHAND, 1);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
 
 		break;
 	case ITEMTYPE_BONESPEAR:
 		MotionChange(MOTION_PIERCING, 0);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 100);
-
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
 		break;
 	case ITEMTYPE_FISH:
 		MotionChange(MOTION_ONE_HAND, 0);
-		StatusChange(3.3f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 80);
-
+		StatusChange(3.3f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
 		break;
 	case ITEMTYPE_HEX:
 		MotionChange(MOTION_DBHAND, 1);
-		StatusChange(1.8f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 300);
-
+		StatusChange(1.8f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 300);
 		break;
 	case ITEMTYPE_HEXMANDOLIN:
 		MotionChange(MOTION_ONE_HAND, 0);
-		StatusChange(2.8f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 100);
-
+		StatusChange(2.8f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
 		break;
 	case ITEMTYPE_SURFBOARDFISH:
 		MotionChange(MOTION_BIGWEPON, 0);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 85.0f, 0.0f), 80);
-
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
 		break;
 	case ITEMTYPE_TUTORIAL:
 		MotionChange(MOTION_DBHAND, 1);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 50);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
 
 		break;
 	case ITEMTYPE_KATANA:
 		MotionChange(MOTION_KATANA, 0);
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 100);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
 		break;
 	default:
 		break;

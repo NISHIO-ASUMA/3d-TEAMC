@@ -104,6 +104,11 @@ typedef struct
 	DWORD g_dwNumMatModel;          // マテリアルの数
 	LPDIRECT3DTEXTURE9 g_apTextureModel[MAX_TEX]; // テクスチャ
 	D3DXVECTOR3 vtxMin, vtxMax;		// 最小値,最大値
+	D3DXVECTOR3 Size;
+	int nElement;
+	int nType;
+	int durability;
+	int Maxdurability; // 最大の耐久力
 }TEXTURE_INFO;
 
 //***************************

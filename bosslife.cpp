@@ -200,6 +200,7 @@ void DrawBossLife()
 		// í—Ş‚ğ•Û‘¶
 		int nType = g_BossLife[nCnt].nType;
 
+		// •`‰æ‡‚Ìİ’è
 		switch (nType)
 		{
 		case BOSSTEX_DELAY:

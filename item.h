@@ -130,6 +130,8 @@ typedef struct
 	int nCounterState; // 状態カウンター
 	int Maxdurability; // 最大の耐久力
 	int nIdxBillboardCount;
+	int nEasingCnt;  // イージングのカウント
+	int nImpactCount; // インパクトのカウント
 }Item;
 
 //***************************
@@ -141,9 +143,9 @@ void UpdateItem(void);
 void DrawItem(void);
 void SetItem(D3DXVECTOR3 pos, int nType);
 bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius);
-void Itemchange(int nType);
+void Itemchange(int nIdx,int nType);
 Item* GetItem(void);
 void ElementChange(int nCountItem);
-Item* GetItemOrigin(void);
+TEXTURE_INFO* GetItemOrigin(void);
 
 #endif

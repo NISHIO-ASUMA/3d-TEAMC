@@ -20,6 +20,7 @@
 //プロトタイプ宣言
 //**************************************************************************************************************
 void UIFlash(int nType);	// 点滅処理
+void UpdateDestroyUI(int nCnt); // 武器が壊れた時のUI
 float fcolorA;
 
 //**************************************************************************************************************
@@ -74,6 +75,7 @@ void InitGameUI(void)
 		g_GameUI[nCnt].nUseTime = 0;
 		g_GameUI[nCnt].bUse = false;
 		g_GameUI[nCnt].nType = UITYPE_TITLE;
+		g_GameUI[nCnt].col = COLOR_WHITE;
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -143,6 +145,7 @@ void UpdateGameUI(void)
 
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
+	static bool bUp = false;
 
 	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
@@ -165,9 +168,7 @@ void UpdateGameUI(void)
 
 			break;
 		case UITYPE_FIVER:
-		{
-			static bool bUp = false;
-
+		
 			// 上昇しているとき
 			if (bUp)
 			{
@@ -192,9 +193,8 @@ void UpdateGameUI(void)
 			{
 				g_GameUI[nCnt].bUse = false;
 			}
-
+		
 			break;
-		}
 		case UITYPE_SYUTYUSEN:
 			g_nCounterAnim++;
 
@@ -281,7 +281,19 @@ void UpdateGameUI(void)
 				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
 			}
 			break;
-		default:
+		case UITYPE_DESTORY:
+			UpdateDestroyUI(nCnt);
+			//頂点カラーの設定
+			pVtx[0].col = D3DXCOLOR(g_GameUI[nCnt].col);
+			pVtx[1].col = D3DXCOLOR(g_GameUI[nCnt].col);
+			pVtx[2].col = D3DXCOLOR(g_GameUI[nCnt].col);
+			pVtx[3].col = D3DXCOLOR(g_GameUI[nCnt].col);
+
+			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
 			break;
 		}
 
@@ -318,14 +330,17 @@ void DrawGameUI(void)
 
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
 	{
-		if (g_GameUI[nCnt].bUse)
+		if (g_GameUI[nCnt].bUse == false)
 		{
-			// テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureGameUI[g_GameUI[nCnt].nType]);
-
-			// ポリゴンの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
+			continue;
 		}
+
+		int nType = g_GameUI[nCnt].nType;
+		// テクスチャの設定
+		pDevice->SetTexture(0, g_pTextureGameUI[nType]);
+
+		// ポリゴンの描画
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
 	}
 }
 //==============================================================================================================
@@ -374,7 +389,7 @@ void FlashGameUI(int nSelect)
 
 	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
-
+	
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
 	{
 		if (g_GameUI[nCnt].nType == UITYPE_TITLE2)
@@ -462,4 +477,19 @@ void UIFlash(int nType)
 
 	//頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
+}
+//==============================================================================================================
+// UIの点滅処理
+//==============================================================================================================
+void UpdateDestroyUI(int nCnt)
+{
+	g_GameUI[nCnt].nUseTime--;
+
+	g_GameUI[nCnt].pos.x += (float)(rand() % 21 - 10.0f);
+	g_GameUI[nCnt].pos.y += (float)(rand() % 21 - 10.0f);
+
+	if (g_GameUI[nCnt].nUseTime <= 0)
+	{
+		g_GameUI[nCnt].bUse = false;
+	}
 }
