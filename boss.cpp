@@ -39,6 +39,7 @@
 #define SHADOWSIZEOFFSET (40.0f) // 影の大きさのオフセット
 #define SHADOW_A (1.0f)          // 影の濃さの基準
 #define NUM_MTX (8)
+#define BOSS_LIFE (10000)        // ボスの最大HP
 
 //**************************************************************************************************************
 // プロトタイプ宣言
@@ -74,17 +75,18 @@ void InitBoss(void)
 	// デバイスのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
+	// 全部のボス分回す
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
 		g_Boss[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 座標
 		g_Boss[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 移動量
 		g_Boss[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // 角度
-		g_Boss[nCnt].bUse = false;						 // 未使用状態
-		g_Boss[nCnt].nLife = 20;							 // 体力
-		g_Boss[nCnt].state = BOSSSTATE_NORMAL;			 // 状態
-		g_Boss[nCnt].Speed = 5.0f;						 // 足の速さ
-		g_Boss[nCnt].AttackState = BOSSATTACK_NO;			 // 攻撃状態
-		g_Boss[nCnt].nHitStopCount = 0;                  // ヒットストップのカウント
+		g_Boss[nCnt].bUse = false;						   // 未使用状態
+		g_Boss[nCnt].nLife = BOSS_LIFE;					   // 体力
+		g_Boss[nCnt].state = BOSSSTATE_NORMAL;			   // 状態
+		g_Boss[nCnt].Speed = 5.0f;						   // 足の速さ
+		g_Boss[nCnt].AttackState = BOSSATTACK_NO;		   // 攻撃状態
+		g_Boss[nCnt].nHitStopCount = 0;                    // ヒットストップのカウント
 
 		for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
 		{
@@ -92,6 +94,7 @@ void InitBoss(void)
 			g_Boss[nCnt].nStateCount[nCnt2] = 0;
 		}
 	}
+
 	LoadBoss(); // ボスのロード
 }
 //===============================================================================================================
@@ -214,7 +217,7 @@ void UpdateBoss(void)
 		SetMiniMapPotision(g_Boss[nCnt].nIdxMap, &g_Boss[nCnt].pos);
 
 		// HPゲージの位置設定処理
-		SetPositionLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].pos);
+		SetPositionLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].nLifeFrame,g_Boss[nCnt].pos);
 
 		// 敵の攻撃の設定
 		switch (g_Boss[nCnt].Motion.motionType)
@@ -330,8 +333,6 @@ void UpdateBoss(void)
 //===============================================================================================================
 void DrawBoss(void)
 {
-	DrawBossLife();
-
 	// デバイスのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice(); 
 
@@ -440,8 +441,9 @@ void DrawBoss(void)
 			// マテリアルの設定
 			pDevice->SetMaterial(&matDef);
 		}
-		
 	}
+
+	DrawBossLife();
 }
 //===============================================================================================================
 // ボスの設定処理
@@ -452,13 +454,13 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 	{
 		if (g_Boss[nCnt].bUse == false)
 		{// 未使用なら
-			g_Boss[nCnt].Motion = g_LoadBoss;
-			g_Boss[nCnt].pos = pos;	  // 位置を代入
-			//g_Boss.Speed = speed; // 足の速さ
-			g_Boss[nCnt].nLife = nLife; // 体力を挿入
-			g_Boss[nCnt].state = BOSSSTATE_NORMAL;			 // 状態
-			g_Boss[nCnt].AttackState = BOSSATTACK_NO;			 // 攻撃状態
-			
+			g_Boss[nCnt].Motion = g_LoadBoss;         // 情報を代入
+			g_Boss[nCnt].pos = pos;					  // 位置を代入
+			//g_Boss.Speed = speed;					  // 足の速さ
+			g_Boss[nCnt].nLife = nLife;				  // 体力を挿入
+			g_Boss[nCnt].state = BOSSSTATE_NORMAL;	  // 状態
+			g_Boss[nCnt].AttackState = BOSSATTACK_NO; // 攻撃状態
+			g_Boss[nCnt].nMaxLife = nLife;            // 最大のHP
 			// 状態異常関係
 			for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
 			{
@@ -482,7 +484,8 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].nIdxMap = SetMiniMap(BossPos, MINIMAPTEX_BOSS);
 
 			// ボスのライフゲージの設定
-			g_Boss[nCnt].nLifeBarIdx = SetBossLife(pos,0);
+			g_Boss[nCnt].nLifeBarIdx = SetBossLife(pos,BOSSTEX_LIFE);
+			g_Boss[nCnt].nLifeFrame = SetBossLife(pos, BOSSTEX_FRAME);
 			break;
 		}
 	}
@@ -525,6 +528,9 @@ void HitBoss(int nCntBoss,int nDamage)
 
 	if (g_Boss[nCntBoss].nLife <= 0)
 	{
+		// ゲージを消す
+		DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame);
+
 		// 死んだらパーティクルを出す(雑魚より派手に)
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z),
 			g_Boss[nCntBoss].rot,

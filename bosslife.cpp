@@ -14,7 +14,15 @@
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define NUM_BOSSLIFE (20) // 最大数
+#define NUM_BOSSLIFE (100) // 最大数
+#define MAX_LENGTH (100.0f) // 横幅
+#define TOPPOS (105.0f) // いちばん上の位置
+#define UNDERPOS (90.0f) // いちばん上の位置
+
+//**************************************************************************************************************
+// プロトタイプ宣言
+//**************************************************************************************************************
+void UpdateLifegage(Boss* pBoss); // ボスの体力バーの更新
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -123,7 +131,7 @@ void UninitBossLife()
 //==============================================================================================================
 void UpdateBossLife(Boss* pBoss)
 {
-	
+	UpdateLifegage(pBoss);
 }
 //==============================================================================================================
 // ボスの体力バーの描画処理
@@ -172,7 +180,7 @@ void DrawBossLife()
 		g_BossLife[nCnt].mtxWorld._33 = mtxView._33;
 
 		// 位置を反映
-		D3DXMatrixTranslation(&mtxTrans, g_BossLife[nCnt].pos.x, g_BossLife[nCnt].pos.y, g_BossLife[nCnt].pos.z);
+		D3DXMatrixTranslation(&mtxTrans,  g_BossLife[nCnt].pos.x - (MAX_LENGTH * 0.5f), g_BossLife[nCnt].pos.y, g_BossLife[nCnt].pos.z);
 		D3DXMatrixMultiply(&g_BossLife[nCnt].mtxWorld, &g_BossLife[nCnt].mtxWorld, &mtxTrans);
 
 		// ワールドマトリックスの設定
@@ -203,33 +211,83 @@ void DrawBossLife()
 
 	// ライトを有効にする
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-
 }
 //==============================================================================================================
 // ボスの体力バーの設定処理
 //==============================================================================================================
 int SetBossLife(D3DXVECTOR3 pos, int nType)
 {
+	// 頂点情報のポインタ
+	VERTEX_3D* pVtx = NULL;
+
+	// 頂点バッファをロックし,頂点情報へのポインタを取得
+	g_pVtxBuffBossLife->Lock(0, 0, (void**)&pVtx, 0);
+
 	int nCnt = 0;
 
 	for (nCnt = 0; nCnt < NUM_BOSSLIFE; nCnt++)
 	{
-		if (!g_BossLife[nCnt].bUse)
+		if (g_BossLife[nCnt].bUse == false)
 		{// 未使用なら
 			g_BossLife[nCnt].pos = pos; // 座標
 			g_BossLife[nCnt].nType = nType; // 種類
 			g_BossLife[nCnt].bUse = true; // 使用判定
 
+			// 頂点座標の設定
+			pVtx[0].pos = D3DXVECTOR3(0.0f, TOPPOS, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(MAX_LENGTH, TOPPOS, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(0.0f, UNDERPOS, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(MAX_LENGTH, UNDERPOS, 0.0f);
+
 			break;
 		}
+		pVtx += 4;
 	}
+
+	// アンロック
+	g_pVtxBuffBossLife->Unlock();
 
 	return nCnt;
 }
 //==============================================================================================================
 // ボスの体力バーの位置設定
 //==============================================================================================================
-void SetPositionLifeBar(int nIdx, D3DXVECTOR3 pos)
+void SetPositionLifeBar(int nIdxBar, int nIdxFrame, D3DXVECTOR3 pos)
 {
-	g_BossLife[nIdx].pos = pos;
+	g_BossLife[nIdxBar].pos = pos;
+	g_BossLife[nIdxFrame].pos = pos;
+}
+//==============================================================================================================
+// ボスの体力バーの消去
+//==============================================================================================================
+void DeleateLifeBar(int nIdxBar, int nIdxFrame)
+{
+	g_BossLife[nIdxBar].bUse = false;
+	g_BossLife[nIdxFrame].bUse = false;
+}
+//==============================================================================================================
+// ボスの体力バーの更新
+//==============================================================================================================
+void UpdateLifegage(Boss* pBoss)
+{
+	// 頂点情報のポインタ
+	VERTEX_3D* pVtx = NULL;
+
+	// 頂点バッファをロックし,頂点情報へのポインタを取得
+	g_pVtxBuffBossLife->Lock(0, 0, (void**)&pVtx, 0);
+
+	float fRateLife = (float)pBoss->nLife / (float)pBoss->nMaxLife;
+
+	g_BossLife[pBoss->nLifeBarIdx].fLength = fRateLife * MAX_LENGTH;
+
+	pVtx += 4 * pBoss->nLifeBarIdx;
+
+	// 頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(0.0f, TOPPOS, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(g_BossLife[pBoss->nLifeBarIdx].fLength, TOPPOS, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(0.0f, UNDERPOS, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(g_BossLife[pBoss->nLifeBarIdx].fLength, UNDERPOS, 0.0f);
+
+	// アンロック
+	g_pVtxBuffBossLife->Unlock();
 }

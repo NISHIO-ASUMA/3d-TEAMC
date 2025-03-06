@@ -211,6 +211,7 @@ void InitGame(void)
 	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 6, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
 	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 
 #endif // _DEBUG
 
@@ -650,9 +651,6 @@ void DrawGame(void)
 	//敵の描画処理
 	DrawEnemy();
 
-	// ボスの描画処理
-	DrawBoss();
-
 	// 矢印の描画処理
 	DrawMark();
 
@@ -710,6 +708,9 @@ void DrawGame(void)
 
 	//壁の描画処理
 	DrawWall();
+
+	// ボスの描画処理
+	DrawBoss();
 
 	// 軌跡の描画処理
 	DrawMeshSword();
