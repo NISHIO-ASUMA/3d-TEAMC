@@ -290,6 +290,13 @@ void UpdateEnemy(void)
 		{
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_ATTACK;
 			SetMotion(&g_Enemy[nCntEnemy].Motion,MOTIONTYPE_ACTION, true, 20); // モーションをニュートラルにする
+			SetParticle(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + g_Enemy[nCntEnemy].Size.y / 1.5f, g_Enemy[nCntEnemy].pos.z),
+				D3DXVECTOR3(1.57f, g_Enemy[nCntEnemy].rot.y, 1.57f),
+				D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+				2.0f, 3, 12, 10, 2.0f, 20.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		}
 
 		// 攻撃状態だったら動きを止める
