@@ -68,7 +68,7 @@ typedef struct
 	int nAttackPattern; //ボスの攻撃パターン設定
 	float Speed; // 足の速さ
 	int nHitStopCount; // ヒットストップのカウント
-	int nLifeBarIdx,nLifeFrame,nLifeDamageBarIdx; // HPゲージのインデックス
+	int nLifeBarIdx,nLifeFrame,nLifeDelayIdx; // HPゲージのインデックス
 	int nStateCharge[5]; //状態異常蓄積値
 	int nStateCount[5]; //状態異常の残時間(0 = 出血、1 = 炎、2 = 氷、3 = 雷、4 = 水)
 	int nMaxLife;

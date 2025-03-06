@@ -20,6 +20,7 @@ typedef enum
 {
 	BOSSTEX_LIFE = 0,
 	BOSSTEX_FRAME,
+	BOSSTEX_DELAY,
 	BOSSTEX_MAX
 }BOSSTEX;
 
@@ -30,6 +31,7 @@ static const char* BOSSLIFE_TEX[BOSSTEX_MAX] =
 {
 	"data\\TEXTURE\\boss_life.png",
 	"data\\TEXTURE\\boss_lifeframe.png",
+	"data\\TEXTURE\\boss_lifedamage.png",
 };
 
 //***************************
@@ -41,7 +43,8 @@ typedef struct
 	D3DXVECTOR3 pos; //　座標
 	int nType; // 種類
 	bool bUse; // 使用判定
-	float fLength; // 体力バーの長さ
+	float fLength,DelayLength; // 体力バーの長さ
+	int nEasingCnt;   // イージングのカウント
 }BossLife;
 
 //***************************
@@ -52,6 +55,6 @@ void UninitBossLife(); // 体力バーの終了処理
 void UpdateBossLife(Boss* pBoss); // 体力バーの更新処理
 void DrawBossLife(); // 体力バーの描画処理
 int SetBossLife(D3DXVECTOR3 pos, int nType); // 体力バーの設定処理
-void SetPositionLifeBar(int nIdxBar,int nIdxFrame,D3DXVECTOR3 pos); // ボスのHPゲージの更新処理
-void DeleateLifeBar(int nIdxBar,int nIdxFrame); // ボスの体力ゲージの消去
+void SetPositionLifeBar(int nIdxBar,int nIdxFrame,int nIdxDelay,D3DXVECTOR3 pos); // ボスのHPゲージの更新処理
+void DeleateLifeBar(int nIdxBar,int nIdxFrame,int nIdxDelay); // ボスの体力ゲージの消去
 #endif

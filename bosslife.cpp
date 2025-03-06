@@ -10,6 +10,7 @@
 //**************************************************************************************************************
 #include "boss.h"
 #include "bosslife.h"
+#include "easing.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -23,6 +24,8 @@
 // プロトタイプ宣言
 //**************************************************************************************************************
 void UpdateLifegage(Boss* pBoss); // ボスの体力バーの更新
+void SetLifeBarLength(int nIdxLifebar, float fRate, float fLength); // ボスの体力バーの長さの設定処理
+void SetDelayBarLength(int nIdxDelayBar, float fRate, float fLength,int state); // ボスのディレイバーの長さの設定処理
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -53,6 +56,8 @@ void InitBossLife()
 		g_BossLife[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 座標
 		g_BossLife[nCnt].nType = 0;			                // 種類
 		g_BossLife[nCnt].fLength = 0.0f;                    // バーの長さ
+		g_BossLife[nCnt].DelayLength = MAX_LENGTH;                // バーの長さ
+		g_BossLife[nCnt].nEasingCnt = 0;                // イージングのカウント
 		g_BossLife[nCnt].bUse = false;						// 使用判定
 	}
 
@@ -192,16 +197,33 @@ void DrawBossLife()
 		// 頂点フォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		if (g_BossLife[nCnt].bUse == true)
-		{
-			// 種類を保存
-			int nType = g_BossLife[nCnt].nType;
+		// 種類を保存
+		int nType = g_BossLife[nCnt].nType;
 
+		switch (nType)
+		{
+		case BOSSTEX_DELAY:
 			//テクスチャの設定
 			pDevice->SetTexture(0, g_pTextureBossLife[nType]);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+			break;
+		case BOSSTEX_LIFE:
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureBossLife[nType]);
+
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+			break;
+		case BOSSTEX_FRAME:
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureBossLife[nType]);
+
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+			break;
+
 		}
 	}
 
@@ -252,18 +274,20 @@ int SetBossLife(D3DXVECTOR3 pos, int nType)
 //==============================================================================================================
 // ボスの体力バーの位置設定
 //==============================================================================================================
-void SetPositionLifeBar(int nIdxBar, int nIdxFrame, D3DXVECTOR3 pos)
+void SetPositionLifeBar(int nIdxBar, int nIdxFrame, int nIdxDelay,D3DXVECTOR3 pos)
 {
 	g_BossLife[nIdxBar].pos = pos;
 	g_BossLife[nIdxFrame].pos = pos;
+	g_BossLife[nIdxDelay].pos = pos;
 }
 //==============================================================================================================
 // ボスの体力バーの消去
 //==============================================================================================================
-void DeleateLifeBar(int nIdxBar, int nIdxFrame)
+void DeleateLifeBar(int nIdxBar, int nIdxFrame, int nIdxDelay)
 {
 	g_BossLife[nIdxBar].bUse = false;
 	g_BossLife[nIdxFrame].bUse = false;
+	g_BossLife[nIdxDelay].bUse = false;
 }
 //==============================================================================================================
 // ボスの体力バーの更新
@@ -273,20 +297,86 @@ void UpdateLifegage(Boss* pBoss)
 	// 頂点情報のポインタ
 	VERTEX_3D* pVtx = NULL;
 
-	// 頂点バッファをロックし,頂点情報へのポインタを取得
-	g_pVtxBuffBossLife->Lock(0, 0, (void**)&pVtx, 0);
-
 	float fRateLife = (float)pBoss->nLife / (float)pBoss->nMaxLife;
 
 	g_BossLife[pBoss->nLifeBarIdx].fLength = fRateLife * MAX_LENGTH;
 
-	pVtx += 4 * pBoss->nLifeBarIdx;
+	//// 体力バーのゲージの設定処理
+	//SetLifeBarLength(pBoss->nLifeBarIdx, fRateLife, g_BossLife[pBoss->nLifeBarIdx].fLength);
+
+	//// ディレイバーの設定処理
+	//SetDelayBarLength(pBoss->nLifeDelayIdx, fRateLife, g_BossLife[pBoss->nLifeBarIdx].fLength,pBoss->state);
+}
+//==============================================================================================================
+// ボスの体力バーの長さの設定処理
+//==============================================================================================================
+void SetLifeBarLength(int nIdxLifebar,float fRate,float fLength)
+{
+	// 頂点情報のポインタ
+	VERTEX_3D* pVtx = NULL;
+
+	// 頂点バッファをロックし,頂点情報へのポインタを取得
+	g_pVtxBuffBossLife->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nIdxLifebar;
 
 	// 頂点座標の設定
 	pVtx[0].pos = D3DXVECTOR3(0.0f, TOPPOS, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(g_BossLife[pBoss->nLifeBarIdx].fLength, TOPPOS, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(fLength, TOPPOS, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(0.0f, UNDERPOS, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(g_BossLife[pBoss->nLifeBarIdx].fLength, UNDERPOS, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(fLength, UNDERPOS, 0.0f);
+
+	// テクスチャ座標の設定
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(fRate, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(fRate, 1.0f);
+
+	// アンロック
+	g_pVtxBuffBossLife->Unlock();
+
+}
+//==============================================================================================================
+// ボスのディレイバーの長さの設定処理
+//==============================================================================================================
+void SetDelayBarLength(int nIdxDelayBar,float fRate,float fLength,int state)
+{
+	// 頂点情報のポインタ
+	VERTEX_3D* pVtx = NULL;
+
+	// 頂点バッファをロックし,頂点情報へのポインタを取得
+	g_pVtxBuffBossLife->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nIdxDelayBar;
+
+	if (state == BOSSSTATE_DAMAGE)
+	{
+		g_BossLife[nIdxDelayBar].nEasingCnt = 0;
+	}
+	else
+	{
+		g_BossLife[nIdxDelayBar].nEasingCnt++;
+	}
+
+	float Time = SetEase(g_BossLife[nIdxDelayBar].nEasingCnt,180);
+
+	g_BossLife[nIdxDelayBar].DelayLength += (fLength - g_BossLife[nIdxDelayBar].DelayLength) * EaseOutCubic(Time);
+
+	// 頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(0.0f, TOPPOS, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(g_BossLife[nIdxDelayBar].DelayLength, TOPPOS, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(0.0f, UNDERPOS, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(g_BossLife[nIdxDelayBar].DelayLength, UNDERPOS, 0.0f);
+
+	static float fDelayRate = fRate;
+
+	fDelayRate += (fRate - fDelayRate) * EaseOutCubic(Time);
+
+	// テクスチャ座標の設定
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(fDelayRate, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(fDelayRate, 1.0f);
 
 	// アンロック
 	g_pVtxBuffBossLife->Unlock();
