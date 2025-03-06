@@ -52,9 +52,20 @@
 //プロトタイプ宣言
 //**************************************************************************************************************
 void LoadEnemy(int nType);										  // 読み込み処理
+
+int LoadEnemyFilename(FILE* pFile, int nNumModel, char* aString, int nType);							 // 敵のモデルのロード処理
+void LoadEnemyCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);					 // 敵のパーツの設定処理
+void LoadEnemyMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);						 // 敵のモーションのロード処理
+void LoadEnemyKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);							 // 敵のモーションのキーの読み込み処理
+
+
 //bool AgentRange(float plrange, float playerrange, int nCntEnemy); // ホーミングの範囲にいるかどうか
 void AgentEnemy(int nCntEnemy);									  // 敵のホーミング処理
 void CollisionToEnemy(int nCntEnemy);							  // 敵と敵の当たり判定
+void UpdateHomingEnemy(int nCntEnemy);                            // 敵のホーミング処理
+void UpdateRunAwayEnemy(int nCntEnemy);                           // 逃げる敵の更新処理
+void UpdateAttackState(int nCntEnemy);                            // 敵の攻撃の更新処理
+void UpdateDroneEnemy(int nCntEnemy);                                  // 飛んでる敵の更新処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -64,14 +75,18 @@ MOTION g_LoadEnemy[ENEMYTYPE_MAX]; // 読み込み
 int g_nNumEnemy;				  // 敵の総数カウント
 bool g_bSound;
 int g_nNumKill;
+int nCntMotionEnemy, nKeyEnemy;
 
 //===============================================================================================================
-//ブロックの初期化処理
+// 敵の初期化処理
 //===============================================================================================================
 void InitEnemy(void)
 {
 	// デバイスのポインタを取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	nCntMotionEnemy = 0;
+	nKeyEnemy = 0;
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
@@ -102,89 +117,6 @@ void InitEnemy(void)
 	{
 		// 敵の読み込み
 		LoadEnemy(nCntEnemyType);
-
-		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].nNumModel; nCntModel++)
-		{
-			D3DXMATERIAL* pMat; // マテリアルへのポインタ
-
-			// マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pBuffMat->GetBufferPointer();
-
-			for (int nCntMat = 0; nCntMat < (int)g_LoadEnemy[nCntEnemyType].aModel[nCntModel].dwNumMat; nCntMat++)
-			{
-				if (pMat[nCntMat].pTextureFilename != NULL)
-				{
-					// このファイル名を使用してテクスチャを読み込む
-					// テクスチャの読み込み
-					D3DXCreateTextureFromFile(pDevice,
-						pMat[nCntMat].pTextureFilename,
-						&g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pTexture[nCntMat]);
-				}
-			}
-		}
-	}
-
-	// 頂点座標の取得
-	int nNumVtx;	// 頂点数
-	DWORD sizeFVF;  // 頂点フォーマットのサイズ
-	BYTE* pVtxBuff; // 頂点バッファへのポインタ
-
-	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
-	{
-		for (int nCntModel = 0; nCntModel < g_LoadEnemy[nCntEnemyType].nNumModel; nCntModel++)
-		{
-			// 頂点数の取得
-			nNumVtx = g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->GetNumVertices();
-
-			// 頂点フォーマットのサイズ取得
-			sizeFVF = D3DXGetFVFVertexSize(g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->GetFVF());
-
-			// 頂点バッファのロック
-			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
-
-			for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
-			{
-				// 頂点座標の代入
-				D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
-
-				// 頂点座標を比較してブロックの最小値,最大値を取得
-				if (vtx.x < g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.x)
-				{
-					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.x = vtx.x;
-				}
-				else if (vtx.y < g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.y)
-				{
-					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.y = vtx.y;
-				}
-				else if (vtx.z < g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.z)
-				{
-					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.z = vtx.z;
-				}
-				else if (vtx.x > g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.x)
-				{
-					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.x = vtx.x;
-				}
-				else if (vtx.y > g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.y)
-				{
-					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.y = vtx.y;
-				}
-				else if (vtx.z > g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.z)
-				{
-					g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.z = vtx.z;
-				}
-
-				// 頂点フォーマットのサイズ分ポインタを進める
-				pVtxBuff += sizeFVF;
-
-			}
-			// 頂点バッファのアンロック
-			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].pMesh->UnlockVertexBuffer();
-
-			// サイズに代入
-			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].Size.x = g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.x - g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.x;
-			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].Size.y = g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.y - g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.y;
-			g_LoadEnemy[nCntEnemyType].aModel[nCntModel].Size.z = g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMax.z - g_LoadEnemy[nCntEnemyType].aModel[nCntModel].vtxMin.z;
-		}
 	}
 }
 //===============================================================================================================
@@ -336,6 +268,7 @@ void UpdateEnemy(void)
 		{
 			HitEnemy(nCntEnemy, (float)pPlayer->nDamage * 1.5f);
 		}
+
 		// 剣と敵の当たり判定
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);
 
@@ -343,64 +276,11 @@ void UpdateEnemy(void)
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
-		// ホーミング範囲に入っているかつ視界に入っている
-		if (((sphererange(&pPlayer->pos,&g_Enemy[nCntEnemy].pos,50.0f, 1800.0f) && CollisionView(&g_Enemy[nCntEnemy].pos,&g_Enemy[nCntEnemy].rot,200.0f,0.75f) == true) || (sphererange(&pPlayer->pos,&g_Enemy[nCntEnemy].pos,50.0f,500.0f) == true)) &&
-			g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
-		{
-			// ホーミング処理
-			AgentEnemy(nCntEnemy);
+		// ホーミングの更新処理
+		UpdateHomingEnemy(nCntEnemy);
 
-			// モーションを歩きモーションにする
-			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
-			
-			// 敵の角度を設定
-			g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos) + D3DX_PI;
-		}
-		else
-		{
-			// 攻撃モーションじゃない
-			if (g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
-			{
-				// モーションをニュートラルにする
-				g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL;
-			}
-		}
-
-		// 敵の種類がスコア高いやつなら
-		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SEVEN)
-		{
-			// 体力が最大値と同等、つまりノーダメなら何もしない
-			if (g_Enemy[nCntEnemy].nMaxLife == g_Enemy[nCntEnemy].nLife)
-			{
-
-			}
-			else // 少しでもダメージを受けてて
-			{
-				// プレイヤーの近くに居たら
-				if (sphererange(&g_Enemy[nCntEnemy].pos, &pPlayer->pos, 50.0f, 80.0f))
-				{
-					// 敵をプレイヤーに向かわせる
-					AgentEnemy(nCntEnemy);
-
-					// 敵の角度を設定
-					g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos);
-				}
-
-				// 虹の素
-				float fColor[3];
-				fColor[0] = ((float)(rand() % 100) / 100.0f);
-				fColor[1] = ((float)(rand() % 100) / 100.0f);
-				fColor[2] = ((float)(rand() % 100) / 100.0f);
-
-				// 高価そうなオーラを出す
-				SetParticle(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + 10, g_Enemy[nCntEnemy].pos.z),
-				D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), 
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(fColor[0], fColor[1], fColor[2], 1.0f),
-				2.0f, 1, 10, 5, 20.0f, 20.0f, true, D3DXVECTOR3(0.0f, 1.0f, 0.0f));
-			}
-		}
+		// 飛んでる敵の更新処理
+		UpdateDroneEnemy(nCntEnemy);
 
 		// 敵と敵の当たり判定
 		CollisionToEnemy(nCntEnemy);
@@ -418,33 +298,8 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		}
 
-		//// 線分と球の当たり判定
-		//if (CollisionLine(&pPlayer->pos, &g_Enemy[nCntEnemy].pos) == true)
-		//{
-		//	g_Enemy[nCntEnemy].state = ENEMYSTATE_DAMAGE;
-		//}
-
-		// プレイヤーのモデルの情報を代入
-		D3DXVECTOR3 PlayerModel(pPlayer->Motion.aModel[0].mtxWorld._41,
-			pPlayer->Motion.aModel[0].mtxWorld._42,
-			pPlayer->Motion.aModel[0].mtxWorld._43);
-
-		// 敵のモデルの情報を代入
-		D3DXVECTOR3 EnemyModel(g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._41,
-			g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._42,
-			g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._43);
-
-		// 攻撃範囲に入った
-		if (sphererange(&PlayerModel, &EnemyModel, 20.0f, 50.0f) &&
-			g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_ATTACK &&
-			pPlayer->state != PLAYERSTATE_DAMAGE && g_Enemy[nCntEnemy].Motion.nKey >= 4)
-		{
-			HitPlayer(50);
-		}
-
 		// モーションが最後まで行ったら攻撃状態をリセット
-		if (!g_Enemy[nCntEnemy].Motion.aMotionInfo[g_Enemy[nCntEnemy].Motion.motionType].bLoop &&
-			g_Enemy[nCntEnemy].Motion.nKey >= g_Enemy[nCntEnemy].Motion.aMotionInfo[g_Enemy[nCntEnemy].Motion.motionType].nNumkey - 1)
+		if (g_Enemy[nCntEnemy].Motion.bFinishMotion == true)
 		{
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
@@ -456,42 +311,8 @@ void UpdateEnemy(void)
 			UpdateMotion(&g_Enemy[nCntEnemy].Motion);
 		}
 
-		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
-		{
-			// 追尾処理
-			AgentEnemy(nCntEnemy);
-
-			// 範囲内だったら
-			if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 300.0f))
-			{
-				g_Enemy[nCntEnemy].nCountAction++;
-			}
-
-			float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
-			D3DXVECTOR3 dest = pPlayer->pos - g_Enemy[nCntEnemy].pos; // プレイヤーのベクトルを求める
-			D3DXVec3Normalize(&dest, &dest); // 正規化する
-
-			g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
-
-			// 弾を発射する処理
-			if (g_Enemy[nCntEnemy].nCountAction >= 120)
-			{
-				// 左から場所、ベクトル、方向、寿命、威力、大きさ、速度
-				SetBullet(g_Enemy[nCntEnemy].pos, dest, D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
-
-				// こっちはショットガン化する為の処理
-				/*float fRand[3];
-				for (int nCount = 0; nCount < 10; nCount++)
-				{
-					fRand[0] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
-					fRand[1] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
-					fRand[2] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
-					SetBullet(g_Enemy[nCntEnemy].pos, D3DXVECTOR3(dest.x + fRand[0], dest.y + fRand[1], dest.z + fRand[2]), D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
-				}*/
-				g_Enemy[nCntEnemy].nCountAction = 0;
-			}
-		}
-
+		// 敵の攻撃の更新処理
+		UpdateAttackState(nCntEnemy);
 
 		//敵の角度の正規化
 		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
@@ -966,10 +787,10 @@ void LoadEnemy(int nType)
 	int NumKey = 0;					// キー数
 	int nCnt = 0;					// モデルカウント用
 	int nNumParts = 0;				// パーツ数格納用
-	int nCntMotion = 0;				// モーションカウント用
 	int nCntKey = 0;				// キーカウント用
 	int nCntPosKey = 0;				// posカウント
 	int nCntRotkey = 0;				// rotカウント
+	int nScanData = 0;              // 戻り値代入用
 
 	// ファイルポインタを宣言
 	FILE* pFile;
@@ -1028,291 +849,59 @@ void LoadEnemy(int nType)
 		break;
 	}
 
+	char Skip[3] = {};
+	int nNumModel = 0;
+	int nLoadCnt = 0;
+
 	if (pFile != NULL)
 	{//　NULL じゃない
-		char aString[ENEMY_WORD];
+		char aStr[ENEMY_WORD];
 
 		while (1)
 		{
-			// 読み飛ばし
-			fscanf(pFile, "%s", &aString[0]);
+			// 文字列を読み込む
+			int nData = fscanf(pFile, "%s", &aStr[0]);
 
-			if (strcmp(&aString[0], "SCRIPT") == 0)
-			{// SCRIPTを読み取ったら
-				while (1)
-				{
-					// 読み飛ばし
-					fscanf(pFile, "%s", &aString[0]);
+			if (strcmp(&aStr[0], "#") == 0)
+			{//コメントが来たら
+				//処理を読み飛ばす
+				continue;
+			}
 
-					if (strcmp(&aString[0], "NUM_MODEL") == 0)
-					{// NUM_MODELを読み取ったら
-						fscanf(pFile, "%s", &aString[0]);
+			// NUM_MODELを読み取ったら
+			if (strcmp(&aStr[0], "NUM_MODEL") == 0)
+			{
+				nScanData = fscanf(pFile, "%s", &Skip[0]);						// [=]を読み飛ばす
+				nScanData = fscanf(pFile, "%d", &nNumModel);					// モデルの最大数を代入
+				g_LoadEnemy[nType].nNumModel = nNumModel;	// モデルの最大数を代入
+			}
 
-						if (strcmp(&aString[0], "=") == 0)
-						{// 値を代入
-							fscanf(pFile, "%d", &g_LoadEnemy[nType].nNumModel);
-						}
-					}
+			// モデルの読み込みがまだ終わっていなかったら
+			if (nLoadCnt < nNumModel)
+			{
+				// モデルの読み込んだ数を返す
+				nLoadCnt = LoadEnemyFilename(pFile, nNumModel, &aStr[0], nType);
+			}
 
-					else if (strcmp(&aString[0], "MODEL_FILENAME") == 0)
-					{
-						// MODEL_FILENAMEを読み取ったら
-						fscanf(pFile, "%s", &aString[0]);
+			// CHARACTERSETを読み取ったら
+			if (strcmp(&aStr[0], "CHARACTERSET") == 0)
+			{
+				// パーツの設定処理
+				LoadEnemyCharacterSet(pFile, &aStr[0], nNumParts, nType);
+			}
 
-						if (strcmp(&aString[0], "=") == 0)
-						{// 代入
-							// 文字列を読み込む
-							fscanf(pFile, "%s", &aString[0]);
+			// MOTIONSETを読み取ったら
+			if (strcmp(&aStr[0], "MOTIONSET") == 0)
+			{
+				// モーションの設定処理
+				LoadEnemyMotionSet(pFile, &aStr[0], nNumModel, nType);
+			}
 
-							const char* MODEL_FILE = {};	// モデルファイル名格納用の変数
-
-							// 読み込んだ文字列を保存する
-							MODEL_FILE = aString;
-
-							//Xファイルの読み込み
-							D3DXLoadMeshFromX(MODEL_FILE,
-								D3DXMESH_SYSTEMMEM,
-								pDevice,
-								NULL,
-								&g_LoadEnemy[nType].aModel[nCnt].pBuffMat,
-								NULL,
-								&g_LoadEnemy[nType].aModel[nCnt].dwNumMat,
-								&g_LoadEnemy[nType].aModel[nCnt].pMesh);
-
-							nCnt++; // nCntをインクリメント
-						}
-					}
-					else if (strcmp(&aString[0], "CHARACTERSET") == 0)
-					{
-						while (1)
-						{
-							// 文字列を読み飛ばす
-							fscanf(pFile, "%s", &aString[0]);
-
-							if (strcmp(&aString[0], "NUM_PARTS") == 0)
-							{// NUM_PARTSを読み取ったら
-
-								fscanf(pFile, "%s", &aString[0]);
-
-								if (strcmp(&aString[0], "=") == 0)
-								{// 値を代入
-									fscanf(pFile, "%d", &nNumParts);
-								}
-							}
-
-							else if (strcmp(&aString[0], "PARTSSET") == 0)
-							{
-								while (1)
-								{
-									// 文字列を読み飛ばす
-									fscanf(pFile, "%s", &aString[0]);
-
-									if (strcmp(&aString[0], "INDEX") == 0)
-									{// INDEXを読み取ったら
-
-										fscanf(pFile, "%s", &aString[0]);
-
-										if (strcmp(&aString[0], "=") == 0)
-										{// 代入
-											fscanf(pFile, "%d", &nIdx);
-										}
-									}
-
-									if (strcmp(&aString[0], "PARENT") == 0)
-									{// PARENTを読み取ったら
-
-										fscanf(pFile, "%s", &aString[0]);
-
-										if (strcmp(&aString[0], "=") == 0)
-										{// 代入
-											// ペアネント
-											fscanf(pFile, "%d", &g_LoadEnemy[nType].aModel[nIdx].nIdxModelParent);
-										}
-									}
-
-
-									if (strcmp(&aString[0], "POS") == 0)
-									{// INDEXを読み取ったら
-
-										fscanf(pFile, "%s", &aString[0]);
-
-										if (strcmp(&aString[0], "=") == 0)
-										{// 座標を代入
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.x);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.y);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.z);
-										}
-									}
-
-									if (strcmp(&aString[0], "ROT") == 0)
-									{// INDEXを読み取ったら
-
-										fscanf(pFile, "%s", &aString[0]);
-
-										if (strcmp(&aString[0], "=") == 0)
-										{// 角度を代入
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.x);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.y);
-											fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.z);
-										}
-									}
-
-									if (strcmp(&aString[0], "END_PARTSSET") == 0)
-									{// END_PARTSSETを読み取ったら
-										// whileを抜ける
-										break;
-									}
-
-								}// while文末
-							}
-							else if (strcmp(&aString[0], "END_CHARACTERSET") == 0)
-							{
-								break;
-							}
-						}
-					}
-					else if (strcmp(&aString[0], "MOTIONSET") == 0)
-					{// MOTIONSETを読み取ったら
-
-
-						while (1)
-						{
-							// 文字を読み飛ばす
-							fscanf(pFile, "%s", &aString[0]);
-
-							if (strcmp(aString, "LOOP") == 0)
-							{// LOOP を読み取ったら
-								// 文字を読み飛ばす
-								fscanf(pFile, "%s", &aString[0]);
-
-								if (strcmp(&aString[0], "=") == 0)
-								{// = を読み取ったら
-									// 値を代入
-									fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].bLoop);
-								}
-							}
-
-							else if (strcmp(aString, "NUM_KEY") == 0)
-							{// NUM_KEYを読み取ったら
-								// 文字を読み飛ばす
-								fscanf(pFile, "%s", &aString[0]);
-
-								if (strcmp(&aString[0], "=") == 0)
-								{// = を読み取ったら
-									// 値を代入
-									fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].nNumkey);
-								}
-
-								while (nCntKey < g_LoadEnemy[nType].aMotionInfo[nCntMotion].nNumkey)
-								{
-									// 文字を読み飛ばす
-									fscanf(pFile, "%s", &aString[0]);
-
-									if (strcmp(aString, "KEYSET") == 0)
-									{// KEYSETを読み取ったら
-
-
-										while (1)
-										{
-											// 文字を読み飛ばす
-											fscanf(pFile, "%s", &aString[0]);
-
-
-											if (strcmp(&aString[0], "FRAME") == 0)
-											{// FRAMEを読み取ったら
-												// 文字を読み飛ばす
-												fscanf(pFile, "%s", &aString[0]);
-
-												if (strcmp(&aString[0], "=") == 0)
-												{// 値を代入
-													fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].nFrame);
-													break;
-												}
-											}
-
-										}
-
-										while (1)
-										{
-											// 文字を読み飛ばす
-											fscanf(pFile, "%s", &aString[0]);
-											if (strcmp(&aString[0], "KEY") == 0)
-											{// KEYを読みとったら
-												while (1)
-												{
-													// 文字を読み飛ばす
-													fscanf(pFile, "%s", &aString[0]);
-
-													if (strcmp(&aString[0], "POS") == 0)
-													{// POSを読み取ったら
-														// 文字を読み飛ばす
-														fscanf(pFile, "%s", &aString[0]);
-
-														if (strcmp(&aString[0], "=") == 0)
-														{// 値を代入
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosX);
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosY);
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosZ);
-															nCntPosKey++;		// インクリメント
-														}
-													}
-
-													else if (strcmp(&aString[0], "ROT") == 0)
-													{// ROTを読み取ったら
-														// 文字を読み飛ばす
-														fscanf(pFile, "%s", &aString[0]);
-
-														if (strcmp(&aString[0], "=") == 0)
-														{// 値を代入
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotX);
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotY);
-															fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotZ);
-															nCntRotkey++;		// インクリメント
-														}
-													}
-
-													else if (strcmp(&aString[0], "END_KEY") == 0)
-													{// END_KEYを読み取ったら
-														break;
-													}
-												}
-											}
-											else if (strcmp(&aString[0], "END_KEYSET") == 0)
-											{// END_KEYSETを読み取ったら
-												nCntRotkey = 0;
-												nCntPosKey = 0;
-												nCntKey++;			// インクリメント
-												break;
-											}
-
-
-										}
-
-									}
-
-								}
-							}
-
-							if (strcmp(&aString[0], "END_MOTIONSET") == 0)
-							{// END_MOTIONSETを読み取ったら
-								nCntMotion++;		// モーションの更新
-								nCntKey = 0;		// 0から始める
-								break;
-							}
-						}
-					}
-
-					else if (strcmp(&aString[0], "END_SCRIPT") == 0)
-					{
-						break;
-					}
-					else
-					{
-						continue;
-					}
-				}// while文末
-
-				break;
+			// END_SCRIPTを読み取ったら
+			if (nData == EOF)
+			{
+				nCntMotionEnemy = 0; // モーションのカウントをリセットする
+				break;          // While文を抜ける
 			}
 		}// while文末
 	}
@@ -1328,6 +917,303 @@ void LoadEnemy(int nType)
 	// ファイルを閉じる
 	fclose(pFile);
 
+}
+//===============================================================================================================
+// 敵のファイルネームのロード処理
+//==============================================================================================================
+int LoadEnemyFilename(FILE* pFile, int nNumModel, char* aString, int nType)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	D3DXMATERIAL* pMat;//マテリアルへのポインタ
+
+	//頂点座標の取得
+	int nNumVtx;	//頂点数
+	DWORD sizeFVF;	//頂点フォーマットのサイズ
+	BYTE* pVtxBuff;	//頂点バッファへのポインタ
+
+	char Skip[3] = {}; // [=]読み飛ばしよう変数
+
+	int nCntLoadModel = 0; // モデルのロードのカウンター
+	int nScanData = 0;              // 戻り値代入用
+
+	// カウントがモデル数より下だったら
+	while (nCntLoadModel < nNumModel)
+	{
+		// 文字を読み取る
+		nScanData = fscanf(pFile, "%s", aString);
+
+		// MODEL_FILENAMEを読み取ったら
+		if (strcmp(aString, "MODEL_FILENAME") == 0)
+		{
+			nScanData = fscanf(pFile, "%s", &Skip[0]); // [=]を読み飛ばす
+			nScanData = fscanf(pFile, "%s", aString);  // ファイル名を読み取る
+
+			const char* FILE_NAME = {};    // ファイル名代入用変数
+
+			FILE_NAME = aString;           // ファイル名を代入
+
+			//Xファイルの読み込み
+			D3DXLoadMeshFromX(FILE_NAME,
+				D3DXMESH_SYSTEMMEM,
+				pDevice,
+				NULL,
+				&g_LoadEnemy[nType].aModel[nCntLoadModel].pBuffMat,
+				NULL,
+				&g_LoadEnemy[nType].aModel[nCntLoadModel].dwNumMat,
+				&g_LoadEnemy[nType].aModel[nCntLoadModel].pMesh);
+
+			//マテリアルのデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_LoadEnemy[nType].aModel[nCntLoadModel].pBuffMat->GetBufferPointer();
+
+			for (int nCntMat = 0; nCntMat < (int)g_LoadEnemy[nType].aModel[nCntLoadModel].dwNumMat; nCntMat++)
+			{
+				if (pMat[nCntMat].pTextureFilename != NULL)
+				{
+					//このファイル名を使用してテクスチャを読み込む
+						//テクスチャの読み込み
+					D3DXCreateTextureFromFile(pDevice,
+						pMat[nCntMat].pTextureFilename,
+						&g_LoadEnemy[nType].aModel[nCntLoadModel].pTexture[nCntMat]);
+				}
+			}
+
+			//頂点数の取得
+			nNumVtx = g_LoadEnemy[nType].aModel[nCntLoadModel].pMesh->GetNumVertices();
+
+			//頂点フォーマットのサイズ取得
+			sizeFVF = D3DXGetFVFVertexSize(g_LoadEnemy[nType].aModel[nCntLoadModel].pMesh->GetFVF());
+
+			//頂点バッファのロック
+			g_LoadEnemy[nType].aModel[nCntLoadModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+
+			for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
+			{
+				//頂点座標の代入
+				D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
+
+				//頂点座標を比較してブロックの最小値,最大値を取得
+				if (vtx.x < g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.x)
+				{
+					g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.x = vtx.x;
+				}
+				else if (vtx.y < g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.y)
+				{
+					g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.y = vtx.y;
+				}
+				else if (vtx.z < g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.z)
+				{
+					g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.z = vtx.z;
+				}
+
+				else if (vtx.x > g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.x)
+				{
+					g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.x = vtx.x;
+				}
+
+				else if (vtx.y > g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.y)
+				{
+					g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.y = vtx.y;
+				}
+
+				else if (vtx.z > g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.z)
+				{
+					g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.z = vtx.z;
+				}
+
+				//頂点フォーマットのサイズ分ポインタを進める
+				pVtxBuff += sizeFVF;
+			}
+
+			////サイズを代入
+			//g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
+			//g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
+			//g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
+
+			//各モデルごとのサイズを代入
+			g_LoadEnemy[nType].aModel[nCntLoadModel].Size.x = g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.x - g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.x;
+			g_LoadEnemy[nType].aModel[nCntLoadModel].Size.y = g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.y - g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.y;
+			g_LoadEnemy[nType].aModel[nCntLoadModel].Size.z = g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMax.z - g_LoadEnemy[nType].aModel[nCntLoadModel].vtxMin.z;
+
+			//頂点バッファのアンロック
+			g_LoadEnemy[nType].aModel[nCntLoadModel].pMesh->UnlockVertexBuffer();
+
+			nCntLoadModel++; // モデルのカウントを増やす
+		}
+	}
+	return nCntLoadModel; // モデルのカウントを返す
+}
+//===============================================================================================================
+// 敵のキャラクター設定処理
+//==============================================================================================================
+void LoadEnemyCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType)
+{
+	int nIdx = 0; // インデックス格納変数
+	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nScanData = 0;          // 戻り値代入用
+
+	// END_CHARACTERSETを読み取ってなかったら
+	while (strcmp(aString, "END_CHARACTERSET") != 0)
+	{
+		// 文字を読み取る
+		nScanData = fscanf(pFile, "%s", aString);
+
+		// INDEXを読み取ったら
+		if (strcmp(aString, "INDEX") == 0)
+		{
+			nScanData = fscanf(pFile, "%s", &Skip[0]); // [=]読み飛ばす
+			nScanData = fscanf(pFile, "%d", &nIdx);    // インデックスを代入
+		}
+		// PARENTを読み取ったら
+		else if (strcmp(aString, "PARENT") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// 親のインデックスを保存
+			nScanData = fscanf(pFile, "%d", &g_LoadEnemy[nType].aModel[nIdx].nIdxModelParent);
+		}
+		// POSを読み取ったら
+		else if (strcmp(aString, "POS") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// モデルのオフセットを代入
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.x);
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.y);
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offpos.z);
+		}
+		// ROTを読み取ったら
+		else if (strcmp(aString, "ROT") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// モデルのオフセットを代入
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.x);
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.y);
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aModel[nIdx].offrot.z);
+		}
+	}
+}
+//===============================================================================================================
+// 敵のモーションのロード処理
+//==============================================================================================================
+void LoadEnemyMotionSet(FILE* pFile, char* aString, int nNumModel, int nType)
+{
+	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nScanData = 0;          // 戻り値代入用
+
+	while (1)
+	{
+		// 文字を読み取る
+		fscanf(pFile, "%s", aString);
+
+		if (strcmp(aString, "#") == 0 || strcmp(aString, "<<") == 0)
+		{// コメントが来たら
+			// コメントを読み飛ばす
+			continue;
+		}
+
+		// LOOPを読み通ったら
+		if (strcmp(aString, "LOOP") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// ループするかしないか
+			nScanData = fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotionEnemy].bLoop);
+		}
+		// NUM_KEYを読み通ったら
+		else if (strcmp(aString, "NUM_KEY") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// キーの最大数を代入
+			nScanData = fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotionEnemy].nNumkey);
+		}
+		// KEYSETを読み通ったら
+		if (strcmp(aString, "KEYSET") == 0)
+		{
+			// キーの設定処理
+			LoadEnemyKeySet(pFile, aString, nType, nCntMotionEnemy);
+		}
+		// END_MOTIONSETを読み通ったら
+		if (strcmp(aString, "END_MOTIONSET") == 0)
+		{
+			nCntMotionEnemy++; // モーションのカウントをリセット
+			nKeyEnemy = 0;     // キーをリセット
+			break;
+		}
+	}
+
+}
+//===============================================================================================================
+// 敵のモーションのキー処理
+//==============================================================================================================
+void LoadEnemyKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
+{
+	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nCntPos = 0;   // 位置のカウント
+	int nCntRot = 0;   // 角度のカウント
+	int nScanData = 0;          // 戻り値代入用
+
+	while (1)
+	{
+		// 文字を読み取る
+		nScanData = fscanf(pFile, "%s", aString);
+
+		if (strcmp(aString, "#") == 0)
+		{// コメントが来たら
+			// コメントを読み飛ばす
+			continue;
+		}
+
+		// FRAMEを読み通ったら
+		if (strcmp(aString, "FRAME") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// フレームを読み込む
+			nScanData = fscanf(pFile, "%d", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nKeyEnemy].nFrame);
+		}
+
+		// POSを読み通ったら
+		if (strcmp(aString, "POS") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// 位置を読み込む
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nKeyEnemy].aKey[nCntPos].fPosX);
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nKeyEnemy].aKey[nCntPos].fPosY);
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nKeyEnemy].aKey[nCntPos].fPosZ);
+			nCntPos++;
+		}
+		// ROTを読み通ったら
+		else if (strcmp(aString, "ROT") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// 角度を読み込む
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nKeyEnemy].aKey[nCntRot].fRotX);
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nKeyEnemy].aKey[nCntRot].fRotY);
+			nScanData = fscanf(pFile, "%f", &g_LoadEnemy[nType].aMotionInfo[nCntMotion].aKeyInfo[nKeyEnemy].aKey[nCntRot].fRotZ);
+			nCntRot++;
+		}
+		// END_KEYSETを読み通ったら
+		else if (strcmp(aString, "END_KEYSET") == 0)
+		{
+			nKeyEnemy++;		 // キーを増やす
+			nCntPos = 0; // 位置のカウントをリセット
+			nCntRot = 0; // 角度のカウントをリセット
+			break;
+		}
+	}
 }
 
 //===============================================================================================================
@@ -1383,6 +1269,186 @@ void CollisionToEnemy(int nCntEnemy)
 				g_Enemy[nCnt].move.x -= vector.x * g_Enemy[nCntEnemy].Speed;
 				g_Enemy[nCnt].move.z -= vector.z * g_Enemy[nCntEnemy].Speed;
 			}
+		}
+	}
+}
+//===============================================================================================================
+// 敵の追跡処理の更新処理
+//===============================================================================================================
+void UpdateHomingEnemy(int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	// 絶対に追跡する範囲にいるかを判定
+	const bool is_absolute = sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 50.0f, 500.0f) == true;
+
+	// 追跡する範囲にいるか判定
+	const bool is_sphereBounds = sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 50.0f, 1800.0f) == true;
+
+	// 視界内にいるかを判定
+	const bool is_ViewBounds = CollisionView(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].rot, 200.0f, 0.75f) == true;
+
+	// 攻撃状態かを判定
+	const bool is_NotAction = g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION;
+
+	// 敵の種類が7番目じゃないかを判定
+	const bool is_NotTypeSeven = g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN;
+
+	// 追跡できるかを判定s
+	const bool is_CanAgent = ((is_sphereBounds == true && is_ViewBounds == true) || is_absolute == true) && is_NotAction == true && is_NotTypeSeven == true;
+
+	// 追跡できる
+	if (is_CanAgent == true)
+	{
+		// ホーミング処理
+		AgentEnemy(nCntEnemy);
+
+		// モーションを歩きモーションにする
+		g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_MOVE;
+
+		// 敵の角度を設定
+		g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos) + D3DX_PI;
+	}
+	else
+	{
+		// 攻撃モーションじゃない
+		if (g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
+		{
+			// モーションをニュートラルにする
+			g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL;
+		}
+	}
+}
+//===============================================================================================================
+// 逃げる敵の更新処理
+//===============================================================================================================
+void UpdateRunAwayEnemy(int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	// 敵の種類がスコア高いやつなら
+	if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SEVEN)
+	{
+		// 体力が最大値と同等、つまりノーダメなら何もしない
+		if (g_Enemy[nCntEnemy].nMaxLife == g_Enemy[nCntEnemy].nLife)
+		{
+
+		}
+		else // 少しでもダメージを受けてて
+		{
+			// プレイヤーの近くに居たら
+			if (sphererange(&g_Enemy[nCntEnemy].pos, &pPlayer->pos, 50.0f, 80.0f))
+			{
+				// 敵をプレイヤーに向かわせる
+				AgentEnemy(nCntEnemy);
+
+				// 敵の角度を設定
+				g_Enemy[nCntEnemy].rotDest.y = SetAngle(&g_Enemy[nCntEnemy].rot, &g_Enemy[nCntEnemy].pos);
+			}
+
+			// 虹の素
+			float fColor[3];
+			fColor[0] = ((float)(rand() % 100) / 100.0f);
+			fColor[1] = ((float)(rand() % 100) / 100.0f);
+			fColor[2] = ((float)(rand() % 100) / 100.0f);
+
+			// 高価そうなオーラを出す
+			SetParticle(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + 10, g_Enemy[nCntEnemy].pos.z),
+				D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(fColor[0], fColor[1], fColor[2], 1.0f),
+				2.0f, 1, 10, 5, 20.0f, 20.0f, true, D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+		}
+	}
+}
+//===============================================================================================================
+// 敵の攻撃モーションの更新処理
+//===============================================================================================================
+void UpdateAttackState(int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	// モーションの種類
+	int Motiontype = g_Enemy[nCntEnemy].Motion.motionType;
+
+	// キー
+	int nKey = g_Enemy[nCntEnemy].Motion.nKey;
+
+	// 最後のキー
+	int LastKey = g_Enemy[nCntEnemy].Motion.aMotionInfo[Motiontype].nNumkey - 1;
+
+	// モーションのカウント
+	int nCounter = g_Enemy[nCntEnemy].Motion.nCountMotion;
+
+	// 最大フレーム
+	int EndFrame = g_Enemy[nCntEnemy].Motion.aMotionInfo[Motiontype].aKeyInfo[LastKey].nFrame;
+
+	// プレイヤーのモデルの情報を代入
+	D3DXVECTOR3 PlayerModel(pPlayer->Motion.aModel[0].mtxWorld._41, pPlayer->Motion.aModel[0].mtxWorld._42, pPlayer->Motion.aModel[0].mtxWorld._43);
+
+	// 敵のモデルの情報を代入
+	D3DXVECTOR3 EnemyModel(g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._41, g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._42, g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._43);
+	
+	// 範囲内にいるかを判定
+	const bool is_sphereBounds = sphererange(&PlayerModel, &EnemyModel, 20.0f, 50.0f) == true;
+
+	// 敵が攻撃状態かを判定
+	const bool is_EnemyNotAction = g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_ATTACK;
+
+	// プレイヤーがダメージ状態かどうかを判定
+	const bool is_PlayerNotDamage = pPlayer->state != PLAYERSTATE_DAMAGE;
+
+	// 攻撃をできるかを判定
+	const bool CanDamage = is_sphereBounds == true && is_EnemyNotAction == true && is_PlayerNotDamage == true;
+
+	// 攻撃範囲に入った
+	if (CanDamage == true && CheckMotionBounds(nKey, nCounter,4, LastKey,0, EndFrame) == true)
+	{
+		// プレイヤーにダメージを与える
+		HitPlayer(50);
+	}
+}
+//===============================================================================================================
+// 飛んでる敵の更新処理
+//===============================================================================================================
+void UpdateDroneEnemy(int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
+	{
+		// 追尾処理
+		AgentEnemy(nCntEnemy);
+
+		// 範囲内だったら
+		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 300.0f))
+		{
+			g_Enemy[nCntEnemy].nCountAction++;
+		}
+
+		float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+		D3DXVECTOR3 dest = pPlayer->pos - g_Enemy[nCntEnemy].pos; // プレイヤーのベクトルを求める
+		D3DXVec3Normalize(&dest, &dest); // 正規化する
+
+		g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
+
+		// 弾を発射する処理
+		if (g_Enemy[nCntEnemy].nCountAction >= 120)
+		{
+			// 左から場所、ベクトル、方向、寿命、威力、大きさ、速度
+			SetBullet(g_Enemy[nCntEnemy].pos, dest, D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
+
+			// こっちはショットガン化する為の処理
+			/*float fRand[3];
+			for (int nCount = 0; nCount < 10; nCount++)
+			{
+				fRand[0] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+				fRand[1] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+				fRand[2] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+				SetBullet(g_Enemy[nCntEnemy].pos, D3DXVECTOR3(dest.x + fRand[0], dest.y + fRand[1], dest.z + fRand[2]), D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
+			}*/
+			g_Enemy[nCntEnemy].nCountAction = 0;
 		}
 	}
 }

@@ -580,6 +580,9 @@ void UpdateGame(void)
 
 				// 矢印の更新処理
 				UpdateMark();
+
+				// ブロックの更新処理
+				UpdateBlock();
 			}
 
 			//プレイヤーの更新処理

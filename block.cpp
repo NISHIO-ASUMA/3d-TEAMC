@@ -1835,17 +1835,6 @@ bool PushEnemy(int nCntBlock,int nIdx)
 			D3DXVECTOR3 NewEnemyPos = pEnemy[nIdx].pos + faceEnemyPos * Nor;
 
 			pEnemy[nIdx].pos.y = NewEnemyPos.y; // 位置を面に合わせる
-
-			// プレイヤーと敵の間にブロックが有ったら
-			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
-			{
-				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
-
-				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
-
-				pEnemy[nIdx].move.x += WallMove.x;
-				pEnemy[nIdx].move.z += WallMove.z;
-			}
 		}
 
 		// -Xの面から当たった
@@ -1864,18 +1853,6 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
-
-			// プレイヤーと敵の間にブロックが有ったら
-			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
-			{
-				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
-
-				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
-
-				pEnemy[nIdx].move.x += WallMove.x;
-				pEnemy[nIdx].move.z += WallMove.z;
-			}
-
 		}
 		// +Xの面から当たった
 		else if (DotXm < DotXp && DotXm < DotZp && DotXm < DotZm)
@@ -1893,18 +1870,6 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
-
-			// プレイヤーと敵の間にブロックが有ったら
-			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
-			{
-				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
-
-				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
-
-				pEnemy[nIdx].move.x += WallMove.x;
-				pEnemy[nIdx].move.z += WallMove.z;
-			}
-
 		}
 		// -Zの面から当たった
 		else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
@@ -1922,18 +1887,6 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
-
-			// プレイヤーと敵の間にブロックが有ったら
-			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
-			{
-				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
-
-				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
-
-				pEnemy[nIdx].move.x += WallMove.x;
-				pEnemy[nIdx].move.z += WallMove.z;
-			}
-
 		}
 		// +Zの面から当たった
 		else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
@@ -1951,17 +1904,6 @@ bool PushEnemy(int nCntBlock,int nIdx)
 
 			// 敵の位置を更新
 			pEnemy[nIdx].pos = NewEnemyPos;
-
-			// プレイヤーと敵の間にブロックが有ったら
-			if (CollisionLine(&pPlayer->pos, &pEnemy[nIdx].pos, RADIUS) == true)
-			{
-				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
-
-				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
-
-				pEnemy[nIdx].move.x += WallMove.x;
-				pEnemy[nIdx].move.z += WallMove.z;
-			}
 
 		}
 	}
@@ -2115,12 +2057,6 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
-
-			// プレイヤーと敵の間にブロックが有ったら
-			if (CollisionLine(&pPlayer->pos, &pBoss[nIdx].pos, RADIUS) == true)
-			{
-
-			}
 		}
 		// -Zの面から当たった
 		else if (DotZp > DotZm && DotZp > DotXp && DotZp > DotXm)
@@ -2138,12 +2074,6 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
-
-			// プレイヤーと敵の間にブロックが有ったら
-			if (CollisionLine(&pPlayer->pos, &pBoss[nIdx].pos, RADIUS) == true)
-			{
-
-			}
 		}
 		// +Zの面から当たった
 		else if (DotZp < DotZm && DotZp < DotXp && DotZp < DotXm)
@@ -2161,12 +2091,6 @@ bool PushBoss(int nCntBlock, int nIdx)
 
 			// ボスの位置を更新
 			pBoss[nIdx].pos = NewBossPos;
-
-			// プレイヤーと敵の間にブロックが有ったら
-			if (CollisionLine(&pPlayer->pos, &pBoss[nIdx].pos,RADIUS) == true)
-			{
-
-			}
 		}
 	}
 

@@ -22,7 +22,7 @@
 //***************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBullet = NULL;
 LPDIRECT3DTEXTURE9 g_pTextureBullet = NULL;
-#define MAX_BULLET (100)
+#define MAX_BULLET (300)
 Bullet g_Bullet[MAX_BULLET];
 
 //==========================
