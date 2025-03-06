@@ -19,7 +19,7 @@
 #define SOAD_WIDTH (10.0f) //‰¡•
 #define SOAD_HEIGHT (10.0f) //‚‚³
 
-#define X (16) // X
+#define X (32) // X
 #define Z (1) // Z
 #define DIVI (4) // 1ƒtƒŒ[ƒ€’†‚Ì•ªŠ„”
 
