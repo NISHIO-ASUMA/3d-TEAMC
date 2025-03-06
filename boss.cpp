@@ -629,6 +629,18 @@ void HitBoss(int nCntBoss,int nDamage)
 				}
 			}
 		}
+		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_IRONBAT) //‹à‘®ƒoƒbƒg‚È‚çoŒŒ“ÁêŒø‰Ê‚ğ—^‚¦‚é
+		{
+			if (g_Boss[nCntBoss].nStateCount[0] <= 0)
+			{
+				g_Boss[nCntBoss].nStateCharge[0] += 25;
+				if (g_Boss[nCntBoss].nStateCharge[0] >= 100)
+				{
+					g_Boss[nCntBoss].nStateCount[0] = 300;
+					g_Boss[nCntBoss].nStateCharge[0] = 0;
+				}
+			}
+		}
 		else if (pItem[pPlayer->ItemIdx].nType == 15) //–Ò‰ÎŒ•‚È‚ç‰Š“ÁêŒø‰Ê‚ğ—^‚¦‚é
 		{
 			if (g_Boss[nCntBoss].nStateCount[1] <= 0)
@@ -662,6 +674,18 @@ void HitBoss(int nCntBoss,int nDamage)
 				{
 					g_Boss[nCntBoss].nStateCount[3] = 300;
 					g_Boss[nCntBoss].nStateCharge[3] = 0;
+				}
+			}
+		}
+		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_SURFBOARDFISH) //L•‚‚«—Ö‚È‚ç—‹“ÁêŒø‰Ê‚ğ—^‚¦‚é
+		{
+			if (g_Boss[nCntBoss].nStateCount[4] <= 0)
+			{
+				g_Boss[nCntBoss].nStateCharge[4] += 25;
+				if (g_Boss[nCntBoss].nStateCharge[4] >= 100)
+				{
+					g_Boss[nCntBoss].nStateCount[4] = 300;
+					g_Boss[nCntBoss].nStateCharge[4] = 0;
 				}
 			}
 		}
@@ -1275,7 +1299,10 @@ bool SetAbnormalCondition(int nType, int nTime, int nDamage,int nCntBoss)
 		is_SetParticle = true;
 		if (g_Boss[nCntBoss].nStateCount[nType] % nTime == 0)
 		{
-			HitBoss(nCntBoss, nDamage);	
+			if (nDamage > 0)
+			{
+				HitBoss(nCntBoss, nDamage);
+			}
 		}
 	}
 	return is_SetParticle;
@@ -1313,7 +1340,7 @@ void UpdateAbnormalCondition(int nCntBoss)
 	}
 
 	// ó‘ÔˆÙí•X‚Ìˆ—
-	if (SetAbnormalCondition(2, 60, g_Boss[nCntBoss].nLife / 20, nCntBoss) == true)
+	if (SetAbnormalCondition(2, 60, 0, nCntBoss) == true)
 	{
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
 			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
@@ -1331,7 +1358,7 @@ void UpdateAbnormalCondition(int nCntBoss)
 	}
 
 	// ó‘ÔˆÙí—‹‚Ìˆ—
-	if (SetAbnormalCondition(3, 60, g_Boss[nCntBoss].nLife / 20, nCntBoss) == true)
+	if (SetAbnormalCondition(3, 60, 0, nCntBoss) == true)
 	{
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
 			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
@@ -1342,7 +1369,7 @@ void UpdateAbnormalCondition(int nCntBoss)
 	}
 
 	// ó‘ÔˆÙí…‚Ìˆ—
-	if (SetAbnormalCondition(4, 60, g_Boss[nCntBoss].nLife / 20, nCntBoss) == true)
+	if (SetAbnormalCondition(4, 60, 0, nCntBoss) == true)
 	{
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
 			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),

@@ -685,127 +685,127 @@ void LoadItemModel(void)
 void ElementChange(int nTypeItem)
 {
 	// 属性を武器ごとに判別する
-	if (g_TexItem[nTypeItem].nType == 0) // バットの属性
+	if (g_TexItem[nTypeItem].nType == ITEMTYPE_BAT) // バットの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 1) // ゴルフクラブの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_GOLF) // ゴルフクラブの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 2) // ハンマーの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HUNMER) // ハンマーの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if(g_TexItem[nTypeItem].nType == 3) // 石の属性
+	else if(g_TexItem[nTypeItem].nType == ITEMTYPE_STONE) // 石の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 4) // 角材の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_WOOD) // 角材の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 5) // 石付きバットの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_STONEBAT) // 石付きバットの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 6) // 蛍光灯の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_LIGHT) // 蛍光灯の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_SPARK;
 	}
-	else if (g_TexItem[nTypeItem].nType == 7) // 電撃剣の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_LIGHTWOOD) // 電撃剣の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_SPARK;
 	}
-	else if (g_TexItem[nTypeItem].nType == 8) // ハリセンの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HARISEN) // ハリセンの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 9) // 氷塊の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_ICEBLOCK) // 氷塊の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FREEZE;
 	}
-	else if (g_TexItem[nTypeItem].nType == 10) // 凍結剣の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_ICEBLOCKSOWRD) // 凍結剣の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FREEZE;
 	}
-	else if (g_TexItem[nTypeItem].nType == 11) // 鉄パイプの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_IRON) // 鉄パイプの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 12) // 金属バットの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_IRONBAT) // 金属バットの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 13) // サーフボードの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_SURFBOARD) // サーフボードの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_AQUA;
 	}
-	else if (g_TexItem[nTypeItem].nType == 14) // 松明の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TORCH) // 松明の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FIRE;
 	}
-	else if (g_TexItem[nTypeItem].nType == 15) // 猛火剣の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TORCHSWORD) // 猛火剣の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FIRE;
 	}
-	else if (g_TexItem[nTypeItem].nType == 16) // バールの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_BAR) // バールの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 17) // 頭像の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HEADSTATUE) // 頭像の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 18) // マネキンの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HEADSTATUTORSO) // マネキンの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 19) // メガホンの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_MEGAPHONE) // メガホンの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 20) // すっぽんの属性(仮)
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_RUBBERCUP) // すっぽんの属性(仮)
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 21) // 電柱の属性(仮)
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TELEPHONEPOLE) // 電柱の属性(仮)
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 22) // トルソーの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TORSO) // トルソーの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 23) // 拡声器の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE) // 拡声器の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_SPARK;
 	}
-	else if (g_TexItem[nTypeItem].nType == 24) // 骨槍の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_BONESPEAR) // 骨槍の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_DARK;
 	}
-	else if (g_TexItem[nTypeItem].nType == 25) // 魚の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_FISH) // 魚の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_AQUA;
 	}
-	else if (g_TexItem[nTypeItem].nType == 26) // 呪物の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HEX) // 呪物の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_DARK;
 	}
-	else if (g_TexItem[nTypeItem].nType == 27) // ハープの属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HEXMANDOLIN) // ハープの属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_DARK;
 	}
-	else if (g_TexItem[nTypeItem].nType == 28) // 鮫浮き輪の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_SURFBOARDFISH) // 鮫浮き輪の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_AQUA;
 	}
-	else if (g_TexItem[nTypeItem].nType == 29) // 看板の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TUTORIAL) // 看板の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
 	}
-	else if (g_TexItem[nTypeItem].nType == 30) // 初期刀の属性
+	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_KATANA) // 初期刀の属性
 	{
 		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
 	}
@@ -853,7 +853,7 @@ void CraftItem(void)
 
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
-			// 氷の剣の材料がそろった
+			// 炎の剣の材料がそろった
 			if (((g_Item[nCnt].nType == ITEMTYPE_TORCH && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_TORCH && g_Item[nCnt].nType == ITEMTYPE_KATANA))
 				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
@@ -864,6 +864,7 @@ void CraftItem(void)
 
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
+			// 雷の剣の材料がそろった
 			if (((g_Item[nCnt].nType == ITEMTYPE_LIGHT && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_WOOD || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_LIGHT && g_Item[nCnt].nType == ITEMTYPE_WOOD))
 				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
@@ -874,6 +875,7 @@ void CraftItem(void)
 
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
+			// 金属バットの材料がそろった
 			if (((g_Item[nCnt].nType == ITEMTYPE_IRON && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_IRON && g_Item[nCnt].nType == ITEMTYPE_BAT))
 				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
@@ -884,6 +886,7 @@ void CraftItem(void)
 
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
+			// 全身マネキンの材料がそろった
 			if (((g_Item[nCnt].nType == ITEMTYPE_HEADSTATUE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_TORSO || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_HEADSTATUE && g_Item[nCnt].nType == ITEMTYPE_TORSO))
 				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
@@ -894,6 +897,7 @@ void CraftItem(void)
 
 				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
 			}
+			// 鮫浮き輪の材料がそろった
 			if (((g_Item[nCnt].nType == ITEMTYPE_FISH && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_SURFBOARD || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_FISH && g_Item[nCnt].nType == ITEMTYPE_SURFBOARD))
 				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
 			{
