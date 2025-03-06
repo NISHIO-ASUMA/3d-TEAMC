@@ -135,8 +135,8 @@ void InitMeshSword(void)
 
 	for (int nCount = 0; nCount < X; nCount++)
 	{
-		pVtx[nCount * 2 + 2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - Tex * nCount);
-		pVtx[nCount * 2 + 3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - Tex * nCount);
+		pVtx[nCount * 2 + 2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (Tex * nCount));
+		pVtx[nCount * 2 + 3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (Tex * nCount));
 	}
 
 	//for (int nCnt = 0; nCnt < ORBIT_VERTEX; nCnt++)
@@ -212,12 +212,6 @@ void UninitMeshSword(void)
 //=================================================================================================================
 void UpdateMeshSword(void)
 {
-	// 攻撃した時リセットをかける
-	if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X))
-	{
-		ResetMeshSword();
-	}
-
 	g_nMeshSwordCount++;
 
 	// プレイヤー情報を取得
@@ -275,6 +269,17 @@ void DrawMeshSword(void)
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
 
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
+	/*pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION ||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION2 ||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION3 ||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION4) &&
+		pPlayer->Motion.nNumModel != 15 &&
+		pPlayer->HandState != PLAYERHOLD_HOLD*/
+
 	if ((pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION ||
 		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION2 ||
 		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION3 ||
@@ -321,6 +326,10 @@ void DrawMeshSword(void)
 		// ポリゴンの描画
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, Min * 2 + 4, 0, Min);
 	}
+
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }

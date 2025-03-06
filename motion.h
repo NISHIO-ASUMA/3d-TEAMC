@@ -21,6 +21,28 @@
 #define FILENAME001 ("data\\ModelPlayer.txt")
 #define MAX_PARTS (16)
 
+#define KEY_FIRST (0)  // 0番目のキー
+#define KEY_ONE (1)    // 1番目のキー
+#define KEY_TWO (2)  // 2番目のキー
+#define KEY_THREE (3)  // 3番目のキー
+#define KEY_FOUR (4)  // 4番目のキー
+#define KEY_FIVE (5)  // 5番目のキー
+#define KEY_SIX (6)  // 6番目のキー
+#define KEY_SEVEN (7)  // 7番目のキー
+#define KEY_EIGHT (8)  // 8番目のキー
+#define KEY_NINE (9)  // 9番目のキー
+#define KEY_TEN (10) // 10番目のキー
+#define KEY_EREVEN (11) // 11番目のキー
+#define KEY_TWELVE (12) // 12番目のキー
+#define KEY_THIRTEEN (13) // 13番目のキー
+#define KEY_FOURTEEN (14) // 14番目のキー
+#define KEY_FIFTEEN (15) // 15番目のキー
+#define KEY_SIXTEEN (16) // 16番目のキー
+#define KEY_SEVENTEEN (17) // 17番目のキー
+#define KEY_EIGHTEEN (18) // 18番目のキー
+#define KEY_NINETEEN (19) // 19番目のキー
+#define KEY_TWENTY (20) // 20番目のキー
+
 //**************************
 //キャラの種類
 //**************************

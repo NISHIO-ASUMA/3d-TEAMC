@@ -43,15 +43,26 @@
 //**************************************************************************************************************
 // プロトタイプ宣言
 //**************************************************************************************************************
-void LoadBoss(void);				// ボスを読み込む
-void colisionSword(int nCntBoss);   // 剣とボスの当たり判定
-void CollisionToBoss(int nCntBoss); // ボスとボスの当たり判定
+void LoadBoss(void);																// ボスを読み込む
+int LoadBossFilename(FILE* pFile, int nNumModel, char* aString, int nType);			// ボスのモデルのロード処理
+void LoadBossCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);	// ボスのパーツの設定処理
+void LoadBossMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);		// ボスのモーションのロード処理
+void LoadBossKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);			// ボスのモーションのキーの読み込み処理
+
+void colisionSword(int nCntBoss);													// 剣とボスの当たり判定
+void CollisionToBoss(int nCntBoss);													// ボスとボスの当たり判定
+bool SetAbnormalCondition(int nType, int nTime, int nDamage,int nCntBoss);          // 状態異常の設定
+void UpdateAbnormalCondition(int nCntBoss);                                         // 状態異常の更新処理
+void SetRasuAttack(int nCntBoss);													// ボスの突進攻撃の設定
+void SetDoubleRasuAttack(int nCntBoss);                                             // ボスの二回突進してくる攻撃処理
+void UpdateAgentBoss(int nCntBoss);                                                 // ボスの追跡の更新処理
 
 //**************************************************************************************************************
 // グローバル変数宣言
 //**************************************************************************************************************
 Boss g_Boss[MAX_BOSS]; // ボスの情報
 MOTION g_LoadBoss;
+int nKeyBoss, nCntMotionBoss;
 
 //===============================================================================================================
 // ボスの初期化処理
@@ -74,97 +85,14 @@ void InitBoss(void)
 		g_Boss[nCnt].Speed = 5.0f;						 // 足の速さ
 		g_Boss[nCnt].AttackState = BOSSATTACK_NO;			 // 攻撃状態
 		g_Boss[nCnt].nHitStopCount = 0;                  // ヒットストップのカウント
+
 		for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
 		{
 			g_Boss[nCnt].nStateCharge[nCnt2] = 0;
 			g_Boss[nCnt].nStateCount[nCnt2] = 0;
 		}
 	}
-
 	LoadBoss(); // ボスのロード
-
-	D3DXMATERIAL* pMat; // マテリアルへのポインタ
-
-	for (int nCntModel = 0; nCntModel < g_LoadBoss.nNumModel; nCntModel++)
-	{
-		// マテリアルのデータへのポインタを取得
-		pMat = (D3DXMATERIAL*)g_LoadBoss.aModel[nCntModel].pBuffMat->GetBufferPointer();
-
-		for (int nCntMat = 0; nCntMat < (int)g_LoadBoss.aModel[nCntModel].dwNumMat; nCntMat++)
-		{
-			if (pMat[nCntMat].pTextureFilename != NULL)
-			{
-				//このファイル名を使用してテクスチャを読み込む
-				//テクスチャの読み込み
-				D3DXCreateTextureFromFile(pDevice,
-					pMat[nCntMat].pTextureFilename,
-					&g_LoadBoss.aModel[nCntModel].pTexture[nCntMat]);
-			}
-		}
-	}
-
-	// 頂点座標の取得
-	int nNumVtx;	//頂点数
-	DWORD sizeFVF;	//頂点フォーマットのサイズ
-	BYTE* pVtxBuff; //頂点バッファへのポインタ
-
-	for (int nCntModel = 0; nCntModel < g_LoadBoss.nNumModel; nCntModel++)
-	{
-		// 頂点数の取得
-		nNumVtx = g_LoadBoss.aModel[nCntModel].pMesh->GetNumVertices();
-
-		// 頂点フォーマットのサイズ取得
-		sizeFVF = D3DXGetFVFVertexSize(g_LoadBoss.aModel[nCntModel].pMesh->GetFVF());
-
-		// 頂点バッファのロック
-		g_LoadBoss.aModel[nCntModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
-
-		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
-		{
-			// 頂点座標の代入
-			D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
-
-			// 頂点座標を比較してボスの最小値,最大値を取得
-			if (vtx.x < g_LoadBoss.aModel[nCntModel].vtxMin.x)
-			{
-				g_LoadBoss.aModel[nCntModel].vtxMin.x = vtx.x;
-			}
-			else if (vtx.y < g_LoadBoss.aModel[nCntModel].vtxMin.y)
-			{
-				g_LoadBoss.aModel[nCntModel].vtxMin.y = vtx.y;
-			}
-			else if (vtx.z < g_LoadBoss.aModel[nCntModel].vtxMin.z)
-			{
-				g_LoadBoss.aModel[nCntModel].vtxMin.z = vtx.z;
-			}
-			else if (vtx.x > g_LoadBoss.aModel[nCntModel].vtxMax.x)
-			{
-				g_LoadBoss.aModel[nCntModel].vtxMax.x = vtx.x;
-			}
-			else if (vtx.y > g_LoadBoss.aModel[nCntModel].vtxMax.y)
-			{
-				g_LoadBoss.aModel[nCntModel].vtxMax.y = vtx.y;
-			}
-			else if (vtx.z > g_LoadBoss.aModel[nCntModel].vtxMax.z)
-			{
-				g_LoadBoss.aModel[nCntModel].vtxMax.z = vtx.z;
-			}
-
-			// 頂点フォーマットのサイズ分ポインタを進める
-			pVtxBuff += sizeFVF;
-
-			// サイズに代入
-			g_LoadBoss.aModel[nCntModel].Size.x = g_LoadBoss.aModel[nCntModel].vtxMax.x - g_LoadBoss.aModel[nCntModel].vtxMin.x;
-			g_LoadBoss.aModel[nCntModel].Size.y = g_LoadBoss.aModel[nCntModel].vtxMax.y - g_LoadBoss.aModel[nCntModel].vtxMin.y;
-			g_LoadBoss.aModel[nCntModel].Size.z = g_LoadBoss.aModel[nCntModel].vtxMax.z - g_LoadBoss.aModel[nCntModel].vtxMin.z;
-		}
-
-		// 頂点バッファのアンロック
-		g_LoadBoss.aModel[nCntModel].pMesh->UnlockVertexBuffer();
-	}
-
-	InitBillboard();
-
 }
 //===============================================================================================================
 // ボスの終了処理
@@ -229,8 +157,6 @@ void UninitBoss(void)
 		}
 	}
 
-	UninitBillboard();
-
 }
 //===============================================================================================================
 // ボスの更新処理
@@ -250,87 +176,10 @@ void UpdateBoss(void)
 		}
 
 		// ボスのHPゲージの更新
-		UpdateBossLife(&g_Boss[nCnt]);
+		UpdateBossLife(&g_Boss[nCnt]);		
 
-		// 状態異常出血の処理
-		if (g_Boss[nCnt].nStateCount[0] > 0)
-		{
-			if (g_Boss[nCnt].nStateCount[0] % 60 == 0)
-			{
-				HitBoss(nCnt, g_Boss[nCnt].nLife / 20);
-			}
-			g_Boss[nCnt].nStateCount[0]--;
-			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
-			D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
-			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-			2.0f, 2, 30, 6, 10.0f, 20.0f, true, D3DXVECTOR3(0.0f, -1.0f, 0.0f));
-		}
-
-		// 状態異常炎の処理
-		if (g_Boss[nCnt].nStateCount[1] > 0)
-		{
-			if (g_Boss[nCnt].nStateCount[1] % 60 == 0)
-			{
-				HitBoss(nCnt, g_Boss[nCnt].nLife / 20);
-			}
-			g_Boss[nCnt].nStateCount[1]--;
-			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y, g_Boss[nCnt].pos.z),
-				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
-				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-				2.0f, 2, 30, 7, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 2.0f, 0.0f));
-			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y, g_Boss[nCnt].pos.z),
-				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
-				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
-				2.0f, 2, 30, 7, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 2.0f, 0.0f));
-		}
-
-		// 状態異常氷の処理
-		if (g_Boss[nCnt].nStateCount[2] > 0)
-		{
-			g_Boss[nCnt].nStateCount[2]--;
-			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
-				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
-				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-				1.0f, 2, 60, 7, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
-				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
-				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(0.0f, 0.6f, 1.0f, 1.0f),
-				1.0f, 2, 60, 7, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-		}
-
-		// 状態異常雷の処理
-		if (g_Boss[nCnt].nStateCount[3] > 0)
-		{
-			g_Boss[nCnt].nStateCount[3]--;
-			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
-				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
-				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-				1.0f, 2, 120, 6, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-		}
-
-		// 状態異常水の処理
-		if (g_Boss[nCnt].nStateCount[4] > 0)
-		{
-			g_Boss[nCnt].nStateCount[4]--;
-			SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + 50.0f, g_Boss[nCnt].pos.z),
-				D3DXVECTOR3(g_Boss[nCnt].rot.x, g_Boss[nCnt].rot.y - D3DX_PI, g_Boss[nCnt].rot.z),
-				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f),
-				2.0f, 2, 30, 6, 10.0f, 20.0f, true, D3DXVECTOR3(0.0f, -1.0f, 0.0f));
-		}
+		// 状態異常の更新処理
+		UpdateAbnormalCondition(nCnt);
 
 		switch (g_Boss[nCnt].state)
 		{
@@ -360,134 +209,24 @@ void UpdateBoss(void)
 
 		// 影の位置の更新
 		SetPositionShadow(g_Boss[nCnt].nIdxShadow, g_Boss[nCnt].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss[nCnt].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss[nCnt].pos.y / 30.0f));
+
+		// ミニマップの位置の設定
 		SetMiniMapPotision(g_Boss[nCnt].nIdxMap, &g_Boss[nCnt].pos);
+
+		// HPゲージの位置設定処理
 		SetPositionLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].pos);
 
-		// ボスの攻撃モーション
-		if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION)// ドス突きの状態で
+		// 敵の攻撃の設定
+		switch (g_Boss[nCnt].Motion.motionType)
 		{
-			if (g_Boss[nCnt].Motion.nKey == 0 || g_Boss[nCnt].Motion.nKey == 1)// 溜める動作中に
-			{
-				// 向きをプレイヤーに向ける
-				float fAngle = atan2f(pPlayer->posOld.x - g_Boss[nCnt].pos.x, pPlayer->posOld.z - g_Boss[nCnt].pos.z);
-
-				// ボスの向き代入
-				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
-			}
-			else if (g_Boss[nCnt].Motion.nKey == 2)// 溜まり切ったモーションになって
-			{
-				if (g_Boss[nCnt].Motion.nCountMotion == 1)// その最初にエフェクトを出す
-				{
-					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
-						D3DXVECTOR3(1.57f, g_Boss[nCnt].rot.y, 1.57f),
-						D3DXVECTOR3(0.2f, 3.14f, 0.2f),
-						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 3, 20, 30, 4.0f, 50.0f,
-						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				}
-			}
-			else if (g_Boss[nCnt].Motion.nKey == 3)// 突進モーション中の			
-			{
-				if (g_Boss[nCnt].Motion.nCountMotion == 1)// 最初は加速させて
-				{
-					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 40.0f;
-					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 40.0f;
-				}
-				else // その後はエフェクトを纏いながら移動する
-				{
-					g_Boss[nCnt].pos += g_Boss[nCnt].move;
-					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
-						g_Boss[nCnt].rot,
-						D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 4, 60, 30, 6.0f, 60.0f,
-						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				}
-			}
-		}
-		else if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_ACTION2)// アッパー＆ハイの状態で
-		{
-			if (g_Boss[nCnt].Motion.nKey == 0 || g_Boss[nCnt].Motion.nKey == 4)// 溜める動作中に
-			{
-				// 向きをプレイヤーに向ける
-				float fAngle = atan2f(pPlayer->posOld.x - g_Boss[nCnt].pos.x, pPlayer->posOld.z - g_Boss[nCnt].pos.z);
-
-				// ボスの向き代入
-				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
-			}
-			else if (g_Boss[nCnt].Motion.nKey == 1)// 溜まり切ったモーションになって
-			{
-				if (g_Boss[nCnt].Motion.nCountMotion == 1)// その最初にエフェクトを出す
-				{
-					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 1.5f, g_Boss[nCnt].pos.z),
-						D3DXVECTOR3(1.57f, g_Boss[nCnt].rot.y, 1.57f),
-						D3DXVECTOR3(0.2f, 3.14f, 0.2f),
-						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 3, 20, 55, 4.0f, 50.0f,
-						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				}
-			}
-			else if (g_Boss[nCnt].Motion.nKey == 6)// ハイキックモーション中の			
-			{
-				if (g_Boss[nCnt].Motion.nCountMotion == 1)// 最初は加速させる
-				{
-					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 30.0f;
-					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 30.0f;
-				}
-				else
-				{
-					SetParticle(D3DXVECTOR3(g_Boss[nCnt].pos.x, g_Boss[nCnt].pos.y + g_Boss[nCnt].Size.y / 2.0f, g_Boss[nCnt].pos.z),
-						g_Boss[nCnt].rot,
-						D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-						D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-						D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-						2.0f, 4, 60, 40, 6.0f, 60.0f,
-						false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				}
-			}
-			else if (g_Boss[nCnt].Motion.nKey == 2 || g_Boss[nCnt].Motion.nKey == 3)//アッパー中にはエフェクトを出す
-			{
-				D3DXVECTOR3 BlowPos(
-					g_Boss[nCnt].Motion.aModel[5].mtxWorld._41, // X方向
-					g_Boss[nCnt].Motion.aModel[5].mtxWorld._42, // Y方向
-					g_Boss[nCnt].Motion.aModel[5].mtxWorld._43  // Z方向
-				);
-
-				g_Boss[nCnt].pos += g_Boss[nCnt].move;
-				SetParticle(D3DXVECTOR3(BlowPos),
-					g_Boss[nCnt].rot,
-					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-					2.0f, 4, 20, 12, 2.0f, 5.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-				if (g_Boss[nCnt].Motion.nCountMotion == 1 && g_Boss[nCnt].Motion.nKey == 2)
-				{
-					g_Boss[nCnt].move.x = sinf(g_Boss[nCnt].rot.y + D3DX_PI) * 20.0f;
-					g_Boss[nCnt].move.z = cosf(g_Boss[nCnt].rot.y + D3DX_PI) * 20.0f;
-				}
-			}
-			else if (g_Boss[nCnt].Motion.nKey >= 6)//蹴り中にもエフェクトを出す
-			{
-				D3DXVECTOR3 BlowPos(
-					g_Boss[nCnt].Motion.aModel[11].mtxWorld._41, // X方向
-					g_Boss[nCnt].Motion.aModel[11].mtxWorld._42, // Y方向
-					g_Boss[nCnt].Motion.aModel[11].mtxWorld._43  // Z方向
-				);
-
-				g_Boss[nCnt].pos += g_Boss[nCnt].move;
-				SetParticle(D3DXVECTOR3(BlowPos),
-					g_Boss[nCnt].rot,
-					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-					2.0f, 4, 20, 12, 2.0f, 5.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-
+		case MOTIONTYPE_ACTION:
+			SetRasuAttack(nCnt);
+			break;
+		case MOTIONTYPE_ACTION2:
+			SetDoubleRasuAttack(nCnt);
+			break;
+		default:
+			break;
 		}
 
 		// 移動量の減衰
@@ -509,104 +248,75 @@ void UpdateBoss(void)
 			HitBoss(nCnt, ImpactDamege(0));
 		}
 
-		// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
-		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 2000.0f))
-		{
-			if (g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION2 && g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION3)// 勿論モーションが攻撃中でない時のみ
-			{
-				// モデル情報を代入
-				D3DXVECTOR3 HootR(g_Boss[nCnt].Motion.aModel[11].mtxWorld._41, g_Boss[nCnt].Motion.aModel[11].mtxWorld._42, g_Boss[nCnt].Motion.aModel[11].mtxWorld._43);
-				D3DXVECTOR3 HootL(g_Boss[nCnt].Motion.aModel[14].mtxWorld._41, g_Boss[nCnt].Motion.aModel[14].mtxWorld._42, g_Boss[nCnt].Motion.aModel[14].mtxWorld._43);
-
-				// モーションがムーブの時1キーの1フレーム目
-				if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_MOVE &&
-					g_Boss[nCnt].Motion.nKey == 1 &&
-					g_Boss[nCnt].Motion.nCountMotion == 1)
-				{
-					SetExplosion(HootR, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
-				}
-
-				// モーションがムーブの時3キーの1フレーム目
-				else if (g_Boss[nCnt].Motion.motionType == MOTIONTYPE_MOVE &&
-					g_Boss[nCnt].Motion.nKey == 3 &&
-					g_Boss[nCnt].Motion.nCountMotion == 1)
-				{
-					SetExplosion(HootL, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
-				}
-
-				g_Boss[nCnt].Motion.motionType = MOTIONTYPE_MOVE; // モーションの種類を移動にする
-
-				// ボスの向きをプレイヤーの位置を向くようにする
-				float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCnt].pos.x, pPlayer->pos.z - g_Boss[nCnt].pos.z);
-
-				// ボスの向き代入
-				g_Boss[nCnt].rot.y = fAngle + D3DX_PI;
-
-				// プレイヤーの位置を算出
-				D3DXVECTOR3 Dest = pPlayer->pos - g_Boss[nCnt].pos;
-
-				// 正規化
-				D3DXVec3Normalize(&Dest, &Dest);
-
-				// 移動量に代入
-				g_Boss[nCnt].move.x = Dest.x * g_Boss[nCnt].Speed;
-				g_Boss[nCnt].move.z = Dest.z * g_Boss[nCnt].Speed;
-			}
-
-		}
-		//else
-		//{
-		//	if (g_Boss[nCnt].Motion.motionType != MOTIONTYPE_ACTION)
-		//	{
-		//		g_Boss[nCnt].Motion.motionType = MOTIONTYPE_NEUTRAL; // 攻撃してない
-		//	}
-		//}
+		// ボスの追跡処理の更新
+		UpdateAgentBoss(nCnt);
 
 		// 攻撃範囲に入ったら
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 50.0f) && g_Boss[nCnt].AttackState != BOSSATTACK_ATTACK)
 		{
 			// 行動パターンをランダム選択し
 			g_Boss[nCnt].nAttackPattern = rand() % 2;
-			// もし0ならドス突きを行う
-			if (g_Boss[nCnt].nAttackPattern == 0)
+
+			// 攻撃状態の遷移
+			switch (g_Boss[nCnt].nAttackPattern)
 			{
+			case 0:
 				// モーションを攻撃にする
-				SetMotion(&g_Boss[nCnt].Motion, // モーション構造体のアドレス
-					MOTIONTYPE_ACTION,   // ブレンドモーションタイプ
-					true,                 // ブレンドするかしないか
-					10);				  // ブレンドのフレーム
-			}
-			else if (g_Boss[nCnt].nAttackPattern == 1)// もし1ならアッパー＆ハイを行う
-			{
+				SetMotion(&g_Boss[nCnt].Motion,MOTIONTYPE_ACTION,true,10);
+				break;
+			case 1:
 				// モーションを攻撃にする
-				SetMotion(&g_Boss[nCnt].Motion, // モーション構造体のアドレス
-					MOTIONTYPE_ACTION2,   // ブレンドモーションタイプ
-					true,                 // ブレンドするかしないか
-					10);				  // ブレンドのフレーム
+				SetMotion(&g_Boss[nCnt].Motion, MOTIONTYPE_ACTION2, true, 10);
+				break;
+			default:
+				break;
 			}
 
 			g_Boss[nCnt].AttackState = BOSSATTACK_ATTACK; // 攻撃している
 		}
 
+		// ボスの攻撃判定範囲にいるかどうかを判定
+		const bool is_sphereBounds = sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20.0f) == true;
+
+		// プレイヤーがダメージ状態じゃないかを判定
+		const bool is_PlayerNotDamage = pPlayer->state != PLAYERSTATE_DAMAGE;
+
+		// プレイヤーがスペシャルアタックをしてないかを判定
+		const bool is_SpAttack = pPlayer->AttackSp == false;
+
+		// 攻撃をできるかを判定
+		const bool is_CanDamage = is_sphereBounds == true && is_PlayerNotDamage && is_PlayerNotDamage == true && is_SpAttack == true;
+
 		// 攻撃範囲に入った
-		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20.0f) &&
-			pPlayer->state != PLAYERSTATE_DAMAGE &&
-			g_Boss[nCnt].Motion.nKey >= 3 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motiontypeBlend == MOTIONTYPE_ACTION)
+		if (is_CanDamage == true)
 		{
-			HitPlayer(40);
-		}
-		else if(sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 20.0f) &&
-			pPlayer->state != PLAYERSTATE_DAMAGE &&
-			g_Boss[nCnt].Motion.nKey >= 2 && !pPlayer->AttackSp && g_Boss[nCnt].Motion.motiontypeBlend == MOTIONTYPE_ACTION2)
-		{
-			HitPlayer(30);
+			switch (g_Boss[nCnt].Motion.motiontypeBlend)
+			{
+			case MOTIONTYPE_ACTION:
+				if (g_Boss[nCnt].Motion.nKey >= 3)
+				{
+					HitPlayer(40);
+				}
+				break;
+			case MOTIONTYPE_ACTION2:
+				if (g_Boss[nCnt].Motion.nKey >= 2)
+				{
+					HitPlayer(40);
+				}
+				break;
+			default:
+				break;
+			}
 		}
 
-		colisionSword(nCnt);   // 剣との当たり判定
+		if (CheckActionMotion(&pPlayer->Motion) == false)
+		{
+			colisionSword(nCnt);   // 剣との当たり判定
+		}
 		CollisionToBoss(nCnt); // ボスとボスの当たり判定
 
 		// ループしないモーションが最後まで行ったら
-		if (!g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].bLoop && g_Boss[nCnt].Motion.nKey >= g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].nNumkey - 1)
+		if (g_Boss[nCnt].Motion.bFinishMotion == true)
 		{
 			g_Boss[nCnt].AttackState = BOSSATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
@@ -620,8 +330,6 @@ void UpdateBoss(void)
 //===============================================================================================================
 void DrawBoss(void)
 {
-	DrawBillboard();
-
 	DrawBossLife();
 
 	// デバイスのポインタ
@@ -758,12 +466,19 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 				g_Boss[nCnt].nStateCount[nCnt2] = 0;
 			}
 
-			g_Boss[nCnt].bUse = true;   // 使用状態にする
+			// 使用状態にする
+			g_Boss[nCnt].bUse = true;   
 
+			// ボスのモデルの位置を代入
 			D3DXVECTOR3 BossPos(g_Boss[nCnt].mtxWorld._41, g_Boss[nCnt].mtxWorld._42, g_Boss[nCnt].mtxWorld._43);
 
+			// ポリゴンをセット
 			SetPolygon(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 20.0f, 100.0f, POLYGON_TYPE_FIVE);
+
+			// 影をセット
 			g_Boss[nCnt].nIdxShadow = SetShadow(BossPos, D3DXVECTOR3(0.0f,0.0f,0.0f), 40.0f,1.0f);
+
+			// ミニマップにボスアイコンを設定
 			g_Boss[nCnt].nIdxMap = SetMiniMap(BossPos, MINIMAPTEX_BOSS);
 
 			// ボスのライフゲージの設定
@@ -967,301 +682,69 @@ void LoadBoss(void)
 	pFile = fopen("data\\MOTION\\boss.txt", "r");
 
 	// ローカル変数宣言-----------------------------
-	int nCntMotion = 0;
 	int nCntKey = 0;
 	int nCntPosKey = 0;
 	int nCntRotkey = 0;
 	int nCnt = 0;
 	int nNumParts = 0;
 	int nIdx = 0;
+	int nScanData = 0;
+	int nNumModel = 0;
+	char Skip[3] = {};
+	int nLoadCnt = 0;
+
 	//----------------------------------------------
 
 	if (pFile != NULL)
 	{//　NULL じゃない
 		// 文字列
-		char aString[MAX_WORD];
+		char aStr[MAX_WORD];
 
 		while (1)
 		{
-			// 読み飛ばし
-			fscanf(pFile, "%s", &aString[0]);
+			// 文字列を読み込む
+			int nData = fscanf(pFile, "%s", &aStr[0]);
 
-			if (strcmp(&aString[0], "SCRIPT") == 0)
-			{// SCRIPTを読み取ったら
-				while (1)
-				{
-					// 読み飛ばし
-					fscanf(pFile, "%s", &aString[0]);
+			if (strcmp(&aStr[0], "#") == 0)
+			{//コメントが来たら
+				//処理を読み飛ばす
+				continue;
+			}
 
-					if (strcmp(&aString[0], "NUM_MODEL") == 0)
-					{// NUM_MODELを読み取ったら
-						fscanf(pFile, "%s", &aString[0]);
+			// NUM_MODELを読み取ったら
+			if (strcmp(&aStr[0], "NUM_MODEL") == 0)
+			{
+				nScanData = fscanf(pFile, "%s", &Skip[0]);						// [=]を読み飛ばす
+				nScanData = fscanf(pFile, "%d", &nNumModel);					// モデルの最大数を代入
+				g_LoadBoss.nNumModel = nNumModel;	// モデルの最大数を代入
+			}
 
-						if (strcmp(&aString[0], "=") == 0)
-						{// 値を代入
-							fscanf(pFile, "%d", &g_LoadBoss.nNumModel);
-						}
-					}
+			// モデルの読み込みがまだ終わっていなかったら
+			if (nLoadCnt < nNumModel)
+			{
+				// モデルの読み込んだ数を返す
+				nLoadCnt = LoadBossFilename(pFile, nNumModel, &aStr[0], 0);
+			}
 
-					else if (strcmp(&aString[0], "MODEL_FILENAME") == 0)
-					{
-						// MODEL_FILENAMEを読み取ったら
-						fscanf(pFile, "%s", &aString[0]);
+			// CHARACTERSETを読み取ったら
+			if (strcmp(&aStr[0], "CHARACTERSET") == 0)
+			{
+				// パーツの設定処理
+				LoadBossCharacterSet(pFile, &aStr[0], nNumParts, 0);
+			}
 
-						if (strcmp(&aString[0], "=") == 0)
-						{// 代入
-							// 文字列を読み込む
-							fscanf(pFile, "%s", &aString[0]);
+			// MOTIONSETを読み取ったら
+			if (strcmp(&aStr[0], "MOTIONSET") == 0)
+			{
+				// モーションの設定処理
+				LoadBossMotionSet(pFile, &aStr[0], nNumModel, 0);
+			}
 
-							const char* MODEL_FILE = {};	// モデルファイル名格納用の変数
-
-							// 読み込んだ文字列を保存する
-							MODEL_FILE = aString;
-
-							//Xファイルの読み込み
-							D3DXLoadMeshFromX(MODEL_FILE,
-								D3DXMESH_SYSTEMMEM,
-								pDevice,
-								NULL,
-								&g_LoadBoss.aModel[nCnt].pBuffMat,
-								NULL,
-								&g_LoadBoss.aModel[nCnt].dwNumMat,
-								&g_LoadBoss.aModel[nCnt].pMesh);
-
-							nCnt++; // nCntをインクリメント
-						}
-					}
-					else if (strcmp(&aString[0], "CHARACTERSET") == 0)
-					{
-						while (1)
-						{
-							// 文字列を読み飛ばす
-							fscanf(pFile, "%s", &aString[0]);
-
-							if (strcmp(&aString[0], "NUM_PARTS") == 0)
-							{// NUM_PARTSを読み取ったら
-
-								fscanf(pFile, "%s", &aString[0]);
-
-								if (strcmp(&aString[0], "=") == 0)
-								{// 値を代入
-									fscanf(pFile, "%d", &nNumParts);
-								}
-							}
-
-							else if (strcmp(&aString[0], "PARTSSET") == 0)
-							{
-								while (1)
-								{
-									// 文字列を読み飛ばす
-									fscanf(pFile, "%s", &aString[0]);
-
-									if (strcmp(&aString[0], "INDEX") == 0)
-									{// INDEXを読み取ったら
-
-										fscanf(pFile, "%s", &aString[0]);
-
-										if (strcmp(&aString[0], "=") == 0)
-										{// 代入
-											fscanf(pFile, "%d", &nIdx);
-										}
-									}
-
-									if (strcmp(&aString[0], "PARENT") == 0)
-									{// PARENTを読み取ったら
-
-										fscanf(pFile, "%s", &aString[0]);
-
-										if (strcmp(&aString[0], "=") == 0)
-										{// 代入
-											// ペアネント
-											fscanf(pFile, "%d", &g_LoadBoss.aModel[nIdx].nIdxModelParent);
-										}
-									}
-
-
-									if (strcmp(&aString[0], "POS") == 0)
-									{// INDEXを読み取ったら
-
-										fscanf(pFile, "%s", &aString[0]);
-
-										if (strcmp(&aString[0], "=") == 0)
-										{// 座標を代入
-											fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offpos.x);
-											fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offpos.y);
-											fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offpos.z);
-										}
-									}
-
-									if (strcmp(&aString[0], "ROT") == 0)
-									{// INDEXを読み取ったら
-
-										fscanf(pFile, "%s", &aString[0]);
-
-										if (strcmp(&aString[0], "=") == 0)
-										{// 角度を代入
-											fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].rot.x);
-											fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].rot.y);
-											fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].rot.z);
-										}
-									}
-
-									if (strcmp(&aString[0], "END_PARTSSET") == 0)
-									{// END_PARTSSETを読み取ったら
-										// whileを抜ける
-										break;
-									}
-
-								}// while文末
-							}
-							else if (strcmp(&aString[0], "END_CHARACTERSET") == 0)
-							{
-								break;
-							}
-						}
-					}
-					else if (strcmp(&aString[0], "MOTIONSET") == 0)
-					{// MOTIONSETを読み取ったら
-
-
-						while (1)
-						{
-							// 文字を読み飛ばす
-							fscanf(pFile, "%s", &aString[0]);
-
-							if (strcmp(aString, "LOOP") == 0)
-							{// LOOP を読み取ったら
-								// 文字を読み飛ばす
-								fscanf(pFile, "%s", &aString[0]);
-
-								if (strcmp(&aString[0], "=") == 0)
-								{// = を読み取ったら
-									// 値を代入
-									fscanf(pFile, "%d", &g_LoadBoss.aMotionInfo[nCntMotion].bLoop);
-								}
-							}
-
-							else if (strcmp(aString, "NUM_KEY") == 0)
-							{// NUM_KEYを読み取ったら
-								// 文字を読み飛ばす
-								fscanf(pFile, "%s", &aString[0]);
-
-								if (strcmp(&aString[0], "=") == 0)
-								{// = を読み取ったら
-									// 値を代入
-									fscanf(pFile, "%d", &g_LoadBoss.aMotionInfo[nCntMotion].nNumkey);
-								}
-
-								while (nCntKey < g_LoadBoss.aMotionInfo[nCntMotion].nNumkey)
-								{
-									// 文字を読み飛ばす
-									fscanf(pFile, "%s", &aString[0]);
-
-									if (strcmp(aString, "KEYSET") == 0)
-									{// KEYSETを読み取ったら
-
-
-										while (1)
-										{
-											// 文字を読み飛ばす
-											fscanf(pFile, "%s", &aString[0]);
-
-
-											if (strcmp(&aString[0], "FRAME") == 0)
-											{// FRAMEを読み取ったら
-												// 文字を読み飛ばす
-												fscanf(pFile, "%s", &aString[0]);
-
-												if (strcmp(&aString[0], "=") == 0)
-												{// 値を代入
-													fscanf(pFile, "%d", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].nFrame);
-													break;
-												}
-											}
-
-										}
-
-										while (1)
-										{
-											// 文字を読み飛ばす
-											fscanf(pFile, "%s", &aString[0]);
-											if (strcmp(&aString[0], "KEY") == 0)
-											{// KEYを読みとったら
-												while (1)
-												{
-													// 文字を読み飛ばす
-													fscanf(pFile, "%s", &aString[0]);
-
-													if (strcmp(&aString[0], "POS") == 0)
-													{// POSを読み取ったら
-														// 文字を読み飛ばす
-														fscanf(pFile, "%s", &aString[0]);
-
-														if (strcmp(&aString[0], "=") == 0)
-														{// 値を代入
-															fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosX);
-															fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosY);
-															fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntPosKey].fPosZ);
-															nCntPosKey++;		// インクリメント
-														}
-													}
-
-													else if (strcmp(&aString[0], "ROT") == 0)
-													{// ROTを読み取ったら
-														// 文字を読み飛ばす
-														fscanf(pFile, "%s", &aString[0]);
-
-														if (strcmp(&aString[0], "=") == 0)
-														{// 値を代入
-															fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotX);
-															fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotY);
-															fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nCntKey].aKey[nCntRotkey].fRotZ);
-															nCntRotkey++;		// インクリメント
-														}
-													}
-
-													else if (strcmp(&aString[0], "END_KEY") == 0)
-													{// END_KEYを読み取ったら
-														break;
-													}
-												}
-											}
-											else if (strcmp(&aString[0], "END_KEYSET") == 0)
-											{// END_KEYSETを読み取ったら
-												nCntRotkey = 0;
-												nCntPosKey = 0;
-												nCntKey++;			// インクリメント
-												break;
-											}
-
-
-										}
-
-									}
-
-								}
-							}
-
-							if (strcmp(&aString[0], "END_MOTIONSET") == 0)
-							{// END_MOTIONSETを読み取ったら
-								nCntMotion++;		// モーションの更新
-								nCntKey = 0;		// 0から始める
-								break;
-							}
-						}
-					}
-
-					else if (strcmp(&aString[0], "END_SCRIPT") == 0)
-					{
-						break;
-					}
-					else
-					{
-						continue;
-					}
-				}// while文末
-
-				break;
+			// END_SCRIPTを読み取ったら
+			if (nData == EOF)
+			{
+				nCntMotionBoss = 0; // モーションのカウントをリセットする
+				break;          // While文を抜ける
 			}
 		}// while文末
 	}
@@ -1275,6 +758,302 @@ void LoadBoss(void)
 	fclose(pFile);
 }
 //===========================================================================================================
+// ボスのモデルのロード処理
+//===========================================================================================================
+int LoadBossFilename(FILE* pFile, int nNumModel, char* aString, int nType)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	D3DXMATERIAL* pMat;//マテリアルへのポインタ
+
+	//頂点座標の取得
+	int nNumVtx;	//頂点数
+	DWORD sizeFVF;	//頂点フォーマットのサイズ
+	BYTE* pVtxBuff;	//頂点バッファへのポインタ
+
+	char Skip[3] = {}; // [=]読み飛ばしよう変数
+
+	int nCntLoadModel = 0; // モデルのロードのカウンター
+	int nScanData = 0;              // 戻り値代入用
+
+	// カウントがモデル数より下だったら
+	while (nCntLoadModel < nNumModel)
+	{
+		// 文字を読み取る
+		nScanData = fscanf(pFile, "%s", aString);
+
+		// MODEL_FILENAMEを読み取ったら
+		if (strcmp(aString, "MODEL_FILENAME") == 0)
+		{
+			nScanData = fscanf(pFile, "%s", &Skip[0]); // [=]を読み飛ばす
+			nScanData = fscanf(pFile, "%s", aString);  // ファイル名を読み取る
+
+			const char* FILE_NAME = {};    // ファイル名代入用変数
+
+			FILE_NAME = aString;           // ファイル名を代入
+
+			//Xファイルの読み込み
+			D3DXLoadMeshFromX(FILE_NAME,
+				D3DXMESH_SYSTEMMEM,
+				pDevice,
+				NULL,
+				&g_LoadBoss.aModel[nCntLoadModel].pBuffMat,
+				NULL,
+				&g_LoadBoss.aModel[nCntLoadModel].dwNumMat,
+				&g_LoadBoss.aModel[nCntLoadModel].pMesh);
+
+			//マテリアルのデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_LoadBoss.aModel[nCntLoadModel].pBuffMat->GetBufferPointer();
+
+			for (int nCntMat = 0; nCntMat < (int)g_LoadBoss.aModel[nCntLoadModel].dwNumMat; nCntMat++)
+			{
+				if (pMat[nCntMat].pTextureFilename != NULL)
+				{
+					//このファイル名を使用してテクスチャを読み込む
+						//テクスチャの読み込み
+					D3DXCreateTextureFromFile(pDevice,
+						pMat[nCntMat].pTextureFilename,
+						&g_LoadBoss.aModel[nCntLoadModel].pTexture[nCntMat]);
+				}
+			}
+
+			//頂点数の取得
+			nNumVtx = g_LoadBoss.aModel[nCntLoadModel].pMesh->GetNumVertices();
+
+			//頂点フォーマットのサイズ取得
+			sizeFVF = D3DXGetFVFVertexSize(g_LoadBoss.aModel[nCntLoadModel].pMesh->GetFVF());
+
+			//頂点バッファのロック
+			g_LoadBoss.aModel[nCntLoadModel].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
+
+			for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
+			{
+				//頂点座標の代入
+				D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBuff;
+
+				//頂点座標を比較してブロックの最小値,最大値を取得
+				if (vtx.x < g_LoadBoss.aModel[nCntLoadModel].vtxMin.x)
+				{
+					g_LoadBoss.aModel[nCntLoadModel].vtxMin.x = vtx.x;
+				}
+				else if (vtx.y < g_LoadBoss.aModel[nCntLoadModel].vtxMin.y)
+				{
+					g_LoadBoss.aModel[nCntLoadModel].vtxMin.y = vtx.y;
+				}
+				else if (vtx.z < g_LoadBoss.aModel[nCntLoadModel].vtxMin.z)
+				{
+					g_LoadBoss.aModel[nCntLoadModel].vtxMin.z = vtx.z;
+				}
+
+				else if (vtx.x > g_LoadBoss.aModel[nCntLoadModel].vtxMax.x)
+				{
+					g_LoadBoss.aModel[nCntLoadModel].vtxMax.x = vtx.x;
+				}
+
+				else if (vtx.y > g_LoadBoss.aModel[nCntLoadModel].vtxMax.y)
+				{
+					g_LoadBoss.aModel[nCntLoadModel].vtxMax.y = vtx.y;
+				}
+
+				else if (vtx.z > g_LoadBoss.aModel[nCntLoadModel].vtxMax.z)
+				{
+					g_LoadBoss.aModel[nCntLoadModel].vtxMax.z = vtx.z;
+				}
+
+				//頂点フォーマットのサイズ分ポインタを進める
+				pVtxBuff += sizeFVF;
+			}
+
+			////サイズを代入
+			//g_player.Size.x = g_player.vtxMaxPlayer.x - g_player.vtxMinPlayer.x;
+			//g_player.Size.y = g_player.vtxMaxPlayer.y - g_player.vtxMinPlayer.y;
+			//g_player.Size.z = g_player.vtxMaxPlayer.z - g_player.vtxMinPlayer.z;
+
+			//各モデルごとのサイズを代入
+			g_LoadBoss.aModel[nCntLoadModel].Size.x = g_LoadBoss.aModel[nCntLoadModel].vtxMax.x - g_LoadBoss.aModel[nCntLoadModel].vtxMin.x;
+			g_LoadBoss.aModel[nCntLoadModel].Size.y = g_LoadBoss.aModel[nCntLoadModel].vtxMax.y - g_LoadBoss.aModel[nCntLoadModel].vtxMin.y;
+			g_LoadBoss.aModel[nCntLoadModel].Size.z = g_LoadBoss.aModel[nCntLoadModel].vtxMax.z - g_LoadBoss.aModel[nCntLoadModel].vtxMin.z;
+
+			//頂点バッファのアンロック
+			g_LoadBoss.aModel[nCntLoadModel].pMesh->UnlockVertexBuffer();
+
+			nCntLoadModel++; // モデルのカウントを増やす
+		}
+	}
+	return nCntLoadModel; // モデルのカウントを返す
+}
+//===========================================================================================================
+// ボスのパーツの設定処理
+//===========================================================================================================
+void LoadBossCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType)
+{
+	int nIdx = 0; // インデックス格納変数
+	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nScanData = 0;          // 戻り値代入用
+
+	// END_CHARACTERSETを読み取ってなかったら
+	while (strcmp(aString, "END_CHARACTERSET") != 0)
+	{
+		// 文字を読み取る
+		nScanData = fscanf(pFile, "%s", aString);
+
+		// INDEXを読み取ったら
+		if (strcmp(aString, "INDEX") == 0)
+		{
+			nScanData = fscanf(pFile, "%s", &Skip[0]); // [=]読み飛ばす
+			nScanData = fscanf(pFile, "%d", &nIdx);    // インデックスを代入
+		}
+		// PARENTを読み取ったら
+		else if (strcmp(aString, "PARENT") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// 親のインデックスを保存
+			nScanData = fscanf(pFile, "%d", &g_LoadBoss.aModel[nIdx].nIdxModelParent);
+		}
+		// POSを読み取ったら
+		else if (strcmp(aString, "POS") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// モデルのオフセットを代入
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offpos.x);
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offpos.y);
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offpos.z);
+		}
+		// ROTを読み取ったら
+		else if (strcmp(aString, "ROT") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// モデルのオフセットを代入
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offrot.x);
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offrot.y);
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aModel[nIdx].offrot.z);
+		}
+	}
+}
+//===========================================================================================================
+// ボスのモーションのロード処理
+//===========================================================================================================
+void LoadBossMotionSet(FILE* pFile, char* aString, int nNumModel, int nType)
+{
+	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nScanData = 0;          // 戻り値代入用
+
+	while (1)
+	{
+		// 文字を読み取る
+		nScanData = fscanf(pFile, "%s", aString);
+
+		if (strcmp(aString, "#") == 0 || strcmp(aString, "<<") == 0)
+		{// コメントが来たら
+			// コメントを読み飛ばす
+			continue;
+		}
+
+		// LOOPを読み通ったら
+		if (strcmp(aString, "LOOP") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// ループするかしないか
+			nScanData = fscanf(pFile, "%d", &g_LoadBoss.aMotionInfo[nCntMotionBoss].bLoop);
+		}
+		// NUM_KEYを読み通ったら
+		else if (strcmp(aString, "NUM_KEY") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// キーの最大数を代入
+			nScanData = fscanf(pFile, "%d", &g_LoadBoss.aMotionInfo[nCntMotionBoss].nNumkey);
+		}
+		// KEYSETを読み通ったら
+		if (strcmp(aString, "KEYSET") == 0)
+		{
+			// キーの設定処理
+			LoadBossKeySet(pFile, aString, nType, nCntMotionBoss);
+		}
+		// END_MOTIONSETを読み通ったら
+		if (strcmp(aString, "END_MOTIONSET") == 0)
+		{
+			nCntMotionBoss++; // モーションのカウントをリセット
+			nKeyBoss = 0;     // キーをリセット
+			break;
+		}
+	}
+}
+//===========================================================================================================
+// ボスのモーションのキーの読み込み処理
+//===========================================================================================================
+void LoadBossKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
+{
+	char Skip[3] = {}; // [=]読み飛ばし変数
+	int nCntPos = 0;   // 位置のカウント
+	int nCntRot = 0;   // 角度のカウント
+	int nScanData = 0;          // 戻り値代入用
+
+	while (1)
+	{
+		// 文字を読み取る
+		nScanData = fscanf(pFile, "%s", aString);
+
+		if (strcmp(aString, "#") == 0)
+		{// コメントが来たら
+			// コメントを読み飛ばす
+			continue;
+		}
+
+		// FRAMEを読み通ったら
+		if (strcmp(aString, "FRAME") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// フレームを読み込む
+			nScanData = fscanf(pFile, "%d", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nKeyBoss].nFrame);
+		}
+
+		// POSを読み通ったら
+		if (strcmp(aString, "POS") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// 位置を読み込む
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nKeyBoss].aKey[nCntPos].fPosX);
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nKeyBoss].aKey[nCntPos].fPosY);
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nKeyBoss].aKey[nCntPos].fPosZ);
+			nCntPos++;
+		}
+		// ROTを読み通ったら
+		else if (strcmp(aString, "ROT") == 0)
+		{
+			// [=]読み飛ばす
+			nScanData = fscanf(pFile, "%s", &Skip[0]);
+
+			// 角度を読み込む
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nKeyBoss].aKey[nCntRot].fRotX);
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nKeyBoss].aKey[nCntRot].fRotY);
+			nScanData = fscanf(pFile, "%f", &g_LoadBoss.aMotionInfo[nCntMotion].aKeyInfo[nKeyBoss].aKey[nCntRot].fRotZ);
+			nCntRot++;
+		}
+		// END_KEYSETを読み通ったら
+		else if (strcmp(aString, "END_KEYSET") == 0)
+		{
+			nKeyBoss++;		 // キーを増やす
+			nCntPos = 0; // 位置のカウントをリセット
+			nCntRot = 0; // 角度のカウントをリセット
+			break;
+		}
+	}
+}
+//===========================================================================================================
 // 剣の当たり判定
 //===========================================================================================================
 void colisionSword(int nCntBoss)
@@ -1282,129 +1061,182 @@ void colisionSword(int nCntBoss)
 	Player* pPlayer = GetPlayer();
 	Item* pItem = GetItem();
 
-	D3DXVECTOR3 mtxDis, SwordPos;
+	bool bHit = false;
+
+	// 球の半径
+	float Radius = 50.0f;
+
+	// 剣先の位置
+	D3DXVECTOR3 SwordTopPos(pPlayer->SwordMtx._41, pPlayer->SwordMtx._42, pPlayer->SwordMtx._43);
+
+	// 剣の持ち手の位置
+	D3DXVECTOR3 SwordUnderPos(pPlayer->Motion.aModel[15].mtxWorld._41, pPlayer->Motion.aModel[15].mtxWorld._42, pPlayer->Motion.aModel[15].mtxWorld._43);
+
+	for (int nCntModel = 0; nCntModel < g_Boss[nCntBoss].Motion.nNumModel; nCntModel++)
+	{
+		// 敵の位置
+		D3DXVECTOR3 BossModel(g_Boss[nCntBoss].Motion.aModel[nCntModel].mtxWorld._41, g_Boss[nCntBoss].Motion.aModel[nCntModel].mtxWorld._42, g_Boss[nCntBoss].Motion.aModel[nCntModel].mtxWorld._43);
+
+		// 線分の終点から球体の中心点までのベクトル
+		D3DXVECTOR3 pvEnd = SwordTopPos - BossModel;
+
+		// 線分の始点から球体の中心点までのベクトル
+		D3DXVECTOR3 pvFirst = SwordUnderPos - BossModel;
+
+		// 始点～終点までのベクトル
+		D3DXVECTOR3 sv = SwordTopPos - SwordUnderPos;
+
+		// 長さX
+		float LengthX = SwordTopPos.x - SwordUnderPos.x;
+		// 長さY
+		float LengthY = SwordTopPos.y - SwordUnderPos.y;
+		// 長さZ
+		float LengthZ = SwordTopPos.z - SwordUnderPos.z;
+
+		// 線分の長さを求める
+		float Length = sqrtf((LengthX * LengthX) + (LengthY * LengthY) + (LengthZ * LengthZ));
+
+		// 正規化する
+		D3DXVec3Normalize(&sv, &sv);
+
+		// ベクトルの終点と円の中心との内積
+		float DotEnd = D3DXVec3Dot(&sv, &pvEnd);
+
+		// ベクトルの始点と円の中心との内積
+		float DotFirst = D3DXVec3Dot(&sv, &pvFirst);
+
+		// 交差した
+		if (D3DXVec3Length(&pvEnd) < Radius)
+		{
+			bHit = true;
+			break;
+		}
+		// 交差した
+		else if (D3DXVec3Length(&pvFirst) < Radius)
+		{
+			bHit = true;
+			break;
+		}
+
+		// 内積の値が0より大きく線分のベクトルの大きさより小さいなら
+		if (0 < DotEnd && DotEnd < Length)
+		{
+			// svを長さDotのベクトルにする
+			sv *= DotEnd;
+
+			// ベクトルの引き算でpvを[線分から球体の中心点までの最短ベクトルにする]
+			pvEnd -= sv;
+
+			// 交差した
+			if (D3DXVec3Length(&pvEnd) < Radius)
+			{
+				bHit = true;
+				break;
+			}
+		}
+		// 内積の値が0より大きく線分のベクトルの大きさより小さいなら
+		else if (0 < DotFirst && DotFirst < Length)
+		{
+			// svを長さDotのベクトルにする
+			sv *= DotFirst;
+
+			// ベクトルの引き算でpvを[線分から球体の中心点までの最短ベクトルにする]
+			pvFirst -= sv;
+
+			// 交差した
+			if (D3DXVec3Length(&pvEnd) < Radius)
+			{
+				bHit = true;
+				break;
+			}
+		}
+	}
+
+	// モーションのキー
+	int nKey = pPlayer->Motion.nKey;
+
+	// モーションのカウンター
+	int nCounter = pPlayer->Motion.nCountMotion;
+
+	// 最後のキー
+	int LastKey = pPlayer->Motion.aMotionInfo[pPlayer->Motion.motionType].nNumkey - 1;
+
+	// 最後のフレーム
+	int EndFrame = pPlayer->Motion.aMotionInfo[pPlayer->Motion.motionType].aKeyInfo[LastKey].nFrame;
+
+	// プレイヤーが武器を持っているか判定
+	const bool is_HaveWepon = pPlayer->Motion.nNumModel == MAX_MODEL;
+
+	// プレイヤーがスペシャル状態じゃないか判定
+	const bool is_NotSpAttack = pPlayer->AttackSp == false;
+
+	// ボスの状態がダメージじゃなかったら
+	const bool is_NotDamage = g_Boss[nCntBoss].state != BOSSSTATE_DAMAGE;
+
+	// プレイヤーが攻撃状態だったら
+	const bool is_playerAction = pPlayer->Combostate != COMBO_NO;
+
+	// 攻撃できる
+	const bool CanSwordDamage = is_HaveWepon == true && is_NotSpAttack == true && is_NotDamage == true && is_playerAction == true;
 
 	// スペシャル攻撃じゃない
-	if (pPlayer->Motion.nNumModel == 16 && !pPlayer->AttackSp)
+	if (CanSwordDamage == true && bHit == true && CheckMotionBounds(nKey,nCounter,KEY_ONE,LastKey,0,EndFrame) == true)
 	{
-		//剣の長さを求める
-		mtxDis.x = (pPlayer->SwordMtx._41 - pPlayer->Motion.aModel[15].mtxWorld._41);
-		mtxDis.y = (pPlayer->SwordMtx._42 - pPlayer->Motion.aModel[15].mtxWorld._42);
-		mtxDis.z = (pPlayer->SwordMtx._43 - pPlayer->Motion.aModel[15].mtxWorld._43);
+		HitBoss(nCntBoss,pPlayer->nDamage * 5);
 
-		// マトリクスの数分だけ回す
-		for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
+		pItem[pPlayer->ItemIdx].durability--;
+
+		if (pItem[pPlayer->ItemIdx].durability <= 0)
 		{
-			// 剣の位置を全て求める
-			SwordPos.x = pPlayer->Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.125f * nCnt;
-			SwordPos.y = pPlayer->Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.125f * nCnt;
-			SwordPos.z = pPlayer->Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.125f * nCnt;
-
-			D3DXVECTOR3 DisPos; // 距離算出用
-
-			DisPos.x = g_Boss[nCntBoss].pos.x - SwordPos.x; // 距離Xを求める
-			DisPos.y = g_Boss[nCntBoss].pos.y - SwordPos.y; // 距離Yを求める
-			DisPos.z = g_Boss[nCntBoss].pos.z - SwordPos.z; // 距離Zを求める
-
-			float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z); // 距離を求める
-
-			float Radius1, Radius2; // 半径
-
-			Radius1 = 15.0f;
-			Radius2 = 50.0f;
-
-			float fRadius = Radius1 + Radius2; // 半径を求める
-
-			fRadius = (fRadius * fRadius); // 半径を求める
-
-			// ボスの範囲に入った
-			if (fDistance <= fRadius && g_Boss[nCntBoss].state != BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO)
-			{
-				HitBoss(nCntBoss,pPlayer->nDamage * 5);
-
-				pItem[pPlayer->ItemIdx].durability--;
-
-				if (pItem[pPlayer->ItemIdx].durability <= 0)
-				{
-					pPlayer->Itembreak[pPlayer->ItemIdx] = true;
-				}
-				break;
-			}
+			pPlayer->Itembreak[pPlayer->ItemIdx] = true;
 		}
 	}
-	// 素手でsp攻撃してない
-	else if (pPlayer->Motion.nNumModel == 15 && !pPlayer->AttackSp)
-	{
-		// モデルの位置を変数に代入
-		D3DXVECTOR3 ModelPos(pPlayer->Motion.aModel[4].mtxWorld._41, pPlayer->Motion.aModel[4].mtxWorld._42, pPlayer->Motion.aModel[4].mtxWorld._43);
 
-		// 円の範囲
-		if (sphererange(&ModelPos, &g_Boss[nCntBoss].pos, 30.0f, 65.0f) && pPlayer->Combostate != COMBO_NO && g_Boss[nCntBoss].state != ENEMYSTATE_DAMAGE)
-		{
-			if (pPlayer->Motion.motionType == MOTIONTYPE_ACTION && pPlayer->Motion.nKey >= 2)
-			{
-				HitBoss(nCntBoss,pPlayer->nDamage * 3); // 敵に当たった
-			}
-		}
+	// モデルの位置を変数に代入
+	D3DXVECTOR3 ModelPos(pPlayer->Motion.aModel[4].mtxWorld._41, pPlayer->Motion.aModel[4].mtxWorld._42, pPlayer->Motion.aModel[4].mtxWorld._43);
+
+	// 武器を持っていないかを判定
+	const bool is_NotWepon = pPlayer->Motion.nNumModel == MAX_MODEL - 1;
+
+	// 円の範囲内にいるかどうかを判定
+	const bool is_sphereBounds = sphererange(&ModelPos, &g_Boss[nCntBoss].pos, 30.0f, 65.0f) == true;
+
+	// ダメージを与えられるかを判定
+	const bool CanPanchDamage = is_NotWepon == true && is_sphereBounds == true && is_NotDamage == true && is_playerAction == true;
+
+	// 素手で攻撃できる
+	if (CanPanchDamage == true && CheckMotionBounds(nKey, nCounter, KEY_TWO, LastKey, 0, EndFrame) == true)
+	{
+		HitBoss(nCntBoss,pPlayer->nDamage * 3); // 敵に当たった
 	}
-	else if (pPlayer->Motion.nNumModel == 16 && pPlayer->AttackSp)
+
+	// ダメージを与えられる
+	const bool is_CanSpDamage = pPlayer->Motion.nNumModel == MAX_MODEL && pPlayer->AttackSp == true;
+
+	// 刀のスペシャル攻撃
+	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, KEY_THREE, LastKey, 0, EndFrame / 2) == true)
 	{
-		//剣の長さを求める
-		mtxDis.x = (pPlayer->SwordMtx._41 - pPlayer->Motion.aModel[15].mtxWorld._41);
-		mtxDis.y = (pPlayer->SwordMtx._42 - pPlayer->Motion.aModel[15].mtxWorld._42);
-		mtxDis.z = (pPlayer->SwordMtx._43 - pPlayer->Motion.aModel[15].mtxWorld._43);
-
-		// マトリクスの数分だけ回す
-		for (int nCnt = 0; nCnt < NUM_MTX; nCnt++)
-		{
-			// 剣の位置を全て求める
-			SwordPos.x = pPlayer->Motion.aModel[15].mtxWorld._41 + mtxDis.x * 0.125f * nCnt;
-			SwordPos.y = pPlayer->Motion.aModel[15].mtxWorld._42 + mtxDis.y * 0.125f * nCnt;
-			SwordPos.z = pPlayer->Motion.aModel[15].mtxWorld._43 + mtxDis.z * 0.125f * nCnt;
-
-			D3DXVECTOR3 DisPos; // 距離算出用
-
-			DisPos.x = g_Boss[nCntBoss].pos.x - SwordPos.x; // 距離Xを求める
-			DisPos.y = g_Boss[nCntBoss].pos.y - SwordPos.y; // 距離Yを求める
-			DisPos.z = g_Boss[nCntBoss].pos.z - SwordPos.z; // 距離Zを求める
-
-			float fDistance = (DisPos.x * DisPos.x) + (DisPos.y * DisPos.y) + (DisPos.z * DisPos.z); // 距離を求める
-
-			float Radius1, Radius2; // 半径
-
-			Radius1 = 200.0f;
-			Radius2 = 50.0f;
-
-			float fRadius = Radius1 + Radius2; // 半径を求める
-
-			fRadius = (fRadius * fRadius); // 半径を求める
-
-			// 範囲内にいたら
-			if (fDistance <= fRadius && pPlayer->WeponMotion != MOTION_SPPIERCING && pPlayer->WeponMotion != MOTION_SPDOUBLE &&
-				g_Boss[nCntBoss].state !=BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO && pPlayer->Motion.nKey >= 3)
-			{
-				// 敵にダメージを与える
-				HitBoss(nCntBoss, (pPlayer->nDamage * 50));
-				break;
-			}
-			// 範囲内にいたら
-			if (sphererange(&pPlayer->pos, &g_Boss[nCntBoss].pos, 200.0f, 50.0f) && pPlayer->WeponMotion == MOTION_SPPIERCING &&
-				g_Boss[nCntBoss].state != BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO && pPlayer->Motion.nKey >= 19)
-			{
-				// 敵にダメージを与える
-				HitBoss(nCntBoss, (pPlayer->nDamage * 50));
-				break;
-			}
-
-			// 範囲内にいたら
-			if (sphererange(&pPlayer->pos, &g_Boss[nCntBoss].pos, 200.0f, 50.0f) && pPlayer->WeponMotion == MOTION_SPDOUBLE &&
-				g_Boss[nCntBoss].state != BOSSSTATE_DAMAGE && pPlayer->Combostate != COMBO_NO && pPlayer->Motion.nKey >= 6)
-			{
-				// 敵にダメージを与える
-				HitBoss(nCntBoss, (pPlayer->nDamage * 50));
-				break;
-			}
-		}
+		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+	}
+	// 両手持ちの必殺技
+	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPDOUBLE && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
+	{
+		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+	}
+	// ハンマーのスペシャル攻撃
+	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPHAMMER && CheckMotionBounds(nKey, nCounter, KEY_ONE, LastKey, 0, EndFrame / 2) == true)
+	{
+		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+	}
+	// 片手の必殺技
+	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
+	{
+		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+	}
+	// 槍の必殺技
+	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, KEY_EIGHTEEN, LastKey, 0, EndFrame / 2) == true)
+	{
+		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
 	}
 
 }
@@ -1427,6 +1259,304 @@ void CollisionToBoss(int nCntBoss)
 			}
 		}
 	}
+}
+//========================================================================================================
+// 状態異常の設定
+//========================================================================================================
+bool SetAbnormalCondition(int nType, int nTime, int nDamage,int nCntBoss)
+{			
+	bool is_SetParticle = false;
+
+	if (g_Boss[nCntBoss].nStateCount[nType] > 0)
+	{
+		// 状態異常出血の処理
+		g_Boss[nCntBoss].nStateCount[nType]--;
+
+		is_SetParticle = true;
+		if (g_Boss[nCntBoss].nStateCount[nType] % nTime == 0)
+		{
+			HitBoss(nCntBoss, nDamage);	
+		}
+	}
+	return is_SetParticle;
+}
+//========================================================================================================
+// 状態異常の更新処理
+//========================================================================================================
+void UpdateAbnormalCondition(int nCntBoss)
+{
+	if (SetAbnormalCondition(0, 60, g_Boss[nCntBoss].nLife / 20, nCntBoss) == true)
+	{
+		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
+			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
+			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+			2.0f, 2, 30, 6, 10.0f, 20.0f, true, D3DXVECTOR3(0.0f, -1.0f, 0.0f));
+	}
+
+	// 状態異常炎の処理
+	if (SetAbnormalCondition(1, 60, g_Boss[nCntBoss].nLife / 20, nCntBoss) == true)
+	{
+		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y, g_Boss[nCntBoss].pos.z),
+			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
+			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+			2.0f, 2, 30, 7, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 2.0f, 0.0f));
+		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y, g_Boss[nCntBoss].pos.z),
+			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
+			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
+			2.0f, 2, 30, 7, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 2.0f, 0.0f));
+	}
+
+	// 状態異常氷の処理
+	if (SetAbnormalCondition(2, 60, g_Boss[nCntBoss].nLife / 20, nCntBoss) == true)
+	{
+		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
+			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
+			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+			1.0f, 2, 60, 7, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+
+		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
+			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
+			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(0.0f, 0.6f, 1.0f, 1.0f),
+			1.0f, 2, 60, 7, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+	}
+
+	// 状態異常雷の処理
+	if (SetAbnormalCondition(3, 60, g_Boss[nCntBoss].nLife / 20, nCntBoss) == true)
+	{
+		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
+			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
+			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+			1.0f, 2, 120, 6, 1.0f, 25.0f, false, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+	}
+
+	// 状態異常水の処理
+	if (SetAbnormalCondition(4, 60, g_Boss[nCntBoss].nLife / 20, nCntBoss) == true)
+	{
+		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
+			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
+			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f),
+			2.0f, 2, 30, 6, 10.0f, 20.0f, true, D3DXVECTOR3(0.0f, -1.0f, 0.0f));
+	}
+}
+//========================================================================================================
+// ボスの突進攻撃の設定
+//========================================================================================================
+void SetRasuAttack(int nCntBoss)
+{
+	Player* pPlayer = GetPlayer();
+
+	if (g_Boss[nCntBoss].Motion.nKey == KEY_FIRST || g_Boss[nCntBoss].Motion.nKey == KEY_ONE)// 溜める動作中に
+	{
+		// 向きをプレイヤーに向ける
+		float fAngle = atan2f(pPlayer->posOld.x - g_Boss[nCntBoss].pos.x, pPlayer->posOld.z - g_Boss[nCntBoss].pos.z);
+
+		// ボスの向き代入
+		g_Boss[nCntBoss].rot.y = fAngle + D3DX_PI;
+	}
+	else if (g_Boss[nCntBoss].Motion.nKey == KEY_TWO)// 溜まり切ったモーションになって
+	{
+		if (g_Boss[nCntBoss].Motion.nCountMotion == 1)// その最初にエフェクトを出す
+		{
+			SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z),
+				D3DXVECTOR3(1.57f, g_Boss[nCntBoss].rot.y, 1.57f),
+				D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+				2.0f, 3, 20, 30, 4.0f, 50.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+	}
+	else if (g_Boss[nCntBoss].Motion.nKey == KEY_THREE)// 突進モーション中の			
+	{
+		if (g_Boss[nCntBoss].Motion.nCountMotion == 1)// 最初は加速させて
+		{
+			g_Boss[nCntBoss].move.x = sinf(g_Boss[nCntBoss].rot.y + D3DX_PI) * 40.0f;
+			g_Boss[nCntBoss].move.z = cosf(g_Boss[nCntBoss].rot.y + D3DX_PI) * 40.0f;
+		}
+		else // その後はエフェクトを纏いながら移動する
+		{
+			g_Boss[nCntBoss].pos += g_Boss[nCntBoss].move;
+			SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z),
+				g_Boss[nCntBoss].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+				2.0f, 4, 60, 30, 6.0f, 60.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+	}
+}
+//========================================================================================================
+// ボスの二回突進してくる攻撃処理
+//========================================================================================================
+void SetDoubleRasuAttack(int nCntBoss)
+{
+	Player* pPlayer = GetPlayer();
+
+	if (g_Boss[nCntBoss].Motion.nKey == KEY_FIRST || g_Boss[nCntBoss].Motion.nKey == KEY_FOUR)// 溜める動作中に
+	{
+		// 向きをプレイヤーに向ける
+		float fAngle = atan2f(pPlayer->posOld.x - g_Boss[nCntBoss].pos.x, pPlayer->posOld.z - g_Boss[nCntBoss].pos.z);
+
+		// ボスの向き代入
+		g_Boss[nCntBoss].rot.y = fAngle + D3DX_PI;
+	}
+	else if (g_Boss[nCntBoss].Motion.nKey == KEY_ONE)// 溜まり切ったモーションになって
+	{
+		if (g_Boss[nCntBoss].Motion.nCountMotion == 1)// その最初にエフェクトを出す
+		{
+			SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z),
+				D3DXVECTOR3(1.57f, g_Boss[nCntBoss].rot.y, 1.57f),
+				D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+				2.0f, 3, 20, 55, 4.0f, 50.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+	}
+	else if (g_Boss[nCntBoss].Motion.nKey == KEY_SIX)// ハイキックモーション中の			
+	{
+		if (g_Boss[nCntBoss].Motion.nCountMotion == 1)// 最初は加速させる
+		{
+			g_Boss[nCntBoss].move.x = sinf(g_Boss[nCntBoss].rot.y + D3DX_PI) * 30.0f;
+			g_Boss[nCntBoss].move.z = cosf(g_Boss[nCntBoss].rot.y + D3DX_PI) * 30.0f;
+		}
+		else
+		{
+			SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 2.0f, g_Boss[nCntBoss].pos.z),
+				g_Boss[nCntBoss].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+				2.0f, 4, 60, 40, 6.0f, 60.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+	}
+	else if (g_Boss[nCntBoss].Motion.nKey == KEY_TWO || g_Boss[nCntBoss].Motion.nKey == KEY_THREE)//アッパー中にはエフェクトを出す
+	{
+		D3DXVECTOR3 BlowPos(
+			g_Boss[nCntBoss].Motion.aModel[5].mtxWorld._41, // X方向
+			g_Boss[nCntBoss].Motion.aModel[5].mtxWorld._42, // Y方向
+			g_Boss[nCntBoss].Motion.aModel[5].mtxWorld._43  // Z方向
+		);
+
+		g_Boss[nCntBoss].pos += g_Boss[nCntBoss].move;
+		SetParticle(D3DXVECTOR3(BlowPos),
+			g_Boss[nCntBoss].rot,
+			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+			2.0f, 4, 20, 12, 2.0f, 5.0f,
+			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		if (g_Boss[nCntBoss].Motion.nCountMotion == 1 && g_Boss[nCntBoss].Motion.nKey == KEY_TWO)
+		{
+			g_Boss[nCntBoss].move.x = sinf(g_Boss[nCntBoss].rot.y + D3DX_PI) * 20.0f;
+			g_Boss[nCntBoss].move.z = cosf(g_Boss[nCntBoss].rot.y + D3DX_PI) * 20.0f;
+		}
+	}
+	else if (g_Boss[nCntBoss].Motion.nKey >= KEY_SIX)//蹴り中にもエフェクトを出す
+	{
+		D3DXVECTOR3 BlowPos(
+			g_Boss[nCntBoss].Motion.aModel[11].mtxWorld._41, // X方向
+			g_Boss[nCntBoss].Motion.aModel[11].mtxWorld._42, // Y方向
+			g_Boss[nCntBoss].Motion.aModel[11].mtxWorld._43  // Z方向
+		);
+
+		g_Boss[nCntBoss].pos += g_Boss[nCntBoss].move;
+		SetParticle(D3DXVECTOR3(BlowPos),
+			g_Boss[nCntBoss].rot,
+			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+			2.0f, 4, 20, 12, 2.0f, 5.0f,
+			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	}
+}
+//========================================================================================================
+// ボスの追跡の更新処理
+//========================================================================================================
+void UpdateAgentBoss(int nCntBoss)
+{
+	Player* pPlayer = GetPlayer();
+
+	// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
+	const bool is_sphereBounds = sphererange(&pPlayer->pos, &g_Boss[nCntBoss].pos, 50.0f, 2000.0f) == true;
+
+	// 攻撃モーション0かどうかを判定
+	const bool is_NotAction0 = g_Boss[nCntBoss].Motion.motionType != MOTIONTYPE_ACTION;
+
+	// 攻撃モーション1かどうかを判定
+	const bool is_NotAction1 = g_Boss[nCntBoss].Motion.motionType != MOTIONTYPE_ACTION2;
+
+	// 攻撃モーション2かどうかを判定
+	const bool is_NotAction2 = g_Boss[nCntBoss].Motion.motionType != MOTIONTYPE_ACTION3;
+
+	// 追跡できるかどうかを判定
+	const bool CanAgent = is_sphereBounds == true && is_NotAction0 == true && is_NotAction1 == true && is_NotAction2 == true;
+
+	if (CanAgent == true)
+	{
+		// モデル情報を代入
+		D3DXVECTOR3 HootR(g_Boss[nCntBoss].Motion.aModel[11].mtxWorld._41, g_Boss[nCntBoss].Motion.aModel[11].mtxWorld._42, g_Boss[nCntBoss].Motion.aModel[11].mtxWorld._43);
+		D3DXVECTOR3 HootL(g_Boss[nCntBoss].Motion.aModel[14].mtxWorld._41, g_Boss[nCntBoss].Motion.aModel[14].mtxWorld._42, g_Boss[nCntBoss].Motion.aModel[14].mtxWorld._43);
+
+		// モーションがムーブの時1キーの1フレーム目
+		if (g_Boss[nCntBoss].Motion.motionType == MOTIONTYPE_MOVE &&
+			g_Boss[nCntBoss].Motion.nKey == 1 &&
+			g_Boss[nCntBoss].Motion.nCountMotion == 1)
+		{
+			SetExplosion(HootR, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
+		}
+
+		// モーションがムーブの時3キーの1フレーム目
+		else if (g_Boss[nCntBoss].Motion.motionType == MOTIONTYPE_MOVE &&
+			g_Boss[nCntBoss].Motion.nKey == 3 &&
+			g_Boss[nCntBoss].Motion.nCountMotion == 1)
+		{
+			SetExplosion(HootL, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
+		}
+
+		g_Boss[nCntBoss].Motion.motionType = MOTIONTYPE_MOVE; // モーションの種類を移動にする
+
+		// ボスの向きをプレイヤーの位置を向くようにする
+		float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCntBoss].pos.x, pPlayer->pos.z - g_Boss[nCntBoss].pos.z);
+
+		// ボスの向き代入
+		g_Boss[nCntBoss].rot.y = fAngle + D3DX_PI;
+
+		// プレイヤーの位置を算出
+		D3DXVECTOR3 Dest = pPlayer->pos - g_Boss[nCntBoss].pos;
+
+		// 正規化
+		D3DXVec3Normalize(&Dest, &Dest);
+
+		// 移動量に代入
+		g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed;
+		g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed;
+	}
+	//else
+	//{
+	//	if (g_Boss[nCntBoss].Motion.motionType != MOTIONTYPE_ACTION)
+	//	{
+	//		g_Boss[nCntBoss].Motion.motionType = MOTIONTYPE_NEUTRAL; // 攻撃してない
+	//	}
+	//}
+
+
 }
 //========================================================================================================
 // ボスの取得処理

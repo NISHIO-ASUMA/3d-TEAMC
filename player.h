@@ -233,4 +233,5 @@ bool sphererange(D3DXVECTOR3* pPos1,D3DXVECTOR3 *pPos2, float radius1, float rad
 void MotionChange(int itemtype, int LoadPlayer);													 // モーション変更
 void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage);							 // プレイヤーのステータス変更
 bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int startFrame, int EndFrame); // モーションの開始判定処理
+//bool CollisionLine(float Radius, D3DXVECTOR3* pEndPos, D3DXVECTOR3* pFirstPos,int nMaxModel, D3DXVECTOR3* pSphereCenterPos);       // 線分と円の当たり判定
 #endif
