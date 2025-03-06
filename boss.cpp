@@ -298,13 +298,27 @@ void UpdateBoss(void)
 			case MOTIONTYPE_ACTION:
 				if (g_Boss[nCnt].Motion.nKey >= 3)
 				{
-					HitPlayer(40);
+					if (g_Boss[nCnt].nStateCount[3] > 0)
+					{
+						HitPlayer(30);
+					}
+					else
+					{
+						HitPlayer(40);
+					}
 				}
 				break;
 			case MOTIONTYPE_ACTION2:
 				if (g_Boss[nCnt].Motion.nKey >= 2)
 				{
-					HitPlayer(40);
+					if (g_Boss[nCnt].nStateCount[3] > 0)
+					{
+						HitPlayer(30);
+					}
+					else
+					{
+						HitPlayer(40);
+					}
 				}
 				break;
 			default:
