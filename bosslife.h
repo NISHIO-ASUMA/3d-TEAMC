@@ -52,5 +52,6 @@ void UninitBossLife(); // 体力バーの終了処理
 void UpdateBossLife(Boss* pBoss); // 体力バーの更新処理
 void DrawBossLife(); // 体力バーの描画処理
 int SetBossLife(D3DXVECTOR3 pos, int nType); // 体力バーの設定処理
-void SetPositionLifeBar(int nIdx,D3DXVECTOR3 pos); // 
+void SetPositionLifeBar(int nIdxBar,int nIdxFrame,D3DXVECTOR3 pos); // ボスのHPゲージの更新処理
+void DeleateLifeBar(int nIdxBar,int nIdxFrame); // ボスの体力ゲージの消去
 #endif
