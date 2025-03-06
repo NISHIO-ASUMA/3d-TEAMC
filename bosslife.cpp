@@ -185,7 +185,7 @@ void DrawBossLife()
 		g_BossLife[nCnt].mtxWorld._33 = mtxView._33;
 
 		// 位置を反映
-		D3DXMatrixTranslation(&mtxTrans,  g_BossLife[nCnt].pos.x - (MAX_LENGTH * 0.5f), g_BossLife[nCnt].pos.y, g_BossLife[nCnt].pos.z);
+		D3DXMatrixTranslation(&mtxTrans,  g_BossLife[nCnt].pos.x, g_BossLife[nCnt].pos.y, g_BossLife[nCnt].pos.z);
 		D3DXMatrixMultiply(&g_BossLife[nCnt].mtxWorld, &g_BossLife[nCnt].mtxWorld, &mtxTrans);
 
 		// ワールドマトリックスの設定
@@ -256,10 +256,10 @@ int SetBossLife(D3DXVECTOR3 pos, int nType)
 			g_BossLife[nCnt].bUse = true; // 使用判定
 
 			// 頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(0.0f, TOPPOS, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(MAX_LENGTH, TOPPOS, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, UNDERPOS, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(MAX_LENGTH, UNDERPOS, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f, TOPPOS, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f + MAX_LENGTH, TOPPOS, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f, UNDERPOS, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f + MAX_LENGTH, UNDERPOS, 0.0f);
 
 			break;
 		}
@@ -301,11 +301,11 @@ void UpdateLifegage(Boss* pBoss)
 
 	g_BossLife[pBoss->nLifeBarIdx].fLength = fRateLife * MAX_LENGTH;
 
-	//// 体力バーのゲージの設定処理
-	//SetLifeBarLength(pBoss->nLifeBarIdx, fRateLife, g_BossLife[pBoss->nLifeBarIdx].fLength);
+	// 体力バーのゲージの設定処理
+	SetLifeBarLength(pBoss->nLifeBarIdx, fRateLife, g_BossLife[pBoss->nLifeBarIdx].fLength);
 
-	//// ディレイバーの設定処理
-	//SetDelayBarLength(pBoss->nLifeDelayIdx, fRateLife, g_BossLife[pBoss->nLifeBarIdx].fLength,pBoss->state);
+	// ディレイバーの設定処理
+	SetDelayBarLength(pBoss->nLifeDelayIdx, fRateLife, g_BossLife[pBoss->nLifeBarIdx].fLength,pBoss->state);
 }
 //==============================================================================================================
 // ボスの体力バーの長さの設定処理
@@ -321,10 +321,10 @@ void SetLifeBarLength(int nIdxLifebar,float fRate,float fLength)
 	pVtx += 4 * nIdxLifebar;
 
 	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(0.0f, TOPPOS, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(fLength, TOPPOS, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0.0f, UNDERPOS, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(fLength, UNDERPOS, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f, TOPPOS, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f + fLength, TOPPOS, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f, UNDERPOS, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f + fLength, UNDERPOS, 0.0f);
 
 	// テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -363,10 +363,10 @@ void SetDelayBarLength(int nIdxDelayBar,float fRate,float fLength,int state)
 	g_BossLife[nIdxDelayBar].DelayLength += (fLength - g_BossLife[nIdxDelayBar].DelayLength) * EaseOutCubic(Time);
 
 	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(0.0f, TOPPOS, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(g_BossLife[nIdxDelayBar].DelayLength, TOPPOS, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0.0f, UNDERPOS, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(g_BossLife[nIdxDelayBar].DelayLength, UNDERPOS, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f, TOPPOS, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f + g_BossLife[nIdxDelayBar].DelayLength, TOPPOS, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f, UNDERPOS, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f + g_BossLife[nIdxDelayBar].DelayLength, UNDERPOS, 0.0f);
 
 	static float fDelayRate = fRate;
 

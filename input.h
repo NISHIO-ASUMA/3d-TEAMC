@@ -85,6 +85,7 @@ bool JoypadRelease(JOYKEY key);						// キーのリリース
 bool JoypadRepeat(JOYKEY key);						// キーのリピート
 
 bool GetJoyStick(void);								//ジョイパッドのスティック情報(L)
+bool GetJoyRStick(void);								//ジョイパッドのスティック情報(R)
 bool GetJoyStickRrepeat(void);						//ジョイパッドのスティック情報(R)
 void UpdateStick(void);								//Rスティック
 

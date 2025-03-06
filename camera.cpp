@@ -234,7 +234,7 @@ void StickCamera(void)
 	XINPUT_STATE* pStick = GetJoyStickAngle();
 
 #if 1
-	if (GetJoyStick())
+	if (GetJoyRStick() == true)
 	{
 		float RStickAngleY = pStick->Gamepad.sThumbRY;
 		float RStickAngleX = pStick->Gamepad.sThumbRX;
@@ -242,53 +242,14 @@ void StickCamera(void)
 		float DeadZone = 10920.0f;
 		float fMag = sqrtf((RStickAngleX * RStickAngleX) + (RStickAngleY * RStickAngleY));
 
-		if (fMag > DeadZone)
+		if (fMag >= DeadZone)
 		{
-			if (pStick->Gamepad.sThumbRX < -10920.0f)
-			{// 左右移動
-				// 角度
-				g_camera.rot.y += 0.04f;
+			float NormalizeX = RStickAngleX / fMag;
+			float NormalizeY = RStickAngleY / fMag;
 
-			}
-			else if (pStick->Gamepad.sThumbRX > 10920.0f)
-			{// 左右移動
-				// 角度
-				g_camera.rot.y -= 0.04f;
-			}
-
-			if (pStick->Gamepad.sThumbRY < -10920.0f)
-			{// 上下移動
-				// 角度
-				g_camera.rot.x -= 0.04f;
-			}
-			else if (pStick->Gamepad.sThumbRY > 10920.0f)
-			{// 上下移動
-				// 角度
-				g_camera.rot.x += 0.04f;
-			}
-
-
-			//if (pStick->Gamepad.sThumbRY < -10920.0f)
-			//{// 上下移動
-			//	// 角度
-			//	g_camera.rot.x -= 0.03f;
-
-			//	// カメラの視点の情報
-			//	g_camera.posV.y = g_camera.posR.y - cosf(g_camera.rot.x) * g_camera.fDistance;
-			//	g_camera.posV.z = g_camera.posR.z - sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * g_camera.fDistance;
-
-			//}
-			//else if (pStick->Gamepad.sThumbRY > 10920.0f)
-			//{
-			//	// 角度
-			//	g_camera.rot.x += 0.03f;
-
-			//	// カメラの視点の情報
-			//	g_camera.posV.y = g_camera.posR.y - cosf(g_camera.rot.x) * g_camera.fDistance;
-			//	g_camera.posV.z = g_camera.posR.z - sinf(g_camera.rot.x) * cosf(g_camera.rot.y) * g_camera.fDistance;
-
-			//}
-
+			float fAngle = fMag * 0.000003f;
+			g_camera.rot.y += NormalizeX * 0.5f * fAngle;
+			g_camera.rot.x -= NormalizeY * 0.5f * fAngle;
 		}
 	}
 
