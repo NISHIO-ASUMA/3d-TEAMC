@@ -271,7 +271,7 @@ void UpdatePlayer(void)
 	}
 
 	// パッドを使っていないかつ攻撃モーションじゃない
-	if (bUsePad == false && CheckActionMotion(&g_player.Motion) == true && g_player.AttackSp == false && g_player.nLife > 0)
+	if (GetJoyStick() == false && CheckActionMotion(&g_player.Motion) == true && g_player.AttackSp == false && g_player.nLife > 0)
 	{
 		PlayerMove(); // プレイヤーの移動処理
 	}
@@ -2498,7 +2498,7 @@ void DestroyWepon(void)
 	// 武器を持っているかつプレイヤーの持っているアイテムが壊れた
 	if (g_player.Motion.nNumModel == MAX_MODEL && g_player.Itembreak[g_player.ItemIdx] == true)
 	{
-		SetGameUI(D3DXVECTOR3(625.0f, 500.0f, 0.0f), UITYPE_DESTORY, 150.0f, 50.0f, 120);
+		SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f, 240);
 
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
@@ -2567,15 +2567,15 @@ void DropItem(void)
 
 		StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
-		// 素手の時のモーション情報を代入
-		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
-		{
-			g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].aModel[nCntModel]; // モデルの情報を代入
-		}
-		for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
-		{
-			g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].aMotionInfo[nCntMotion];
-		}
+		//// 素手の時のモーション情報を代入
+		//for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
+		//{
+		//	g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].aModel[nCntModel]; // モデルの情報を代入
+		//}
+		//for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
+		//{
+		//	g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].aMotionInfo[nCntMotion];
+		//}
 
 		// 投げた後に武器を消す
 		g_player.Motion.nNumModel -= 1;
@@ -2583,9 +2583,11 @@ void DropItem(void)
 		// プレイヤーの状態を何も持っていない状態にする
 		g_player.HandState = PLAYERHOLD_NO;
 
-		SetItem(g_player.pos, pItem[g_player.ItemIdx].nType);
+		pItem[g_player.ItemIdx].bUse = true;
+		pItem[g_player.ItemIdx].pos = g_player.pos;
 
-		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
+		pItem[g_player.ItemIdx].state = ITEMSTATE_RELEASE;
+		pItem[g_player.ItemIdx].nCounterState = 20;
 	}
 }
 //===============================================================================================================
@@ -2740,15 +2742,15 @@ void UpdateItemStock(void)
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
 
-		// 素手の時のモーション情報を代入
-		for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
-		{
-			g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].aModel[nCntModel]; // モデルの情報を代入
-		}
-		for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
-		{
-			g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].aMotionInfo[nCntMotion];
-		}
+		//// 素手の時のモーション情報を代入
+		//for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
+		//{
+		//	g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].aModel[nCntModel]; // モデルの情報を代入
+		//}
+		//for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
+		//{
+		//	g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].aMotionInfo[nCntMotion];
+		//}
 
 		// 投げた後に武器を消す
 		g_player.Motion.nNumModel -= 1;

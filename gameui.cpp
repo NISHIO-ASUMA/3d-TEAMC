@@ -11,10 +11,17 @@
 #include "gameui.h"
 #include "HPGauge.h"
 #include "player.h"
+#include"math.h"
+#include "easing.h"
 
 //**************************************************************************************************************
 //マクロ定義
 //**************************************************************************************************************
+#define DEST_WIDTHEXPANSION (120.0f) // 目標の拡大率(横幅)
+#define DEST_WIDTHREDUCTION (100.0f) // 目標の縮小率(横幅)
+
+#define DEST_HEIGHTEXPANSION (45.0f) // 目標の拡大率(縦幅)
+#define DEST_HEIGHTREDUCTION (25.0f) // 目標の縮小率(縦幅)
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -76,6 +83,7 @@ void InitGameUI(void)
 		g_GameUI[nCnt].bUse = false;
 		g_GameUI[nCnt].nType = UITYPE_TITLE;
 		g_GameUI[nCnt].col = COLOR_WHITE;
+		g_GameUI[nCnt].nEaseCnt = 0;
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -152,157 +160,157 @@ void UpdateGameUI(void)
 
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
 	{
-		if (!g_GameUI[nCnt].bUse)
+		if (g_GameUI[nCnt].bUse == true)
 		{
-			continue;
-		}
 
-		switch (g_GameUI[nCnt].nType)
-		{
-		case UITYPE_TITLE:
-
-			if (g_GameUI[nCnt].pos.y <= 140.0f)
+			switch (g_GameUI[nCnt].nType)
 			{
-				g_GameUI[nCnt].pos.y += 5.0f; // 下に移動
-			}
+			case UITYPE_TITLE:
 
-			break;
-		case UITYPE_FIVER:
-		
-			// 上昇しているとき
-			if (bUp)
-			{
-				g_GameUI[nCnt].pos.y -= 2.0f; // 下に下げる
-
-				if (g_GameUI[nCnt].pos.y < 630.0f)
+				if (g_GameUI[nCnt].pos.y <= 140.0f)
 				{
-					bUp = false; // 下に下げる
+					g_GameUI[nCnt].pos.y += 5.0f; // 下に移動
 				}
-			}
-			else if (!bUp)
-			{
-				g_GameUI[nCnt].pos.y += 2.0f;
 
-				if (g_GameUI[nCnt].pos.y > 650.0f)
+				break;
+			case UITYPE_FIVER:
+
+				// 上昇しているとき
+				if (bUp)
 				{
-					bUp = true; // 上に上げる
+					g_GameUI[nCnt].pos.y -= 2.0f; // 下に下げる
+
+					if (g_GameUI[nCnt].pos.y < 630.0f)
+					{
+						bUp = false; // 下に下げる
+					}
 				}
-			}
+				else if (!bUp)
+				{
+					g_GameUI[nCnt].pos.y += 2.0f;
 
-			if (!pPlayer->FeverMode)
-			{
-				g_GameUI[nCnt].bUse = false;
-			}
-		
-			break;
-		case UITYPE_SYUTYUSEN:
-			g_nCounterAnim++;
+					if (g_GameUI[nCnt].pos.y > 650.0f)
+					{
+						bUp = true; // 上に上げる
+					}
+				}
 
-			if (g_nCounterAnim > 2)
-			{
-				g_nCounterAnim = 0;
+				if (!pPlayer->FeverMode)
+				{
+					g_GameUI[nCnt].bUse = false;
+				}
 
-				g_nPatternAnim++;//パターンナンバーを更新
+				break;
+			case UITYPE_SYUTYUSEN:
+				g_nCounterAnim++;
 
-			}
+				if (g_nCounterAnim > 2)
+				{
+					g_nCounterAnim = 0;
 
-			//頂点カラーの設定
-			pVtx[0].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
-			pVtx[1].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
-			pVtx[2].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
-			pVtx[3].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+					g_nPatternAnim++;//パターンナンバーを更新
 
-			//頂点座標の更新
-			pVtx[0].tex = D3DXVECTOR2(0.0f + g_nPatternAnim * 0.5f, 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(0.5f + g_nPatternAnim * 0.5f, 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(0.0f + g_nPatternAnim * 0.5f, 1.0f);
-			pVtx[3].tex = D3DXVECTOR2(0.5f + g_nPatternAnim * 0.5f, 1.0f);
+				}
 
-			if (g_nPatternAnim > 2)
-			{
-				g_nPatternAnim = 0;
-			}
-		
-			if (!pPlayer->FeverMode)
-			{
-				g_GameUI[nCnt].bUse = false;
-			}
-
-			break;
-		case UITYPE_BLACK:
-		{
-			if (fcolorA >= 0.9f)
-			{
-				fcolorA = 0.9f; // α値を固定
-			}
-			else
-			{
-				fcolorA += 0.01f; // インクリメント
-			}
-
-			if (pPlayer->AttackSp && pPlayer->Motion.nKey == 4)
-			{
-				g_GameUI[nCnt].bUse = false; // 消す
-				fcolorA = 0.0f; // 初期化
-			}
-
-			//頂点カラーの設定
-			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
-			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
-			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
-			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
-		}
-			break;
-
-		case UITYPE_KATANA:
-
-			if (g_GameUI[nCnt].pos.x >= 650.0f)
-			{
-				g_GameUI[nCnt].pos.x -= 10.0f; // 左に移動
-			}
-
-			break;
-		case UITYPE_RED:
-
-			if (pPlayer->nLife <= 150)
-			{
 				//頂点カラーの設定
-				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
-				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
-				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
-				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
-			}
-			else
+				pVtx[0].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+				pVtx[1].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+				pVtx[2].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+				pVtx[3].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
+
+				//頂点座標の更新
+				pVtx[0].tex = D3DXVECTOR2(0.0f + g_nPatternAnim * 0.5f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(0.5f + g_nPatternAnim * 0.5f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f + g_nPatternAnim * 0.5f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(0.5f + g_nPatternAnim * 0.5f, 1.0f);
+
+				if (g_nPatternAnim > 2)
+				{
+					g_nPatternAnim = 0;
+				}
+
+				if (!pPlayer->FeverMode)
+				{
+					g_GameUI[nCnt].bUse = false;
+				}
+
+				break;
+			case UITYPE_BLACK:
 			{
+				if (fcolorA >= 0.9f)
+				{
+					fcolorA = 0.9f; // α値を固定
+				}
+				else
+				{
+					fcolorA += 0.01f; // インクリメント
+				}
+
+				if (pPlayer->AttackSp && pPlayer->Motion.nKey == 4)
+				{
+					g_GameUI[nCnt].bUse = false; // 消す
+					fcolorA = 0.0f; // 初期化
+				}
+
 				//頂点カラーの設定
-				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
-				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
-				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
-				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
+				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
+				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
+				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fcolorA);
 			}
 			break;
-		case UITYPE_DESTORY:
-			UpdateDestroyUI(nCnt);
-			//頂点カラーの設定
-			pVtx[0].col = D3DXCOLOR(g_GameUI[nCnt].col);
-			pVtx[1].col = D3DXCOLOR(g_GameUI[nCnt].col);
-			pVtx[2].col = D3DXCOLOR(g_GameUI[nCnt].col);
-			pVtx[3].col = D3DXCOLOR(g_GameUI[nCnt].col);
 
-			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-			pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+			case UITYPE_KATANA:
 
-			break;
+				if (g_GameUI[nCnt].pos.x >= 650.0f)
+				{
+					g_GameUI[nCnt].pos.x -= 10.0f; // 左に移動
+				}
+
+				break;
+			case UITYPE_RED:
+
+				if (pPlayer->nLife <= 150)
+				{
+					//頂点カラーの設定
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.3f);
+				}
+				else
+				{
+					//頂点カラーの設定
+					pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+					pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+					pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+					pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+				}
+				break;
+			case UITYPE_DESTORY:
+
+				UpdateDestroyUI(nCnt);
+
+				//頂点カラーの設定
+				pVtx[0].col = D3DXCOLOR(g_GameUI[nCnt].col);
+				pVtx[1].col = D3DXCOLOR(g_GameUI[nCnt].col);
+				pVtx[2].col = D3DXCOLOR(g_GameUI[nCnt].col);
+				pVtx[3].col = D3DXCOLOR(g_GameUI[nCnt].col);
+
+				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+				break;
+			}
+
+			//頂点座標の設定
+			pVtx[0].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
 		}
-
-		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y + g_GameUI[nCnt].fHeight, 0.0f);
-
 		pVtx += 4;
 	}
 
@@ -335,7 +343,9 @@ void DrawGameUI(void)
 			continue;
 		}
 
+		// 種類
 		int nType = g_GameUI[nCnt].nType;
+
 		// テクスチャの設定
 		pDevice->SetTexture(0, g_pTextureGameUI[nType]);
 
@@ -356,7 +366,7 @@ void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUse
 
 	for (int nCnt = 0; nCnt < UITYPE_MAX; nCnt++)
 	{
-		if (!g_GameUI[nCnt].bUse)
+		if (g_GameUI[nCnt].bUse == false)
 		{
 			g_GameUI[nCnt].pos = pos;
 			g_GameUI[nCnt].nType = nType;
@@ -484,9 +494,94 @@ void UIFlash(int nType)
 void UpdateDestroyUI(int nCnt)
 {
 	g_GameUI[nCnt].nUseTime--;
+	static int WidthEase = 0;
+	static int HeightEase = 0;
 
-	g_GameUI[nCnt].pos.x += (float)(rand() % 21 - 10.0f);
-	g_GameUI[nCnt].pos.y += (float)(rand() % 21 - 10.0f);
+	HeightEase++;
+
+	// イージングを設定
+	float Widthtime = SetEase(WidthEase,120);
+
+	static bool bWIdthExpansion = false;
+	static bool bHeightExpansion = false;
+
+	//// 拡大のカウント
+	//static int nExpansionCnt = 0;
+
+	//// 縮小のカウント
+	//static int nReductionCnt = 0;
+
+	// 横幅が300.0fを超えたら
+	if (g_GameUI[nCnt].fWidth >= DEST_WIDTHEXPANSION - 5.0f)
+	{
+		WidthEase = 0;
+		// 縮小開始
+		bWIdthExpansion = false;
+	}
+	// 横幅が160を下回ったら
+	else if(g_GameUI[nCnt].fWidth <= DEST_WIDTHREDUCTION + 5.0f)
+	{
+		WidthEase = 0;
+		// 拡大開始
+		bWIdthExpansion = true;
+	}
+
+	// 拡大できる
+	if (bWIdthExpansion == true)
+	{
+		// 拡大する
+		g_GameUI[nCnt].fWidth += SetSmoothAprroach(DEST_WIDTHEXPANSION, g_GameUI[nCnt].fWidth, 0.1f);
+	}
+	// 拡大できない
+	else if (bWIdthExpansion == false)
+	{
+		g_GameUI[nCnt].fWidth += SetSmoothAprroach(DEST_WIDTHREDUCTION, g_GameUI[nCnt].fWidth, 0.1f);
+	}
+
+
+	// 横幅が300.0fを超えたら
+	if (g_GameUI[nCnt].fHeight >= DEST_HEIGHTEXPANSION - 5.0f)
+	{
+		// 縮小開始
+		bHeightExpansion = false;
+	}
+	// 横幅が160を下回ったら
+	else if (g_GameUI[nCnt].fHeight <= DEST_HEIGHTREDUCTION + 5.0f)
+	{
+		// 拡大開始
+		bHeightExpansion = true;
+	}
+
+	// 拡大できる
+	if (bHeightExpansion == true)
+	{
+		// 拡大する
+		g_GameUI[nCnt].fHeight += SetSmoothAprroach(DEST_HEIGHTEXPANSION, g_GameUI[nCnt].fHeight, 0.1f);
+	}
+	// 拡大できない
+	else if (bHeightExpansion == false)
+	{
+		g_GameUI[nCnt].fHeight += SetSmoothAprroach(DEST_HEIGHTREDUCTION, g_GameUI[nCnt].fHeight, 0.1f);
+	}
+
+	
+	//if (g_GameUI[nCnt].pos.x <= 600.0f)
+	//{
+	//	bRIghtMove = false;
+	//}
+	//else if (g_GameUI[nCnt].pos.x >= 650.0f)
+	//{
+	//	bRIghtMove = true;
+	//}
+
+	//if (bRIghtMove == true)
+	//{
+	//	g_GameUI[nCnt].pos.x -= 6.0f;
+	//}
+	//else if (bRIghtMove == false)
+	//{
+	//	g_GameUI[nCnt].pos.x += 6.0f;
+	//}
 
 	if (g_GameUI[nCnt].nUseTime <= 0)
 	{

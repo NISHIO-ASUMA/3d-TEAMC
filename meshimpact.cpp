@@ -182,6 +182,11 @@ void DrawMeshImpact(void)
 			continue;
 		}
 
+		////アルファテストを有効
+		//pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+		//pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		//pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_MeshImpact[nCntImpact].mtxWorld);
 
@@ -211,6 +216,11 @@ void DrawMeshImpact(void)
 		//ポリゴンの描画
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, g_MeshImpact[nCntImpact].Vertex, 0, g_MeshImpact[nCntImpact].Polygon);
 	}
+
+	////aブレンディングをもとに戻す
+	//pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	//pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	//pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 }
 //=================================================================================================================
 // インパクトの作成処理

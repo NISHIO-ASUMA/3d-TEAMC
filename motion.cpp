@@ -94,7 +94,7 @@ void UpdateMotion(MOTION *pMotion)
 		pMotion->nKey = 0;
 
 		// ブレンドしたフレームから開始
-		pMotion->nCountMotion = pMotion->nFrameBlend;
+		pMotion->nCountMotion = 0;
 	}
 
 	//// モーションカウントの設定
