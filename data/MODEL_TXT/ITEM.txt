@@ -39,7 +39,7 @@ MODEL_FILENAME = data/MODEL/ITEM/wepon_surfboardfish.x					# [28]サメの浮き
 MODEL_FILENAME = data/MODEL/ITEM/wepon_tutorial.x						# [29]4枚目のチュートリアルの看板
 MODEL_FILENAME = data/MODEL/ITEM/wepon_katana.x							# [30]刀
 MODEL_FILENAME = data/MODEL/ITEM/onigiri.x								# [31]回復アイテム(おにぎり)
-MODEL_FILENAME = data/MODEL/ITEM/wepon_spear							# [32]槍
+MODEL_FILENAME = data/MODEL/ITEM/wepon_spear.x							# [32]槍
 MODEL_FILENAME = data/MODEL/ITEM/wepon_mandolin.x						# [33]マンドリン
 MODEL_FILENAME = data/MODEL/ITEM/wepon_bone.x							# [34]骨
 

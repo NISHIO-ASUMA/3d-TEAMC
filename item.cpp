@@ -102,6 +102,10 @@ void InitItem(void)
 
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
+		if (g_TexItem[nCntNum].g_pBuffMatModel == NULL)
+		{
+			continue;
+		}
 		// マテリアルのデータへのポインタを取得
 		pMat = (D3DXMATERIAL*)g_TexItem[nCntNum].g_pBuffMatModel->GetBufferPointer();
 

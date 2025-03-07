@@ -74,7 +74,7 @@ void InitTime(void)
 
 	//テクスチャの読み込み(コロン)
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\time001.png",
+		"data\\TEXTURE\\time002.png",
 		&g_pTextureContDown);
 
 	//頂点バッファの生成・頂点情報の設定
@@ -464,17 +464,34 @@ void UpdateTime(void)
 		pVtx[6].pos = D3DXVECTOR3(400.0f + 250.0f, 400.0f, 0.0f);
 		pVtx[7].pos = D3DXVECTOR3(600.0f + 250.0f, 400.0f, 0.0f);
 
-		//頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 50);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 50);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 50);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+		if (g_nTimerSecond <= 3)
+		{
+			//頂点カラーの設定
+			pVtx[0].col = D3DCOLOR_RGBA(255, 0, 0, 50);
+			pVtx[1].col = D3DCOLOR_RGBA(255, 0, 0, 50);
+			pVtx[2].col = D3DCOLOR_RGBA(255, 0, 0, 50);
+			pVtx[3].col = D3DCOLOR_RGBA(255, 0, 0, 50);
 
-		//頂点カラーの設定
-		pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 50);
-		pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 50);
-		pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 50);
-		pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+			//頂点カラーの設定
+			pVtx[4].col = D3DCOLOR_RGBA(255, 0, 0, 50);
+			pVtx[5].col = D3DCOLOR_RGBA(255, 0, 0, 50);
+			pVtx[6].col = D3DCOLOR_RGBA(255, 0, 0, 50);
+			pVtx[7].col = D3DCOLOR_RGBA(255, 0, 0, 50);
+		}
+		else
+		{
+			//頂点カラーの設定
+			pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+			pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+			pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+			pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+
+			//頂点カラーの設定
+			pVtx[4].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+			pVtx[5].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+			pVtx[6].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+			pVtx[7].col = D3DCOLOR_RGBA(255, 255, 255, 50);
+		}
 
 		//テクスチャの設定
 		pVtx[0].tex = D3DXVECTOR2(offpos * Second10, 0.0f);
