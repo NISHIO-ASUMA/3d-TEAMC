@@ -213,6 +213,7 @@ typedef struct
 	int nIdxCylinder;  // シリンダーのインデックス
 	int AttackState;   // プレイヤーの攻撃状態
 	int nCounterAttack; // 攻撃状態の状態カウンター
+	D3DXVECTOR3 avoidMove; // 回避の移動量
 }Player;
 
 //**************************

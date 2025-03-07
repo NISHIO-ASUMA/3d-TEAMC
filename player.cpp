@@ -53,6 +53,7 @@
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
 #define HEAL_VALUE (100)		// 回復量
+#define AVOID_MOVE (10.0f)       // 回避の移動量
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -80,6 +81,7 @@ void HandleSpecialAttack(void);																	 // スペシャルアタックの処理
 void UpdateItemStock(void);																		 // プレイヤーのアイテムのストック処理
 void SetPlayerWepon(int nType,float SwordLength);											     // アイテムを変更する処理
 void UpdatePlayerAvoid(void);																	 // プレイヤーの回避処理
+D3DXVECTOR3 SetMotionMoveAngle(void);                                                                  // モーションのアングルの設定
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -145,6 +147,7 @@ void InitPlayer(void)
 	g_player.Combostate = COMBO_NO;                                 // コンボの状態
 	g_player.AttackState = PLAYERATTACKSTATE_NO;                    // 攻撃の状態
 	g_player.nCounterAttack = 0;                                    // 攻撃状態のカウンター
+	g_player.avoidMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);             // 回避の移動量
 
 	// アイテム分回す
 	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -463,6 +466,18 @@ void UpdatePlayer(void)
 		}
 	}
 
+	// モーションのキー
+	int nKey = g_player.Motion.nKey;
+
+	// モーションのカウンター
+	int nCounter = g_player.Motion.nCountMotion;
+
+	// モーションの最後のキー
+	int EndKey = g_player.Motion.aMotionInfo[g_player.Motion.motionType].nNumkey - 1;
+
+	// モーションの最後のフレーム
+	int EndFrame = g_player.Motion.aMotionInfo[g_player.Motion.motionType].aKeyInfo[EndKey].nFrame;
+
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
 	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 	{
@@ -474,21 +489,21 @@ void UpdatePlayer(void)
 			ResetMeshSword();
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION &&
-			CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 1, 5, 0, 30) == true)
+			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // コンボ2
 			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
 			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION2 &&
-			CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 2, 6, 0, 30) == true)
+			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // コンボ3
 			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
 			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION3 &&
-			CheckMotionBounds(g_player.Motion.nKey, g_player.Motion.nCountMotion, 3, 8, 0, 30) == true)
+			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 45, 40, COMBO_ATTACK4); // コンボ4
 			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
@@ -768,8 +783,8 @@ void HitPlayer(int nDamage)
 			// マイナスでも0にする
 			g_player.nLife = 0;
 
-			// モーションを上書き
-			g_player.Motion = g_LoadPlayer[0];
+			//// モーションを上書き
+			//g_player.Motion = g_LoadPlayer[0];
 
 			// モーションの設定
 			SetMotion(&g_player.Motion, MOTIONTYPE_DEATH, false, 10);
@@ -2348,12 +2363,27 @@ void PlayerMove(void)
 {
 	Camera* pCamera = GetCamera();
 
+	// ジャンプしてるかを判定
+	const bool NotJump = g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP;
+
+	// モーションがムーブかを判定
+	const bool NotMove = g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE;
+
+	// うごけるかを判定
+	const bool is_MotionMove = NotJump == true && NotMove == true;
+
+	// モーションが回避かつキーが3以下
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID && g_player.Motion.nKey <= KEY_THREE)
+	{
+		return;
+	}
+
 	if (GetKeyboardPress(DIK_A))
 	{
 		//プレイヤーの移動(上)
 		if (GetKeyboardPress(DIK_W) == true)
 		{
-			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (is_MotionMove == true)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2366,7 +2396,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(下)
 		else if (GetKeyboardPress(DIK_S))
 		{
-			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (is_MotionMove == true)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2379,7 +2409,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(左)
 		else
 		{
-			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (is_MotionMove == true)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2396,7 +2426,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(上)
 		if (GetKeyboardPress(DIK_W))
 		{
-			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (is_MotionMove == true)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2409,7 +2439,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(下)
 		else if (GetKeyboardPress(DIK_S))
 		{
-			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (is_MotionMove == true)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2422,7 +2452,7 @@ void PlayerMove(void)
 		//プレイヤーの移動(右)
 		else
 		{
-			if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+			if (is_MotionMove == true)
 			{
 				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
@@ -2437,7 +2467,7 @@ void PlayerMove(void)
 	//プレイヤーの移動(上)
 	else if (GetKeyboardPress(DIK_W) == true)
 	{
-		if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+		if (is_MotionMove == true)
 		{
 			SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 		}
@@ -2450,7 +2480,7 @@ void PlayerMove(void)
 	//プレイヤーの移動(下)
 	else if (GetKeyboardPress(DIK_S) == true)
 	{
-		if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+		if (is_MotionMove == true)
 		{
 			SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 		}
@@ -2926,23 +2956,141 @@ void SetPlayerWepon(int nType,float SwordLength)
 //===============================================================================================================
 void UpdatePlayerAvoid(void)
 {
-	if (OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true)
+	Camera* pCamera = GetCamera();
+
+	// イージングのカウント
+	static int avoidEaseCnt = 0;
+
+	// インクリメント
+	avoidEaseCnt++;
+
+	// イージングを設定
+	float time = SetEase(avoidEaseCnt, 20);
+
+	// 回避モーションかを判定
+	const bool NotAvoid = g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID;
+
+	// ニュートラルモーションかを判定
+	const bool NotNeutral = g_player.Motion.motionType != MOTIONTYPE_NEUTRAL;
+
+	// モーションが終わったかどうかを判定
+	const bool NotFinish = g_player.Motion.bFinishMotion == false;
+
+	// 回避モーションを発動できるかを判定
+	const bool CanAvoid = NotAvoid == true && NotNeutral == true && NotFinish == true;
+
+	// モーションが回避じゃない
+	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)
 	{
+		g_player.avoidMove = SetMotionMoveAngle();
+
+		avoidEaseCnt = 0;
+
+		// モーションを回避にする
 		SetMotion(&g_player.Motion, MOTIONTYPE_AVOID, true, 10);
 	}
 
-	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID)
-	{
-		static int EasingCount = 0;
-
-		EasingCount++;
-
-		float time = SetEase(EasingCount, 25);
-
-		g_player.move.x += sinf(g_player.rotDestPlayer.y) * g_player.speed;
-		g_player.move.z += cosf(g_player.rotDestPlayer.y) * g_player.speed;
-
-		g_player.move.x += sinf(g_player.rotDestPlayer.y) * SetSmoothAprroach(10.0f, g_player.move.x, EaseInOutQuad(time));
-		//float Time = SetEase();
+	// モーションの種類が回避だったら
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID && g_player.Motion.nKey <= KEY_TWO)
+	{	
+		// 移動量をだんだん近づける
+		g_player.move.x += (g_player.avoidMove.x - g_player.move.x) * EaseInOutQuad(time);
+		g_player.move.z += (g_player.avoidMove.z - g_player.move.z) * EaseInOutQuad(time);
 	}
+	else
+	{
+		// 0に近づける
+		g_player.move.x += (0.0f - g_player.move.x) * 0.0001f;
+		g_player.move.z += (0.0f - g_player.move.z) * 0.0001f;
+
+		// イージングのカウントをリセット
+		avoidEaseCnt = 0;
+	}
+}
+//===============================================================================================================
+// モーションのアングルの設定
+//===============================================================================================================
+D3DXVECTOR3 SetMotionMoveAngle(void)
+{
+	static D3DXVECTOR3 OutPutMove = D3DXVECTOR3(0.0f,0.0f,0.0f);
+
+	Camera* pCamera = GetCamera();
+
+	if (GetKeyboardPress(DIK_A))
+	{
+		//プレイヤーの移動(上)
+		if (GetKeyboardPress(DIK_W) == true)
+		{
+			OutPutMove.x = sinf(pCamera->rot.y - D3DX_PI * 0.25f) * AVOID_MOVE;
+			OutPutMove.z = cosf(pCamera->rot.y - D3DX_PI * 0.25f) * AVOID_MOVE;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
+		}
+		//プレイヤーの移動(下)
+		else if (GetKeyboardPress(DIK_S))
+		{
+			OutPutMove.x = sinf(pCamera->rot.y - D3DX_PI * 0.75f) * AVOID_MOVE;
+			OutPutMove.z = cosf(pCamera->rot.y - D3DX_PI * 0.75f) * AVOID_MOVE;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.25f;
+		}
+		//プレイヤーの移動(左)
+		else
+		{
+			OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.5f) * -AVOID_MOVE;
+			OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.5f) * -AVOID_MOVE;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.5f;
+		}
+	}
+	//プレイヤーの移動(右)
+	else if (GetKeyboardPress(DIK_D))
+	{
+		//プレイヤーの移動(上)
+		if (GetKeyboardPress(DIK_W))
+		{
+			OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.25f) * AVOID_MOVE;
+			OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.25f) * AVOID_MOVE;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
+		}
+		//プレイヤーの移動(下)
+		else if (GetKeyboardPress(DIK_S))
+		{
+			OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.75f) * AVOID_MOVE;
+			OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.75f) * AVOID_MOVE;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.25f;
+		}
+		//プレイヤーの移動(右)
+		else
+		{
+			OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.5f) * AVOID_MOVE;
+			OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.5f) * AVOID_MOVE;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.5f;
+		}
+	}
+	//プレイヤーの移動(上)
+	else if (GetKeyboardPress(DIK_W) == true)
+	{
+		OutPutMove.x = sinf(pCamera->rot.y) * AVOID_MOVE;
+		OutPutMove.z = cosf(pCamera->rot.y) * AVOID_MOVE;
+
+		g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
+	}
+	//プレイヤーの移動(下)
+	else if (GetKeyboardPress(DIK_S) == true)
+	{		
+		OutPutMove.x = sinf(pCamera->rot.y) * -AVOID_MOVE;
+		OutPutMove.z = cosf(pCamera->rot.y) * -AVOID_MOVE;
+
+		g_player.rotDestPlayer.y = pCamera->rot.y;
+	}
+	else
+	{
+		OutPutMove.x = sinf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
+		OutPutMove.z = cosf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
+	}
+	return OutPutMove;
 }
