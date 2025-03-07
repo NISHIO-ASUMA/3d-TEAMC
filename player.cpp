@@ -53,7 +53,7 @@
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
 #define HEAL_VALUE (100)		// 回復量
-#define AVOID_MOVE (10.0f)       // 回避の移動量
+#define AVOID_MOVE (15.0f)       // 回避の移動量
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -72,7 +72,7 @@ void LoadWeponMotionSet(FILE* pFile, char* aString, int nNumModel, int nWepontyp
 void LoadWeponKeySet(FILE* pFile, char* aString, int nWepontype, int nCntMotion);				 // プレイヤーの武器のオフセットのキーの読み込み処理
 
 void SetElementEffect(void);																	 // 属性ごとのエフェクト
-void SetMotionContller(void);																		 // モーションの設定処理
+void SetMotionContller(void);																	 // モーションの設定処理
 void PlayerMove(void);																			 // プレイヤーの移動処理
 void UpdatePlayerCraft(void);                                                                    // プレイヤーのクラフト
 void DestroyWepon(void);																		 // アイテムの破壊処理
@@ -81,7 +81,8 @@ void HandleSpecialAttack(void);																	 // スペシャルアタックの処理
 void UpdateItemStock(void);																		 // プレイヤーのアイテムのストック処理
 void SetPlayerWepon(int nType,float SwordLength);											     // アイテムを変更する処理
 void UpdatePlayerAvoid(void);																	 // プレイヤーの回避処理
-D3DXVECTOR3 SetMotionMoveAngle(void);                                                                  // モーションのアングルの設定
+D3DXVECTOR3 SetMotionMoveAngle(void);                                                            // モーションのアングルの設定
+void SetWeponEffect(void);                                                                       // 武器ごとのエフェクト処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -821,6 +822,20 @@ void StickPad(void)
 
 	Camera* pCamera = GetCamera();
 
+	// ジャンプしてるかを判定
+	const bool NotJump = g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP;
+
+	// モーションがムーブかを判定
+	const bool NotMove = g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE;
+
+	// うごけるかを判定
+	const bool is_MotionMove = NotJump == true && NotMove == true;
+
+	// モーションが回避かつキーが3以下
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID && g_player.Motion.nKey <= KEY_THREE)
+	{
+		return;
+	}
 	if (CheckActionMotion(&g_player.Motion) == true && g_player.nLife > 0 && g_player.AttackSp == false)
 	{
 		if (GetJoyStick() == true)
@@ -855,7 +870,7 @@ void StickPad(void)
 
 				bUsePad = true;
 				// プレイヤーを歩きモーションにする
-				if (g_player.Motion.motiontypeBlend != MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+				if (is_MotionMove == true)
 				{
 					SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 				}
@@ -2303,7 +2318,7 @@ void SetMotionContller(void)
 	}
 
 	// モーションの種類が歩き
-	if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
+	if (g_player.Motion.motionType == MOTIONTYPE_MOVE && g_player.Motion.bFirstMotion == false)
 	{
 		// キ一1番目かつカウントが5
 		if (CheckMotionBounds(nKey, nCounter, 1, 1, 5, 5) == true)
@@ -3013,84 +3028,128 @@ void UpdatePlayerAvoid(void)
 D3DXVECTOR3 SetMotionMoveAngle(void)
 {
 	static D3DXVECTOR3 OutPutMove = D3DXVECTOR3(0.0f,0.0f,0.0f);
+	XINPUT_STATE* pStick;
+
+	pStick = GetJoyStickAngle();
 
 	Camera* pCamera = GetCamera();
 
-	if (GetKeyboardPress(DIK_A))
+	// パッドを入力してなかったら
+	if (GetJoyStick() == false)
 	{
-		//プレイヤーの移動(上)
-		if (GetKeyboardPress(DIK_W) == true)
+		if (GetKeyboardPress(DIK_A))
 		{
-			OutPutMove.x = sinf(pCamera->rot.y - D3DX_PI * 0.25f) * AVOID_MOVE;
-			OutPutMove.z = cosf(pCamera->rot.y - D3DX_PI * 0.25f) * AVOID_MOVE;
+			//プレイヤーの移動(上)
+			if (GetKeyboardPress(DIK_W) == true)
+			{
+				OutPutMove.x = sinf(pCamera->rot.y - D3DX_PI * 0.25f) * AVOID_MOVE;
+				OutPutMove.z = cosf(pCamera->rot.y - D3DX_PI * 0.25f) * AVOID_MOVE;
 
-			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
-		}
-		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S))
-		{
-			OutPutMove.x = sinf(pCamera->rot.y - D3DX_PI * 0.75f) * AVOID_MOVE;
-			OutPutMove.z = cosf(pCamera->rot.y - D3DX_PI * 0.75f) * AVOID_MOVE;
+				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.75f;
+			}
+			//プレイヤーの移動(下)
+			else if (GetKeyboardPress(DIK_S))
+			{
+				OutPutMove.x = sinf(pCamera->rot.y - D3DX_PI * 0.75f) * AVOID_MOVE;
+				OutPutMove.z = cosf(pCamera->rot.y - D3DX_PI * 0.75f) * AVOID_MOVE;
 
-			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.25f;
-		}
-		//プレイヤーの移動(左)
-		else
-		{
-			OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.5f) * -AVOID_MOVE;
-			OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.5f) * -AVOID_MOVE;
+				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.25f;
+			}
+			//プレイヤーの移動(左)
+			else
+			{
+				OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.5f) * -AVOID_MOVE;
+				OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.5f) * -AVOID_MOVE;
 
-			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.5f;
-		}
-	}
-	//プレイヤーの移動(右)
-	else if (GetKeyboardPress(DIK_D))
-	{
-		//プレイヤーの移動(上)
-		if (GetKeyboardPress(DIK_W))
-		{
-			OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.25f) * AVOID_MOVE;
-			OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.25f) * AVOID_MOVE;
-
-			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
-		}
-		//プレイヤーの移動(下)
-		else if (GetKeyboardPress(DIK_S))
-		{
-			OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.75f) * AVOID_MOVE;
-			OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.75f) * AVOID_MOVE;
-
-			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.25f;
+				g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI * 0.5f;
+			}
 		}
 		//プレイヤーの移動(右)
+		else if (GetKeyboardPress(DIK_D))
+		{
+			//プレイヤーの移動(上)
+			if (GetKeyboardPress(DIK_W))
+			{
+				OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.25f) * AVOID_MOVE;
+				OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.25f) * AVOID_MOVE;
+
+				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.75f;
+			}
+			//プレイヤーの移動(下)
+			else if (GetKeyboardPress(DIK_S))
+			{
+				OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.75f) * AVOID_MOVE;
+				OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.75f) * AVOID_MOVE;
+
+				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.25f;
+			}
+			//プレイヤーの移動(右)
+			else
+			{
+				OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.5f) * AVOID_MOVE;
+				OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.5f) * AVOID_MOVE;
+
+				g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.5f;
+			}
+		}
+		//プレイヤーの移動(上)
+		else if (GetKeyboardPress(DIK_W) == true)
+		{
+			OutPutMove.x = sinf(pCamera->rot.y) * AVOID_MOVE;
+			OutPutMove.z = cosf(pCamera->rot.y) * AVOID_MOVE;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
+		}
+		//プレイヤーの移動(下)
+		else if (GetKeyboardPress(DIK_S) == true)
+		{
+			OutPutMove.x = sinf(pCamera->rot.y) * -AVOID_MOVE;
+			OutPutMove.z = cosf(pCamera->rot.y) * -AVOID_MOVE;
+
+			g_player.rotDestPlayer.y = pCamera->rot.y;
+		}
 		else
 		{
-			OutPutMove.x = sinf(pCamera->rot.y + D3DX_PI * 0.5f) * AVOID_MOVE;
-			OutPutMove.z = cosf(pCamera->rot.y + D3DX_PI * 0.5f) * AVOID_MOVE;
-
-			g_player.rotDestPlayer.y = pCamera->rot.y - D3DX_PI * 0.5f;
+			OutPutMove.x = sinf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
+			OutPutMove.z = cosf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
 		}
 	}
-	//プレイヤーの移動(上)
-	else if (GetKeyboardPress(DIK_W) == true)
-	{
-		OutPutMove.x = sinf(pCamera->rot.y) * AVOID_MOVE;
-		OutPutMove.z = cosf(pCamera->rot.y) * AVOID_MOVE;
 
-		g_player.rotDestPlayer.y = pCamera->rot.y + D3DX_PI;
-	}
-	//プレイヤーの移動(下)
-	else if (GetKeyboardPress(DIK_S) == true)
-	{		
-		OutPutMove.x = sinf(pCamera->rot.y) * -AVOID_MOVE;
-		OutPutMove.z = cosf(pCamera->rot.y) * -AVOID_MOVE;
-
-		g_player.rotDestPlayer.y = pCamera->rot.y;
-	}
-	else
+	if (GetJoyStick() == true)
 	{
-		OutPutMove.x = sinf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
-		OutPutMove.z = cosf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
+		// Lスティックの角度
+		float LStickAngleY = pStick->Gamepad.sThumbLY;
+		float LStickAngleX = pStick->Gamepad.sThumbLX;
+
+		// デッドゾーン
+		float deadzone = 10920;
+
+		// スティックの傾けた角度を求める
+		float magnitude = sqrtf(LStickAngleX * LStickAngleX + LStickAngleY * LStickAngleY);
+
+		// 動かせる
+		if (magnitude > deadzone)
+		{
+			// アングルを正規化
+			float normalizeX = (LStickAngleX / magnitude);
+			float normalizeY = (LStickAngleY / magnitude);
+
+			// プレイヤーの移動量
+			float moveX = normalizeX * cosf(-pCamera->rot.y) - normalizeY * sinf(-pCamera->rot.y);
+			float moveZ = normalizeX * sinf(-pCamera->rot.y) + normalizeY * cosf(-pCamera->rot.y);
+
+			// プレイヤーの目的の角度を決める
+			g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
+
+			// プレイヤーの移動
+			OutPutMove.x = sinf(g_player.rotDestPlayer.y + D3DX_PI) * AVOID_MOVE;
+			OutPutMove.z = cosf(g_player.rotDestPlayer.y + D3DX_PI) * AVOID_MOVE;
+		}
 	}
+
 	return OutPutMove;
+}
+
+void SetWeponEffect(void)
+{
 }

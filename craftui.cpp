@@ -220,8 +220,6 @@ void UninitCraftUI(void)
 //==============================================================================================================
 void UpdateCraftUI(void)
 {
-	// 頂点情報のポインタ
-	VERTEX_2D* pVtx;
 
 	Item* pItem = GetItem();
 	Player* pPlayer = GetPlayer();
