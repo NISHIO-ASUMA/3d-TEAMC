@@ -108,6 +108,7 @@ typedef struct
 	int CameraState;            // カメラの状態
 	bool bViewCrossing;         // モデルと交差したか
 	int nBlockIdx;              // ブロックのインデックス
+	D3DXVECTOR3 rotDest;        // 目標の角度
 }Camera;
 
 //**********************
@@ -122,4 +123,5 @@ void StickCamera(void);		// 右スティックのカメラ処理
 void MouseWheel(int zDelta);// マウスホイール
 void WaveCamera(int WaveTime); // カメラを揺らす処理
 void SetAnimation(int nAnimType); // カメラのアニメーション設定
+void UpdateEventCamera(void);     // イベントのカメラ
 #endif

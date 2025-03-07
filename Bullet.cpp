@@ -135,7 +135,7 @@ void UpdateBullet(void)
 				if (sphererange(&g_Bullet[nCnt].pos, &pPlayer->pos, g_Bullet[nCnt].fSize, 30.0f))
 				{
 					//pPlayer->state != PLAYERSTATE_DAMAGE
-					HitPlayer(g_Bullet[nCnt].nDamege);
+					HitPlayer(g_Bullet[nCnt].nDamege,false,0,0);
 					g_Bullet[nCnt].bUse = false;
 					KillShadow(g_Bullet[nCnt].nIdxShadow);
 				}

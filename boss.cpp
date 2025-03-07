@@ -32,6 +32,7 @@
 #include "bosslife.h"
 #include "Effect.h"
 #include "math.h"
+#include "meshcylinder.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -168,6 +169,7 @@ void UninitBoss(void)
 void UpdateBoss(void)
 {
 	Player* pPlayer = GetPlayer();
+	GAMESTATE gameState = GetGameState();
 
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
@@ -205,15 +207,6 @@ void UpdateBoss(void)
 			break;
 		}
 
-		// アイテムが当たったか
-		if (HitThrowItem(&g_Boss[nCnt].pos, 10.0f, 50.0f) && g_Boss[nCnt].state != BOSSSTATE_DAMAGE)
-		{
-			HitBoss(nCnt, (float)pPlayer->nDamage * 1.5f);
-		}
-
-		// 影の位置の更新
-		SetPositionShadow(g_Boss[nCnt].nIdxShadow, g_Boss[nCnt].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss[nCnt].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss[nCnt].pos.y / 30.0f));
-
 		// ミニマップの位置の設定
 		SetMiniMapPotision(g_Boss[nCnt].nIdxMap, &g_Boss[nCnt].pos);
 
@@ -221,7 +214,7 @@ void UpdateBoss(void)
 		SetPositionLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].nLifeFrame,g_Boss[nCnt].nLifeDelayIdx,g_Boss[nCnt].pos);
 
 		// 敵の攻撃の設定
-		switch (g_Boss[nCnt].Motion.motionType)
+		switch (g_Boss[nCnt].Motion.motiontypeBlend)
 		{
 		case MOTIONTYPE_ACTION:
 			SetRasuAttack(nCnt);
@@ -243,6 +236,24 @@ void UpdateBoss(void)
 		// 位置の更新
 		g_Boss[nCnt].pos += g_Boss[nCnt].move;
 
+		// 影の位置の更新
+		SetPositionShadow(g_Boss[nCnt].nIdxShadow, g_Boss[nCnt].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Boss[nCnt].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Boss[nCnt].pos.y / 30.0f));
+
+		// モーションの更新処理
+		UpdateMotion(&g_Boss[nCnt].Motion);
+
+		// ゲームの状態がムービーだったら
+		if (gameState == GAMESTATE_MOVIE)
+		{
+			continue;
+		}
+
+		// アイテムが当たったか
+		if (HitThrowItem(&g_Boss[nCnt].pos, 10.0f, 50.0f) && g_Boss[nCnt].state != BOSSSTATE_DAMAGE)
+		{
+			HitBoss(nCnt, (float)pPlayer->nDamage * 1.5f);
+		}
+
 		// 壁との当たり判定
 		CollisionWall(&g_Boss[nCnt].pos, &g_Boss[nCnt].posOld, &g_Boss[nCnt].move, g_Boss[nCnt].Speed);
 
@@ -251,10 +262,17 @@ void UpdateBoss(void)
 		{
 			HitBoss(nCnt, ImpactDamege(0));
 		}
+		
+		// 範囲内にいる
+		if (CollisionCylinder(&pPlayer->pos) == false)
+		{
+			// ボスの追跡処理の更新
+			UpdateAgentBoss(nCnt);
+		}
+		else
+		{
 
-		// ボスの追跡処理の更新
-		UpdateAgentBoss(nCnt);
-
+		}
 		// 攻撃範囲に入ったら
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 50.0f) && g_Boss[nCnt].AttackState != BOSSATTACK_ATTACK)
 		{
@@ -265,12 +283,18 @@ void UpdateBoss(void)
 			switch (g_Boss[nCnt].nAttackPattern)
 			{
 			case 0:
-				// モーションを攻撃にする
-				SetMotion(&g_Boss[nCnt].Motion,MOTIONTYPE_ACTION,true,10);
+				if (g_Boss[nCnt].Motion.motiontypeBlend != MOTIONTYPE_ACTION)
+				{
+					// モーションを攻撃にする
+					SetMotion(&g_Boss[nCnt].Motion, MOTIONTYPE_ACTION, true, 10);
+				}
 				break;
 			case 1:
-				// モーションを攻撃にする
-				SetMotion(&g_Boss[nCnt].Motion, MOTIONTYPE_ACTION2, true, 10);
+				if (g_Boss[nCnt].Motion.motiontypeBlend != MOTIONTYPE_ACTION2)
+				{
+					// モーションを攻撃にする
+					SetMotion(&g_Boss[nCnt].Motion, MOTIONTYPE_ACTION2, true, 10);
+				}
 				break;
 			default:
 				break;
@@ -301,11 +325,11 @@ void UpdateBoss(void)
 				{
 					if (g_Boss[nCnt].nStateCount[3] > 0)
 					{
-						HitPlayer(30);
+						HitPlayer(30,true, nCnt, ATTACKER_BOSS);
 					}
 					else
 					{
-						HitPlayer(40);
+						HitPlayer(40,true, nCnt, ATTACKER_BOSS);
 					}
 				}
 				break;
@@ -314,11 +338,11 @@ void UpdateBoss(void)
 				{
 					if (g_Boss[nCnt].nStateCount[3] > 0)
 					{
-						HitPlayer(30);
+						HitPlayer(30,true, nCnt, ATTACKER_BOSS);
 					}
 					else
 					{
-						HitPlayer(40);
+						HitPlayer(40,true, nCnt, ATTACKER_BOSS);
 					}
 				}
 				break;
@@ -327,20 +351,19 @@ void UpdateBoss(void)
 			}
 		}
 
+		// 攻撃していない
 		if (CheckActionMotion(&pPlayer->Motion) == false)
 		{
 			colisionSword(nCnt);   // 剣との当たり判定
 		}
+
 		CollisionToBoss(nCnt); // ボスとボスの当たり判定
 
-		// ループしないモーションが最後まで行ったら
-		if (g_Boss[nCnt].Motion.bFinishMotion == true)
+		// モーションが終わったら
+		if (g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].bLoop == false && g_Boss[nCnt].Motion.nKey >= g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].nNumkey - 1)
 		{
 			g_Boss[nCnt].AttackState = BOSSATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
-
-		// モーションの更新処理
-		UpdateMotion(&g_Boss[nCnt].Motion);
 	}
 }
 //===============================================================================================================
@@ -1547,13 +1570,13 @@ void UpdateAgentBoss(int nCntBoss)
 	const bool is_sphereBounds = sphererange(&pPlayer->pos, &g_Boss[nCntBoss].pos, 50.0f, 2000.0f) == true;
 
 	// 攻撃モーション0かどうかを判定
-	const bool is_NotAction0 = g_Boss[nCntBoss].Motion.motionType != MOTIONTYPE_ACTION;
+	const bool is_NotAction0 = g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_ACTION;
 
 	// 攻撃モーション1かどうかを判定
-	const bool is_NotAction1 = g_Boss[nCntBoss].Motion.motionType != MOTIONTYPE_ACTION2;
+	const bool is_NotAction1 = g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_ACTION2;
 
 	// 攻撃モーション2かどうかを判定
-	const bool is_NotAction2 = g_Boss[nCntBoss].Motion.motionType != MOTIONTYPE_ACTION3;
+	const bool is_NotAction2 = g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_ACTION3;
 
 	// 追跡できるかどうかを判定
 	const bool CanAgent = is_sphereBounds == true && is_NotAction0 == true && is_NotAction1 == true && is_NotAction2 == true;
@@ -1565,7 +1588,7 @@ void UpdateAgentBoss(int nCntBoss)
 		D3DXVECTOR3 HootL(g_Boss[nCntBoss].Motion.aModel[14].mtxWorld._41, g_Boss[nCntBoss].Motion.aModel[14].mtxWorld._42, g_Boss[nCntBoss].Motion.aModel[14].mtxWorld._43);
 
 		// モーションがムーブの時1キーの1フレーム目
-		if (g_Boss[nCntBoss].Motion.motionType == MOTIONTYPE_MOVE &&
+		if (g_Boss[nCntBoss].Motion.motiontypeBlend == MOTIONTYPE_MOVE &&
 			g_Boss[nCntBoss].Motion.nKey == 1 &&
 			g_Boss[nCntBoss].Motion.nCountMotion == 1)
 		{
@@ -1573,14 +1596,18 @@ void UpdateAgentBoss(int nCntBoss)
 		}
 
 		// モーションがムーブの時3キーの1フレーム目
-		else if (g_Boss[nCntBoss].Motion.motionType == MOTIONTYPE_MOVE &&
+		else if (g_Boss[nCntBoss].Motion.motiontypeBlend == MOTIONTYPE_MOVE &&
 			g_Boss[nCntBoss].Motion.nKey == 3 &&
 			g_Boss[nCntBoss].Motion.nCountMotion == 1)
 		{
 			SetExplosion(HootL, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 40.0f, 40.0f, EXPLOSION_MOVE);
 		}
 
-		g_Boss[nCntBoss].Motion.motionType = MOTIONTYPE_MOVE; // モーションの種類を移動にする
+		if (g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_MOVE)
+		{
+			// モーションをムーブにする
+			SetMotion(&g_Boss[nCntBoss].Motion, MOTIONTYPE_MOVE, true, 10);
+		}
 
 		// ボスの向きをプレイヤーの位置を向くようにする
 		float fAngle = atan2f(pPlayer->pos.x - g_Boss[nCntBoss].pos.x, pPlayer->pos.z - g_Boss[nCntBoss].pos.z);

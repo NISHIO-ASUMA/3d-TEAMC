@@ -192,6 +192,8 @@ void UninitEnemy(void)
 //===============================================================================================================
 void UpdateEnemy(void)
 {
+	GAMESTATE gameState = GetGameState();
+
 	g_bSound = false;
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
@@ -256,6 +258,19 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].pos.y = 170.0f;
 		}
 
+		// 6番目の敵以外 && 7番目の敵以外
+		if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
+		{
+			//モーションの更新
+			UpdateMotion(&g_Enemy[nCntEnemy].Motion);
+		}
+
+		// ゲームの状態がムービーだったら
+		if (gameState == GAMESTATE_MOVIE)
+		{
+			continue;
+		}
+
 		// 壁との当たり判定
 		CollisionWall(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, g_Enemy[nCntEnemy].Speed);
 
@@ -267,7 +282,7 @@ void UpdateEnemy(void)
 		// アイテムが当たったか
 		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f)&& g_Enemy[nCntEnemy].state!=ENEMYSTATE_DAMAGE)
 		{
-			HitEnemy(nCntEnemy, (float)pPlayer->nDamage * 1.5f);
+			HitEnemy(nCntEnemy, pPlayer->nDamage * (int)1.5f);
 		}
 
 		// 剣と敵の当たり判定
@@ -310,13 +325,6 @@ void UpdateEnemy(void)
 		if (g_Enemy[nCntEnemy].Motion.bFinishMotion == true)
 		{
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
-		}
-
-		// 6番目の敵以外 && 7番目の敵以外
-		if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
-		{
-			//モーションの更新
-			UpdateMotion(&g_Enemy[nCntEnemy].Motion);
 		}
 
 		// 敵の攻撃の更新処理
@@ -1414,7 +1422,7 @@ void UpdateAttackState(int nCntEnemy)
 	if (CanDamage == true && CheckMotionBounds(nKey, nCounter,4, LastKey,0, EndFrame) == true)
 	{
 		// プレイヤーにダメージを与える
-		HitPlayer(50);
+		HitPlayer(50,false, 0, 0);
 	}
 }
 //===============================================================================================================

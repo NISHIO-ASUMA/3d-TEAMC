@@ -10,18 +10,20 @@
 //**************************************************************************************************************
 #include "meshcylinder.h"
 #include "effectEdit.h"
+#include "mark.h"
+#include "player.h"
 
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define MAX_CILINDER (10) // シリンダーの数
+#define MAX_CYLINDER (10) // シリンダーの数
 #define CYLINDER_ALV (0.6f) // α値の基準
 
 //**************************************************************************************************************
 // グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureMeshCylinderOrigin[CYLINDERTYPE_MAX] = {};	    // テクスチャへのポインタ
-MeshCylinder g_MeshCylinder[MAX_CILINDER];
+MeshCylinder g_MeshCylinder[MAX_CYLINDER];
 
 //===================================================================================================================
 // メッシュシリンダーの初期化処理
@@ -31,7 +33,7 @@ void InitMeshCylinder(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice(); //デバイスへのポインタ
 
 	// 全シリンダー分回す
-	for (int nCnt = 0; nCnt < MAX_CILINDER; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_CYLINDER; nCnt++)
 	{
 		g_MeshCylinder[nCnt].pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
 		g_MeshCylinder[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -66,7 +68,7 @@ void InitMeshCylinder(void)
 void UninitMeshCylinder(void)
 {
 	// 全シリンダー分回す
-	for (int nCnt = 0; nCnt < MAX_CILINDER; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_CYLINDER; nCnt++)
 	{
 		// テクスチャの解放
 		if (g_MeshCylinder[nCnt].g_pTextureMeshCylinder != NULL)
@@ -96,7 +98,7 @@ void UpdateMeshCylinder(void)
 	VERTEX_3D* pVtx = NULL;
 	
 	// 全シリンダー分回す
-	for (int nCntCylinder = 0; nCntCylinder < MAX_CILINDER; nCntCylinder++)
+	for (int nCntCylinder = 0; nCntCylinder < MAX_CYLINDER; nCntCylinder++)
 	{
 		// 未使用だったら
 		if (g_MeshCylinder[nCntCylinder].bUse == false)
@@ -147,7 +149,7 @@ void DrawMeshCylinder(void)
 	D3DXMATRIX mtxRot, mtxTrans;
 
 	// 全シリンダー分回す
-	for (int nCnt = 0; nCnt < MAX_CILINDER; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_CYLINDER; nCnt++)
 	{
 		// 未使用だったら
 		if (g_MeshCylinder[nCnt].bUse == false)
@@ -156,7 +158,9 @@ void DrawMeshCylinder(void)
 			continue;
 		}
 
-		if (g_MeshCylinder[nCnt].nType == CYLINDERTYPE_HEAL)
+		int nType = g_MeshCylinder[nCnt].nType;
+
+		if (nType == CYLINDERTYPE_HEAL || nType == CYLINDERTYPE_EVENT)
 		{
 			pDevice->SetRenderState(D3DRS_CULLMODE, TRUE);
 		}
@@ -201,7 +205,7 @@ int SetMeshCylinder(D3DXVECTOR3 pos, int nType, int nLife, float fRadius, D3DXCO
 	int nCnt = 0;
 
 	// 全シリンダー分回す
-	for (nCnt = 0; nCnt < MAX_CILINDER; nCnt++)
+	for (nCnt = 0; nCnt < MAX_CYLINDER; nCnt++)
 	{
 		// 未使用だったら
 		if (g_MeshCylinder[nCnt].bUse == false)
@@ -343,10 +347,65 @@ void CreateMeshCylinder(int nCntCylinder, int Vertex, int Index, int nNumPosX, i
 	g_MeshCylinder[nCntCylinder].g_pIdxBuffMeshCylinder->Unlock();
 }
 //===================================================================================================================
+// メッシュシリンダーの消去処理
+//===================================================================================================================
+void DeleteCylinder(int nIdx)
+{
+	g_MeshCylinder[nIdx].bUse = false;
+}
+//===================================================================================================================
+// メッシュシリンダーの当たり判定
+//===================================================================================================================
+bool CollisionCylinder(D3DXVECTOR3* pPos)
+{
+	VERTEX_3D* pVtx = NULL;
+	bool b = false;
+
+	// 全部のシリンダー分回す
+	for (int nCnt = 0; nCnt < MAX_CYLINDER; nCnt++)
+	{
+		// 使用状態じゃないかつイベントのシリンダーじゃなかったら
+		if (g_MeshCylinder[nCnt].bUse == false || g_MeshCylinder[nCnt].nType != CYLINDERTYPE_EVENT)
+		{
+			// 読み飛ばす
+			continue;
+		}
+
+		//頂点バッファをロック
+		g_MeshCylinder[nCnt].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
+
+		// 全部の頂点分回す
+		for (int nCntvtx = 0; nCntvtx < g_MeshCylinder[nCnt].nNumPosX; nCntvtx++)
+		{
+			// 頂点から目標までのベクトル
+			D3DXVECTOR3 posDirection = *pPos - (g_MeshCylinder[nCnt].pos + pVtx[nCntvtx].pos);
+
+			D3DXVECTOR3 edgeVector = (pVtx[(nCntvtx + 1) % g_MeshCylinder[nCnt].nNumPosX].pos + g_MeshCylinder[nCnt].pos) - (g_MeshCylinder[nCnt].pos + pVtx[nCntvtx].pos);
+
+			D3DXVECTOR3 Cross = NULLVECTOR3;
+			D3DXVec3Cross(&Cross, &edgeVector, &posDirection);
+			D3DXVec3Normalize(&Cross, &Cross);
+
+			if (Cross.y <= 0.0f)
+			{
+				b = true;
+			}
+
+			//頂点バッファをアンロック
+			g_MeshCylinder[nCnt].g_pVtxBuffMeshCylinder->Unlock();
+		}
+	}
+	return b
+		;
+}
+//===================================================================================================================
 // メッシュシリンダーの位置設定処理
 //===================================================================================================================
 void SetPotisionCylinder(int nIdx,D3DXVECTOR3 pos)
 {
-	g_MeshCylinder[nIdx].pos.x = pos.x;
-	g_MeshCylinder[nIdx].pos.z = pos.z;
+	if (g_MeshCylinder[nIdx].nType == CYLINDERTYPE_HEAL)
+	{
+		g_MeshCylinder[nIdx].pos.x = pos.x;
+		g_MeshCylinder[nIdx].pos.z = pos.z;
+	}
 }

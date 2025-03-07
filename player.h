@@ -25,6 +25,8 @@
 #define HEIGHT (100.0f) //壁の高さ
 #define MAX_MODEL (16)
 #define MAX_ITEM (256)
+#define ATTACKER_ENEMY (0)      // 攻撃してきたのが敵
+#define ATTACKER_BOSS (1)       // 攻撃してきたのがボス
 
 //**************************************************************************************************************
 //ライフの種類
@@ -214,6 +216,10 @@ typedef struct
 	int AttackState;   // プレイヤーの攻撃状態
 	int nCounterAttack; // 攻撃状態の状態カウンター
 	D3DXVECTOR3 avoidMove; // 回避の移動量
+	int BlowCounter;       // 吹き飛ぶまでのカウンター
+	int AttackerIdx;       // 攻撃してきた敵のインデックス
+	bool bstiffness;        // ダメージの硬直時間
+
 }Player;
 
 //**************************
@@ -225,7 +231,7 @@ void UpdatePlayer(void);//プレイヤーの更新処理
 void DrawPlayer(void);//プレイヤーの描画処理
 Player* GetPlayer(void);//プレイヤーの取得処理
 void SetMtxPos(void);//ワールドマトリックスのオフセット設定処理
-void HitPlayer(int nDamage);//プレイヤーのヒット処理
+void HitPlayer(int nDamage, bool SetDamageMotion, int AttackerIdx, int AttackerType);//プレイヤーのヒット処理
 bool CollisionItem(int nIdx, float Itemrange, float plrange);
 void HitSowrd(ENEMY* pEnemy,int nCntEnemy);
 void ThrowItem(void); // アイテムを投げる
@@ -233,5 +239,7 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 void MotionChange(int itemtype, int LoadPlayer);													 // モーション変更
 void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage);							 // プレイヤーのステータス変更
 bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int startFrame, int EndFrame); // モーションの開始判定処理
+float SetAttackerAngle(int AttackerIdx, int AttackerType); // アタッカーを調べる関数
+
 //bool CollisionLine(float Radius, D3DXVECTOR3* pEndPos, D3DXVECTOR3* pFirstPos,int nMaxModel, D3DXVECTOR3* pSphereCenterPos);       // 線分と円の当たり判定
 #endif

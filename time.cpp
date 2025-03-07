@@ -334,7 +334,7 @@ void UpdateTime(void)
 	GAMESTATE gamestate = GetGameState(); // ゲームの状態を取得
 
 	// ゲームが続いているなら
-	if (gamestate != GAMESTATE_END)
+	if (gamestate != GAMESTATE_END && gamestate != GAMESTATE_MOVIE)
 	{
 		g_nCountTime++; // タイマーカウントを加算
 

@@ -33,6 +33,7 @@ typedef enum
 {
 	CYLINDERTYPE_NORMAL = 0,
 	CYLINDERTYPE_HEAL,
+	CYLINDERTYPE_EVENT,
 	CYLINDERTYPE_MAX
 }CYLINDERTYPE;
 
@@ -69,4 +70,6 @@ void DrawMeshCylinder(void);//メッシュシリンダーの描画処理
 int SetMeshCylinder(D3DXVECTOR3 pos, int nType, int nLife, float fRadius, D3DXCOLOR col, int nNumPosX, int nNumPosZ, float speed, float fHeight); // メッシュシリンダーの設定
 void CreateMeshCylinder(int nCntCylinder, int Vertex, int Index, int nNumPosX, int nNumPosZ, float fRadius, float fHeight);// メッシュシリンダーの作成処理
 void SetPotisionCylinder(int nIdx,D3DXVECTOR3 pos); // シリンダーの位置設定処理
+void DeleteCylinder(int nIdx);
+bool CollisionCylinder(D3DXVECTOR3 *pPos);
 #endif

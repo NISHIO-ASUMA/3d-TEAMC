@@ -53,7 +53,9 @@
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
 #define HEAL_VALUE (100)		// 回復量
-#define AVOID_MOVE (15.0f)       // 回避の移動量
+#define AVOID_MOVE (15.0f)      // 回避の移動量
+#define DAMAGEBLOW (20.0f)      // ダメージを受けた時の吹き飛び量
+#define BLOWCOUNT (5)           // 吹っ飛びカウント
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -83,6 +85,7 @@ void SetPlayerWepon(int nType,float SwordLength);											     // アイテムを変
 void UpdatePlayerAvoid(void);																	 // プレイヤーの回避処理
 D3DXVECTOR3 SetMotionMoveAngle(void);                                                            // モーションのアングルの設定
 void SetWeponEffect(void);                                                                       // 武器ごとのエフェクト処理
+bool IsDamageAction(void);                                                                       // ダメージアクションかどうか
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -107,41 +110,41 @@ void InitPlayer(void)
 	MODE mode = GetMode();//現在のモードを取得
 
 	//プレイヤーの初期化
-	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);		   // 座標
-	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		   // 角度
-	g_player.rotDestPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 目的の角度
-	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		   // 移動量
-	g_player.bJump = false;								   // ジャンプ中か否か
-	g_player.bDisp = true;								   // 使用状態
-	g_player.nLife = PLAYERLIFE;						   // 体力
-	g_player.nMaxLife = PLAYERLIFE;						   // 最大体力
-	g_player.state = PLAYERSTATE_NORMAL;				   // 状態
-	g_player.Motion.bLoopMotion = true;					   // モーションのループ
-	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	   // 剣の角度
-	g_player.Motion.nKey = 0;							   // キー数
-	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;	   // モーションの種類
-	g_player.SwordOffpos.x = 0.0f;						   // 剣のオフセットの座標x
-	g_player.SwordOffpos.y = 85.0f;						   // 剣のオフセットの座標y
-	g_player.SwordOffpos.z = 0.0f;						   // 剣のオフセットの座標z
-	g_player.nCounterAction = 0;						   // アクションカウント
-	g_nCounterState = 0;                                   // 状態カウンター
-	g_AttackState = 0;									   // 攻撃状態のカウンター
-	bNohand = false;									   // 物を投げたか投げてないか
-	g_player.speed = 1.0f;								   // 足の速さ
-	g_player.nDamage = 100;								   // 攻撃力
-	bUsePad = false;									   // パッドを使っているか
-	g_player.nStockDamage = 100;						   // ダメージのストック
-	g_player.fStockSpeed = 3.5f;                           // スピードのストック
-	g_player.FeverMode = false;                            // フィーバーモードかどうか
-	g_player.SpMode = false;                               // スペシャルを発動できるかどうか
-	g_player.WeponMotion = MOTION_KATANA;                  // 武器ごとのモーション
-	g_player.AttackSp = false;                             // スペシャル攻撃中かどうか
-	g_player.bLandingOBB = false;                          // OBBに乗ってるか
-	nCntMotion = 0;                                        // モーションのカウント
-	nKey = 0;											   // キーのカウント
-	g_player.bCraft = false;                               // クラフト中かどうか
-	g_player.nElement = WEPONELEMENT_STANDARD;             // 属性の種類
-	g_EaseCount = 0;                                       // イージングのカウント
+	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);					// 座標
+	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					// 角度
+	g_player.rotDestPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 目的の角度
+	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					// 移動量
+	g_player.bJump = false;											// ジャンプ中か否か
+	g_player.bDisp = true;											// 使用状態
+	g_player.nLife = PLAYERLIFE;									// 体力
+	g_player.nMaxLife = PLAYERLIFE;									// 最大体力
+	g_player.state = PLAYERSTATE_NORMAL;							// 状態
+	g_player.Motion.bLoopMotion = true;								// モーションのループ
+	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// 剣の角度
+	g_player.Motion.nKey = 0;										// キー数
+	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;				// モーションの種類
+	g_player.SwordOffpos.x = 0.0f;									// 剣のオフセットの座標x
+	g_player.SwordOffpos.y = 85.0f;									// 剣のオフセットの座標y
+	g_player.SwordOffpos.z = 0.0f;									// 剣のオフセットの座標z
+	g_player.nCounterAction = 0;									// アクションカウント
+	g_nCounterState = 0;											// 状態カウンター
+	g_AttackState = 0;												// 攻撃状態のカウンター
+	bNohand = false;												// 物を投げたか投げてないか
+	g_player.speed = 1.0f;											// 足の速さ
+	g_player.nDamage = 100;											// 攻撃力
+	bUsePad = false;												// パッドを使っているか
+	g_player.nStockDamage = 100;									// ダメージのストック
+	g_player.fStockSpeed = 3.5f;									// スピードのストック
+	g_player.FeverMode = false;										// フィーバーモードかどうか
+	g_player.SpMode = false;										// スペシャルを発動できるかどうか
+	g_player.WeponMotion = MOTION_KATANA;							// 武器ごとのモーション
+	g_player.AttackSp = false;										// スペシャル攻撃中かどうか
+	g_player.bLandingOBB = false;									// OBBに乗ってるか
+	nCntMotion = 0;													// モーションのカウント
+	nKey = 0;														// キーのカウント
+	g_player.bCraft = false;										// クラフト中かどうか
+	g_player.nElement = WEPONELEMENT_STANDARD;						// 属性の種類
+	g_EaseCount = 0;												// イージングのカウント
 	g_player.nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f, 1.0f); // 影を設定
 	g_player.nIdxMap = SetMiniMap(g_player.pos, MINIMAPTEX_PLAYER); // ミニマップにプレイヤーを設定
 	g_player.HandState = PLAYERHOLD_NO;								// 手の状態
@@ -149,6 +152,10 @@ void InitPlayer(void)
 	g_player.AttackState = PLAYERATTACKSTATE_NO;                    // 攻撃の状態
 	g_player.nCounterAttack = 0;                                    // 攻撃状態のカウンター
 	g_player.avoidMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);             // 回避の移動量
+	g_player.ItemIdx = 0;											// アイテムのインデックスの初期化
+	g_player.BlowCounter = 0;										// 吹っ飛ぶまでのカウンター
+	g_player.AttackerIdx = 0;										// 攻撃してきた敵のインデックス
+	g_player.bstiffness = false;									// ダメージの硬直
 
 	// アイテム分回す
 	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -253,6 +260,7 @@ void UpdatePlayer(void)
 {
 	Camera* pCamera = GetCamera();
 	Item* pItem = GetItem();
+	GAMESTATE gameState = GetGameState();
 
 	// 体力の現在値が最大値を超えてたら最大値にする
 	if (g_player.nMaxLife <= g_player.nLife)
@@ -260,8 +268,22 @@ void UpdatePlayer(void)
 		g_player.nLife = g_player.nMaxLife;
 	}
 
+	// モーションの更新
+	UpdateMotion(&g_player.Motion);
+
+	// ゲームの状態がムービーだったら
+	if (gameState == GAMESTATE_MOVIE)
+	{
+		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 10);
+		// 関数を抜ける
+		return;
+	}
+
 	// プレイヤーのクラフトの設定
 	UpdatePlayerCraft();
+
+	// モーションの演出処理
+	SetMotionContller();
 
 	// クラフト状態なら
 	if (g_player.bCraft == true)
@@ -276,13 +298,36 @@ void UpdatePlayer(void)
 		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	}
 
-	// パッドを使っていないかつ攻撃モーションじゃない
-	if (GetJoyStick() == false && CheckActionMotion(&g_player.Motion) == true && g_player.AttackSp == false && g_player.nLife > 0)
+	// パッドを使っていないかを判定
+	const bool NotUsePad = GetJoyStick() == false;
+
+	// アクションじゃないかを判定
+	const bool NotAction = CheckActionMotion(&g_player.Motion) == true;
+
+	// スペシャル攻撃じゃないか判定
+	const bool NotSp = g_player.AttackSp == false;
+
+	// 死んでるかどうかを判定
+	const bool NotDeth = g_player.nLife > 0;
+
+	// ダメージモーションかどうかを判定
+	const bool NotDamage = g_player.bstiffness == false;
+
+	// うごけるかどうかを判定
+	const bool is_Move = NotUsePad && NotAction && NotSp && NotDeth && NotDamage;
+
+	// うごける
+	if (is_Move == true)
 	{
 		PlayerMove(); // プレイヤーの移動処理
 	}
 
-	StickPad(); // パッドの移動処理
+	const bool is_MovePad = !NotUsePad && NotAction && NotSp && NotDamage;
+
+	if (is_MovePad == true)
+	{
+		StickPad(); // パッドの移動処理
+	}
 
 	D3DXVECTOR3 SwordPos(
 		g_player.SwordMtx._41, // X方向
@@ -453,7 +498,7 @@ void UpdatePlayer(void)
 	// ミニマップの位置の設定
 	SetMiniMapPotision(g_player.nIdxMap, &g_player.pos);
 
-	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH)
+	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false)
 	{//aボタン or Enterキーが押された
 
 		// 音楽再生
@@ -480,7 +525,7 @@ void UpdatePlayer(void)
 	int EndFrame = g_player.Motion.aMotionInfo[g_player.Motion.motionType].aKeyInfo[EndKey].nFrame;
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH)
+	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
@@ -595,15 +640,9 @@ void UpdatePlayer(void)
 	// シリンダーの位置設定処理
 	SetPotisionCylinder(g_player.nIdxCylinder, g_player.pos);
 
-	// モーションの演出処理
-	SetMotionContller();
-
 	//D3DXVec3TransformCoord
 	// getactivewindow
 	
-	// モーションの更新
-	UpdateMotion(&g_player.Motion);
-
 	//プレイヤーの向きを目的の向きに近づける
 	g_player.rot.y += (g_player.rotDestPlayer.y - g_player.rot.y) * 0.1f;
 }
@@ -770,46 +809,76 @@ void SetMtxPos(void)
 //===============================================================================================================
 // プレイヤーと敵の判定
 //===============================================================================================================
-void HitPlayer(int nDamage)
+void HitPlayer(int nDamage,bool SetDamageMotion, int AttackerIdx, int AttackerType)
 {
 	// プレイヤーの状態がスペシャルじゃなかったら
-	if (g_player.AttackSp == false)
+	if (g_player.AttackSp == true)
 	{
-		// プレイヤーの体力を減らす
-		g_player.nLife -= nDamage;
+		return;
+	}
 
-		// プレイヤーの体力が0になったら
-		if (g_player.nLife <= 0 && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH)
+	// 無敵時間だったら
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID && g_player.Motion.nKey <= KEY_TWO)
+	{
+		return;
+	}
+
+	// プレイヤーの体力を減らす
+	g_player.nLife -= nDamage;
+
+	// プレイヤーの体力が0になったら
+	if (g_player.nLife <= 0)
+	{
+		// マイナスでも0にする
+		g_player.nLife = 0;
+
+		if (g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 		{
-			// マイナスでも0にする
-			g_player.nLife = 0;
-
-			//// モーションを上書き
-			//g_player.Motion = g_LoadPlayer[0];
-
 			// モーションの設定
 			SetMotion(&g_player.Motion, MOTIONTYPE_DEATH, false, 10);
 
 			D3DXVECTOR3 HeadPos(g_player.Motion.aModel[2].mtxWorld._41, g_player.Motion.aModel[2].mtxWorld._42, g_player.Motion.aModel[2].mtxWorld._43);
 
-			//// 魂
-			//LoadEffect(1, HeadPos);
-
-			// プレイヤーを消す
-			EnableMap(g_player.nIdxMap);    // マップから消す
+			// 魂
+			LoadEffect(1, HeadPos);
 		}
-		else
+
+		// プレイヤーを消す
+		EnableMap(g_player.nIdxMap);    // マップから消す
+	}
+	else
+	{
+		// 状態カウンター
+		g_nCounterState = 30;
+
+		// プレイヤーの状態をダメージにする
+		g_player.state = PLAYERSTATE_DAMAGE;
+
+		// 吹っ飛べるなら
+		if (SetDamageMotion == true)
 		{
-			// カメラを揺らす
-			//WaveCamera(5);
+			// 吹き飛びカウント
+			g_player.BlowCounter++;
 
-			// 状態カウンター
-			g_nCounterState = 30;
+			// カウントが最大になったら
+			if (g_player.BlowCounter >= BLOWCOUNT)
+			{
+				g_player.bstiffness = true;
 
-			// プレイヤーの状態をダメージにする
-			g_player.state = PLAYERSTATE_DAMAGE;
+				// 攻撃してきた敵のインデックスを代入
+				g_player.AttackerIdx = AttackerIdx;
+
+				// アタッカーの角度を求める
+				g_player.rotDestPlayer.y = SetAttackerAngle(AttackerIdx, AttackerType);
+
+				g_player.BlowCounter = 0;
+
+				// モーションの設定
+				SetMotion(&g_player.Motion, MOTIONTYPE_DAMAGE, true, 5);
+			}
 		}
 	}
+	
 }
 //===============================================================================================================
 // プレイヤーのスティック操作
@@ -836,55 +905,54 @@ void StickPad(void)
 	{
 		return;
 	}
-	if (CheckActionMotion(&g_player.Motion) == true && g_player.nLife > 0 && g_player.AttackSp == false)
+
+	if (GetJoyStick() == true)
 	{
-		if (GetJoyStick() == true)
+		// Lスティックの角度
+		float LStickAngleY = pStick->Gamepad.sThumbLY;
+		float LStickAngleX = pStick->Gamepad.sThumbLX;
+
+		// デッドゾーン
+		float deadzone = 10920;
+
+		// スティックの傾けた角度を求める
+		float magnitude = sqrtf(LStickAngleX * LStickAngleX + LStickAngleY * LStickAngleY);
+
+		// 動かせる
+		if (magnitude > deadzone)
 		{
-			// Lスティックの角度
-			float LStickAngleY = pStick->Gamepad.sThumbLY;
-			float LStickAngleX = pStick->Gamepad.sThumbLX;
+			// アングルを正規化
+			float normalizeX = (LStickAngleX / magnitude);
+			float normalizeY = (LStickAngleY / magnitude);
 
-			// デッドゾーン
-			float deadzone = 10920;
+			// プレイヤーの移動量
+			float moveX = normalizeX * cosf(-pCamera->rot.y) - normalizeY * sinf(-pCamera->rot.y);
+			float moveZ = normalizeX * sinf(-pCamera->rot.y) + normalizeY * cosf(-pCamera->rot.y);
 
-			// スティックの傾けた角度を求める
-			float magnitude = sqrtf(LStickAngleX * LStickAngleX + LStickAngleY * LStickAngleY);
+			// プレイヤーの移動
+			g_player.move.x += moveX * g_player.speed;
+			g_player.move.z += moveZ * g_player.speed;
 
-			// 動かせる
-			if (magnitude > deadzone)
+			// プレイヤーの目的の角度を決める
+			g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
+
+			bUsePad = true;
+			// プレイヤーを歩きモーションにする
+			if (is_MotionMove == true)
 			{
-				// アングルを正規化
-				float normalizeX = (LStickAngleX / magnitude);
-				float normalizeY = (LStickAngleY / magnitude);
-
-				// プレイヤーの移動量
-				float moveX = normalizeX * cosf(-pCamera->rot.y) - normalizeY * sinf(-pCamera->rot.y);
-				float moveZ = normalizeX * sinf(-pCamera->rot.y) + normalizeY * cosf(-pCamera->rot.y);
-
-				// プレイヤーの移動
-				g_player.move.x += moveX * g_player.speed;
-				g_player.move.z += moveZ * g_player.speed;
-
-				// プレイヤーの目的の角度を決める
-				g_player.rotDestPlayer.y = atan2f(-moveX, -moveZ);
-
-				bUsePad = true;
-				// プレイヤーを歩きモーションにする
-				if (is_MotionMove == true)
-				{
-					SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
-				}
-			}
-			else
-			{
-				if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
-				{
-					SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 5); // モーションをニュートラルにする
-				}
-				bUsePad = false;
+				SetMotion(&g_player.Motion, MOTIONTYPE_MOVE, true, 5);
 			}
 		}
+		else
+		{
+			if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
+			{
+				SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 5); // モーションをニュートラルにする
+			}
+			bUsePad = false;
+		}
 	}
+	
 }
 //===============================================================================================================
 // プレイヤーのステータス変更
@@ -1271,7 +1339,7 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 		// 敵を戻す
 		pMove->x -= DisPos.x * 0.1f;
 		pMove->z -= DisPos.z * 0.1f;
-		HitPlayer(50);
+		//g_player.rotDestPlayer.y = SetAttackerAngle(nCnt, ATTACKER_BOSS);
 	}
 }
 //===============================================================================================================
@@ -1285,8 +1353,23 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 	bool bCollision = false; // 当たっているかどうか
 
+	// ダメージ状態かを判定
+	const bool is_Damage = g_player.bstiffness == false;
+
+	// 範囲内かを判定
+	const bool Inbounds = sphererange(&g_player.pos, &pItem[nIdx].pos, Itemrange, plrange) == true;
+
+	// 状態がノーマルか判定
+	const bool stateNormal = pItem[nIdx].state == ITEMSTATE_NORMAL;
+
+	// 死んでいるかを判定
+	const bool NotDeth = g_player.Motion.motionType != MOTIONTYPE_DEATH;
+
+	// 拾えるかを判定
+	const bool CanPickUp = is_Damage && Inbounds && stateNormal && NotDeth;
+
 	// 範囲内に入った
-	if (sphererange(&g_player.pos,&pItem[nIdx].pos, Itemrange, plrange) == true && pItem[nIdx].state == ITEMSTATE_NORMAL && g_player.Motion.motionType != MOTIONTYPE_DEATH)
+	if (CanPickUp == true)
 	{
 		bCollision = true;
 		
@@ -1354,7 +1437,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			if (g_player.Motion.nNumModel == MAX_MODEL)
 			{
 				pItem[g_player.ItemIdx].bUse = true;
-				pItem[g_player.ItemIdx].pos = g_player.pos;
+				pItem[g_player.ItemIdx].pos.x = g_player.pos.x + (float)(rand() % 50 - 25.0f);
+				pItem[g_player.ItemIdx].pos.z = g_player.pos.z + (float)(rand() % 50 - 25.0f);
 				pItem[g_player.ItemIdx].state = ITEMSTATE_RELEASE;
 				pItem[g_player.ItemIdx].nCounterState = 60;
 			}
@@ -1530,6 +1614,45 @@ bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int 
 
 	// 判定を返す
 	return bFlag;
+}
+//===============================================================================================================
+// アタッカーを調べる関数
+//===============================================================================================================
+float SetAttackerAngle(int AttackerIdx, int AttackerType)
+{
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID || g_player.Motion.motiontypeBlend == MOTIONTYPE_DEATH)
+	{
+		return g_player.rot.y;
+	}
+	// 角度
+	float OutAngle = 0.0f;
+
+	// 敵を取得
+	ENEMY* pEnemy = GetEnemy();
+
+	// ボスを取得
+	Boss* pBoss = Getboss();
+
+	// アタッカーが敵
+	if (AttackerType == ATTACKER_ENEMY)
+	{
+		// 差分を求める
+		D3DXVECTOR3 DiffPos = g_player.pos - pEnemy[AttackerIdx].pos;
+
+		// 角度を求める
+		OutAngle = atan2f(DiffPos.x, DiffPos.z);
+	}
+	// アタッカーがボス
+	else if (AttackerType == ATTACKER_BOSS)
+	{
+		// 差分を求める
+		D3DXVECTOR3 DiffPos = g_player.pos - pBoss[AttackerIdx].posOld;
+
+		// 角度を求める
+		OutAngle = atan2f(DiffPos.x, DiffPos.z);
+	}
+
+	return OutAngle;
 }
 //===============================================================================================================
 // 線分と円の当たり判定
@@ -2368,6 +2491,20 @@ void SetMotionContller(void)
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}	//モーションの更新
 
+	Boss* pBoss = Getboss();
+
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_DAMAGE && g_player.Motion.bFirstMotion == true)
+	{
+		g_player.move.x = sinf(pBoss[g_player.AttackerIdx].rot.y + D3DX_PI) * 15.0f;
+		g_player.move.y = 5.0f;
+		g_player.move.z = cosf(pBoss[g_player.AttackerIdx].rot.y + D3DX_PI) * 15.0f;
+	}
+
+	if(g_player.Motion.motiontypeBlend == MOTIONTYPE_DAMAGE && nKey >= 0 && nCounter >= 34)
+	{
+		g_player.bstiffness = false;
+	}
+
 	// 振動の更新処理
 	UpdateVibration(&vibrationState);
 }
@@ -2656,8 +2793,11 @@ void HandleSpecialAttack(void)
 	// 生存しているかを判定
 	const bool is_Alive = g_player.Motion.motionType != MOTIONTYPE_DEATH;
 
+	// ダメージ状態か
+	const bool is_Damage = g_player.bstiffness == false;
+
 	// スペシャルモーションを発動できるかを判定
-	const bool is_SpecialAttack = is_HaveWepon == true && is_NotHaveThrowItem == true && is_Alive == true;
+	const bool is_SpecialAttack = is_HaveWepon && is_NotHaveThrowItem && is_Alive && is_Damage;
 
 	// スペシャルモードになった時の攻撃
 	if ((KeyboardTrigger(DIK_Q) || JoypadTrigger(JOYKEY_LS) || JoypadTrigger(JOYKEY_RS)) && is_SpecialAttack == true)
@@ -2733,7 +2873,7 @@ void HandleSpecialAttack(void)
 	const bool is_FinishBlend = g_player.Motion.nCounterBlend >= g_player.Motion.nFrameBlend * 0.5f;
 
 	// もとに戻せるかを判定
-	const bool is_restoreMotion = is_SpAttack == true && is_LastKey == true && is_FinishMotion == true && is_FinishBlend == true;
+	const bool is_restoreMotion = is_SpAttack && is_LastKey && is_FinishMotion && is_FinishBlend;
 
 	// スペシャルモーションからもとに戻す
 	if (is_restoreMotion == true)
@@ -2767,8 +2907,11 @@ void UpdateItemStock(void)
 	// 武器を持っているかを判定
 	const bool is_HaveWepon = g_player.Motion.nNumModel == MAX_MODEL;
 
+	// ダメージ状態か
+	const bool is_Damage = g_player.bstiffness == false;
+
 	// アイテムをストックできるかを判定
-	const bool is_StockItem = is_Alive == true && is_NotSpAttack == true && is_HaveWepon == true;
+	const bool is_StockItem = is_Alive && is_NotSpAttack && is_HaveWepon && is_Damage;
 
 	// アイテムのストック
 	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && is_StockItem == true && CheckActionMotion(&g_player.Motion) == true)
@@ -2997,6 +3140,7 @@ void UpdatePlayerAvoid(void)
 	// モーションが回避じゃない
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)
 	{
+		g_player.bstiffness = false;
 		g_player.avoidMove = SetMotionMoveAngle();
 
 		avoidEaseCnt = 0;
@@ -3115,6 +3259,7 @@ D3DXVECTOR3 SetMotionMoveAngle(void)
 		}
 	}
 
+	// パッドを使っているか
 	if (GetJoyStick() == true)
 	{
 		// Lスティックの角度
@@ -3147,9 +3292,19 @@ D3DXVECTOR3 SetMotionMoveAngle(void)
 		}
 	}
 
+	// 移動量を返す
 	return OutPutMove;
 }
-
+//===============================================================================================================
+// 武器ごとのエフェクト処理
+//===============================================================================================================
 void SetWeponEffect(void)
 {
+}
+//===============================================================================================================
+// ダメージアクションかどうか
+//===============================================================================================================
+bool IsDamageAction(void)
+{
+	return false;
 }

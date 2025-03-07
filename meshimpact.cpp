@@ -387,7 +387,8 @@ bool CollisionImpact(D3DXVECTOR3* pPos)
 			else if (fDistance <= DiffSize * 0.5f && g_MeshImpact[nCnt].nType != IMPACTTYPE_PLAYER)
 			{
 				// “–‚½‚Á‚Ä‚¢‚é
-				HitPlayer(20);
+				HitPlayer(20,false,0,0);
+				//pPlayer->rotDestPlayer.y = SetAttackerAngle(nCnt, ATTACKER_BOSS);
 			}
 		}
 

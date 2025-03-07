@@ -15,6 +15,8 @@
 #include "game.h"
 #include "tutorial3d.h"
 #include "spgauge.h"
+#include "event.h"
+#include"math.h"
 
 //***************************************************************************************************************
 // マクロ定義
@@ -37,7 +39,7 @@ void SaveCameraAnim(int nType);
 void LoadCameraAnim(int nType);
 void LoadAmimationKey(FILE* pFile, int nType, char* aStr);
 int LoadAnimationKeySet(FILE* pFile, int nType, char* aStr);
-
+void EventCameraAngle(D3DXVECTOR3 pos);
 //***************************************************************************************************************
 // グローバル変数宣言
 //***************************************************************************************************************
@@ -52,6 +54,7 @@ void InitCamera(void)
 {
 	// 変数の初期化
 	g_camera.posV = D3DXVECTOR3(0.0f, 250.0f, -550.0f);			// カメラの位置
+	g_camera.rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// カメラの位置
 
 	g_camera.posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// カメラの見ている位置
 	g_camera.vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);				// 上方向ベクトル
@@ -113,6 +116,7 @@ void UpdateCamera(void)
 	// プレイヤーを取得
 	Player* pPlayer = GetPlayer();
 	MODE mode = GetMode();
+	GAMESTATE gameState = GetGameState();
 
 	if (GetEditState() || GetEditStatetuto())
 	{
@@ -120,7 +124,7 @@ void UpdateCamera(void)
 	}
 
 	// ゲームの時のカメラの更新
-	if (mode != MODE_TITLE && !GetEditState() &&!GetEditStatetuto() && g_camera.bEditMode == false)
+	if (mode != MODE_TITLE && !GetEditState() &&!GetEditStatetuto() && g_camera.bEditMode == false && gameState != GAMESTATE_MOVIE)
 	{
 		g_camera.fDistance = g_camera.oldDistance; // 距離をリセット
 		
@@ -1027,6 +1031,19 @@ int LoadAnimationKeySet(FILE* pFile, int nType, char* aStr)
 	}
 	return 0;
 }
+//===========================================================================================================
+// イベントのカメラのアングル
+//===========================================================================================================
+void EventCameraAngle(D3DXVECTOR3 pos)
+{
+	g_camera.posRDest.x = pos.x + sinf(g_camera.rot.y) * 1.0f;
+	g_camera.posRDest.y = pos.y + cosf(g_camera.rot.y) * 1.0f;
+	g_camera.posRDest.z = pos.z + cosf(g_camera.rot.y) * 1.0f;
+
+	g_camera.posR.x += ((g_camera.posRDest.x - g_camera.posR.x) * 0.01f);
+	g_camera.posR.y += ((g_camera.posRDest.y - g_camera.posR.y) * 0.01f);
+	g_camera.posR.z += ((g_camera.posRDest.z - g_camera.posR.z) * 0.01f);
+}
 
 //===========================================================================================================
 // カメラテクスチャの設定処理
@@ -1050,4 +1067,41 @@ void SetAnimation(int nAnimType)
 	g_camera.nAnimKey = 0;
 	g_camera.nCounterAnim = 0;
 	g_camera.CameraState = CAMERAMODE_ANIMATION;
+}
+//===========================================================================================================
+// イベントのカメラの更新
+//===========================================================================================================
+void UpdateEventCamera(void)
+{
+	Player* pPlayer = GetPlayer();
+
+	int Eventtype = GetEventPos();
+
+	switch (Eventtype)
+	{
+	case 0:
+		EventCameraAngle(EVENTPOS_ONE);
+		break;
+	case 1:
+		EventCameraAngle(EVENTPOS_ONE);
+		break;
+	case 2:
+		EventCameraAngle(EVENTPOS_ONE);
+		break;
+	case 3:
+		EventCameraAngle(EVENTPOS_ONE);
+		break;
+	default:
+		break;
+	}
+
+	// プレイヤーの角度の正規化
+	if (g_camera.rotDest.y - g_camera.rot.y >= D3DX_PI)
+	{
+		g_camera.rot.y += D3DX_PI * 2.0f;
+	}
+	else if (g_camera.rotDest.y - g_camera.rot.y <= -D3DX_PI)
+	{
+		g_camera.rot.y -= D3DX_PI * 2.0f;
+	}
 }

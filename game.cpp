@@ -52,11 +52,17 @@
 #include "meshcylinder.h"
 #include "mark.h"
 #include "bosslife.h"
+#include "event.h"
 
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
 #define SPAWN_ENEMY (10) // 敵のスポーン数
+
+//**************************************************************************************************************
+// プロトタイプ宣言
+//**************************************************************************************************************
+void UpdateEventMovie(void); // イベントのムービー
 
 //**************************************************************************************************************
 //グローバル変数
@@ -65,8 +71,9 @@ GAMESTATE g_gameState = GAMESTATE_NONE;//ゲームの状態
 int g_nCounterGameState = 0;//状態管理カウンター
 bool g_bPause = false;//ポーズ中かどうか
 bool g_bEditMode = false; // エディットモードかどうか
-int g_EnemyWaveTime;
+int g_MovieCnt = 0;
 bool g_bCraft = false;
+bool g_bMovie = false;
 
 //=========================================================================================================
 //ゲーム画面の初期化処理
@@ -181,6 +188,9 @@ void InitGame(void)
 	//弾の初期化処理
 	InitBullet();
 
+	// イベントの初期化処理
+	InitEvent();
+
 #ifdef _DEBUG
 
 	//エディットの初期化処理
@@ -195,8 +205,8 @@ void InitGame(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
 	{
-		SpawnEnemy(2); // 敵を出す処理
-		SpawnEnemy(1); // 敵を出す処理
+		//SpawnEnemy(2); // 敵を出す処理
+		//SpawnEnemy(1); // 敵を出す処理
 	}
 	//SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f, 240);
 
@@ -239,8 +249,9 @@ void InitGame(void)
 
 	g_bPause = false; // ポーズ解除
 	g_bEditMode = false;// エディットモード解除
-	g_EnemyWaveTime = 0; // 敵が出てくる時間
+	g_MovieCnt = 0; // 敵が出てくる時間
 	g_bCraft = false;
+	g_bMovie = false;
 
 	// 音楽を再生
 	PlaySound(SOUND_LABEL_GAME_BGM);
@@ -373,6 +384,19 @@ void UninitGame(void)
 //=========================================================================================================
 void UpdateGame(void)
 {
+	if (g_bMovie == true)
+	{
+		g_gameState = GAMESTATE_MOVIE;
+		UpdateEventMovie();
+
+		g_MovieCnt--;
+		if (g_MovieCnt <= 0)
+		{
+			g_gameState = GAMESTATE_NORMAL;
+			g_bMovie = false;
+		}
+	}
+
 	if (g_bCraft == false && g_bPause == false && g_bEditMode == false)
 	{
 		// 敵の出現時間を加算する
@@ -403,28 +427,6 @@ void UpdateGame(void)
 
 	//int nSetSpawn = (HandredPlace * 100) + (tenPlace * 10) + onePlace;
 
-	if (g_EnemyWaveTime >= 1800)
-	{
-		int Spawn_randvalue = rand() % 100; // 出るか出ないか
-		int nSpawner = rand() % 3; // どこから出すか
-
-		switch (nSpawner)
-		{
-		case 0:
-			SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
-			break;
-		case 1:
-			SetBoss(D3DXVECTOR3(-526.0f, 0.0f, -455.0f), 3.0f, 10000); // ボスをセット
-			break;
-		case 2:
-			SetBoss(D3DXVECTOR3(-506.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
-			break;
-		default:
-			break;
-		}
-
-		g_EnemyWaveTime = 0;
-	}
 	//else if ((nSetSpawn % 40 != 0))
 	//{
 	//	bSet = false;
@@ -594,6 +596,9 @@ void UpdateGame(void)
 
 				// ブロックの更新処理
 				UpdateBlock();
+
+				// イベントの更新処理
+				UpdateEvent();
 			}
 
 			//プレイヤーの更新処理
@@ -704,9 +709,6 @@ void DrawGame(void)
 	// 影の描画処理
 	DrawShadow();
 
-	// アイコンの描画処理
-	DrawIcon();
-
 	//壁の描画処理
 	DrawWall();
 
@@ -730,6 +732,9 @@ void DrawGame(void)
 
 	//メッシュシリンダーの描画処理
 	DrawMeshCylinder();
+
+	// アイコンの描画処理
+	DrawIcon();
 
 	//HPゲージの描写処理
 	DrawGauge();
@@ -801,4 +806,25 @@ bool EnableCraft(bool bCraft)
 {
 	g_bCraft = bCraft;
 	return g_bCraft;
+}
+//==========================================================================================================
+// ムービーの有効無効処理
+//=======================================================================================================
+void EnableMovie(bool bMovie)
+{
+	g_bMovie = bMovie;
+}
+//==========================================================================================================
+ // ムービーの設定処理
+ //=======================================================================================================
+void SetMovie(int nTime)
+{
+	g_MovieCnt = nTime;
+}
+//==========================================================================================================
+// イベントのムービー
+//=======================================================================================================
+void UpdateEventMovie(void)
+{
+	UpdateEventCamera();
 }

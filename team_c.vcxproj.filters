@@ -31,9 +31,6 @@
     <ClCompile Include="block.cpp">
       <Filter>ソースファイル\obj</Filter>
     </ClCompile>
-    <ClCompile Include="boss.cpp">
-      <Filter>ソースファイル\obj</Filter>
-    </ClCompile>
     <ClCompile Include="edit.cpp">
       <Filter>ソースファイル\editor</Filter>
     </ClCompile>
@@ -60,9 +57,6 @@
     </ClCompile>
     <ClCompile Include="Particle.cpp">
       <Filter>ソースファイル\efffect</Filter>
-    </ClCompile>
-    <ClCompile Include="Damegepop.cpp">
-      <Filter>ソースファイル\UI</Filter>
     </ClCompile>
     <ClCompile Include="HPGauge.cpp">
       <Filter>ソースファイル\UI</Filter>
@@ -94,9 +88,6 @@
     <ClCompile Include="wall.cpp">
       <Filter>ソースファイル\obj</Filter>
     </ClCompile>
-    <ClCompile Include="enemy.cpp">
-      <Filter>ソースファイル\obj</Filter>
-    </ClCompile>
     <ClCompile Include="gameui.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
@@ -109,13 +100,7 @@
     <ClCompile Include="pause.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>ソースファイル\obj</Filter>
-    </ClCompile>
     <ClCompile Include="resultscore.cpp">
-      <Filter>ソースファイル\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Shadow.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
     <ClCompile Include="motion.cpp">
@@ -124,20 +109,11 @@
     <ClCompile Include="edit2d.cpp">
       <Filter>ソースファイル\editor</Filter>
     </ClCompile>
-    <ClCompile Include="polygon.cpp">
-      <Filter>ソースファイル\obj</Filter>
-    </ClCompile>
     <ClCompile Include="meshfan.cpp">
       <Filter>ソースファイル\mesh</Filter>
     </ClCompile>
-    <ClCompile Include="billboard.cpp">
-      <Filter>ソースファイル\UI</Filter>
-    </ClCompile>
     <ClCompile Include="craftui.cpp">
       <Filter>ソースファイル\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>ソースファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="minimap.cpp">
       <Filter>ソースファイル\UI</Filter>
@@ -166,18 +142,42 @@
     <ClCompile Include="mark.cpp">
       <Filter>ソースファイル\obj</Filter>
     </ClCompile>
-    <ClCompile Include="bosslife.cpp">
-      <Filter>ソースファイル\UI</Filter>
-    </ClCompile>
     <ClCompile Include="math.cpp">
       <Filter>ソースファイル\os</Filter>
+    </ClCompile>
+    <ClCompile Include="event.cpp">
+      <Filter>ソースファイル\gimic</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>ソースファイル\cahrctor</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>ソースファイル\cahrctor</Filter>
+    </ClCompile>
+    <ClCompile Include="boss.cpp">
+      <Filter>ソースファイル\cahrctor</Filter>
+    </ClCompile>
+    <ClCompile Include="billboard.cpp">
+      <Filter>ソースファイル\billboard</Filter>
+    </ClCompile>
+    <ClCompile Include="bosslife.cpp">
+      <Filter>ソースファイル\billboard</Filter>
+    </ClCompile>
+    <ClCompile Include="Damegepop.cpp">
+      <Filter>ソースファイル\billboard</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>ソースファイル\billboard</Filter>
+    </ClCompile>
+    <ClCompile Include="Shadow.cpp">
+      <Filter>ソースファイル\polygon</Filter>
+    </ClCompile>
+    <ClCompile Include="polygon.cpp">
+      <Filter>ソースファイル\polygon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
-      <Filter>ヘッダーファイル\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="boss.h">
       <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
     <ClInclude Include="edit.h">
@@ -222,20 +222,11 @@
     <ClInclude Include="model.h">
       <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>ヘッダーファイル\obj</Filter>
-    </ClInclude>
     <ClInclude Include="input.h">
       <Filter>ヘッダーファイル\os</Filter>
     </ClInclude>
-    <ClInclude Include="Damagepop.h">
-      <Filter>ヘッダーファイル\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Effect.h">
       <Filter>ヘッダーファイル\effect</Filter>
-    </ClInclude>
-    <ClInclude Include="enemy.h">
-      <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
     <ClInclude Include="explosion.h">
       <Filter>ヘッダーファイル\effect</Filter>
@@ -276,9 +267,6 @@
     <ClInclude Include="spgauge.h">
       <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Shadow.h">
-      <Filter>ヘッダーファイル\UI</Filter>
-    </ClInclude>
     <ClInclude Include="wall.h">
       <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
@@ -287,9 +275,6 @@
     </ClInclude>
     <ClInclude Include="edit2d.h">
       <Filter>ヘッダーファイル\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="polygon.h">
-      <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
     <ClInclude Include="sound.h">
       <Filter>ヘッダーファイル\os</Filter>
@@ -300,14 +285,8 @@
     <ClInclude Include="meshfan.h">
       <Filter>ヘッダーファイル\mesh</Filter>
     </ClInclude>
-    <ClInclude Include="billboard.h">
-      <Filter>ヘッダーファイル\UI</Filter>
-    </ClInclude>
     <ClInclude Include="craftui.h">
       <Filter>ヘッダーファイル\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
     <ClInclude Include="minimap.h">
       <Filter>ヘッダーファイル\UI</Filter>
@@ -336,14 +315,41 @@
     <ClInclude Include="mark.h">
       <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
-    <ClInclude Include="bosslife.h">
-      <Filter>ヘッダーファイル\UI</Filter>
-    </ClInclude>
     <ClInclude Include="math.h">
       <Filter>ヘッダーファイル\os</Filter>
     </ClInclude>
     <ClInclude Include="mouse.h">
       <Filter>ヘッダーファイル\os</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>ヘッダーファイル\gimic</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>ヘッダーファイル\charctor</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
+      <Filter>ヘッダーファイル\charctor</Filter>
+    </ClInclude>
+    <ClInclude Include="boss.h">
+      <Filter>ヘッダーファイル\charctor</Filter>
+    </ClInclude>
+    <ClInclude Include="billboard.h">
+      <Filter>ヘッダーファイル\billboard</Filter>
+    </ClInclude>
+    <ClInclude Include="bosslife.h">
+      <Filter>ヘッダーファイル\billboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Damagepop.h">
+      <Filter>ヘッダーファイル\billboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>ヘッダーファイル\billboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadow.h">
+      <Filter>ヘッダーファイル\polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="polygon.h">
+      <Filter>ヘッダーファイル\polygon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +400,30 @@
     </Filter>
     <Filter Include="ヘッダーファイル\obj">
       <UniqueIdentifier>{9b48dc6a-64d7-48ae-bc99-447fb2a0e79b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\gimic">
+      <UniqueIdentifier>{782aaa86-232d-4e83-9249-a5396773c118}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダーファイル\gimic">
+      <UniqueIdentifier>{8c07546e-7ab9-413c-82ab-0f81241f94d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダーファイル\charctor">
+      <UniqueIdentifier>{5ae83c28-9d0d-4f70-a3a5-0ba7c90a939e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\cahrctor">
+      <UniqueIdentifier>{5601b15c-fe09-4cd8-8dc5-4dcfabaac6a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダーファイル\billboard">
+      <UniqueIdentifier>{3d348ad6-25dd-4b78-8d30-dfc377b6dd36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\billboard">
+      <UniqueIdentifier>{bfc87f75-b097-428e-a95e-3346ee73f618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\polygon">
+      <UniqueIdentifier>{552e62d3-bf66-4f7b-b2fa-f0d1b26b8202}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダーファイル\polygon">
+      <UniqueIdentifier>{6b04064f-3fdc-4714-ab67-ea531430f881}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

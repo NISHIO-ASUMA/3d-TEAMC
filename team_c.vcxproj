@@ -159,6 +159,7 @@
     <ClCompile Include="effect2.cpp" />
     <ClCompile Include="effectEdit.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="event.cpp" />
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="effect2.h" />
     <ClInclude Include="effectEdit.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="event.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
