@@ -1109,7 +1109,7 @@ void PickUpItemAnimation(int nCntItem)
 	// 目的の値に近づける
 	g_Item[nCntItem].rot.y += 0.01f;
 
-	// 長尾ここに頼む
+	// TOOD : 長尾ここにパーティクルを出す処理を頼む
 	//SetParticle();
 	if (g_Item[nCntItem].nImpactCount >= 120)
 	{
