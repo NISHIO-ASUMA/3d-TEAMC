@@ -40,6 +40,7 @@
 #include "mark.h"
 #include "game.h"
 #include "math.h"
+#include "easing.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -77,7 +78,8 @@ void DestroyWepon(void);																		 // アイテムの破壊処理
 void DropItem(void);                                                                             // アイテムのドロップ処理
 void HandleSpecialAttack(void);																	 // スペシャルアタックの処理
 void UpdateItemStock(void);																		 // プレイヤーのアイテムのストック処理
-void SetPlayerWepon(int nType,float SwordLength);																	 // アイテムを変更する処理
+void SetPlayerWepon(int nType,float SwordLength);											     // アイテムを変更する処理
+void UpdatePlayerAvoid(void);																	 // プレイヤーの回避処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -516,14 +518,17 @@ void UpdatePlayer(void)
 	// アイテムの破壊処理
 	DestroyWepon();		
 
-	// アイテムのドロップ処理
-	DropItem();
+	//// アイテムのドロップ処理
+	//DropItem();
 
 	// 必殺技の処理
 	HandleSpecialAttack();
 
 	// アイテムのストックの更新処理
 	UpdateItemStock();		
+
+	// プレイヤーの回避の処理
+	UpdatePlayerAvoid();
 
 	// フォーバーモード
 	if (g_player.FeverMode == true)
@@ -1263,7 +1268,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 		}
 
 
-		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_LEFT_B) || OnMouseTriggerDown(RIGHT_MOUSE)) && g_player.Combostate == COMBO_NO)
+		if ((KeyboardTrigger(DIK_E) || JoypadTrigger(JOYKEY_LEFT_B)) && g_player.Combostate == COMBO_NO)
 		{
 			// インデックス番号のビルボードを非表示
 			DeletIdxBillboard(pItem[nIdx].nIdxBillboardCount);
@@ -2914,5 +2919,30 @@ void SetPlayerWepon(int nType,float SwordLength)
 		break;
 	default:
 		break;
+	}
+}
+//===============================================================================================================
+// プレイヤーの回避処理
+//===============================================================================================================
+void UpdatePlayerAvoid(void)
+{
+	if (OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true)
+	{
+		SetMotion(&g_player.Motion, MOTIONTYPE_AVOID, true, 10);
+	}
+
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID)
+	{
+		static int EasingCount = 0;
+
+		EasingCount++;
+
+		float time = SetEase(EasingCount, 25);
+
+		g_player.move.x += sinf(g_player.rotDestPlayer.y) * g_player.speed;
+		g_player.move.z += cosf(g_player.rotDestPlayer.y) * g_player.speed;
+
+		g_player.move.x += sinf(g_player.rotDestPlayer.y) * SetSmoothAprroach(10.0f, g_player.move.x, EaseInOutQuad(time));
+		//float Time = SetEase();
 	}
 }
