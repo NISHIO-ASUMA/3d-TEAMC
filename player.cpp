@@ -271,7 +271,7 @@ void UpdatePlayer(void)
 	}
 
 	// パッドを使っていないかつ攻撃モーションじゃない
-	if (bUsePad == false && CheckActionMotion(&g_player.Motion) == true && g_player.AttackSp == false && g_player.nLife > 0)
+	if (GetJoyStick() == false && CheckActionMotion(&g_player.Motion) == true && g_player.AttackSp == false && g_player.nLife > 0)
 	{
 		PlayerMove(); // プレイヤーの移動処理
 	}

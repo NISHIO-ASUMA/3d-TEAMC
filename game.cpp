@@ -195,10 +195,10 @@ void InitGame(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
 	{
-		//SpawnEnemy(2); // 敵を出す処理
-		//SpawnEnemy(1); // 敵を出す処理
+		SpawnEnemy(2); // 敵を出す処理
+		SpawnEnemy(1); // 敵を出す処理
 	}
-	SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f, 240);
+	//SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f, 240);
 
 	//SetGameUI(D3DXVECTOR3(625.0f, 500.0f, 0.0f), UITYPE_DESTORY, 150.0f, 50.0f, 120);
 
@@ -215,10 +215,10 @@ void InitGame(void)
 
 #ifdef _DEBUG
 
-	//SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 6, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+	SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 6, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
-	//SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
-	//SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
+	SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 
 #endif // _DEBUG
 
