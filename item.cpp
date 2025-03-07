@@ -1109,10 +1109,9 @@ void PickUpItemAnimation(int nCntItem)
 	// 目的の値に近づける
 	g_Item[nCntItem].rot.y += 0.01f;
 
-<<<<<<< HEAD
 	// TOOD : 長尾ここにパーティクルを出す処理を頼む
 	//SetParticle();
-=======
+	// 
 	// 長尾ここに頼む
 	if (g_Item[nCntItem].nType == ITEMTYPE_ONIGIRI)
 	{
@@ -1135,7 +1134,6 @@ void PickUpItemAnimation(int nCntItem)
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 
->>>>>>> 40f9d302e427779171d3abc1ee1be9a0483912d2
 	if (g_Item[nCntItem].nImpactCount >= 120)
 	{
 		SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x,0.0f, g_Item[nCntItem].pos.z),COLOR_GOLD,20,10.0f,7.0f,1.0f,60,IMPACTTYPE_NORMAL,0);
