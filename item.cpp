@@ -1109,8 +1109,31 @@ void PickUpItemAnimation(int nCntItem)
 	// 目的の値に近づける
 	g_Item[nCntItem].rot.y += 0.01f;
 
-	// 長尾ここに頼む
+	// TOOD : 長尾ここにパーティクルを出す処理を頼む
 	//SetParticle();
+	// 
+	// 長尾ここに頼む
+	if (g_Item[nCntItem].nType == ITEMTYPE_ONIGIRI)
+	{
+		SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + g_Item[nCntItem].Size.y / 1.5f, g_Item[nCntItem].pos.z),
+			D3DXVECTOR3(1.57f, g_Item[nCntItem].rot.y, 1.57f),
+			D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f),
+			2.0f, 2, 20, 4, 4.0f, 40.0f,
+			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	}
+	else
+	{
+		SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + g_Item[nCntItem].Size.y / 1.5f, g_Item[nCntItem].pos.z),
+			D3DXVECTOR3(1.57f, g_Item[nCntItem].rot.y, 1.57f),
+			D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+			2.0f, 2, 20, 4, 4.0f, 40.0f,
+			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	}
+
 	if (g_Item[nCntItem].nImpactCount >= 120)
 	{
 		SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x,0.0f, g_Item[nCntItem].pos.z),COLOR_GOLD,20,10.0f,7.0f,1.0f,60,IMPACTTYPE_NORMAL,0);
