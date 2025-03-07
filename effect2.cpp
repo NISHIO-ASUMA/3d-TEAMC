@@ -242,7 +242,7 @@ void DrawEffectX(void)
 
 			if (EffectType != EFFECT_SMORK && EffectType != EFFECT_WATER)
 			{
-				//アルファテストを有効
+				// 加算合成
 				pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 				pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 				pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
@@ -252,7 +252,7 @@ void DrawEffectX(void)
 			pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 			pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-			//aブレンディング
+			// aテスト
 			pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 			pDevice->SetRenderState(D3DRS_ALPHAREF, NULL);
 			pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);

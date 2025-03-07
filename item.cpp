@@ -434,7 +434,7 @@ void UpdateItem(void)
 		if (g_Item[nCntItem].state == ITEMSTATE_NORMAL || g_Item[nCntItem].state == ITEMSTATE_RELEASE)
 		{
 			// アイテムを拾える範囲に入った
-			if (CollisionItem(nCntItem, 20.0f, 20.0f) == true)
+			if (CollisionItem(nCntItem, 30.0f, 30.0f) == true)
 			{
 				// 拾えるアイテムの更新
 				PickUpItemAnimation(nCntItem);
@@ -508,49 +508,49 @@ void DrawItem(void)
 
 	D3DXMATERIAL* pMat; // マテリアルデータへのポインタ
 
-	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
-		{
-			if (!g_Item[nCntItem].bUse)
-			{//未使用状態なら
-				//下の処理を通さずカウントを進める
-				continue;
-			}
+		if (!g_Item[nCntItem].bUse)
+		{//未使用状態なら
+			//下の処理を通さずカウントを進める
+			continue;
+		}
 
-			// ワールドマトリックスの初期化
-			D3DXMatrixIdentity(&g_Item[nCntItem].mtxWorldItem);
+		int nType = g_Item[nCntItem].nType;
 
-			// 向きを反映
-			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
-			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxRot);
+		// ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&g_Item[nCntItem].mtxWorldItem);
 
-			// 位置を反映
-			D3DXMatrixTranslation(&mtxTrans, g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y, g_Item[nCntItem].pos.z);
-			D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxTrans);
+		// 向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
+		D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxRot);
 
-			// ワールドマトリックスの設定
-			pDevice->SetTransform(D3DTS_WORLD, &g_Item[nCntItem].mtxWorldItem);
+		// 位置を反映
+		D3DXMatrixTranslation(&mtxTrans, g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y, g_Item[nCntItem].pos.z);
+		D3DXMatrixMultiply(&g_Item[nCntItem].mtxWorldItem, &g_Item[nCntItem].mtxWorldItem, &mtxTrans);
+
+		// ワールドマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &g_Item[nCntItem].mtxWorldItem);
 			
-			// 現在のマテリアルを取得
-			pDevice->GetMaterial(&matDef);
+		// 現在のマテリアルを取得
+		pDevice->GetMaterial(&matDef);
 
-			for (int nCntMat = 0; nCntMat < (int)g_Item[nCntItem].ItemTex[nCntNum].g_dwNumMatModel; nCntMat++)
-			{
-				// マテリアルのデータへのポインタを取得
-				pMat = (D3DXMATERIAL*)g_Item[nCntItem].ItemTex[nCntNum].g_pBuffMatModel->GetBufferPointer();
+		for (int nCntMat = 0; nCntMat < (int)g_Item[nCntItem].ItemTex[nType].g_dwNumMatModel; nCntMat++)
+		{
+			// マテリアルのデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_Item[nCntItem].ItemTex[nType].g_pBuffMatModel->GetBufferPointer();
 
-				// マテリアルの設定
-				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+			// マテリアルの設定
+			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
-				// テクスチャの設定
-				pDevice->SetTexture(0, g_Item[nCntItem].ItemTex[nCntNum].g_apTextureModel[nCntMat]);
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_Item[nCntItem].ItemTex[nType].g_apTextureModel[nCntMat]);
 
-				// ブロック(パーツ)の描画
-				g_Item[nCntItem].ItemTex[nCntNum].g_pMeshModel->DrawSubset(nCntMat);
-			}
+			// ブロック(パーツ)の描画
+			g_Item[nCntItem].ItemTex[nType].g_pMeshModel->DrawSubset(nCntMat);
 		}
 	}
+	
 }
 //=========================================================================================================
 //ブロックの設定処理
