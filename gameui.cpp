@@ -28,6 +28,7 @@
 //**************************************************************************************************************
 void UIFlash(int nType);	// 点滅処理
 void UpdateDestroyUI(int nCnt); // 武器が壊れた時のUI
+void SetEventUIAnimation(int nCnt);   // イベントのUIの設定
 float fcolorA;
 
 //**************************************************************************************************************
@@ -84,6 +85,7 @@ void InitGameUI(void)
 		g_GameUI[nCnt].nType = UITYPE_TITLE;
 		g_GameUI[nCnt].col = COLOR_WHITE;
 		g_GameUI[nCnt].nEaseCnt = 0;
+		g_GameUI[nCnt].bLife = false;
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -200,6 +202,17 @@ void UpdateGameUI(void)
 					g_GameUI[nCnt].bUse = false;
 				}
 
+				//頂点カラーの設定
+				pVtx[0].col = COLOR_WHITE;
+				pVtx[1].col = COLOR_WHITE;
+				pVtx[2].col = COLOR_WHITE;
+				pVtx[3].col = COLOR_WHITE;
+
+				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
 				break;
 			case UITYPE_SYUTYUSEN:
 				g_nCounterAnim++;
@@ -305,6 +318,20 @@ void UpdateGameUI(void)
 				break;
 			}
 
+			// 寿命がある
+			if (g_GameUI[nCnt].bLife == true)
+			{
+				// 寿命を減らす
+				g_GameUI[nCnt].nUseTime--;
+
+				// 使用時間が終わった
+				if (g_GameUI[nCnt].nUseTime <= 0)
+				{
+					// 消す
+					g_GameUI[nCnt].bUse = false;
+				}
+			}
+
 			//頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x - g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(g_GameUI[nCnt].pos.x + g_GameUI[nCnt].fWidth, g_GameUI[nCnt].pos.y - g_GameUI[nCnt].fHeight, 0.0f);
@@ -356,7 +383,7 @@ void DrawGameUI(void)
 //==============================================================================================================
 // UIの設定処理
 //==============================================================================================================
-void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUseTime)
+void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, bool bLife,int nUseTime)
 {
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
@@ -373,6 +400,7 @@ void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUse
 			g_GameUI[nCnt].fWidth = fWidth;
 			g_GameUI[nCnt].fHeight = fHeight;
 			g_GameUI[nCnt].nUseTime = nUseTime;
+			g_GameUI[nCnt].bLife = bLife;
 			g_GameUI[nCnt].bUse = true;
 
 			// 頂点座標の設定
@@ -587,4 +615,11 @@ void UpdateDestroyUI(int nCnt)
 	{
 		g_GameUI[nCnt].bUse = false;
 	}
+}
+//==============================================================================================================
+// イベントのUIの設定
+//==============================================================================================================
+void SetEventUIAnimation(int nCnt)
+{
+
 }

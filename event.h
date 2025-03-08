@@ -49,4 +49,6 @@ void SetEvent(D3DXVECTOR3 Eventpos, int IventPosition,int nTime); // ƒCƒxƒ“ƒg‚Ì
 void UpdateEvent(void); // ƒCƒxƒ“ƒg‚ÌXVˆ—
 bool EnableEvent(void); // ƒCƒxƒ“ƒg‚ª”­¶‚µ‚Ä‚é‚©‚Ç‚¤‚©
 int GetEventPos(void);  // ƒCƒxƒ“ƒg‚Ì”­¶’n“_‚Ìæ“¾
+void SetEndEvent(bool bEnableEvent); // ƒCƒxƒ“ƒg‚Ì‹­§I—¹
+
 #endif

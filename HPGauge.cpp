@@ -12,6 +12,7 @@
 #include "HPGauge.h"
 #include "sound.h"
 #include "easing.h"
+#include "game.h"
 
 //**********************************************************************************************************************
 // マクロ定義
@@ -308,6 +309,8 @@ void UpdateGauge(void)
 
 	g_pVtxBuffGauge->Unlock();
 
+	GAMESTATE gameState = GetGameState();
+
 	// フィーバーゲージの処理
 	if (g_fFeverCharge >= 100.0f && pPlayer->FeverMode == false)
 	{
@@ -315,7 +318,7 @@ void UpdateGauge(void)
 		PlaySound(SOUND_LABEL_FEVER);
 		pPlayer->FeverMode = true;
 	}
-	else if (pPlayer->FeverMode == true)
+	else if (pPlayer->FeverMode == true && gameState != GAMESTATE_MOVIE)
 	{
 		g_fFeverCharge -= 0.2f;
 		if (g_fFeverCharge <= 0.0f)

@@ -33,6 +33,8 @@
 #include "Effect.h"
 #include "math.h"
 #include "meshcylinder.h"
+#include "mark.h"
+#include "event.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -59,6 +61,7 @@ void UpdateAbnormalCondition(int nCntBoss);                                     
 void SetRasuAttack(int nCntBoss);													// ボスの突進攻撃の設定
 void SetDoubleRasuAttack(int nCntBoss);                                             // ボスの二回突進してくる攻撃処理
 void UpdateAgentBoss(int nCntBoss);                                                 // ボスの追跡の更新処理
+void DeathMotionContlloer(int nCntBoss);                                            // ボスの死亡モーションの処理
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -213,19 +216,6 @@ void UpdateBoss(void)
 		// HPゲージの位置設定処理
 		SetPositionLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].nLifeFrame,g_Boss[nCnt].nLifeDelayIdx,g_Boss[nCnt].pos);
 
-		// 敵の攻撃の設定
-		switch (g_Boss[nCnt].Motion.motiontypeBlend)
-		{
-		case MOTIONTYPE_ACTION:
-			SetRasuAttack(nCnt);
-			break;
-		case MOTIONTYPE_ACTION2:
-			SetDoubleRasuAttack(nCnt);
-			break;
-		default:
-			break;
-		}
-
 		// 移動量の減衰
 		g_Boss[nCnt].move.x += (0.0f - g_Boss[nCnt].move.x) * 0.25f;
 		g_Boss[nCnt].move.z += (0.0f - g_Boss[nCnt].move.z) * 0.25f;
@@ -242,10 +232,42 @@ void UpdateBoss(void)
 		// モーションの更新処理
 		UpdateMotion(&g_Boss[nCnt].Motion);
 
+		// モーションが終わったら
+		if (g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].bLoop == false && g_Boss[nCnt].Motion.nKey >= g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].nNumkey - 1)
+		{
+			g_Boss[nCnt].AttackState = BOSSATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
+		}
+
 		// ゲームの状態がムービーだったら
 		if (gameState == GAMESTATE_MOVIE)
 		{
 			continue;
+		}
+
+		// 0いかになったら
+		if (g_Boss[nCnt].pos.y <= 0.0f)
+		{
+			// 0に戻す
+			g_Boss[nCnt].pos.y = 0.0f;
+		}
+
+		if (g_Boss[nCnt].Motion.motiontypeBlend == MOTIONTYPE_DEATH)
+		{
+			DeathMotionContlloer(nCnt);
+			continue;
+		}
+
+		// 敵の攻撃の設定
+		switch (g_Boss[nCnt].Motion.motiontypeBlend)
+		{
+		case MOTIONTYPE_ACTION:
+			SetRasuAttack(nCnt);
+			break;
+		case MOTIONTYPE_ACTION2:
+			SetDoubleRasuAttack(nCnt);
+			break;
+		default:
+			break;
 		}
 
 		// アイテムが当たったか
@@ -263,6 +285,19 @@ void UpdateBoss(void)
 			HitBoss(nCnt, ImpactDamege(0));
 		}
 		
+		if (EnableEvent() == false)
+		{
+			// マップから消す
+			EnableMap(g_Boss[nCnt].nIdxMap);
+
+			// 影消す
+			KillShadow(g_Boss[nCnt].nIdxShadow);
+
+			// ゲージを消す
+			DeleateLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].nLifeFrame, g_Boss[nCnt].nLifeDelayIdx);
+
+			g_Boss[nCnt].bUse = false;
+		}
 		// 範囲内にいる
 		if (CollisionCylinder(&pPlayer->pos) == false)
 		{
@@ -271,7 +306,8 @@ void UpdateBoss(void)
 		}
 		else
 		{
-
+			SetMotion(&g_Boss[nCnt].Motion, MOTIONTYPE_NEUTRAL, true, 10);
+			g_Boss[nCnt].AttackState = BOSSATTACK_NO;
 		}
 		// 攻撃範囲に入ったら
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 50.0f) && g_Boss[nCnt].AttackState != BOSSATTACK_ATTACK)
@@ -358,12 +394,6 @@ void UpdateBoss(void)
 		}
 
 		CollisionToBoss(nCnt); // ボスとボスの当たり判定
-
-		// モーションが終わったら
-		if (g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].bLoop == false && g_Boss[nCnt].Motion.nKey >= g_Boss[nCnt].Motion.aMotionInfo[g_Boss[nCnt].Motion.motionType].nNumkey - 1)
-		{
-			g_Boss[nCnt].AttackState = BOSSATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
-		}
 	}
 }
 //===============================================================================================================
@@ -383,7 +413,7 @@ void DrawBoss(void)
 
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
-		if (!g_Boss[nCnt].bUse)
+		if (g_Boss[nCnt].bUse == false)
 		{
 			continue;
 		}
@@ -499,6 +529,9 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].state = BOSSSTATE_NORMAL;	  // 状態
 			g_Boss[nCnt].AttackState = BOSSATTACK_NO; // 攻撃状態
 			g_Boss[nCnt].nMaxLife = nLife;            // 最大のHP
+			SetMotion(&g_Boss[nCnt].Motion, MOTIONTYPE_NEUTRAL, true, 10);
+			g_Boss[nCnt].move = NULLVECTOR3;
+
 			// 状態異常関係
 			for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
 			{
@@ -580,12 +613,12 @@ void HitBoss(int nCntBoss,int nDamage)
 			7.0f, 40, 60, 20, 7.0f, 20.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-		// 影から消す
-		KillShadow(g_Boss[nCntBoss].nIdxShadow);
-		EnableMap(g_Boss[nCntBoss].nIdxMap);		// マップから消す
-
-		// 消す
-		g_Boss[nCntBoss].bUse = false;
+		// モーションがDeathじゃなかったら
+		if (g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
+		{
+			SetMotion(&g_Boss[nCntBoss].Motion, MOTIONTYPE_DEATH, true, 10);
+		}
+		g_Boss[nCntBoss].nLife = 0;
 
 		if (gamestate != GAMESTATE_END)
 		{
@@ -1280,33 +1313,36 @@ void colisionSword(int nCntBoss)
 		HitBoss(nCntBoss,pPlayer->nDamage * 3); // 敵に当たった
 	}
 
+	// 範囲内
+	const bool InBounds = sphererange(&ModelPos, &g_Boss[nCntBoss].pos, 150.0f, 65.0f) == true;
+
 	// ダメージを与えられる
-	const bool is_CanSpDamage = pPlayer->Motion.nNumModel == MAX_MODEL && pPlayer->AttackSp == true;
+	const bool is_CanSpDamage = pPlayer->Motion.nNumModel == MAX_MODEL && pPlayer->AttackSp == true && InBounds;
 
 	// 刀のスペシャル攻撃
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, KEY_THREE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+		HitBoss(nCntBoss, pPlayer->nDamage * 10); // 敵に当たった
 	}
 	// 両手持ちの必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPDOUBLE && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+		HitBoss(nCntBoss, pPlayer->nDamage * 10); // 敵に当たった
 	}
 	// ハンマーのスペシャル攻撃
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPHAMMER && CheckMotionBounds(nKey, nCounter, KEY_ONE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+		HitBoss(nCntBoss, pPlayer->nDamage * 10); // 敵に当たった
 	}
 	// 片手の必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+		HitBoss(nCntBoss, pPlayer->nDamage * 10); // 敵に当たった
 	}
 	// 槍の必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, KEY_EIGHTEEN, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 30); // 敵に当たった
+		HitBoss(nCntBoss, pPlayer->nDamage * 10); // 敵に当たった
 	}
 
 }
@@ -1634,6 +1670,42 @@ void UpdateAgentBoss(int nCntBoss)
 	//}
 
 
+}
+//========================================================================================================
+ // ボスの死亡モーションの処理
+ //========================================================================================================
+void DeathMotionContlloer(int nCntBoss)
+{
+	Player* pPlayer = GetPlayer();
+
+	// キーが最後まで行ったかを判定
+	const bool LastKey = g_Boss[nCntBoss].Motion.nKey >= g_Boss[nCntBoss].Motion.aMotionInfo[MOTIONTYPE_DEATH].nNumkey - 1;
+
+	// 重力
+	g_Boss[nCntBoss].move.y -= MAX_GLABITY;
+
+	// 死亡モーションだったら
+	if (g_Boss[nCntBoss].Motion.nKey <= 0)
+	{
+		g_Boss[nCntBoss].move.x = sinf(pPlayer->rot.y + D3DX_PI) * 20.0f;
+		g_Boss[nCntBoss].move.y = 10.0f;
+		g_Boss[nCntBoss].move.z = cosf(pPlayer->rot.y + D3DX_PI) * 20.0f;
+	}
+
+	if (LastKey == true)
+	{
+		// マップから消す
+		EnableMap(g_Boss[nCntBoss].nIdxMap);
+
+		// 影消す
+		KillShadow(g_Boss[nCntBoss].nIdxShadow);
+
+		// 消す
+		g_Boss[nCntBoss].bUse = false;
+
+		// イベントを強制終了
+		SetEndEvent(false);
+	}
 }
 //========================================================================================================
 // ボスの取得処理

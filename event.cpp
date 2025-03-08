@@ -13,6 +13,7 @@
 #include "meshcylinder.h"
 #include "boss.h"
 #include "game.h"
+#include "gameui.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -107,6 +108,7 @@ void UpdateEvent(void)
 				SetBoss(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
+				SetGameUI(D3DXVECTOR3(500.0f, 600.0f, 0.0f), UITYPE_EVENT, 150.0f, 50.0f, false, 0);
 				break;
 			case EVENTPOSITION_TWO:
 				SetEvent(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), EventPos, 1800);
@@ -114,6 +116,7 @@ void UpdateEvent(void)
 				SetBoss(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
+				SetGameUI(D3DXVECTOR3(500.0f, 500.0f, 0.0f), UITYPE_EVENT, 150.0f, 50.0f, false, 0);
 				break;
 			case EVENTPOSITION_THREE:
 				SetEvent(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), EventPos, 1800);
@@ -121,6 +124,7 @@ void UpdateEvent(void)
 				SetBoss(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
+				SetGameUI(D3DXVECTOR3(500.0f, 500.0f, 0.0f), UITYPE_EVENT, 150.0f, 50.0f, false, 0);
 				break;
 			case EVENTPOSITION_FOUR:
 				SetEvent(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), EventPos, 1800);
@@ -128,6 +132,7 @@ void UpdateEvent(void)
 				SetBoss(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
+				SetGameUI(D3DXVECTOR3(500.0f, 500.0f, 0.0f), UITYPE_EVENT, 150.0f, 50.0f, false, 0);
 				break;
 			default:
 				break;
@@ -175,4 +180,24 @@ bool EnableEvent(void)
 int GetEventPos(void)
 {
 	return g_EventPos;
+}
+//==============================================================================================================
+// イベントの強制終了
+//==============================================================================================================
+void SetEndEvent(bool bEnableEvent)
+{
+	// イベントの場所分回す
+	for (int nCnt = 0; nCnt < EVENTPOSITION_MAX; nCnt++)
+	{
+		// 使用中だったら
+		if (g_Event[nCnt].bEvent == true)
+		{
+			g_Event[nCnt].nTime = 0;
+			DeleteCylinder(g_Event[nCnt].nCylinderIdx);
+			g_Event[nCnt].bEvent = bEvent;
+			bEvent = false;
+
+			return;
+		}
+	}
 }

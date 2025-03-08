@@ -121,9 +121,9 @@ void InitTutorial3d(void)
 	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 29);
 	
 	// UIをセット
-	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f, 0);
-	SetGameUI(D3DXVECTOR3(70.0f, 610.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, 0);
-	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, 0);
+	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f,false, 0);
+	SetGameUI(D3DXVECTOR3(70.0f, 610.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, false,0);
+	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f,false, 0);
 
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f), 0);

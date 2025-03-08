@@ -205,17 +205,17 @@ void InitGame(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
 	{
-		//SpawnEnemy(2); // 敵を出す処理
-		//SpawnEnemy(1); // 敵を出す処理
+		SpawnEnemy(2); // 敵を出す処理
+		SpawnEnemy(1); // 敵を出す処理
 	}
 	//SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f, 240);
 
 	//SetGameUI(D3DXVECTOR3(625.0f, 500.0f, 0.0f), UITYPE_DESTORY, 150.0f, 50.0f, 120);
 
 	// UIをセット
-	SetGameUI(D3DXVECTOR3(70.0f,610.0f,0.0f),UITYPE_ICONFRAME,70.0f, 80.0f,0);
-	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, 0);
-	SetGameUI(D3DXVECTOR3(95.0f, 115.0f, 0.0f), UITYPE_KEY, 90.0f, 50.0f, 0);
+	SetGameUI(D3DXVECTOR3(70.0f,610.0f,0.0f),UITYPE_ICONFRAME,70.0f, 80.0f,false,0);
+	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false,0);
+	SetGameUI(D3DXVECTOR3(95.0f, 115.0f, 0.0f), UITYPE_KEY, 90.0f, 50.0f,false, 0);
 
 	// ストックアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 610.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);

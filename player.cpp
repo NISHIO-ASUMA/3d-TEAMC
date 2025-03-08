@@ -490,7 +490,7 @@ void UpdatePlayer(void)
 	CollisionWall(&g_player.pos,&g_player.posOld,&g_player.move,g_player.speed);
 
 	//プレイヤーの重力
-	g_player.move.y -= 1.0f;
+	g_player.move.y -= MAX_GLABITY;
 
 	// 影の計算
 	SetPositionShadow(g_player.nIdxShadow, g_player.pos, 30.0f + 30.0f * g_player.pos.y / 200.0f, 1.0f / (1.0f + g_player.pos.y / 30.0f));
@@ -619,8 +619,8 @@ void UpdatePlayer(void)
 
 	if (g_player.FeverMode == true && FiverCnt == 0 && g_player.AttackSp == false)
 	{
-		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, 0);
-		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, 0);
+		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, false,0);
+		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, false,0);
 		FiverCnt = 1; // 制限回数を超えた
 	}
 	if (g_player.FeverMode == false)
@@ -2685,7 +2685,7 @@ void DestroyWepon(void)
 	// 武器を持っているかつプレイヤーの持っているアイテムが壊れた
 	if (g_player.Motion.nNumModel == MAX_MODEL && g_player.Itembreak[g_player.ItemIdx] == true)
 	{
-		SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f, 240);
+		SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f,true, 240);
 
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
@@ -2818,7 +2818,7 @@ void HandleSpecialAttack(void)
 				WaveCamera(120); // カメラを揺らす
 				g_player.SwordOffpos.y = 250.0f;
 				MotionChange(MOTION_SP, 0);
-				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f, 0);
+				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_BLACK, 640.0f, 380.0f,false, 0);
 				PlayerComb(MOTIONTYPE_ACTION, 120, 120, COMBO_ATTACK1); // コンボ1
 				break;
 			case MOTION_BIGWEPON:

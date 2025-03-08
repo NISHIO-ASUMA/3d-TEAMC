@@ -31,6 +31,7 @@ typedef enum
 	UITYPE_ICONFRAMESTOCK,
 	UITYPE_KEY,
 	UITYPE_DESTORY,
+	UITYPE_EVENT,
 	UITYPE_MAX
 }UITYPE;
 
@@ -51,6 +52,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\icon_framestoku.png",
 	"data\\TEXTURE\\tutoirial005.png",
 	"data\\TEXTURE\\ui_weponbreak.png",
+	"data\\TEXTURE\\ui_event.png",
 };
 
 //**************************************************************************************************************
@@ -65,6 +67,7 @@ typedef struct
 	int nType;			// 種類
 	float fWidth, fHeight; // 幅、高さ
 	bool bUse;			// 使用状態
+	bool bLife;         // 寿命をつけるかつけないか
 	D3DXCOLOR col;      // 色
 	int nEaseCnt;       // イージングのカウント
 }Gameui;
@@ -76,7 +79,7 @@ void InitGameUI(void);	 // UIの初期化処理
 void UninitGameUI(void); // UIの終了処理
 void UpdateGameUI(void); // UIの更新処理
 void DrawGameUI(void);	 // UIの描画処理
-void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUseTime);
+void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, bool bLife, int nUseTime);
 void FlashGameUI(int nSelect);
 
 #endif
