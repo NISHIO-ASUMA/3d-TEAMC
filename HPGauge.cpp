@@ -61,7 +61,7 @@ void InitGauge(void)
 
 	// フィーバーのフレームとゲージのテクスチャ
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_frame.png", &g_pTexture_Fevframe);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_gage.png", &g_pTexture_Fevgauge);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_gage_2.png", &g_pTexture_Fevgauge);
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * (NUM_HPGAUGE * NUM_FEVERGAUGE), D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 	VERTEX_2D* pVtx;
 
