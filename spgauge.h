@@ -17,13 +17,22 @@
 //**************************************************************************************************************
 typedef enum
 {
-	SPGAUGE_FRAME0 = 0,
-	SPGAUGE_FRAME1,
-	SPGAUGE_FRAME2,
-	SPGAUGE_FRAME3,
-	SPGAUGE_GAUGE,
+	SPGAUGE_FRAME = 0,
+	SPGAUGE_GAUGE_0,
+	SPGAUGE_GAUGE_1,
+	SPGAUGE_GAUGE_2,
 	SPGAUGE_MAX
 }SPGAUGE;
+
+//**************************************************************************************************************
+// スペシャルゲージの状態
+//**************************************************************************************************************
+typedef enum
+{
+	SPGAUGESTATE_NONE = 0,
+	SPGAUGESTATE_CHARGE,
+	SPGAUGESTATE_MAX
+}SPGAUGESTATE;
 
 //**************************************************************************************************************
 // スペシャルゲージの構造体
@@ -33,6 +42,8 @@ typedef struct
 	D3DXVECTOR3 pos; // 位置
 	int nType; // 種類
 	float SpGauge;
+	int state;
+	D3DXCOLOR col; // 色
 }SPgauge;
 
 //**************************************************************************************************************
@@ -43,4 +54,5 @@ void UninitSPgauge(void);		// ゲージの終了
 void UpdateSPgauge(void);		// ゲージの更新
 void DrawSPgauge(void);			// ゲージの描画
 void AddSpgauge(float fValue);  // ゲージの加算処理
+void DecSpgauge(float fValue);  // ゲージの減算処理
 #endif

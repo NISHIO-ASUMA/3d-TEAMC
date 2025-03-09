@@ -14,6 +14,8 @@
 #include "gameui.h"
 #include "sound.h"
 #include "mouse.h"
+#include"math.h"
+#include "easing.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -25,6 +27,7 @@
 void SelectTitle(int select);					   // タイトル画面の選択
 void TitleFlash(int state, int nSelect, int nIdx); // タイトルの点滅
 void TitleMenuFlash(int nSelect);				   // タイトルメニューの点滅
+void TitleMenuAnimation(int nSelect);              // タイトルメニューのアニメーション処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -34,6 +37,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;			// 頂点バッファへのポインタ
 TITLE g_Title[TITLETYPE_MAX];							// 構造体変数
 int g_nTitleCount;										// 画面遷移カウント
 bool bModeSet;
+int g_EasingCnt = 0;
 
 //==============================================================================================================
 //タイトルの初期化処理
@@ -64,6 +68,7 @@ void InitTitle(void)
 
 	// 決定ボタンを押したかどうか
 	bModeSet = false;
+	g_EasingCnt = 0;
 
 	// 頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
@@ -164,6 +169,7 @@ void UpdateTitle(void)
 
 				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO; // メニューチュートリアル
 
+				g_EasingCnt = 0;
 			}
 			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
 			{
@@ -171,6 +177,8 @@ void UpdateTitle(void)
 				PlaySound(SOUND_LABEL_SELECT_SE);
 
 				g_Title[nCnt].TitleMenu = TITLESELECT_RANKING; // メニューゲーム
+
+				g_EasingCnt = 0;
 			}
 
 			if (g_Title[nCnt].state != TITLESTATE_FLASH)
@@ -196,6 +204,8 @@ void UpdateTitle(void)
 		case TITLESELECT_TUTO:
 			if ((KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN)) && bModeSet == false)
 			{
+				g_EasingCnt = 0;
+
 				// 音楽再生
 				PlaySound(SOUND_LABEL_SELECT_SE);
 
@@ -204,6 +214,8 @@ void UpdateTitle(void)
 
 			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
 			{
+				g_EasingCnt = 0;
+
 				// 音楽再生
 				PlaySound(SOUND_LABEL_SELECT_SE);
 
@@ -233,6 +245,8 @@ void UpdateTitle(void)
 		case TITLESELECT_RANKING:
 			if ((KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN)) && bModeSet == false)
 			{
+				g_EasingCnt = 0;
+
 				// 音楽再生
 				PlaySound(SOUND_LABEL_SELECT_SE);
 
@@ -242,6 +256,8 @@ void UpdateTitle(void)
 
 			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
 			{
+				g_EasingCnt = 0;
+
 				// 音楽再生
 				PlaySound(SOUND_LABEL_SELECT_SE);
 
@@ -275,6 +291,7 @@ void UpdateTitle(void)
 
 		// タイトルの点滅処理
 		TitleFlash(g_Title[nCnt].state,g_Title[nCnt].TitleMenu,nCnt);
+		TitleMenuAnimation(g_Title[nCnt].TitleMenu);
 	}
 
 	//// カウンターを加算
@@ -519,4 +536,76 @@ void TitleMenuFlash(int nSelect)
 
 	// 頂点バッファをアンロック
 	g_pVtxBuffTitle->Unlock();
+}
+//==============================================================================================================
+// タイトルメニューのアニメーション処理
+//==============================================================================================================
+void TitleMenuAnimation(int nSelect)
+{
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	//頂点バッファをロック
+	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCntMenu = 0; nCntMenu < TITLETYPE_MAX; nCntMenu++)
+	{
+		if (nCntMenu == nSelect)
+		{
+			// イージングのカウント
+			g_EasingCnt++;
+
+			// 位置
+			D3DXVECTOR3 pos = g_Title[nCntMenu].pos;
+
+			// 横幅
+			float fWidth = g_Title[nCntMenu].fWidth;
+
+			// 高さ
+			float fHeight = g_Title[nCntMenu].fHeight;
+
+			// イージングの時間
+			float  time = SetEase(g_EasingCnt,120);
+
+			// 横幅を拡大
+			g_Title[nCntMenu].fWidth += SetSmoothAprroach(250.0f, g_Title[nCntMenu].fWidth, EaseOutQuint(time));
+
+			// 高さを拡大
+			g_Title[nCntMenu].fHeight += SetSmoothAprroach(60.0f, g_Title[nCntMenu].fHeight, EaseOutQuint(time));
+
+			// 頂点座標の更新
+			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
+		}
+		else
+		{
+			// 位置
+			D3DXVECTOR3 pos = g_Title[nCntMenu].pos;
+
+			// 横幅
+			float fWidth = g_Title[nCntMenu].fWidth;
+
+			// 高さ
+			float fHeight = g_Title[nCntMenu].fHeight;
+
+			// 横幅を拡大
+			g_Title[nCntMenu].fWidth += SetSmoothAprroach(200.0f, g_Title[nCntMenu].fWidth, 0.1f);
+
+			// 高さを拡大
+			g_Title[nCntMenu].fHeight += SetSmoothAprroach(40.0f, g_Title[nCntMenu].fHeight, 0.1f);
+
+			// 頂点座標の更新
+			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
+		}
+		pVtx += 4;
+	}
+
+	// 頂点バッファをアンロック
+	g_pVtxBuffTitle->Unlock();
+
 }

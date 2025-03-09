@@ -268,22 +268,22 @@ void UpdatePlayer(void)
 		g_player.nLife = g_player.nMaxLife;
 	}
 
-	// モーションの更新
-	UpdateMotion(&g_player.Motion);
-
-	// ゲームの状態がムービーだったら
-	if (gameState == GAMESTATE_MOVIE)
+	// ムービーじゃなかったら
+	if (gameState != GAMESTATE_MOVIE)
 	{
-		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 10);
-		// 関数を抜ける
-		return;
+		// モーションの更新
+		UpdateMotion(&g_player.Motion);
 	}
 
 	// プレイヤーのクラフトの設定
 	UpdatePlayerCraft();
 
-	// モーションの演出処理
-	SetMotionContller();
+	// ムービーじゃなかったら
+	if (gameState != GAMESTATE_MOVIE)
+	{
+		// モーションの演出処理
+		SetMotionContller();
+	}
 
 	// クラフト状態なら
 	if (g_player.bCraft == true)
@@ -314,7 +314,7 @@ void UpdatePlayer(void)
 	const bool NotDamage = g_player.bstiffness == false;
 
 	// うごけるかどうかを判定
-	const bool is_Move = NotUsePad && NotAction && NotSp && NotDeth && NotDamage;
+	const bool is_Move = NotUsePad && NotAction && NotSp && NotDeth && NotDamage && gameState != GAMESTATE_MOVIE;
 
 	// うごける
 	if (is_Move == true)
@@ -322,7 +322,7 @@ void UpdatePlayer(void)
 		PlayerMove(); // プレイヤーの移動処理
 	}
 
-	const bool is_MovePad = !NotUsePad && NotAction && NotSp && NotDamage;
+	const bool is_MovePad = !NotUsePad && NotAction && NotSp && NotDamage && gameState != GAMESTATE_MOVIE;
 
 	if (is_MovePad == true)
 	{
@@ -421,52 +421,59 @@ void UpdatePlayer(void)
 	default:
 		break;
 	}
-
-	switch (g_player.Combostate)
+	
+	// ムービーじゃ無かったら
+	if (gameState != GAMESTATE_MOVIE)
 	{
-	case COMBO_NO:
-		break;
-	case COMBO_ATTACK1:
-		g_AttackState--;
-		if (g_AttackState < 0)
+		switch (g_player.Combostate)
 		{
-			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+		case COMBO_NO:
+			break;
+		case COMBO_ATTACK1:
+			g_AttackState--;
+			if (g_AttackState < 0)
+			{
+				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+			}
+			break;
+		case COMBO_ATTACK2:
+			g_AttackState--;
+			if (g_AttackState < 0)
+			{
+				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+			}
+			break;
+		case COMBO_ATTACK3:
+			g_AttackState--;
+			if (g_AttackState < 0)
+			{
+				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+			}
+			break;
+		case COMBO_ATTACK4:
+			g_AttackState--;
+			if (g_AttackState < 0)
+			{
+				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+			}
+			break;
+		default:
+			break;
 		}
-		break;
-	case COMBO_ATTACK2:
-		g_AttackState--;
-		if (g_AttackState < 0)
-		{
-			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
-		}
-		break;
-	case COMBO_ATTACK3:
-		g_AttackState--;
-		if (g_AttackState < 0)
-		{
-			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
-		}
-		break;
-	case COMBO_ATTACK4:
-		g_AttackState--;
-		if (g_AttackState < 0)
-		{
-			g_player.Combostate = COMBO_NO; // コンボ状態を初期化
-		}
-		break;
-	default:
-		break;
 	}
 
-	//移動量を減衰
-	g_player.move.x += (0.0f - g_player.move.x) * 0.5f;
-	g_player.move.z += (0.0f - g_player.move.z) * 0.5f;
+	if (gameState != GAMESTATE_MOVIE)
+	{
+		//移動量を減衰
+		g_player.move.x += (0.0f - g_player.move.x) * 0.5f;
+		g_player.move.z += (0.0f - g_player.move.z) * 0.5f;
 
-	//前回の位置を保存
-	g_player.posOld = g_player.pos;
+		//前回の位置を保存
+		g_player.posOld = g_player.pos;
 
-	//プレイヤーの位置の更新
-	g_player.pos += g_player.move;
+		//プレイヤーの位置の更新
+		g_player.pos += g_player.move;
+	}
 
 	if (CollisionField() == true)
 	{
@@ -504,7 +511,7 @@ void UpdatePlayer(void)
 		// 音楽再生
 		PlaySound(SOUND_LABEL_JUMP_SE);
 
-		if (g_player.bJump == true && g_player.Motion.motionType != MOTIONTYPE_LANDING && g_player.AttackSp == false)
+		if (g_player.bJump == true && g_player.Motion.motionType != MOTIONTYPE_LANDING && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE)
 		{
 			g_player.bJump = false;						 // ジャンプをできなくする
 			SetMotion(&g_player.Motion, MOTIONTYPE_JUMP, true, 10);
@@ -525,7 +532,7 @@ void UpdatePlayer(void)
 	int EndFrame = g_player.Motion.aMotionInfo[g_player.Motion.motionType].aKeyInfo[EndKey].nFrame;
 
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false)
+	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false && gameState != GAMESTATE_MOVIE)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
@@ -558,7 +565,7 @@ void UpdatePlayer(void)
 	}
 
 	// [攻撃してない] かつ [手に何も持っていない] かつ [プレイヤーがスペシャルモーションを発動していない]
-	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.AttackSp == false;
+	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE;
 
 	// 投げ物を持っているときの攻撃
 	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && canAction == true)
@@ -582,14 +589,14 @@ void UpdatePlayer(void)
 	//// アイテムのドロップ処理
 	//DropItem();
 
-	// 必殺技の処理
-	HandleSpecialAttack();
-
 	// アイテムのストックの更新処理
 	UpdateItemStock();		
 
 	// プレイヤーの回避の処理
 	UpdatePlayerAvoid();
+
+	// 必殺技の処理
+	HandleSpecialAttack();
 
 	// フォーバーモード
 	if (g_player.FeverMode == true)
@@ -2644,7 +2651,7 @@ void PlayerMove(void)
 	}
 	else
 	{
-		if (g_player.Motion.motionType == MOTIONTYPE_MOVE && bUsePad == false)
+		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 		{
 			SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 5); // モーションをニュートラルにする
 		}
@@ -2805,8 +2812,7 @@ void HandleSpecialAttack(void)
 		if (g_player.Combostate == COMBO_NO && g_player.AttackSp == false && g_player.SpMode == true)                   // SPゲージがたまった
 		{
 			ResetMeshSword(); //剣の軌跡のリセット
-			AddSpgauge(-100);
-
+			DecSpgauge(100.0f);
 			g_player.AttackSp = true;          // SP技を発動している
 
 			// ブレンドなしでニュートラルにする

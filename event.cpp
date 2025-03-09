@@ -14,11 +14,12 @@
 #include "boss.h"
 #include "game.h"
 #include "gameui.h"
+#include "count.h"
 
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define START_EVENTTIME (900) // イベントが始まるまでの時間
+#define START_EVENTTIME (1800) // イベントが始まるまでの時間
 #define POSITIONONE_RADIUS (700.0f) // 0番目のイベントの半径
 
 //**************************************************************************************************************
@@ -34,8 +35,6 @@ int g_EventPos = 0;
 //==============================================================================================================
 void InitEvent(void)
 {
-	g_Event[EVENTPOSITION_ONE].Eventpos = EVENTPOS_ONE; // 位置の初期化
-
 	// イベントの場所分回す
 	for (int nCnt = 0; nCnt < EVENTPOSITION_MAX; nCnt++)
 	{
@@ -75,6 +74,8 @@ void SetEvent(D3DXVECTOR3 Eventpos, int IventPosition, int nTime)
 //==============================================================================================================
 void UpdateEvent(void)
 {
+	GAMESTATE gamestate = GetGameState();
+
 	if (bEvent == false)
 	{
 		// インクリメント
@@ -103,36 +104,41 @@ void UpdateEvent(void)
 			switch (EventPos)
 			{
 			case EVENTPOSITION_ONE:
-				SetEvent(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), EventPos, 1800);
-				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), CYLINDERTYPE_EVENT,-1, POSITIONONE_RADIUS,COLOR_YELLOW,8,1,0.0f,2000.0f);
-				SetBoss(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), 3.0f, 10000); // ボスをセット
+				SetEvent(EVENTPOS_ONE, EventPos, 1800);
+				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_ONE, CYLINDERTYPE_EVENT,-1, POSITIONONE_RADIUS,COLOR_YELLOW,8,1,0.0f,2000.0f);
+				SetBoss(EVENTPOS_ONE, 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
-				SetGameUI(D3DXVECTOR3(500.0f, 600.0f, 0.0f), UITYPE_EVENT, 150.0f, 50.0f, false, 0);
+				SetGameUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), UITYPE_EVENT, 1280.0f, 1280.0f, false, 0);
+				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_TWO:
-				SetEvent(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), EventPos, 1800);
-				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
-				SetBoss(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), 3.0f, 10000); // ボスをセット
+				SetEvent(EVENTPOS_TWO, EventPos, 1800);
+				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_TWO, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
+				SetBoss(EVENTPOS_TWO, 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
-				SetGameUI(D3DXVECTOR3(500.0f, 500.0f, 0.0f), UITYPE_EVENT, 150.0f, 50.0f, false, 0);
+				SetGameUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), UITYPE_EVENT, 1280.0f, 1280.0f, false, 0);
+				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_THREE:
-				SetEvent(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), EventPos, 1800);
-				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
-				SetBoss(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), 3.0f, 10000); // ボスをセット
+				SetEvent(EVENTPOS_THREE, EventPos, 1800);
+				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_THREE, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
+				SetBoss(EVENTPOS_THREE, 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
-				SetGameUI(D3DXVECTOR3(500.0f, 500.0f, 0.0f), UITYPE_EVENT, 150.0f, 50.0f, false, 0);
+				SetGameUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), UITYPE_EVENT, 1280.0f, 1280.0f, false, 0);
+				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_FOUR:
-				SetEvent(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), EventPos, 1800);
-				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
-				SetBoss(D3DXVECTOR3(-616.0f, 0.0f, -690.0f), 3.0f, 10000); // ボスをセット
+				SetEvent(EVENTPOS_FOUR, EventPos, 1800);
+				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_FOUR, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
+				SetBoss(EVENTPOS_FOUR, 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
-				SetGameUI(D3DXVECTOR3(500.0f, 500.0f, 0.0f), UITYPE_EVENT, 150.0f, 50.0f, false, 0);
+				SetGameUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), UITYPE_EVENT, 1280.0f, 1280.0f, false, 0);
+				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
+
 				break;
 			default:
 				break;
@@ -155,7 +161,10 @@ void UpdateEvent(void)
 
 		bEvent = true;
 
-		g_Event[nCnt].nTime--;
+		if (gamestate == GAMESTATE_NORMAL)
+		{
+			g_Event[nCnt].nTime--;
+		}
 
 		// イベントが終わった
 		if (g_Event[nCnt].nTime <= 0)

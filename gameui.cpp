@@ -14,6 +14,7 @@
 #include"math.h"
 #include "easing.h"
 #include "event.h"
+#include "game.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -619,6 +620,35 @@ void UpdateDestroyUI(int nCnt)
 //==============================================================================================================
 void SetEventUIAnimation(int nCnt)
 {
+	GAMESTATE gamestate = GetGameState();
+	static int fWidthEasing = 0;
+	static int fHeightEasing = 0;
+
+	if (gamestate == GAMESTATE_MOVIE)
+	{
+		fWidthEasing++;
+		fHeightEasing++;
+
+		float timeWidth = SetEase(fWidthEasing, 180);
+		float timeHeight = SetEase(fHeightEasing, 160);
+
+		g_GameUI[nCnt].fWidth += SetSmoothAprroach(250.0f, g_GameUI[nCnt].fWidth, EaseInSine(timeWidth));
+		g_GameUI[nCnt].fHeight += SetSmoothAprroach(80.0f, g_GameUI[nCnt].fHeight, EaseInSine(timeHeight));
+	}
+	// ゲーム状態が普通の時
+	if (gamestate == GAMESTATE_NORMAL)
+	{
+		fWidthEasing = 0;
+		fHeightEasing = 0;
+
+		g_GameUI[nCnt].fWidth += SetSmoothAprroach(100.0f, g_GameUI[nCnt].fWidth, 0.1f);
+		g_GameUI[nCnt].fHeight += SetSmoothAprroach(30.0f, g_GameUI[nCnt].fHeight, 0.1f);
+
+		g_GameUI[nCnt].pos.x += SetSmoothAprroach(950.0f, g_GameUI[nCnt].pos.x, 0.1f);
+
+		g_GameUI[nCnt].pos.y += SetSmoothAprroach(645.0f, g_GameUI[nCnt].pos.y, 0.1f);
+	}
+
 	// イベントが終わった
 	if (EnableEvent() == false)
 	{

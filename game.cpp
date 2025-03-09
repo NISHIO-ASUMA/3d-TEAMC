@@ -211,9 +211,6 @@ void InitGame(void)
 		SpawnEnemy(2); // 敵を出す処理
 		SpawnEnemy(1); // 敵を出す処理
 	}
-	//SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f, 240);
-
-	//SetGameUI(D3DXVECTOR3(625.0f, 500.0f, 0.0f), UITYPE_DESTORY, 150.0f, 50.0f, 120);
 
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(70.0f,610.0f,0.0f),UITYPE_ICONFRAME,70.0f, 80.0f,false,0);
@@ -721,6 +718,12 @@ void DrawGame(void)
 	//壁の描画処理
 	DrawWall();
 
+	// ボスの体力ゲージ描画処理
+	DrawBossLife();
+
+	//メッシュシリンダーの描画処理
+	DrawMeshCylinder();
+
 	// エフェクトの描画処理
 	DrawEffect();
 
@@ -733,14 +736,8 @@ void DrawGame(void)
 	// パーティクルの描画処理
 	DrawParticleX();
 
-	// ボスの体力ゲージ描画処理
-	DrawBossLife();
-
 	// 軌跡の描画処理
 	DrawMeshSword();
-
-	//メッシュシリンダーの描画処理
-	DrawMeshCylinder();
 
 	// アイコンの描画処理
 	DrawIcon();

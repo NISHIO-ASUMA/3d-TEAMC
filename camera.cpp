@@ -1083,13 +1083,13 @@ void UpdateEventCamera(void)
 		EventCameraAngle(EVENTPOS_ONE);
 		break;
 	case 1:
-		EventCameraAngle(EVENTPOS_ONE);
+		EventCameraAngle(EVENTPOS_TWO);
 		break;
 	case 2:
-		EventCameraAngle(EVENTPOS_ONE);
+		EventCameraAngle(EVENTPOS_THREE);
 		break;
 	case 3:
-		EventCameraAngle(EVENTPOS_ONE);
+		EventCameraAngle(EVENTPOS_FOUR);
 		break;
 	default:
 		break;

@@ -44,7 +44,7 @@
 #define SHADOW_A (1.0f)          // ‰e‚Ì”Z‚³‚ÌŠî€
 #define NUM_MTX (8)
 #define BOSS_LIFE (10000)        // ƒ{ƒX‚ÌÅ‘åHP
-#define TRANSPARENT_FRAME (600.0f) // “§–¾‰»‚ÌƒtƒŒ[ƒ€
+#define TRANSPARENT_FRAME (300.0f) // “§–¾‰»‚ÌƒtƒŒ[ƒ€
 
 //**************************************************************************************************************
 // ƒvƒƒgƒ^ƒCƒvéŒ¾
@@ -294,6 +294,12 @@ void UpdateBoss(void)
 		{
 			// ƒ{ƒX‚Ì’ÇÕˆ—‚ÌXV
 			UpdateAgentBoss(nCnt);
+
+			// UŒ‚‚µ‚Ä‚¢‚È‚¢
+			if (CheckActionMotion(&pPlayer->Motion) == false)
+			{
+				colisionSword(nCnt);   // Œ•‚Æ‚Ì“–‚½‚è”»’è
+			}
 		}
 		else
 		{
@@ -376,12 +382,6 @@ void UpdateBoss(void)
 			default:
 				break;
 			}
-		}
-
-		// UŒ‚‚µ‚Ä‚¢‚È‚¢
-		if (CheckActionMotion(&pPlayer->Motion) == false)
-		{
-			colisionSword(nCnt);   // Œ•‚Æ‚Ì“–‚½‚è”»’è
 		}
 
 		CollisionToBoss(nCnt); // ƒ{ƒX‚Æƒ{ƒX‚Ì“–‚½‚è”»’è
@@ -1322,27 +1322,27 @@ void colisionSword(int nCntBoss)
 	// “‚ÌƒXƒyƒVƒƒƒ‹UŒ‚
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, KEY_THREE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 10); // “G‚É“–‚½‚Á‚½
+		HitBoss(nCntBoss, pPlayer->nDamage * 15); // “G‚É“–‚½‚Á‚½
 	}
 	// —¼ŽèŽ‚¿‚Ì•KŽE‹Z
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPDOUBLE && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 10); // “G‚É“–‚½‚Á‚½
+		HitBoss(nCntBoss, pPlayer->nDamage * 15); // “G‚É“–‚½‚Á‚½
 	}
 	// ƒnƒ“ƒ}[‚ÌƒXƒyƒVƒƒƒ‹UŒ‚
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPHAMMER && CheckMotionBounds(nKey, nCounter, KEY_ONE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 10); // “G‚É“–‚½‚Á‚½
+		HitBoss(nCntBoss, pPlayer->nDamage * 15); // “G‚É“–‚½‚Á‚½
 	}
 	// •ÐŽè‚Ì•KŽE‹Z
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 10); // “G‚É“–‚½‚Á‚½
+		HitBoss(nCntBoss, pPlayer->nDamage * 15); // “G‚É“–‚½‚Á‚½
 	}
 	// ‘„‚Ì•KŽE‹Z
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, KEY_EIGHTEEN, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 10); // “G‚É“–‚½‚Á‚½
+		HitBoss(nCntBoss, pPlayer->nDamage * 15); // “G‚É“–‚½‚Á‚½
 	}
 
 }

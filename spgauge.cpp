@@ -26,6 +26,11 @@
 #define SPGAUGE_LENGTH (390.0f) // スペシャルゲージの横幅
 
 //**************************************************************************************************************
+// プロトタイプ宣言
+//**************************************************************************************************************
+void SetChargeGage(int nCnt); // ゲージ0の更新
+
+//**************************************************************************************************************
 // グローバル変数
 //**************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureSPgauge[SPGAUGE_MAX] = {}; // テクスチャへのポインタ
@@ -48,15 +53,6 @@ void InitSPgauge(void)
 		"data\\TEXTURE\\SP_frame_1.png",
 		&g_pTextureSPgauge[0]);
 
-	// テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\SP_gage_white.png",
-		&g_pTextureSPgauge[4]);
-
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\SP_frameCha01.png", &g_pTextureSPgauge[1]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\SP_frameCha02.png", &g_pTextureSPgauge[2]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\SP_frameCha03.png", &g_pTextureSPgauge[3]);
-
 	// 頂点バッファの生成・頂点情報の設定
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * SPGAUGE_MAX,
 		D3DUSAGE_WRITEONLY,
@@ -68,14 +64,24 @@ void InitSPgauge(void)
 	// 頂点ロック
 	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
 
-	// 種類を設定
-	g_SPgauge[0].nType = SPGAUGE_FRAME0;
-	g_SPgauge[1].nType = SPGAUGE_GAUGE;
+	g_SPgauge[SPGAUGE_GAUGE_0].col = COLOR_AQUA;
+	g_SPgauge[SPGAUGE_GAUGE_1].col = COLOR_YELLOW;
+	g_SPgauge[SPGAUGE_GAUGE_2].col = COLOR_ORANGE;
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
 		g_SPgauge[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 位置を初期化
 		g_SPgauge[nCnt].SpGauge = 0.0f;						 // 大きさ
+		g_SPgauge[nCnt].nType = nCnt;						 // 種類
+
+		if (nCnt == 1)
+		{
+			g_SPgauge[nCnt].state = SPGAUGESTATE_CHARGE;
+		}
+		else
+		{
+			g_SPgauge[nCnt].state = SPGAUGESTATE_NONE;
+		}
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -94,6 +100,7 @@ void InitSPgauge(void)
 		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
 		// テクスチャ座標
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
@@ -144,67 +151,21 @@ void UpdateSPgauge(void)
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
-		if (g_SPgauge[nCnt].nType == SPGAUGE_GAUGE)
+		if (g_SPgauge[nCnt].state == SPGAUGESTATE_CHARGE)
 		{
-			// 最大の値
-			float fDest = g_SPgauge[nCnt].SpGauge / 300.0f;
-
-			// 横幅
-			float fWidth = fDest * SPGAUGE_LENGTH;
-
-			// 100.0fたまったら発動可能
-			if (g_SPgauge[nCnt].SpGauge >= 100.0f)
-			{
-				pPlayer->SpMode = true; // 発動可能
-			}
-
-			// 300.0f以上になったら
-			if (g_SPgauge[nCnt].SpGauge >= 300.0f)
-			{
-				// 300.0f以上にならないようにする
-				g_SPgauge[nCnt].SpGauge = 300.0f;
-			}
-
-			// 頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(fWidth, 40.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 60.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(fWidth, 60.0f, 0.0f);
+			SetChargeGage(nCnt);
 		}
-		else
+		
+		if (g_SPgauge[nCnt].nType == SPGAUGE_FRAME)
 		{
-			// フレームの溜まったゲージの数値を決定
-			g_SPgauge[nCnt].nType = g_SPgauge[1].SpGauge / 100.0f;
+			pVtx += 4 * nCnt;
 
 			// 頂点座標の設定
-			pVtx[0].pos = D3DXVECTOR3(0.0f, 40.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(10.0f, 40.0f, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(SPGAUGE_LENGTH, 40.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 60.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(10.0f, 60.0f, 0.0f);
 			pVtx[3].pos = D3DXVECTOR3(SPGAUGE_LENGTH, 60.0f, 0.0f);
-
-			if (g_SPgauge[1].SpGauge >= 100)
-			{
-				// フレーム用変数
-				static int nFrame = 0;
-
-				// フレームが2になったら
-				if (nFrame == 2)
-				{
-					nFrame = 0; // フレームを初期化
-					//頂点カラーの設定
-					pVtx[0].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
-					pVtx[1].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
-					pVtx[2].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
-					pVtx[3].col = D3DCOLOR_RGBA(255, rand() % 155 + 100, 255, 255);
-				}
-				else
-				{
-					// インクリメント
-					nFrame++;
-				}
-			}
 		}
-		pVtx += 4;
 	}
 	// 頂点ロック解除
 	g_pVtxBuffSPgauge->Unlock();
@@ -224,19 +185,29 @@ void DrawSPgauge(void)
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	// ゲージバーの描画----------------------------------
-	// テクスチャの設定
-	pDevice->SetTexture(0, g_pTextureSPgauge[g_SPgauge[1].nType]);
+	// テクスチャの設定	
 
-	// ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4, 2); // プリミティブの種類
-	//---------------------------------------------------
+	for (int nCnt = 1; nCnt < SPGAUGE_MAX; nCnt++)
+	{
+		int nType = g_SPgauge[nCnt].nType;
 
-	// ゲージの枠の描画-------------------------------
-	// テクスチャの設定
-	pDevice->SetTexture(0, g_pTextureSPgauge[g_SPgauge[0].nType]);
+		if (nType != SPGAUGE_FRAME)
+		{
+			// ゲージバーの描画----------------------------------
+			// テクスチャの設定
+			pDevice->SetTexture(0, NULL);
+
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
+		}
+		//---------------------------------------------------
+	}
+
+	pDevice->SetTexture(0, g_pTextureSPgauge[0]);
 
 	// ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2); // プリミティブの種類
+
 	//--------------------------------------------------
 }
 //=======================================================================================================
@@ -247,9 +218,196 @@ void AddSpgauge(float fValue)
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
-	if (g_SPgauge[1].SpGauge <= 300.0f && pPlayer->AttackSp == false)
+	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
-		// 加算処理
-		g_SPgauge[1].SpGauge += fValue;
+		if (g_SPgauge[nCnt].SpGauge <= 100.0f && pPlayer->AttackSp == false && g_SPgauge[nCnt].state == SPGAUGESTATE_CHARGE)
+		{
+			// 加算処理
+			g_SPgauge[nCnt].SpGauge += fValue;
+		}
 	}
+}
+//=======================================================================================================
+// ゲージの減算処理
+//=======================================================================================================
+void DecSpgauge(float fValue)
+{
+	int NowChargeGage = 0;
+	static float Dec = 0.0f;
+
+	for (int nCnt = SPGAUGE_MAX - 1; nCnt >= SPGAUGE_GAUGE_0; nCnt--)
+	{
+		if (g_SPgauge[nCnt].state == SPGAUGESTATE_CHARGE)
+		{
+			NowChargeGage = nCnt;
+			break;
+		}
+	}
+
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	// 頂点ロック
+	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
+
+	if (NowChargeGage != 1)
+	{
+		// 現在のゲージから減らせる分を消費
+		Dec = g_SPgauge[NowChargeGage].SpGauge;
+		g_SPgauge[NowChargeGage].SpGauge -= Dec;
+
+		float fRateLength = g_SPgauge[NowChargeGage].SpGauge / 100.0f;
+		float fLength = fRateLength * SPGAUGE_LENGTH;
+
+		pVtx += 4 * NowChargeGage;
+
+		// 頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(10.0f, 40.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(fLength, 40.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(10.0f, 60.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(fLength, 60.0f, 0.0f);
+
+		float Dec2 = fValue - Dec;
+
+		g_SPgauge[NowChargeGage - 1].SpGauge -= Dec2;
+
+		float fRateLength2 = g_SPgauge[NowChargeGage - 1].SpGauge / 100.0f;
+		float fLength2 = fRateLength2 * SPGAUGE_LENGTH;
+
+		pVtx += 4 * (NowChargeGage - 1);
+
+		// 頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(10.0f, 40.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(fLength, 40.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(10.0f, 60.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(fLength, 60.0f, 0.0f);
+
+	}
+	else
+	{
+		g_SPgauge[NowChargeGage].SpGauge -= fValue;
+	}
+
+	// 頂点ロック解除
+	g_pVtxBuffSPgauge->Unlock();
+}
+//=======================================================================================================
+// ゲージ0の更新
+//=======================================================================================================
+void SetChargeGage(int nCnt)
+{
+	Player* pPlayer = GetPlayer();
+
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	// 頂点ロック
+	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
+
+	float fRateLength = g_SPgauge[nCnt].SpGauge / 100.0f;
+	float fLength = fRateLength * SPGAUGE_LENGTH;
+
+	pVtx += 4 * nCnt;
+
+	if (g_SPgauge[nCnt].SpGauge >= 100.0f)
+	{
+		pPlayer->SpMode = true;
+	}
+
+	// 頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(10.0f, 40.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(fLength, 40.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(10.0f, 60.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(fLength, 60.0f, 0.0f);
+
+	switch (g_SPgauge[nCnt].nType)
+	{
+	case SPGAUGE_GAUGE_0:
+
+		// ゲージがMAXだったら
+		if (g_SPgauge[nCnt].SpGauge >= 100.0f)
+		{
+			g_SPgauge[nCnt].col.a = 1.0f;
+
+			// 頂点カラーの設定
+			pVtx[0].col = g_SPgauge[nCnt].col;
+			pVtx[1].col = g_SPgauge[nCnt].col;
+			pVtx[2].col = g_SPgauge[nCnt].col;
+			pVtx[3].col = g_SPgauge[nCnt].col;
+
+			g_SPgauge[SPGAUGE_GAUGE_1].state = SPGAUGESTATE_CHARGE;
+			g_SPgauge[nCnt].SpGauge = 100.0f;
+		}
+		// ゲージが最大じゃなかったら
+		else
+		{
+			//g_SPgauge[nCnt].col.a = 0.5f;
+			// 頂点カラーの設定
+			pVtx[0].col = g_SPgauge[nCnt].col;
+			pVtx[1].col = g_SPgauge[nCnt].col;
+			pVtx[2].col = g_SPgauge[nCnt].col;
+			pVtx[3].col = g_SPgauge[nCnt].col;
+			g_SPgauge[SPGAUGE_GAUGE_1].state = SPGAUGESTATE_NONE;
+		}
+		break;
+	case SPGAUGE_GAUGE_1:
+
+		// ゲージがMAXだったら
+		if (g_SPgauge[nCnt].SpGauge >= 100.0f)
+		{
+			g_SPgauge[nCnt].col.a = 1.0f;
+
+			// 頂点カラーの設定
+			pVtx[0].col = g_SPgauge[nCnt].col;
+			pVtx[1].col = g_SPgauge[nCnt].col;
+			pVtx[2].col = g_SPgauge[nCnt].col;
+			pVtx[3].col = g_SPgauge[nCnt].col;
+
+			g_SPgauge[SPGAUGE_GAUGE_2].state = SPGAUGESTATE_CHARGE;
+			g_SPgauge[nCnt].SpGauge = 100.0f;
+		}
+		// ゲージが最大じゃなかったら
+		else
+		{
+			//g_SPgauge[nCnt].col.a = 0.5f;
+			// 頂点カラーの設定
+			pVtx[0].col = g_SPgauge[nCnt].col;
+			pVtx[1].col = g_SPgauge[nCnt].col;
+			pVtx[2].col = g_SPgauge[nCnt].col;
+			pVtx[3].col = g_SPgauge[nCnt].col;
+
+			g_SPgauge[SPGAUGE_GAUGE_2].state = SPGAUGESTATE_NONE;
+		}
+		break;
+	case SPGAUGE_GAUGE_2:
+
+		// ゲージがMAXだったら
+		if (g_SPgauge[nCnt].SpGauge >= 100.0f)
+		{
+			g_SPgauge[nCnt].col.a = 1.0f;
+
+			// 頂点カラーの設定
+			pVtx[0].col = g_SPgauge[nCnt].col;
+			pVtx[1].col = g_SPgauge[nCnt].col;
+			pVtx[2].col = g_SPgauge[nCnt].col;
+			pVtx[3].col = g_SPgauge[nCnt].col;
+
+			g_SPgauge[nCnt].SpGauge = 100.0f;
+		}
+		// ゲージが最大じゃなかったら
+		else
+		{
+			//g_SPgauge[nCnt].col.a = 0.5f;
+			// 頂点カラーの設定
+			pVtx[0].col = g_SPgauge[nCnt].col;
+			pVtx[1].col = g_SPgauge[nCnt].col;
+			pVtx[2].col = g_SPgauge[nCnt].col;
+			pVtx[3].col = g_SPgauge[nCnt].col;
+		}
+		break;
+	default:
+		break;
+	}
+	// 頂点ロック解除
+	g_pVtxBuffSPgauge->Unlock();
 }

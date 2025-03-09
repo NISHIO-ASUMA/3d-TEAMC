@@ -18,6 +18,7 @@
 #include "billboard.h"
 #include "player.h"
 #include "math.h"
+#include "mark.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -896,9 +897,13 @@ bool collisionObb(int nCnt)
 	PlayerLength[2] = fabsf(pPlayer->Size.z);
 
 	// Player
-	D3DXVECTOR3 NBe1 = Nbe1 * PlayerLength[0];
-	D3DXVECTOR3 NBe2 = Nbe2 * PlayerLength[1];
-	D3DXVECTOR3 NBe3 = Nbe3 * PlayerLength[2];
+	D3DXVECTOR3 NBe1 = NULLVECTOR3;
+	D3DXVECTOR3 NBe2 = NULLVECTOR3;
+	D3DXVECTOR3 NBe3 = NULLVECTOR3;
+
+	NBe1.x = PlayerLength[0];
+	NBe2.y = PlayerLength[1];
+	NBe3.z = PlayerLength[2];
 
 	//モデル情報の代入
 	//D3DXVECTOR3 Model(pPlayer->Motion.aModel[2].mtxWorld._41, pPlayer->Motion.aModel[2].mtxWorld._42, pPlayer->Motion.aModel[2].mtxWorld._43);

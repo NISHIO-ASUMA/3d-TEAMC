@@ -10,6 +10,8 @@
 //**************************************************************************************************************
 #include "count.h"
 #include "mark.h"
+#include "game.h"
+#include "event.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -30,6 +32,7 @@ void UpdateTextureMinute(int nCnt, int Minute);								  // 分のテクスチャの更新
 void UpdateTextureSecond(int nCnt, int Second);								  // 秒のテクスチャの更新
 void SetCountDown(int nCnt);												  // カウントダウン
 void SetCountUp(int nCnt);                                                    // カウントアップ
+void SetEventTimer(int nCnt);												  // イベントのタイマーのカウント
 
 //**************************************************************************************************************
 // グローバル変数
@@ -160,6 +163,8 @@ void UpdateCounter(void)
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
+	GAMESTATE gamestate = GetGameState();
+
 	for (int nCnt = 0; nCnt < MAX_COUNTER; nCnt++)
 	{
 		if (g_Counter[nCnt].bUse == false)
@@ -167,8 +172,13 @@ void UpdateCounter(void)
 			continue;
 		}
 
-		g_Counter[nCnt].TimerCnt++; // タイマーカウントを加算
+		// ゲーム状態が普通の時
+		if (gamestate == GAMESTATE_NORMAL)
+		{
+			g_Counter[nCnt].TimerCnt++; // タイマーカウントを加算
+		}
 
+		// カウントの種類
 		switch (g_Counter[nCnt].nCountType)
 		{
 		case COUNTER_COUNTDOWN:
@@ -183,12 +193,20 @@ void UpdateCounter(void)
 			break;
 		}
 
+		// タイマーの種類
+		switch (g_Counter[nCnt].nType)
+		{
+		case COUNTERTYPE_EVENTTIMER:
+			SetEventTimer(nCnt);
+			break;
+		default:
+			break;
+		}
 		// 分のテクスチャの更新
 		UpdateTextureMinute(nCnt, g_Counter[nCnt].nMinute);
 
 		// 秒のテクスチャの更新
 		UpdateTextureSecond(nCnt, g_Counter[nCnt].nSecond);
-
 	}
 }
 //==============================================================================================================
@@ -574,6 +592,19 @@ void SetCountUp(int nCnt)
 
 			// 分を一つ減らす
 			g_Counter[nCnt].nMinute++;
+		}
+	}
+}
+//==============================================================================================================
+// イベントのタイマーのカウント
+//==============================================================================================================
+void SetEventTimer(int nCnt)
+{
+	if (g_Counter[nCnt].nType == COUNTERTYPE_EVENTTIMER)
+	{
+		if (EnableEvent() == false)
+		{
+			g_Counter[nCnt].bUse = false;
 		}
 	}
 }
