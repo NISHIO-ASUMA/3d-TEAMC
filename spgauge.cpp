@@ -45,12 +45,12 @@ void InitSPgauge(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\SP_frame.png",
+		"data\\TEXTURE\\SP_frame_1.png",
 		&g_pTextureSPgauge[0]);
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\SP_gage.png",
+		"data\\TEXTURE\\SP_gage_white.png",
 		&g_pTextureSPgauge[4]);
 
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\SP_frameCha01.png", &g_pTextureSPgauge[1]);
