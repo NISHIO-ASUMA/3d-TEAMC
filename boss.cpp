@@ -44,6 +44,7 @@
 #define SHADOW_A (1.0f)          // 影の濃さの基準
 #define NUM_MTX (8)
 #define BOSS_LIFE (10000)        // ボスの最大HP
+#define TRANSPARENT_FRAME (600.0f) // 透明化のフレーム
 
 //**************************************************************************************************************
 // プロトタイプ宣言
@@ -62,6 +63,7 @@ void SetRasuAttack(int nCntBoss);													// ボスの突進攻撃の設定
 void SetDoubleRasuAttack(int nCntBoss);                                             // ボスの二回突進してくる攻撃処理
 void UpdateAgentBoss(int nCntBoss);                                                 // ボスの追跡の更新処理
 void DeathMotionContlloer(int nCntBoss);                                            // ボスの死亡モーションの処理
+void EndEventBossState(int nCntBoss,D3DXMATERIAL* pMat);												// イベントが終わった後にボスを消す処理
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -92,6 +94,8 @@ void InitBoss(void)
 		g_Boss[nCnt].Speed = 5.0f;						   // 足の速さ
 		g_Boss[nCnt].AttackState = BOSSATTACK_NO;		   // 攻撃状態
 		g_Boss[nCnt].nHitStopCount = 0;                    // ヒットストップのカウント
+		g_Boss[nCnt].BossMat = {};						   // ボスのマテリアル
+		g_Boss[nCnt].bTransparent = false;                 // ボスを透明にするフラグ
 
 		for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
 		{
@@ -285,19 +289,6 @@ void UpdateBoss(void)
 			HitBoss(nCnt, ImpactDamege(0));
 		}
 		
-		if (EnableEvent() == false)
-		{
-			// マップから消す
-			EnableMap(g_Boss[nCnt].nIdxMap);
-
-			// 影消す
-			KillShadow(g_Boss[nCnt].nIdxShadow);
-
-			// ゲージを消す
-			DeleateLifeBar(g_Boss[nCnt].nLifeBarIdx, g_Boss[nCnt].nLifeFrame, g_Boss[nCnt].nLifeDelayIdx);
-
-			g_Boss[nCnt].bUse = false;
-		}
 		// 範囲内にいる
 		if (CollisionCylinder(&pPlayer->pos) == false)
 		{
@@ -479,12 +470,12 @@ void DrawBoss(void)
 				// カラー変更用の変数
 				D3DXMATERIAL color;
 
-				if (g_Boss[nCnt].state != BOSSSTATE_DAMAGE)
+				if (g_Boss[nCnt].state != BOSSSTATE_DAMAGE && g_Boss[nCnt].bTransparent == false)
 				{
 					// マテリアルの設定
 					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 				}
-				else if (g_Boss[nCnt].state == BOSSSTATE_DAMAGE)
+				else if (g_Boss[nCnt].state == BOSSSTATE_DAMAGE && g_Boss[nCnt].bTransparent == false)
 				{
 					// カラーを代入
 					color = pMat[nCntMat];
@@ -497,6 +488,15 @@ void DrawBoss(void)
 
 					// マテリアルの設定
 					pDevice->SetMaterial(&color.MatD3D);
+				}
+
+				// イベントが終わった後のボスの処理
+				EndEventBossState(nCnt, &pMat[nCntMat]);
+
+				if (g_Boss[nCnt].bTransparent == true)
+				{
+					// マテリアルの設定
+					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 				}
 
 				// テクスチャの設定
@@ -1603,7 +1603,7 @@ void UpdateAgentBoss(int nCntBoss)
 	Player* pPlayer = GetPlayer();
 
 	// 範囲に入ったら(どこにいても追いかけてくるが一応円で取る)
-	const bool is_sphereBounds = sphererange(&pPlayer->pos, &g_Boss[nCntBoss].pos, 50.0f, 2000.0f) == true;
+	const bool is_sphereBounds = sphererange(&pPlayer->pos, &g_Boss[nCntBoss].pos, 50.0f, 700.0f) == true;
 
 	// 攻撃モーション0かどうかを判定
 	const bool is_NotAction0 = g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_ACTION;
@@ -1705,6 +1705,49 @@ void DeathMotionContlloer(int nCntBoss)
 
 		// イベントを強制終了
 		SetEndEvent(false);
+	}
+}
+//========================================================================================================
+// イベントが終わった後にボスを消す処理
+//========================================================================================================
+void EndEventBossState(int nCntBoss,D3DXMATERIAL *pMat)
+{
+	// イベントが終わった
+	if (EnableEvent() == false)
+	{
+		// 透明化を開始
+		g_Boss[nCntBoss].bTransparent = true;
+
+		// a値の減少値
+		static float DecAlv = 0.0f;
+
+		// 600フレームかけて消す
+		DecAlv = 1.0f / TRANSPARENT_FRAME;
+
+		// 透明にしていく
+		pMat->MatD3D.Diffuse.a -= DecAlv;
+
+		// α値が0になったら
+		if (pMat->MatD3D.Diffuse.a <= 0.0f)
+		{
+			// マップから消す
+			EnableMap(g_Boss[nCntBoss].nIdxMap);
+
+			// 影消す
+			KillShadow(g_Boss[nCntBoss].nIdxShadow);
+
+			// ゲージを消す
+			DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
+
+			// 消す
+			g_Boss[nCntBoss].bUse = false;
+
+			// 透明化を初期化
+			g_Boss[nCntBoss].bTransparent = false;
+
+			// 透明度をもとに戻す
+			pMat->MatD3D.Diffuse.a = 1.0f;
+		}
 	}
 }
 //========================================================================================================

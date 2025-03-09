@@ -72,6 +72,8 @@ typedef struct
 	int nStateCharge[5]; //状態異常蓄積値
 	int nStateCount[5]; //状態異常の残時間(0 = 出血、1 = 炎、2 = 氷、3 = 雷、4 = 水)
 	int nMaxLife;
+	D3DXMATERIAL BossMat; // ボスのマテリアル
+	bool bTransparent;    // 透明にしていくフラグ
 }Boss;
 
 //**************************************************************************************************************

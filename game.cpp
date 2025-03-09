@@ -53,6 +53,7 @@
 #include "mark.h"
 #include "bosslife.h"
 #include "event.h"
+#include "count.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -191,6 +192,9 @@ void InitGame(void)
 	// イベントの初期化処理
 	InitEvent();
 
+	// カウンターの初期化処理
+	InitCounter();
+
 #ifdef _DEBUG
 
 	//エディットの初期化処理
@@ -201,7 +205,6 @@ void InitGame(void)
 	//エディットのロード処理
 	LoadEdit();
 	LoadEdit2d();
-
 
 	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
 	{
@@ -378,6 +381,9 @@ void UninitGame(void)
 
 	// 弾の終了処理
 	UninitBullet();
+
+	// カウンターの終了処理
+	UninitCounter();
 }
 //=========================================================================================================
 //ゲーム画面の更新処理
@@ -599,6 +605,9 @@ void UpdateGame(void)
 
 				// イベントの更新処理
 				UpdateEvent();
+
+				// カウンターの更新処理
+				UpdateCounter();
 			}
 
 			//プレイヤーの更新処理
@@ -753,6 +762,9 @@ void DrawGame(void)
 
 	// タイマーの描画処理
 	DrawTime();
+
+	// カウンターの描画処理
+	DrawCounter();
 
 	// ミニマップの描画処理
 	DarwMinimap();

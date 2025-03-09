@@ -48,3 +48,45 @@ bool sphererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float ra
 	}
 	return bRange;
 }
+////=====================================================================================================
+//// エフェクトのテクスチャアニメーション
+////=====================================================================================================
+//void SetTextureAnimation(int *pPosX,int *pPosY,int *pAnimSpeed,int *pCounterAnim,int *pPatternAnim, VERTEX_3D *pVtx, LPDIRECT3DVERTEXBUFFER9 *pVtxBuff)
+//{
+//	VERTEX_3D* pVtx;
+//
+//	//頂点バッファをロック
+//	g_pVtxBuffEffectX->Lock(0, 0, (void**)&pVtx, 0);
+//
+//	// アニメーションカウンターを加算
+//	g_EffectX[nCnt].g_nCounterAnim++;
+//
+//	// テクスチャ座標を計算
+//	float Uv = 1.0f / XtexPos;
+//	float Hv = 1.0f / YtexPos;
+//
+//	// アニメーションのスピード
+//	if (g_EffectX[nCnt].g_nCounterAnim >= Animspeed)
+//	{
+//		g_EffectX[nCnt].g_nCounterAnim = NULL;//カウンターを初期値に戻す
+//
+//		g_EffectX[nCnt].g_nPatternAnim++;//パターンナンバーを更新
+//
+//		pVtx += 4 * nCnt;
+//
+//		// テクスチャ座標の更新
+//		pVtx[0].tex = D3DXVECTOR2(g_EffectX[nCnt].g_nPatternAnim * Uv, (g_EffectX[nCnt].g_nPatternAnim / XtexPos) * Hv);
+//		pVtx[1].tex = D3DXVECTOR2(Uv + g_EffectX[nCnt].g_nPatternAnim * Uv, (g_EffectX[nCnt].g_nPatternAnim / XtexPos) * Hv);
+//		pVtx[2].tex = D3DXVECTOR2(g_EffectX[nCnt].g_nPatternAnim * Uv, (g_EffectX[nCnt].g_nPatternAnim / XtexPos) * Hv + Hv);
+//		pVtx[3].tex = D3DXVECTOR2(Uv + g_EffectX[nCnt].g_nPatternAnim * Uv, (g_EffectX[nCnt].g_nPatternAnim / XtexPos) * Hv + Hv);
+//	}
+//
+//	// パターンが最大になったら
+//	if (g_EffectX[nCnt].g_nPatternAnim > XtexPos)
+//	{
+//		g_EffectX[nCnt].g_nPatternAnim = 0;//パターンナンバーを初期値に戻す
+//	}
+//
+//	// 頂点バッファのアンロック
+//	g_pVtxBuffEffectX->Unlock();
+//}

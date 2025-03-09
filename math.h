@@ -14,4 +14,5 @@
 //**************************************************************************************************************
 float SetSmoothAprroach(float fDestValue, float Value, float coefficient);
 bool sphererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float radius2); // ‰~‚Ì“–‚½‚è”»’è
+//void SetTextureAnimation(int* pPosX, int* pPosY, int* pAnimSpeed, int* pCounterAnim, int* pPatternAnim);
 #endif

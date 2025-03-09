@@ -175,6 +175,9 @@
     <ClCompile Include="polygon.cpp">
       <Filter>ソースファイル\polygon</Filter>
     </ClCompile>
+    <ClCompile Include="count.cpp">
+      <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -350,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="polygon.h">
       <Filter>ヘッダーファイル\polygon</Filter>
+    </ClInclude>
+    <ClInclude Include="count.h">
+      <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

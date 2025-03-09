@@ -13,6 +13,7 @@
 #include "player.h"
 #include"math.h"
 #include "easing.h"
+#include "event.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -316,6 +317,22 @@ void UpdateGameUI(void)
 				pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
 				break;
+			case UITYPE_EVENT:
+				// イベントUIの設定
+				SetEventUIAnimation(nCnt);
+
+				//頂点カラーの設定
+				pVtx[0].col = COLOR_WHITE;
+				pVtx[1].col = COLOR_WHITE;
+				pVtx[2].col = COLOR_WHITE;
+				pVtx[3].col = COLOR_WHITE;
+
+				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+				pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+				pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+				break;
 			}
 
 			// 寿命がある
@@ -566,7 +583,6 @@ void UpdateDestroyUI(int nCnt)
 		g_GameUI[nCnt].fWidth += SetSmoothAprroach(DEST_WIDTHREDUCTION, g_GameUI[nCnt].fWidth, 0.1f);
 	}
 
-
 	// 横幅が300.0fを超えたら
 	if (g_GameUI[nCnt].fHeight >= DEST_HEIGHTEXPANSION - 5.0f)
 	{
@@ -592,25 +608,7 @@ void UpdateDestroyUI(int nCnt)
 		g_GameUI[nCnt].fHeight += SetSmoothAprroach(DEST_HEIGHTREDUCTION, g_GameUI[nCnt].fHeight, 0.1f);
 	}
 
-	
-	//if (g_GameUI[nCnt].pos.x <= 600.0f)
-	//{
-	//	bRIghtMove = false;
-	//}
-	//else if (g_GameUI[nCnt].pos.x >= 650.0f)
-	//{
-	//	bRIghtMove = true;
-	//}
-
-	//if (bRIghtMove == true)
-	//{
-	//	g_GameUI[nCnt].pos.x -= 6.0f;
-	//}
-	//else if (bRIghtMove == false)
-	//{
-	//	g_GameUI[nCnt].pos.x += 6.0f;
-	//}
-
+	// 使用時間が0になったら消す
 	if (g_GameUI[nCnt].nUseTime <= 0)
 	{
 		g_GameUI[nCnt].bUse = false;
@@ -621,5 +619,9 @@ void UpdateDestroyUI(int nCnt)
 //==============================================================================================================
 void SetEventUIAnimation(int nCnt)
 {
-
+	// イベントが終わった
+	if (EnableEvent() == false)
+	{
+		g_GameUI[nCnt].bUse = false;
+	}
 }
