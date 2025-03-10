@@ -16,7 +16,7 @@
 // É}ÉNÉçíËã`
 //***************************
 #define MAX_TEX (32)
-#define MAX_BLOCK (356)
+#define MAX_BLOCK (450)
 #define INDXPARENT (5)
 
 //***************************
@@ -79,7 +79,7 @@ typedef enum
 	BLOCKTYPE_WOOD001,
 	BLOCKTYPE_WOOD002,
 	BLOCKTYPE_MOUNT000,
-
+	BLOCKTYPE_CURYY,
 	BLOCKTYPE_MAX
 }BLOCKTYPE;
 

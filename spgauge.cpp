@@ -50,7 +50,7 @@ void InitSPgauge(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\SP_frame_1.png",
+		"data\\TEXTURE\\boss_lifeframe.png",
 		&g_pTextureSPgauge[0]);
 
 	// 頂点バッファの生成・頂点情報の設定
@@ -66,7 +66,7 @@ void InitSPgauge(void)
 
 	g_SPgauge[SPGAUGE_GAUGE_0].col = COLOR_AQUA;
 	g_SPgauge[SPGAUGE_GAUGE_1].col = COLOR_YELLOW;
-	g_SPgauge[SPGAUGE_GAUGE_2].col = COLOR_ORANGE;
+	g_SPgauge[SPGAUGE_GAUGE_2].col = COLOR_RED;
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
@@ -96,10 +96,10 @@ void InitSPgauge(void)
 		pVtx[3].rhw = 1.0f;
 
 		// 頂点カラーの設定
-		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[0].col = COLOR_WHITE;
+		pVtx[1].col = COLOR_WHITE;
+		pVtx[2].col = COLOR_WHITE;
+		pVtx[3].col = COLOR_WHITE;
 
 		// テクスチャ座標
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -163,8 +163,8 @@ void UpdateSPgauge(void)
 			// 頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(10.0f, 40.0f, 0.0f);
 			pVtx[1].pos = D3DXVECTOR3(SPGAUGE_LENGTH, 40.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(10.0f, 60.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(SPGAUGE_LENGTH, 60.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(10.0f, 65.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(SPGAUGE_LENGTH, 65.0f, 0.0f);
 		}
 	}
 	// 頂点ロック解除
@@ -220,7 +220,7 @@ void AddSpgauge(float fValue)
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
-		if (g_SPgauge[nCnt].SpGauge <= 100.0f && pPlayer->AttackSp == false && g_SPgauge[nCnt].state == SPGAUGESTATE_CHARGE)
+		if (g_SPgauge[nCnt].SpGauge < 100.0f && pPlayer->AttackSp == false && g_SPgauge[nCnt].state == SPGAUGESTATE_CHARGE)
 		{
 			// 加算処理
 			g_SPgauge[nCnt].SpGauge += fValue;
@@ -264,8 +264,8 @@ void DecSpgauge(float fValue)
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(10.0f, 40.0f, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(fLength, 40.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(10.0f, 60.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(fLength, 60.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(10.0f, 65.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(fLength, 65.0f, 0.0f);
 
 		float Dec2 = fValue - Dec;
 
@@ -279,8 +279,8 @@ void DecSpgauge(float fValue)
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(10.0f, 40.0f, 0.0f);
 		pVtx[1].pos = D3DXVECTOR3(fLength, 40.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(10.0f, 60.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(fLength, 60.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(10.0f, 65.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(fLength, 65.0f, 0.0f);
 
 	}
 	else
@@ -317,8 +317,8 @@ void SetChargeGage(int nCnt)
 	// 頂点座標の設定
 	pVtx[0].pos = D3DXVECTOR3(10.0f, 40.0f, 0.0f);
 	pVtx[1].pos = D3DXVECTOR3(fLength, 40.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(10.0f, 60.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(fLength, 60.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(10.0f, 65.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(fLength, 65.0f, 0.0f);
 
 	switch (g_SPgauge[nCnt].nType)
 	{
