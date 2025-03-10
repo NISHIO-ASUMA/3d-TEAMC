@@ -117,18 +117,18 @@ void InitTutorial3d(void)
 	//tutoload();
 
 	// ブロックをセット
-	SetBlock(D3DXVECTOR3(-70.0f, 0.0f, 120.0f),D3DXVECTOR3(0.0f,D3DX_PI * 0.5f,0.0f), 19);
-	SetBlock(D3DXVECTOR3(280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 20);
-	SetBlock(D3DXVECTOR3(-280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 21);
-	SetBlock(D3DXVECTOR3(-115.0f, 0.0f, -230.0f), D3DXVECTOR3(0.0f, -12.0f, 0.0f), 47);
+	//SetBlock(D3DXVECTOR3(-70.0f, 0.0f, 120.0f),D3DXVECTOR3(0.0f,D3DX_PI * 0.5f,0.0f), 19);
+	//SetBlock(D3DXVECTOR3(280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 20);
+	//SetBlock(D3DXVECTOR3(-280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 21);
+	//SetBlock(D3DXVECTOR3(-115.0f, 0.0f, -230.0f), D3DXVECTOR3(0.0f, -12.0f, 0.0f), 47);
 
 	// アイテムをセット
 	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 29);
 	
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, 500.0f, 0.0f), UITYPE_TUTORIAL, 600.0f, 40.0f,false, 0);
-	SetGameUI(D3DXVECTOR3(70.0f, 610.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, false,0);
-	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f,false, 0);
+	SetGameUI(D3DXVECTOR3(70.0f, 640.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, false, 0);
+	SetGameUI(D3DXVECTOR3(200.0f, 660.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false, 0);
 
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f), 0);
@@ -137,7 +137,7 @@ void InitTutorial3d(void)
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f), 0);
 
 	// ストックアイテムのアイコン
-	SetIcon(D3DXVECTOR3(70.0f, 610.0f, 0.0f), 60.0f, 60.0f, 0, ICONTYPE_HOLDITEM);
+	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0, ICONTYPE_HOLDITEM);
 
 	// チュートリアル補助
 	InitManager();

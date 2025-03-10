@@ -11,6 +11,7 @@
 #include "camera.h"
 #include "input.h"
 #include "spgauge.h"
+
 LPDIRECT3DTEXTURE9 g_pTexture_Tutorial[10] = {};
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffManager = NULL;
 int nSteps = 0;
@@ -25,16 +26,16 @@ void InitManager(void)
 	bAmove = 0.0f;
 	LPDIRECT3DDEVICE9 pDevice;
 	pDevice = GetDevice();
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\Tutorial_MoveCamera.png", &g_pTexture_Tutorial[0]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\Tutorial_Jump.png", &g_pTexture_Tutorial[1]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\Tutorial_Roll.png", &g_pTexture_Tutorial[2]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutoirial003.png", &g_pTexture_Tutorial[3]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutoirial005.png", &g_pTexture_Tutorial[4]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\Tutorial_PickUP.png", &g_pTexture_Tutorial[5]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\Tutorial_Stock.png", &g_pTexture_Tutorial[6]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\ui_Creat_bat.png", &g_pTexture_Tutorial[7]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_step_1.png", &g_pTexture_Tutorial[0]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_step_4.png", &g_pTexture_Tutorial[1]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_step_3.png", &g_pTexture_Tutorial[2]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_step_2.png", &g_pTexture_Tutorial[3]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_step_3.5.png", &g_pTexture_Tutorial[4]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_step_5.png", &g_pTexture_Tutorial[5]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_step_6.png", &g_pTexture_Tutorial[6]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_key_7.png", &g_pTexture_Tutorial[7]);
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\UI_craft.png", &g_pTexture_Tutorial[8]);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial000.png", &g_pTexture_Tutorial[9]);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\tutorial_Temporary\\tuto_step_8.png", &g_pTexture_Tutorial[9]);
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffManager, NULL);
 	VERTEX_2D* pVtx;
 	g_pVtxBuffManager->Lock(0, 0, (void**)&pVtx, 0);
@@ -134,7 +135,7 @@ void UpdateManager(void)
 	}
 	else if (nSteps == 4 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION && fALv2 == 1.0f)
 	{
-		if (pPlayer->AttackSp == false)
+		if (pPlayer->AttackSp == true)
 		{
 			PlaySound(SOUND_LABEL_ENTER_SE);
 			bAmove = -0.01f;
