@@ -15,6 +15,7 @@
 #include "game.h"
 #include "gameui.h"
 #include "count.h"
+#include "sound.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -104,8 +105,11 @@ void UpdateEvent(void)
 			switch (EventPos)
 			{
 			case EVENTPOSITION_ONE:
+				// 音楽再生
+				PlaySound(SOUND_LABEL_EVENTSE);
+
 				SetEvent(EVENTPOS_ONE, EventPos, 1800);
-				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_ONE, CYLINDERTYPE_EVENT,-1, POSITIONONE_RADIUS,COLOR_YELLOW,8,1,0.0f,2000.0f);
+				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_ONE, CYLINDERTYPE_EVENT,-1, POSITIONONE_RADIUS,COLOR_YELLOW,16,1,0.0f,2000.0f);
 				SetBoss(EVENTPOS_ONE, 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
@@ -113,8 +117,11 @@ void UpdateEvent(void)
 				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_TWO:
+				// 音楽再生
+				PlaySound(SOUND_LABEL_EVENTSE);
+
 				SetEvent(EVENTPOS_TWO, EventPos, 1800);
-				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_TWO, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
+				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_TWO, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 16, 1, 0.0f, 2000.0f);
 				SetBoss(EVENTPOS_TWO, 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
@@ -122,8 +129,11 @@ void UpdateEvent(void)
 				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_THREE:
+				// 音楽再生
+				PlaySound(SOUND_LABEL_EVENTSE);
+
 				SetEvent(EVENTPOS_THREE, EventPos, 1800);
-				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_THREE, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
+				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_THREE, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 16, 1, 0.0f, 2000.0f);
 				SetBoss(EVENTPOS_THREE, 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);
@@ -131,8 +141,11 @@ void UpdateEvent(void)
 				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_FOUR:
+				// 音楽再生
+				PlaySound(SOUND_LABEL_EVENTSE);
+
 				SetEvent(EVENTPOS_FOUR, EventPos, 1800);
-				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_FOUR, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 8, 1, 0.0f, 2000.0f);
+				g_Event[nCnt].nCylinderIdx = SetMeshCylinder(EVENTPOS_FOUR, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 16, 1, 0.0f, 2000.0f);
 				SetBoss(EVENTPOS_FOUR, 3.0f, 10000); // ボスをセット
 				SetMovie(300);
 				EnableMovie(true);

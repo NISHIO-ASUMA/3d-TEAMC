@@ -387,7 +387,7 @@ void UninitGame(void)
 //=========================================================================================================
 void UpdateGame(void)
 {
-	if (g_bMovie == true)
+	if (g_bMovie == true && g_bPause == false)
 	{
 		g_gameState = GAMESTATE_MOVIE;
 		UpdateEventMovie();
@@ -395,6 +395,9 @@ void UpdateGame(void)
 		g_MovieCnt--;
 		if (g_MovieCnt <= 0)
 		{
+			// サウンドを止める
+			StopSound(SOUND_LABEL_EVENTSE);
+
 			g_gameState = GAMESTATE_NORMAL;
 			g_bMovie = false;
 		}
@@ -690,9 +693,6 @@ void DrawGame(void)
 
 	if (!g_bEditMode)
 	{
-		// ビルボードの描画処理
-		DrawBillboard();
-
 		//ブロックの描画処理
 		DrawBlock();
 
@@ -735,6 +735,9 @@ void DrawGame(void)
 
 	// パーティクルの描画処理
 	DrawParticleX();
+
+	// ビルボードの描画処理
+	DrawBillboard();
 
 	// 軌跡の描画処理
 	DrawMeshSword();

@@ -81,8 +81,8 @@ void InitItemGage(void)
 	//アンロック
 	g_pVtxBuffItemGage->Unlock();
 
-	SetItemGage(D3DXVECTOR3(3.0f,680.0f,0.0f),ITEMGAGE_FRAME,5.0f);
-	SetItemGage(D3DXVECTOR3(3.0f,680.0f,0.0f), ITEMGAGE_GAGE, 5.0f);
+	SetItemGage(D3DXVECTOR3(3.0f,640.0f,0.0f),ITEMGAGE_FRAME,5.0f);
+	SetItemGage(D3DXVECTOR3(3.0f,640.0f,0.0f), ITEMGAGE_GAGE, 5.0f);
 }
 //==============================================================================================================
 // アイテムのゲージの終了処理

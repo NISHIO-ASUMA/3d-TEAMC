@@ -186,9 +186,10 @@ void DrawBillboard(void)
 	// ライトを無効にする
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-	//// Zテスト
+	// Zテスト
 	//pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 	//pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
 
 	for (int nCnt = 0; nCnt < MAX_BILLBOARD; nCnt++)
 	{
@@ -239,6 +240,7 @@ void DrawBillboard(void)
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
 		}
+
 	}
 
 	//// Zテスト

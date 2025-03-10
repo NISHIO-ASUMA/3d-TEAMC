@@ -273,14 +273,10 @@ void UpdatePlayer(void)
 	{
 		// モーションの更新
 		UpdateMotion(&g_player.Motion);
-	}
 
-	// プレイヤーのクラフトの設定
-	UpdatePlayerCraft();
+		// プレイヤーのクラフトの設定
+		UpdatePlayerCraft();
 
-	// ムービーじゃなかったら
-	if (gameState != GAMESTATE_MOVIE)
-	{
 		// モーションの演出処理
 		SetMotionContller();
 	}
@@ -473,6 +469,12 @@ void UpdatePlayer(void)
 
 		//プレイヤーの位置の更新
 		g_player.pos += g_player.move;
+	}
+	else
+	{
+		g_player.posOld.y = g_player.pos.y;
+
+		g_player.pos.y += g_player.move.y;
 	}
 
 	if (CollisionField() == true)
@@ -2804,7 +2806,7 @@ void HandleSpecialAttack(void)
 	const bool is_Damage = g_player.bstiffness == false;
 
 	// スペシャルモーションを発動できるかを判定
-	const bool is_SpecialAttack = is_HaveWepon && is_NotHaveThrowItem && is_Alive && is_Damage;
+	const bool is_SpecialAttack = is_HaveWepon && is_NotHaveThrowItem && is_Alive && is_Damage && g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID;
 
 	// スペシャルモードになった時の攻撃
 	if ((KeyboardTrigger(DIK_Q) || JoypadTrigger(JOYKEY_LS) || JoypadTrigger(JOYKEY_RS)) && is_SpecialAttack == true)
@@ -3141,7 +3143,7 @@ void UpdatePlayerAvoid(void)
 	const bool NotFinish = g_player.Motion.bFinishMotion == false;
 
 	// 回避モーションを発動できるかを判定
-	const bool CanAvoid = NotAvoid == true && NotNeutral == true && NotFinish == true;
+	const bool CanAvoid = NotAvoid == true && NotNeutral == true && NotFinish == true && g_player.AttackSp == false;
 
 	// モーションが回避じゃない
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)

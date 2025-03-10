@@ -84,7 +84,7 @@ void UpdateLight(void)
 
 	if (pPlayer->FeverMode)
 	{
-		g_light[0].Diffuse = D3DXCOLOR(1.0f, 0.3f, 1.0f, 1.0f);
+		g_light[0].Diffuse = D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f);
 
 		// 正視化する(大きさ位置のベクトルにする)
 		D3DXVec3Normalize(&g_vecDir[0], &g_vecDir[0]);
