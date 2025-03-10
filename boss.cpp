@@ -696,7 +696,7 @@ void HitBoss(int nCntBoss,int nDamage)
 		AddSpgauge(1.0f);   // SPゲージを取得
 
 		// 属性ゾーン
-		if (pItem[pPlayer->ItemIdx].nType == 5) //石バットなら出血特殊効果を与える
+		if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_STONEBAT) //石バットなら出血特殊効果を与える
 		{
 			if (g_Boss[nCntBoss].nStateCount[0] <= 0)
 			{
@@ -720,7 +720,7 @@ void HitBoss(int nCntBoss,int nDamage)
 				}
 			}
 		}
-		else if (pItem[pPlayer->ItemIdx].nType == 15) //猛火剣なら炎特殊効果を与える
+		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_TORCHSWORD) //猛火剣なら炎特殊効果を与える
 		{
 			if (g_Boss[nCntBoss].nStateCount[1] <= 0)
 			{
@@ -732,7 +732,7 @@ void HitBoss(int nCntBoss,int nDamage)
 				}
 			}
 		}
-		else if (pItem[pPlayer->ItemIdx].nType == 10) //凍結剣なら氷特殊効果を与える
+		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_ICEBLOCKSOWRD) //凍結剣なら氷特殊効果を与える
 		{
 			if (g_Boss[nCntBoss].nStateCount[2] <= 0)
 			{
@@ -744,7 +744,7 @@ void HitBoss(int nCntBoss,int nDamage)
 				}
 			}
 		}
-		else if (pItem[pPlayer->ItemIdx].nType == 7) //雷撃剣なら雷特殊効果を与える
+		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_LIGHTWOOD) //雷撃剣なら雷特殊効果を与える
 		{
 			if (g_Boss[nCntBoss].nStateCount[3] <= 0)
 			{
@@ -765,6 +765,82 @@ void HitBoss(int nCntBoss,int nDamage)
 				{
 					g_Boss[nCntBoss].nStateCount[4] = 300;
 					g_Boss[nCntBoss].nStateCharge[4] = 0;
+				}
+			}
+		}
+		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_SURFBOARDFISH) //鮫浮き輪なら雷特殊効果を与える
+		{
+			if (g_Boss[nCntBoss].nStateCount[4] <= 0)
+			{
+				g_Boss[nCntBoss].nStateCharge[4] += 25;
+				if (g_Boss[nCntBoss].nStateCharge[4] >= 100)
+				{
+					g_Boss[nCntBoss].nStateCount[4] = 300;
+					g_Boss[nCntBoss].nStateCharge[4] = 0;
+				}
+			}
+		}
+		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_BONESPEAR) //骨槍なら確率で即死効果を与える
+		{
+			if (rand() % 40 == 0)
+			{
+				// ゲージを消す
+				DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
+
+				// 死んだらパーティクルを出す(雑魚より派手に)
+				SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z),
+					g_Boss[nCntBoss].rot,
+					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+					7.0f, 40, 60, 20, 7.0f, 20.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+				// モーションがDeathじゃなかったら
+				if (g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
+				{
+					SetMotion(&g_Boss[nCntBoss].Motion, MOTIONTYPE_DEATH, true, 10);
+				}
+				g_Boss[nCntBoss].nLife = 0;
+
+				if (gamestate != GAMESTATE_END)
+				{
+					if (pPlayer->FeverMode)
+					{
+						AddScore(30000);		// スコアを取得
+						AddSpgauge(2.5f);   // SPゲージを取得
+					}
+					else if (!pPlayer->FeverMode)
+					{
+						AddFever(10.0f);		// フィーバーポイントを取得
+						AddScore(15000);		// スコアを取得
+						AddSpgauge(2.0f);   // SPゲージを取得
+					}
+				}
+
+				AddTimeSecond(15); // 15秒増やす
+
+				switch (pItem[pPlayer->ItemIdx].nType)
+				{
+				case ITEMTYPE_BAT:
+
+					// 音楽再生
+					PlaySound(SOUND_LABEL_BAT_SE);
+
+					break;
+
+				case ITEMTYPE_HUNMER:
+
+					// 音楽再生
+					PlaySound(SOUND_LABEL_HAMMER_SE);
+
+					break;
+				default:
+
+					// 音楽再生
+					PlaySound(SOUND_LABEL_ACTION_SE);
+
+					break;
 				}
 			}
 		}
