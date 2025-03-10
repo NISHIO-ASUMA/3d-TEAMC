@@ -31,6 +31,7 @@
 void UIFlash(int nType);	// 点滅処理
 void UpdateDestroyUI(int nCnt); // 武器が壊れた時のUI
 void SetEventUIAnimation(int nCnt);   // イベントのUIの設定
+void SetTutoUIAnimation(int nCnt); // チュートリアルUIのアニメーション
 float fcolorA;
 
 //**************************************************************************************************************
@@ -249,6 +250,9 @@ void UpdateGameUI(void)
 					g_GameUI[nCnt].bUse = false;
 				}
 
+				break;
+			case UITYPE_TUTORIAL:
+				SetTutoUIAnimation(nCnt);
 				break;
 			case UITYPE_BLACK:
 			{
@@ -654,4 +658,59 @@ void SetEventUIAnimation(int nCnt)
 	{
 		g_GameUI[nCnt].bUse = false;
 	}
+}
+//==============================================================================================================
+// チュートリアルUIのアニメーション
+//==============================================================================================================
+void SetTutoUIAnimation(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	// 減少させるフラグ
+	static bool bDec = true;
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	// アルファ値
+	static float fA = 1.0f;
+	
+	// アルファ値の減る量
+	float DecAlv = 1.0f / 120.0f;
+
+	// 減らす状態だったら
+	if (bDec == true)
+	{
+		// アルファ値を減少指せる
+		fA -= DecAlv;
+	}
+	// 増やす状態だったら
+	else
+	{
+		// アルファ値を増やす
+		fA += DecAlv;
+	}
+
+	// 透明度が1.0fになったら
+	if (fA >= 1.0f)
+	{
+		// 減少させる
+		bDec = true;
+	}
+	// 透明度が0.0fになったら
+	else if (fA <= 0.0f)
+	{
+		// 増やす
+		bDec = false;
+	}
+	pVtx += 4 * nCnt;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fA);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fA);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fA);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fA);
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
 }

@@ -53,7 +53,7 @@
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
 #define HEAL_VALUE (100)		// 回復量
-#define AVOID_MOVE (15.0f)      // 回避の移動量
+#define AVOID_MOVE (18.0f)      // 回避の移動量
 #define DAMAGEBLOW (20.0f)      // ダメージを受けた時の吹き飛び量
 #define BLOWCOUNT (5)           // 吹っ飛びカウント
 
@@ -533,8 +533,11 @@ void UpdatePlayer(void)
 	// モーションの最後のフレーム
 	int EndFrame = g_player.Motion.aMotionInfo[g_player.Motion.motionType].aKeyInfo[EndKey].nFrame;
 
+	//const bool NoHand = bNohand == false;
+	//const bool NoSpAction = g_player.AttackSp == false;
+
 	// プレイヤーの状態が攻撃じゃないかつ地面にいる
-	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false && gameState != GAMESTATE_MOVIE)
+	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false && gameState != GAMESTATE_MOVIE && g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID)
 	{
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
@@ -1366,7 +1369,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	const bool is_Damage = g_player.bstiffness == false;
 
 	// 範囲内かを判定
-	const bool Inbounds = sphererange(&g_player.pos, &pItem[nIdx].pos, Itemrange, plrange) == true;
+	const bool Inbounds = sphererange(&g_player.pos, &pItem[nIdx].pos, 20.0f, 20.0f) == true;
 
 	// 状態がノーマルか判定
 	const bool stateNormal = pItem[nIdx].state == ITEMSTATE_NORMAL;
@@ -1377,11 +1380,15 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	// 拾えるかを判定
 	const bool CanPickUp = is_Damage && Inbounds && stateNormal && NotDeth;
 
-	// 範囲内に入った
-	if (CanPickUp == true)
+	// 範囲内だったら
+	if (Inbounds == true)
 	{
 		bCollision = true;
-		
+	}
+
+	// 範囲内に入った
+	if (CanPickUp == true)
+	{		
 		if (pItem[nIdx].state == ITEMSTATE_NORMAL)
 		{
 			int nIdxBillboard = pItem[nIdx].nIdxBillboardCount;

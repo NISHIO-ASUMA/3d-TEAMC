@@ -34,6 +34,7 @@
 #include "billboard.h"
 #include "craftui.h"
 #include "TutorialSupport.h"
+#include"spgauge.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -105,6 +106,9 @@ void InitTutorial3d(void)
 	// ビルボードの初期化
 	InitBillboard();
 
+	// スペシャルゲージの初期化処理
+	InitSPgauge();
+
 	// ステージの読み込み
 	LoadEdit();
 	LoadEdit2d();
@@ -122,7 +126,7 @@ void InitTutorial3d(void)
 	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 29);
 	
 	// UIをセット
-	SetGameUI(D3DXVECTOR3(640.0f, 40.0f, 0.0f), 4, 600.0f, 40.0f,false, 0);
+	SetGameUI(D3DXVECTOR3(640.0f, 500.0f, 0.0f), UITYPE_TUTORIAL, 600.0f, 40.0f,false, 0);
 	SetGameUI(D3DXVECTOR3(70.0f, 610.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, false,0);
 	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f,false, 0);
 
@@ -209,6 +213,9 @@ void UninitTutorial3d(void)
 	// チュートリアル補助の終了
 	UninitManager();
 
+	// スペシャルゲージの終了処理
+	UninitSPgauge();
+
 	//// エディター画面の終了処理
 	//UninitEdit();
 }
@@ -250,6 +257,9 @@ void UpdateTutorial3d(void)
 
 		// チュートリアル補助の更新
 		UpdateManager();
+
+		// スペシャルゲージの更新処理
+		UpdateSPgauge();
 	}
 	// プレイヤーの更新処理
 	UpdatePlayer();
@@ -312,6 +322,9 @@ void DrawTutorial3d(void)
 
 	// エフェクトの描画処理
 	//DrawEffect();
+
+	// スペシャルゲージの描画処理
+	DrawSPgauge();
 
 	// UIの描画処理
 	DrawGameUI();
