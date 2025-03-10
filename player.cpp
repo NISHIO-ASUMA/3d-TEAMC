@@ -273,14 +273,10 @@ void UpdatePlayer(void)
 	{
 		// モーションの更新
 		UpdateMotion(&g_player.Motion);
-	}
 
-	// プレイヤーのクラフトの設定
-	UpdatePlayerCraft();
+		// プレイヤーのクラフトの設定
+		UpdatePlayerCraft();
 
-	// ムービーじゃなかったら
-	if (gameState != GAMESTATE_MOVIE)
-	{
 		// モーションの演出処理
 		SetMotionContller();
 	}
