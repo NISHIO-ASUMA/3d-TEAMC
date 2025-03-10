@@ -134,7 +134,7 @@ void UpdateManager(void)
 	}
 	else if (nSteps == 4 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION && fALv2 == 1.0f)
 	{
-		if (pPlayer->AttackSp == false)
+		if (pPlayer->AttackSp == true)
 		{
 			PlaySound(SOUND_LABEL_ENTER_SE);
 			bAmove = -0.01f;
