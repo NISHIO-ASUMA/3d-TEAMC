@@ -34,6 +34,7 @@ typedef enum
 	SOUND_LABEL_CRAFT,			// 武器作成SE
 	SOUND_LABEL_FEVER,			// フィーバー開始SE
 	SPUND_LABEL_WEPONBREAK,     // 武器破壊SE
+	SOUND_LABEL_EVENTSE,        // イベント発生音
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 
