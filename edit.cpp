@@ -383,7 +383,6 @@ void UpdateEdit(void)
 		{
 			g_EditCount--;
 		}
-
 	}
 	else if (EditMode2d)
 	{
@@ -526,7 +525,7 @@ void SaveEdit(void)
 		{
 			if (g_Edit[nCnt].bUse && g_Edit[nCnt].EditCategory == EDITMODE_BLOCK)
 			{
-				fprintf(pFile, "BLOCKSET\n");
+				fprintf(pFile, "BLOCKSET # [ %d個目 ]\n", nCnt);
 
 				fprintf(pFile, "EDITCATEGORY = %d			# [ カテゴリー%d ] \n", g_Edit[nCnt].EditCategory,g_Edit[nCnt].EditCategory);
 
@@ -540,7 +539,7 @@ void SaveEdit(void)
 			}
 			else if (g_Edit[nCnt].bUse && g_Edit[nCnt].EditCategory == EDITMODE_ITEM)
 			{
-				fprintf(pFile, "ITEMSET\n");
+				fprintf(pFile, "ITEMSET # [ %d個目 ]\n",nCnt);
 
 				fprintf(pFile, "EDITCATEGORY = %d			# [ カテゴリー%d ]\n", g_Edit[nCnt].EditCategory, g_Edit[nCnt].EditCategory);
 
@@ -802,17 +801,20 @@ void ReLoadEdit(void)
 
 	for (int nCnt = 0; nCnt < nCntobj; nCnt++)
 	{
-		g_Edit[g_EditCount].bUse = true; // 置かれていたブロックを使用状態にする
+
+			g_Edit[g_EditCount].bUse = true; // 置かれていたブロックを使用状態にする
+			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
+			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
+
+			g_EditCount++;
+			g_nNumBlock++;
+		
+	}
+		// 使用状態にする
+		g_Edit[g_EditCount].bUse = true;
 		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
 		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
-
-		g_EditCount++;
-		g_nNumBlock++;	
-	}
-	// 使用状態にする
-	g_Edit[g_EditCount].bUse = true;
-	g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
-	g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
+	
 }
 
 //=============================================================================================================

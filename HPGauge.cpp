@@ -60,8 +60,8 @@ void InitGauge(void)
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifebar_gage.png", &g_pTexture_Gauge);
 
 	// フィーバーのフレームとゲージのテクスチャ
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_frame.png", &g_pTexture_Fevframe);
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_gage_2.png", &g_pTexture_Fevgauge);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\boss_lifeframe.png", &g_pTexture_Fevframe);
+	//D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_gage_2.png", &g_pTexture_Fevgauge);
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * (NUM_HPGAUGE * NUM_FEVERGAUGE), D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 	VERTEX_2D* pVtx;
 
@@ -295,6 +295,12 @@ void UpdateGauge(void)
 	g_fPer = g_fFeverCharge / 100.0f;
 	g_fLength = g_fPer * 1270;
 
+	// 頂点カラーの設定
+	pVtx[4].col = COLOR_VIOLET;
+	pVtx[5].col = COLOR_VIOLET;
+	pVtx[6].col = COLOR_VIOLET;
+	pVtx[7].col = COLOR_VIOLET;
+
 	// 頂点座標の設定 (それを描写し直す)
 	pVtx[4].pos = D3DXVECTOR3(3.0f, 690.0f, 0.0f);
 	pVtx[5].pos = D3DXVECTOR3(g_fLength + 3.0f, 690.0f, 0.0f);
@@ -320,6 +326,12 @@ void UpdateGauge(void)
 	}
 	else if (pPlayer->FeverMode == true && gameState != GAMESTATE_MOVIE)
 	{
+		//// 頂点カラーの設定
+		//pVtx[4].col = COLOR_YELLOW;
+		//pVtx[5].col = COLOR_YELLOW;
+		//pVtx[6].col = COLOR_YELLOW;
+		//pVtx[7].col = COLOR_YELLOW;
+
 		g_fFeverCharge -= 0.2f;
 		if (g_fFeverCharge <= 0.0f)
 		{
@@ -352,11 +364,11 @@ void DrawGauge(void)
 	pDevice->SetTexture(0, g_pTexture_Gauge);
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 8, 2);
 
+	pDevice->SetTexture(0, NULL);
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 16, 2);
+
 	pDevice->SetTexture(0, g_pTexture_Fevframe);
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 12, 2);
-
-	pDevice->SetTexture(0, g_pTexture_Fevgauge);
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 16, 2);
 }
 
 //===================================================================================================
