@@ -52,6 +52,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/craft.wav",0},  // 武器作成SE
 	{"data/SE/powerup.wav",0},  // フィーバー開始SE
 	{"data/SE/wepon_breakse.wav",0}, // 武器破壊SE
+	{"data/SE/eventSe.wav",0}, // イベント発生SE
 };
 //=============================================================================
 // 初期化処理

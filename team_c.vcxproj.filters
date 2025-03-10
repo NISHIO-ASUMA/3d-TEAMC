@@ -178,6 +178,9 @@
     <ClCompile Include="count.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="TutorialSupport.cpp">
+      <Filter>ソースファイル\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -356,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="count.h">
       <Filter>ヘッダーファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TutorialSupport.h">
+      <Filter>ヘッダーファイル\base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

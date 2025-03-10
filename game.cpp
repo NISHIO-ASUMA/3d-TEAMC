@@ -395,6 +395,9 @@ void UpdateGame(void)
 		g_MovieCnt--;
 		if (g_MovieCnt <= 0)
 		{
+			// ƒTƒEƒ“ƒh‚ðŽ~‚ß‚é
+			StopSound(SOUND_LABEL_EVENTSE);
+
 			g_gameState = GAMESTATE_NORMAL;
 			g_bMovie = false;
 		}

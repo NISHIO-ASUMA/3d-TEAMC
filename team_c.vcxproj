@@ -202,6 +202,7 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="title3d.cpp" />
     <ClCompile Include="tutorial3d.cpp" />
+    <ClCompile Include="TutorialSupport.cpp" />
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +264,7 @@
     <ClInclude Include="title.h" />
     <ClInclude Include="title3d.h" />
     <ClInclude Include="tutorial3d.h" />
+    <ClInclude Include="TutorialSupport.h" />
     <ClInclude Include="wall.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
