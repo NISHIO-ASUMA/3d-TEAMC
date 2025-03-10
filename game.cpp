@@ -215,7 +215,7 @@ void InitGame(void)
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(70.0f,610.0f,0.0f),UITYPE_ICONFRAME,70.0f, 80.0f,false,0);
 	SetGameUI(D3DXVECTOR3(200.0f, 630.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false,0);
-	//SetGameUI(D3DXVECTOR3(95.0f, 115.0f, 0.0f), UITYPE_KEY, 90.0f, 50.0f,false, 0);
+SetGameUI(D3DXVECTOR3(95.0f, 115.0f, 0.0f), UITYPE_KEY, 90.0f, 50.0f,false, 0);
 
 	// ストックアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 610.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);
@@ -690,9 +690,6 @@ void DrawGame(void)
 
 	if (!g_bEditMode)
 	{
-		// ビルボードの描画処理
-		DrawBillboard();
-
 		//ブロックの描画処理
 		DrawBlock();
 
@@ -735,6 +732,9 @@ void DrawGame(void)
 
 	// パーティクルの描画処理
 	DrawParticleX();
+
+	// ビルボードの描画処理
+	DrawBillboard();
 
 	// 軌跡の描画処理
 	DrawMeshSword();
