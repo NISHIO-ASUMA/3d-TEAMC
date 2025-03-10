@@ -44,7 +44,7 @@ typedef enum
 static const char* BILLBOARD_TEXTURE[BILLBOARDTYPE_MAX] = 
 {
 	"data\\TEXTURE\\billboard_wepon.png",
-	"data\\TEXTURE\\billboard_GetItem.png",
+	"data\\TEXTURE\\billboard_Key_get.png",
 };
 
 //***************************
