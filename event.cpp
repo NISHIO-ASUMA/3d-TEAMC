@@ -19,7 +19,7 @@
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define START_EVENTTIME (1800) // イベントが始まるまでの時間
+#define START_EVENTTIME (180) // イベントが始まるまでの時間
 #define POSITIONONE_RADIUS (700.0f) // 0番目のイベントの半径
 
 //**************************************************************************************************************
@@ -110,7 +110,7 @@ void UpdateEvent(void)
 				SetMovie(300);
 				EnableMovie(true);
 				SetGameUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), UITYPE_EVENT, 1280.0f, 1280.0f, false, 0);
-				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
+				SetCounter(D3DXVECTOR3(1080.0f, 670.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_TWO:
 				SetEvent(EVENTPOS_TWO, EventPos, 1800);
@@ -119,7 +119,7 @@ void UpdateEvent(void)
 				SetMovie(300);
 				EnableMovie(true);
 				SetGameUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), UITYPE_EVENT, 1280.0f, 1280.0f, false, 0);
-				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
+				SetCounter(D3DXVECTOR3(1080.0f, 670.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_THREE:
 				SetEvent(EVENTPOS_THREE, EventPos, 1800);
@@ -128,7 +128,7 @@ void UpdateEvent(void)
 				SetMovie(300);
 				EnableMovie(true);
 				SetGameUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), UITYPE_EVENT, 1280.0f, 1280.0f, false, 0);
-				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
+				SetCounter(D3DXVECTOR3(1080.0f, 670.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 				break;
 			case EVENTPOSITION_FOUR:
 				SetEvent(EVENTPOS_FOUR, EventPos, 1800);
@@ -137,7 +137,7 @@ void UpdateEvent(void)
 				SetMovie(300);
 				EnableMovie(true);
 				SetGameUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), UITYPE_EVENT, 1280.0f, 1280.0f, false, 0);
-				SetCounter(D3DXVECTOR3(1080.0f, 645.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
+				SetCounter(D3DXVECTOR3(1080.0f, 670.0f, 0.0f), COUNTER_COUNTDOWN, 30, 20.0f, 25.0f, COUNTERTYPE_EVENTTIMER);
 
 				break;
 			default:

@@ -13,6 +13,11 @@
 #include "meshfield.h"
 
 //**************************************************************************************************************
+// マクロ定義
+//**************************************************************************************************************
+#define MAPFIELDSIZE (85.0f) // マップのフィールドの大きさ
+
+//**************************************************************************************************************
 // プロトタイプ宣言
 //**************************************************************************************************************
 void InitMapField(void);
@@ -346,17 +351,17 @@ void InitMapField(void)
 		&g_pVtxBuffMiniMapField,
 		NULL);
 
-	MapFiledPos = D3DXVECTOR3(1100.0f, 180.0f, 0.0f);
+	MapFiledPos = D3DXVECTOR3(1150.0f, 100.0f, 0.0f);
 
 	// 頂点バッファのロック
 	g_pVtxBuffMiniMapField->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点座標関係
 	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(1000.0f, 80.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1200.0f, 80.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(1000.0f, 280.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1200.0f, 280.0f, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x - MAPFIELDSIZE, MapFiledPos.y - MAPFIELDSIZE, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + MAPFIELDSIZE, MapFiledPos.y - MAPFIELDSIZE, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x - MAPFIELDSIZE, MapFiledPos.y + MAPFIELDSIZE, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + MAPFIELDSIZE, MapFiledPos.y + MAPFIELDSIZE, 0.0f);
 
 	// rhwの設定
 	pVtx[0].rhw = 1.0f;

@@ -51,6 +51,9 @@ typedef enum
 	WEPONTYPE_TUTORIAL,		 // チュートリアル看板
 	WEPONTYPE_KATANA,		 // 初期装備刀
 	WEPONTYPE_ONIGIRI,		 // おにぎり
+	WEPONTYPE_SPEAR,		 // 槍
+	WEPONTYPE_MANDORIN,		 // マンドリン
+	WEPONTYPE_BONE,			 // 骨単体
 	WEPONTYPE_MAX
 }WEPON_TYPE;
 
@@ -102,7 +105,11 @@ static const char* ICON_TEXTURE[WEPONTYPE_MAX] =
 	"data\\TEXTURE\\surfboardfish.png", // サーフボードの合成武器
 	"data\\TEXTURE\\tutorial.png",		// チュートリアルの看板
 	"data\\TEXTURE\\katana.png",		// 初期装備刀
-	"data\\TEXTURE\\onigiri.png",		// 初期装備刀
+	"data\\TEXTURE\\onigiri.png",		// おにぎり
+	"data\\TEXTURE\\spear.png",			// 槍
+	"data\\TEXTURE\\mandolin.png",			// マンドリン
+	"data\\TEXTURE\\bone.png",			// 骨
+
 };
 
 //**************************************************************************************************************

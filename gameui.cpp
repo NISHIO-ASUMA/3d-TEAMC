@@ -157,7 +157,9 @@ void UpdateGameUI(void)
 
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
-	static bool bUp = false;
+
+	// 拡大する
+	static bool bExpansion = true;
 
 	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
@@ -166,7 +168,6 @@ void UpdateGameUI(void)
 	{
 		if (g_GameUI[nCnt].bUse == true)
 		{
-
 			switch (g_GameUI[nCnt].nType)
 			{
 			case UITYPE_TITLE:
@@ -179,27 +180,26 @@ void UpdateGameUI(void)
 				break;
 			case UITYPE_FIVER:
 
-				// 上昇しているとき
-				if (bUp)
+				if (g_GameUI[nCnt].fWidth >= 150.0f)
 				{
-					g_GameUI[nCnt].pos.y -= 2.0f; // 下に下げる
-
-					if (g_GameUI[nCnt].pos.y < 630.0f)
-					{
-						bUp = false; // 下に下げる
-					}
+					bExpansion = false;
 				}
-				else if (!bUp)
+				else if (g_GameUI[nCnt].fWidth <= 100.0f)
 				{
-					g_GameUI[nCnt].pos.y += 2.0f;
-
-					if (g_GameUI[nCnt].pos.y > 650.0f)
-					{
-						bUp = true; // 上に上げる
-					}
+					bExpansion = true;
+				}
+				if (bExpansion == true)
+				{
+					g_GameUI[nCnt].fWidth += SetSmoothAprroach(160.0f, g_GameUI[nCnt].fWidth, 0.1f);
+					g_GameUI[nCnt].fHeight += SetSmoothAprroach(70.0f, g_GameUI[nCnt].fHeight, 0.1f);
+				}
+				else if (bExpansion == false)
+				{
+					g_GameUI[nCnt].fWidth += SetSmoothAprroach(90.0f, g_GameUI[nCnt].fWidth, 0.1f);
+					g_GameUI[nCnt].fHeight += SetSmoothAprroach(30.0f, g_GameUI[nCnt].fHeight, 0.1f);
 				}
 
-				if (!pPlayer->FeverMode)
+				if (pPlayer->FeverMode == false)
 				{
 					g_GameUI[nCnt].bUse = false;
 				}
@@ -646,7 +646,7 @@ void SetEventUIAnimation(int nCnt)
 
 		g_GameUI[nCnt].pos.x += SetSmoothAprroach(950.0f, g_GameUI[nCnt].pos.x, 0.1f);
 
-		g_GameUI[nCnt].pos.y += SetSmoothAprroach(645.0f, g_GameUI[nCnt].pos.y, 0.1f);
+		g_GameUI[nCnt].pos.y += SetSmoothAprroach(670.0f, g_GameUI[nCnt].pos.y, 0.1f);
 	}
 
 	// イベントが終わった

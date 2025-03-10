@@ -162,3 +162,18 @@ ITEMSET
 	DURABILITY = 10    # アイテムの耐久力
 END_ITEMSET
 
+ITEMSET		
+	ITEMTYPE = 32	    # アイテムの種類<< 槍 >>
+	DURABILITY = 80    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 33	    # アイテムの種類<< マンドリン >>
+	DURABILITY = 80    # アイテムの耐久力
+END_ITEMSET
+
+ITEMSET		
+	ITEMTYPE = 34	    # アイテムの種類<< 骨 >>
+	DURABILITY = 50    # アイテムの耐久力
+END_ITEMSET
+

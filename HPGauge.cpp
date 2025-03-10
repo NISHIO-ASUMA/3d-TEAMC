@@ -21,6 +21,8 @@
 #define NUM_FEVERGAUGE (2) // FEVERGAUGEの数
 #define MAX_HPLENGTH (390.0f) // HPゲージの横幅
 #define FRAME (0)             // フレームのカウント
+#define FEVER_LENGTH (800.0f) // フィーバーゲージの長さ
+#define FEVERGAGE_LENGTH (300.0f)
 
 //**********************************************************************************************************************
 // グローバル変数宣言
@@ -60,7 +62,7 @@ void InitGauge(void)
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifebar_gage.png", &g_pTexture_Gauge);
 
 	// フィーバーのフレームとゲージのテクスチャ
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\boss_lifeframe.png", &g_pTexture_Fevframe);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\feverframe2.png", &g_pTexture_Fevframe);
 	//D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_gage_2.png", &g_pTexture_Fevgauge);
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * (NUM_HPGAUGE * NUM_FEVERGAUGE), D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 	VERTEX_2D* pVtx;
@@ -132,20 +134,31 @@ void InitGauge(void)
 		if (nCnt == FRAME)
 		{
 			// FRAMEの頂点座標
-			pVtx[0].pos = D3DXVECTOR3(0.0f, 690.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(1280.0f, 690.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(0.0f, 720.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(1280.0f, 720.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(300.0f, 630.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(FEVER_LENGTH, 630.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(300.0f, 710.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(FEVER_LENGTH, 710.0f, 0.0f);
+
+			// 頂点カラーの設定
+			pVtx[0].col = COLOR_WHITE;
+			pVtx[1].col = COLOR_WHITE;
+			pVtx[2].col = COLOR_WHITE;
+			pVtx[3].col = COLOR_WHITE;
 		}
 		// gauge
 		else if (nCnt != FRAME)
 		{
 			// GAUGEの頂点座標
-			pVtx[0].pos = D3DXVECTOR3(3.0f, 690.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(1270.0f, 690.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(3.0f, 720.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(1270.0f, 720.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(300.0f, 630.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(FEVERGAGE_LENGTH, 630.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(300.0f, 710.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(FEVERGAGE_LENGTH, 710.0f, 0.0f);
 
+			// 頂点カラーの設定
+			pVtx[0].col = COLOR_WHITE;
+			pVtx[1].col = COLOR_WHITE;
+			pVtx[2].col = COLOR_WHITE;
+			pVtx[3].col = COLOR_WHITE;
 		}
 
 		// rhwの設定
@@ -153,12 +166,6 @@ void InitGauge(void)
 		pVtx[1].rhw = 1.0f;
 		pVtx[2].rhw = 1.0f;
 		pVtx[3].rhw = 1.0f;
-
-		// 頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
 		// テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -293,19 +300,19 @@ void UpdateGauge(void)
 	
 	// そこからその割合を計算し長さにする、今は100でチャージ完了
 	g_fPer = g_fFeverCharge / 100.0f;
-	g_fLength = g_fPer * 1270;
+	g_fLength = g_fPer * FEVERGAGE_LENGTH;
 
 	// 頂点カラーの設定
-	pVtx[4].col = COLOR_VIOLET;
-	pVtx[5].col = COLOR_VIOLET;
-	pVtx[6].col = COLOR_VIOLET;
-	pVtx[7].col = COLOR_VIOLET;
+	pVtx[4].col = COLOR_DEEPPINK;
+	pVtx[5].col = COLOR_DEEPPINK;
+	pVtx[6].col = COLOR_DEEPPINK;
+	pVtx[7].col = COLOR_DEEPPINK;
 
-	// 頂点座標の設定 (それを描写し直す)
-	pVtx[4].pos = D3DXVECTOR3(3.0f, 690.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(g_fLength + 3.0f, 690.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(3.0f, 720.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(g_fLength + 3.0f, 720.0f, 0.0f);
+	// GAUGEの頂点座標
+	pVtx[4].pos = D3DXVECTOR3(470.0f, 660.0f, 0.0f);
+	pVtx[5].pos = D3DXVECTOR3(470.0f + g_fLength, 660.0f, 0.0f);
+	pVtx[6].pos = D3DXVECTOR3(470.0f, 687.0f, 0.0f);
+	pVtx[7].pos = D3DXVECTOR3(470.0f + g_fLength, 687.0f, 0.0f);
 
 	// テクスチャ座標
 	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -326,11 +333,11 @@ void UpdateGauge(void)
 	}
 	else if (pPlayer->FeverMode == true && gameState != GAMESTATE_MOVIE)
 	{
-		//// 頂点カラーの設定
-		//pVtx[4].col = COLOR_YELLOW;
-		//pVtx[5].col = COLOR_YELLOW;
-		//pVtx[6].col = COLOR_YELLOW;
-		//pVtx[7].col = COLOR_YELLOW;
+		// 頂点カラーの設定
+		pVtx[4].col = COLOR_YELLOW;
+		pVtx[5].col = COLOR_YELLOW;
+		pVtx[6].col = COLOR_YELLOW;
+		pVtx[7].col = COLOR_YELLOW;
 
 		g_fFeverCharge -= 0.2f;
 		if (g_fFeverCharge <= 0.0f)
@@ -364,11 +371,11 @@ void DrawGauge(void)
 	pDevice->SetTexture(0, g_pTexture_Gauge);
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 8, 2);
 
-	pDevice->SetTexture(0, NULL);
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 16, 2);
-
 	pDevice->SetTexture(0, g_pTexture_Fevframe);
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 12, 2);
+
+	pDevice->SetTexture(0, NULL);
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 16, 2);
 }
 
 //===================================================================================================

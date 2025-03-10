@@ -629,7 +629,7 @@ void UpdatePlayer(void)
 	if (g_player.FeverMode == true && FiverCnt == 0 && g_player.AttackSp == false)
 	{
 		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, false,0);
-		SetGameUI(D3DXVECTOR3(640.0f, 650.0f, 0.0f), UITYPE_FIVER, 200.0f, 80.0f, false,0);
+		SetGameUI(D3DXVECTOR3(640.0f, 600.0f, 0.0f), UITYPE_FIVER, 100.0f, 40.0f, false,0);
 		FiverCnt = 1; // 制限回数を超えた
 	}
 	if (g_player.FeverMode == false)
@@ -2938,7 +2938,7 @@ void UpdateItemStock(void)
 		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
 		// 持っているアイテムのアイコン
-		SetIcon(D3DXVECTOR3(200.0f, 630.0f, 0.0f), 40.0f, 40.0f, pItem[g_player.StockItemIdx].nType, ICONTYPE_STOCKITEM);
+		SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, pItem[g_player.StockItemIdx].nType, ICONTYPE_STOCKITEM);
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
@@ -3113,6 +3113,19 @@ void SetPlayerWepon(int nType,float SwordLength)
 		MotionChange(MOTION_KATANA, 0);
 		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
 		break;
+	case ITEMTYPE_SPEAR:
+		MotionChange(MOTION_PIERCING, 0);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
+		break;
+	case ITEMTYPE_MANDORIN:
+		MotionChange(MOTION_ONE_HAND, 0);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
+		break;
+	case ITEMTYPE_BONE:
+		MotionChange(MOTION_ONE_HAND, 0);
+		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
+		break;
+
 	default:
 		break;
 	}

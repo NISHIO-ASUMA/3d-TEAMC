@@ -120,9 +120,9 @@ void UpdateParticleX(void)
 			int nLife = (rand() % g_aParticle[nCntParticle].nLife) + 60;
 
 			/*int nLife = (rand() % 120) + 20;*/
-			
+
 			//エフェクトの設定SetEffect
-			SetEffectX(pos, move, col, nLife, fSize,g_aParticle[nCntParticle].decfAlv,g_aParticle[nCntParticle].EffectTex);
+			SetEffectX(pos, move, col, nLife, fSize, g_aParticle[nCntParticle].decfAlv, g_aParticle[nCntParticle].EffectTex);		
 		}
 
 		if (g_aParticle[nCntParticle].bLifedecrease)

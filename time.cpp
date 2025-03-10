@@ -125,10 +125,10 @@ void InitTime(void)
 	for (int nCntTime = 0; nCntTime < MAX_NUM_TIME; nCntTime++)
 	{
 		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(1020.0f + nCntTime * 30.0f, 10.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(1020.0f + nCntTime * 30.0f + 30.0f, 10.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1020.0f + nCntTime * 30.0f, 60.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1020.0f + nCntTime * 30.0f + 30.0f, 60.0f, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(540.0f + nCntTime * 30.0f, 10.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(540.0f + nCntTime * 30.0f + 30.0f, 10.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(540.0f + nCntTime * 30.0f, 60.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(540.0f + nCntTime * 30.0f + 30.0f, 60.0f, 0.0f);
 				
 		//rhwの設定
 		pVtx[0].rhw = 1.0f;
@@ -161,10 +161,10 @@ void InitTime(void)
 	for (int nCntTime = 0; nCntTime < MAX_NUM_TIME; nCntTime++)
 	{
 		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(1120.0f + nCntTime * 30.0f, 10.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(1120.0f + nCntTime * 30.0f + 30.0f, 10.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(1120.0f + nCntTime * 30.0f, 60.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(1120.0f + nCntTime * 30.0f + 30.0f, 60.0f, 0.0f);
+		pVtx[0].pos = D3DXVECTOR3(640.0f + nCntTime * 30.0f, 10.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(640.0f + nCntTime * 30.0f + 30.0f, 10.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(640.0f + nCntTime * 30.0f, 60.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(640.0f + nCntTime * 30.0f + 30.0f, 60.0f, 0.0f);
 
 		//rhwの設定
 		pVtx[0].rhw = 1.0f;
@@ -194,10 +194,10 @@ void InitTime(void)
 	g_pVtxBuffTimeCircle->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定 (コロン)
-	pVtx[0].pos = D3DXVECTOR3(1090.0f,20.0f,0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1110.0f,20.0f,0.0f);
-	pVtx[2].pos = D3DXVECTOR3(1090.0f,55.0f,0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1110.0f,55.0f,0.0f);
+	pVtx[0].pos = D3DXVECTOR3(610.0f,20.0f,0.0f);
+	pVtx[1].pos = D3DXVECTOR3(630.0f,20.0f,0.0f);
+	pVtx[2].pos = D3DXVECTOR3(610.0f,55.0f,0.0f);
+	pVtx[3].pos = D3DXVECTOR3(630.0f,55.0f,0.0f);
 
 	//rhwの設定
 	pVtx[0].rhw = 1.0f;
