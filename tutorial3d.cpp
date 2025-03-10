@@ -33,6 +33,7 @@
 #include "itemgage.h"
 #include "billboard.h"
 #include "craftui.h"
+#include "TutorialSupport.h"
 
 //**************************************************************************************************************
 //グローバル変数
@@ -134,6 +135,9 @@ void InitTutorial3d(void)
 	// ストックアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 610.0f, 0.0f), 60.0f, 60.0f, 0, ICONTYPE_HOLDITEM);
 
+	// チュートリアル補助
+	InitManager();
+
 	// グローバル変数の初期化
 	g_bEditMode2 = false;
 
@@ -202,6 +206,9 @@ void UninitTutorial3d(void)
 	// ビルボードの終了
 	UninitBillboard();
 
+	// チュートリアル補助の終了
+	UninitManager();
+
 	//// エディター画面の終了処理
 	//UninitEdit();
 }
@@ -232,9 +239,6 @@ void UpdateTutorial3d(void)
 		// 剣の軌跡の更新処理
 		UpdateMeshSword();
 
-		// プレイヤーの更新処理
-		UpdatePlayer();
-
 		// エフェクトの更新処理
 		UpdateEffect();
 
@@ -243,7 +247,12 @@ void UpdateTutorial3d(void)
 
 		// アイコンの更新
 		UpdateIcon();
+
+		// チュートリアル補助の更新
+		UpdateManager();
 	}
+	// プレイヤーの更新処理
+	UpdatePlayer();
 
 	// クラフト画面の更新処理
 	UpdateCraftUI();
@@ -312,6 +321,9 @@ void DrawTutorial3d(void)
 
 	// アイテムゲージ
 	DrawItemGage();
+
+	// チュートリアル補助の描画
+	DrawManager();
 
 	Player* pPlayer = GetPlayer();
 

@@ -1113,10 +1113,7 @@ void PickUpItemAnimation(int nCntItem)
 	// 目的の値に近づける
 	g_Item[nCntItem].rot.y += 0.01f;
 
-	// TOOD : 長尾ここにパーティクルを出す処理を頼む
-	//SetParticle();
-	// 
-	// 長尾ここに頼む
+	// アイテムの周りにパーティクル出現
 	if (g_Item[nCntItem].nType == ITEMTYPE_ONIGIRI)
 	{
 		SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + g_Item[nCntItem].Size.y / 1.5f, g_Item[nCntItem].pos.z),
