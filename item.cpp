@@ -42,6 +42,8 @@ void CraftMixItem(int nCntItem,int MixItem,int motionchange);
 void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem);
 void LoadDurability(void); // アイテムの耐久力のロード処理
 void PickUpItemAnimation(int nCntItem); // アイテムを拾える時の演出
+bool CheckMixItemMat(int nCntItem,int HoldItem,int StockItem,int HoldIdx);     // アイテムがクラフトできるかどうか
+void UpdateCraftItemParam(int nCnt);                                               // クラフトアイテムのパラメータ設定
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -254,8 +256,41 @@ void UpdateItem(void)
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
+	// 持っているアイテムの情報を書き換えるか判定
+	bool bTypeChange = false;
+
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
+		// ホールドのアイテムがあったら
+		if (g_Item[nCntItem].state == ITEMSTATE_HOLD)
+		{
+			// 持っているアイテムの種類を代入
+			pPlayer->HoldItemType = g_Item[nCntItem].nType;
+
+			// 変更した
+			bTypeChange = true;
+		}
+
+		// ストックのアイテムがあったら
+		if (g_Item[nCntItem].state == ITEMSTATE_STOCK)
+		{
+			// ストックしているアイテムの種類を代入
+			pPlayer->StockItemType = g_Item[nCntItem].nType;
+
+			// 変更した
+			bTypeChange = true;
+		}
+
+		// 変更ないなら
+		if (bTypeChange == false)
+		{
+			// 存在しない種類を代入
+			pPlayer->StockItemType = ITEMTYPE_NONEXISTENT;
+
+			// 存在しない種類を代入
+			pPlayer->HoldItemType = ITEMTYPE_NONEXISTENT;
+		}
+
 		// 耐久力が0になったら
 		if (g_Item[nCntItem].durability <= 0 && g_Item[nCntItem].state == ITEMSTATE_HOLD)
 		{
@@ -312,6 +347,8 @@ void UpdateItem(void)
 
 			// アイテムのインデックスを保存
 			pPlayer->ItemIdx = nCntItem;
+			pPlayer->StockItemIdx = nCntItem;
+
 			g_Item[nCntItem].state = ITEMSTATE_HOLD;
 
 			// ステータス変更
@@ -871,96 +908,20 @@ void CraftItem(void)
 	// キーを押したら
 	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
 	{
-		if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_A))
-		{
-			// ストーンバットの材料がそろった
-			if (((g_Item[nCnt].nType == ITEMTYPE_STONE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_STONE && g_Item[nCnt].nType == ITEMTYPE_BAT))
-				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
-			{
-				// クラフト後のアイテムの処理
-				CraftMixItem(nCnt, ITEMTYPE_STONEBAT, MOTION_DBHAND);
-
-				// ステータスの変更
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
-
-				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
-			}
-			// 氷の剣の材料がそろった
-			if (((g_Item[nCnt].nType == ITEMTYPE_ICEBLOCK && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_ICEBLOCK && g_Item[nCnt].nType == ITEMTYPE_KATANA))
-				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
-			{
-				CraftMixItem(nCnt, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
-
-				// ステータスの変更
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
-
-				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
-			}
-			// 炎の剣の材料がそろった
-			if (((g_Item[nCnt].nType == ITEMTYPE_TORCH && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_KATANA || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_TORCH && g_Item[nCnt].nType == ITEMTYPE_KATANA))
-				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
-			{
-				CraftMixItem(nCnt, ITEMTYPE_TORCHSWORD, MOTION_KATANA);
-
-				// ステータスの変更
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
-
-				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
-			}
-			// 雷の剣の材料がそろった
-			if (((g_Item[nCnt].nType == ITEMTYPE_LIGHT && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_WOOD || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_LIGHT && g_Item[nCnt].nType == ITEMTYPE_WOOD))
-				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
-			{
-				CraftMixItem(nCnt, ITEMTYPE_LIGHTWOOD, MOTION_DBHAND);
-
-				// ステータスの変更
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
-
-				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
-			}
-			// 金属バットの材料がそろった
-			if (((g_Item[nCnt].nType == ITEMTYPE_IRON && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_BAT || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_IRON && g_Item[nCnt].nType == ITEMTYPE_BAT))
-				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
-			{
-				CraftMixItem(nCnt, ITEMTYPE_IRONBAT, MOTION_DBHAND);
-
-				// ステータスの変更
-				StatusChange(3.1f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
-
-				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
-			}
-			// 全身マネキンの材料がそろった
-			if (((g_Item[nCnt].nType == ITEMTYPE_HEADSTATUE && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_TORSO || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_HEADSTATUE && g_Item[nCnt].nType == ITEMTYPE_TORSO))
-				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
-			{
-				CraftMixItem(nCnt, ITEMTYPE_HEADSTATUTORSO, MOTION_BIGWEPON);
-
-				// ステータスの変更
-				StatusChange(2.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
-
-				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
-			}
-			// 鮫浮き輪の材料がそろった
-			if (((g_Item[nCnt].nType == ITEMTYPE_FISH && g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_SURFBOARD || (g_Item[pPlayer->ItemIdx].nType == ITEMTYPE_FISH && g_Item[nCnt].nType == ITEMTYPE_SURFBOARD))
-				&& g_Item[nCnt].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD))
-			{
-				CraftMixItem(nCnt, ITEMTYPE_SURFBOARDFISH, MOTION_BIGWEPON);
-
-				// ステータスの変更
-				StatusChange(2.9f, D3DXVECTOR3(0.0f, 75.0f, 0.0f), 150);
-
-				g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
-			}
-		}
+		// クラフトのパラメーターの設定処理
+		UpdateCraftItemParam(nCnt);
 
 		// クラフトアイコンを表示するかしないか
 		EnableCraftIcon(nCnt, ITEMTYPE_STONE, ITEMTYPE_BAT, ITEMTYPE_STONEBAT);
 		EnableCraftIcon(nCnt, ITEMTYPE_ICEBLOCK, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCKSOWRD);
 		EnableCraftIcon(nCnt, ITEMTYPE_TORCH, ITEMTYPE_KATANA, ITEMTYPE_TORCHSWORD);
-		EnableCraftIcon(nCnt, ITEMTYPE_WOOD, ITEMTYPE_LIGHT, ITEMTYPE_LIGHTWOOD);
+		EnableCraftIcon(nCnt, ITEMTYPE_KATANA, ITEMTYPE_LIGHT, ITEMTYPE_LIGHTWOOD);
 		EnableCraftIcon(nCnt, ITEMTYPE_BAT, ITEMTYPE_IRON, ITEMTYPE_IRONBAT);
 		EnableCraftIcon(nCnt, ITEMTYPE_HEADSTATUE, ITEMTYPE_TORSO, ITEMTYPE_HEADSTATUTORSO);
 		EnableCraftIcon(nCnt, ITEMTYPE_FISH, ITEMTYPE_SURFBOARD, ITEMTYPE_SURFBOARDFISH);
+		EnableCraftIcon(nCnt, ITEMTYPE_HEX, ITEMTYPE_MANDORIN, ITEMTYPE_HEXMANDOLIN);
+		EnableCraftIcon(nCnt, ITEMTYPE_BONE, ITEMTYPE_SPEAR, ITEMTYPE_BONESPEAR);
+
 	}
 }
 //==============================================================================================================
@@ -1008,13 +969,17 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 	// アイテムの見た目を変える
 	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem];
 
-	//g_Item[pPlayer->ItemIdx].durability = g_TexItem[MixItem].durability;
-	//g_Item[pPlayer->ItemIdx].Maxdurability = g_TexItem[MixItem].Maxdurability;
+	g_Item[pPlayer->ItemIdx].durability = g_TexItem[MixItem].durability;
+	g_Item[pPlayer->ItemIdx].Maxdurability = g_TexItem[MixItem].Maxdurability;
 
 	// 手に持ってるアイテムの種類を石バットにする
 	g_Item[pPlayer->ItemIdx].nType = MixItem;
 
 	g_Item[pPlayer->ItemIdx].state = ITEMSTATE_HOLD;
+
+	g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
+
+	pPlayer->StockItemIdx = pPlayer->ItemIdx;
 }
 //==============================================================================================================
 // クラフト先のアイテムのアイコンの表示
@@ -1159,5 +1124,134 @@ void PickUpItemAnimation(int nCntItem)
 	{
 		// 120になるまでインクリメント
 		g_Item[nCntItem].nImpactCount++;
+	}
+}
+//==============================================================================================================
+// アイテムがクラフトできるかどうか
+//==============================================================================================================
+bool CheckMixItemMat(int nCntItem, int HoldItem, int StockItem, int HoldIdx) 
+{
+	// 合成のテンプレートがあっているか判定
+	const bool SetMixTemplate1 = g_Item[nCntItem].nType == StockItem && g_Item[HoldIdx].nType == HoldItem;
+
+	// 合成のテンプレート2があっているか判定
+	const bool SetMixTemplate2 = g_Item[nCntItem].nType == HoldItem && g_Item[HoldIdx].nType == StockItem;
+
+	// アイテムをストックしているか判定
+	const bool ItemStock = g_Item[nCntItem].state == ITEMSTATE_STOCK;
+
+	// アイテムを持っているか判定
+	const bool ItemHold = g_Item[HoldIdx].state == ITEMSTATE_HOLD;
+
+	// クラフトできるか判定
+	const bool CanCraft = (SetMixTemplate1 || SetMixTemplate2) && ItemStock && ItemHold;
+
+	// 材料がそろった
+	if (CanCraft == true)
+	{
+		return true;
+	}
+
+	return false;
+}
+//==============================================================================================================
+// クラフトアイテムのパラメータ設定
+//==============================================================================================================
+void UpdateCraftItemParam(int nCnt)
+{
+	Player* pPlayer = GetPlayer();
+
+	if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_A))
+	{
+		// 石バットの素材がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_BAT, ITEMTYPE_STONE, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_STONEBAT, MOTION_DBHAND);
+
+			// ステータスの変更
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// 氷の剣の材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCK, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
+
+			// ステータスの変更
+			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// 炎の剣の材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_KATANA, ITEMTYPE_TORCH, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_TORCHSWORD, MOTION_KATANA);
+
+			// ステータスの変更
+			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// 雷の剣の材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_LIGHT, ITEMTYPE_KATANA, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_LIGHTWOOD, MOTION_DBHAND);
+
+			// ステータスの変更
+			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// 金属バットの材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_IRON, ITEMTYPE_BAT, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_IRONBAT, MOTION_DBHAND);
+
+			// ステータスの変更
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// 全身マネキンの材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_HEADSTATUE, ITEMTYPE_TORSO, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_HEADSTATUTORSO, MOTION_BIGWEPON);
+
+			// ステータスの変更
+			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// 鮫浮き輪の材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_FISH, ITEMTYPE_SURFBOARD, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_SURFBOARDFISH, MOTION_BIGWEPON);
+
+			// ステータスの変更
+			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// 呪いの楽器の材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_HEX, ITEMTYPE_MANDORIN, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_HEXMANDOLIN, MOTION_ONE_HAND);
+
+			// ステータスの変更
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// 骨の槍の材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_BONE, ITEMTYPE_SPEAR, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_BONESPEAR, MOTION_PIERCING);
+
+			// ステータスの変更
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
 	}
 }

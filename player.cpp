@@ -158,6 +158,8 @@ void InitPlayer(void)
 	g_player.BlowCounter = NULL;									// 吹っ飛ぶまでのカウンター
 	g_player.AttackerIdx = NULL;									// 攻撃してきた敵のインデックス
 	g_player.bstiffness = false;									// ダメージの硬直
+	g_player.StockItemType = ITEMTYPE_NONEXISTENT;                  // ストックしているアイテムの種類
+	g_player.HoldItemType = ITEMTYPE_KATANA;						// 持っているアイテムの種類
 
 	// アイテム分回す
 	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -2906,9 +2908,6 @@ void HandleSpecialAttack(void)
 
 		g_player.SwordOffpos.y = 65.0f;		// 判定の長さを戻す
 		g_player.Itembreak[g_player.ItemIdx] = true;
-		//MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
-		//g_player.Motion.nNumModel = 15;		// 武器を消す
-		//g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
 		//StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //能力値を戻す
 		g_player.AttackSp = false;
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
@@ -2943,7 +2942,10 @@ void UpdateItemStock(void)
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
 
-		// アイテムの状態をストックにする
+		// もともとストックしていたアイテムをノーマルに戻す
+		pItem[g_player.StockItemIdx].state = ITEMSTATE_NORMAL;
+
+		// 持っているアイテムの状態をストックにする
 		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
 
 		// ストックされたアイテムのインデックスを渡す

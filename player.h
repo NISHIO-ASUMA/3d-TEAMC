@@ -28,6 +28,7 @@
 #define ATTACKER_ENEMY (0)      // 攻撃してきたのが敵
 #define ATTACKER_BOSS (1)       // 攻撃してきたのがボス
 #define MAX_GLABITY (1.0f)      // 重力
+#define ITEMTYPE_NONEXISTENT (4096) // 存在しないアイテムの種類
 
 //**************************************************************************************************************
 //ライフの種類
@@ -214,7 +215,8 @@ typedef struct
 	int BlowCounter;       // 吹き飛ぶまでのカウンター
 	int AttackerIdx;       // 攻撃してきた敵のインデックス
 	bool bstiffness;        // ダメージの硬直時間
-
+	int StockItemType;		// ストックしているアイテムの種類
+	int HoldItemType;       // 持っているアイテムの種類
 }Player;
 
 //**************************
