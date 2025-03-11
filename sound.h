@@ -37,6 +37,13 @@ typedef enum
 	SOUND_LABEL_EVENTSE,        // イベント発生音
 	SOUND_LABEL_AVOIDSE,        // 回避SE
 	SOUND_LABEL_TUTOCLEARSE,    // チュートリアルクリア音
+	SOUND_LABEL_WEPONFIRESE,    // 炎武器音
+	SOUND_LABEL_NOWEPON,        // 武器持ってないとき
+	SOUND_LABEL_WATERWEPON,     // 水武器音
+	SOUND_LABEL_SPEARWEPON,     // 槍の武器音
+	SOUND_LABEL_METALWEPON,     // 鉄の武器音
+	SOUND_LABEL_HARISENWEPON,   // ハリセンの音
+	SOUND_LABEL_TELPHONWEPON,   // 電柱の音
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 

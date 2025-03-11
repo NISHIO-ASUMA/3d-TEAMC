@@ -55,6 +55,13 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/eventSe.wav",0}, // イベント発生SE
 	{"data/SE/avoidSe.wav",0}, // 回避音
 	{"data/SE/TutoClearSe.wav",0}, // チュートリアルタスク成功音
+	{"data/SE/actionfireSe.wav",0},// 炎SE
+	{"data/SE/actionnormalSe.wav",0},// アイテムなし
+	{"data/SE/actionwaterSe.wav",0}, // 水武器
+	{"data/SE/actionspearSe.wav",0}, // 槍の武器音
+	{"data/SE/actionmetalSe.wav",0}, // 鉄の武器音
+	{"data/SE/actionharisenSe.wav",0}, // ハリセンの音
+	{"data/SE/actiontelphonSe.wav",0}, // 電柱の音
 };
 //=============================================================================
 // 初期化処理

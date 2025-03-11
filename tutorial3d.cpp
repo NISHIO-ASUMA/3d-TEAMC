@@ -35,6 +35,7 @@
 #include "craftui.h"
 #include "TutorialSupport.h"
 #include"spgauge.h"
+#include "craftrecipe.h"
 
 //*********************************************************************************************************************
 //グローバル変数
@@ -81,6 +82,9 @@ void InitTutorial3d(void)
 
 	// クラフト画面の初期化処理
 	InitCraftUI();
+
+	// レシピの初期化
+	InitCraftRecipe();
 
 	// ブロックの初期化処理
 	InitBlock();
@@ -174,6 +178,9 @@ void UninitTutorial3d(void)
 
 	// クラフト画面の終了処理
 	UninitCraftUI();
+
+	// レシピの終了処理
+	UninitCraftRecipe();
 
 	// ミニマップの終了処理
 	UninitMinMap();
@@ -336,10 +343,8 @@ void DrawTutorial3d(void)
 	// HPゲージの描画
 	DrawGauge();
 
-	Player* pPlayer = GetPlayer();
-
-	if (pPlayer->bCraft == true)
-	{
+	if (GetPlayer()->bCraft == true)
+	{// プレイヤーがクラフト可能状態なら
 		// クラフト画面の描画処理
 		DrawCraftUI();
 	}

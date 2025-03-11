@@ -572,24 +572,54 @@ void HitEnemy(int nCnt,int nDamage)
 		{
 			switch (pItem[pPlayer->ItemIdx].nType)
 			{
-			case ITEMTYPE_BAT:
-
+			case ITEMTYPE_BAT: // バット持っているとき
 				// 音楽再生
 				PlaySound(SOUND_LABEL_BAT_SE);
-
 				break;
 
-			case ITEMTYPE_HUNMER:
-
+			case ITEMTYPE_HUNMER: // ハンマー持っているとき
 				// 音楽再生
 				PlaySound(SOUND_LABEL_HAMMER_SE);
-
 				break;
-			default:
 
+			case ITEMTYPE_TORCH: // 炎持っているとき
+				// 音楽再生
+				PlaySound(SOUND_LABEL_WEPONFIRESE);
+				break;
+
+			case ITEMTYPE_KATANA: // 刀持っているとき
 				// 音楽再生
 				PlaySound(SOUND_LABEL_ACTION_SE);
+				break;
 
+			case ITEMTYPE_FISH: // 魚系統
+				// 音楽再生
+				PlaySound(SOUND_LABEL_WATERWEPON);
+				break;
+				 
+			case ITEMTYPE_SPEAR: // 槍の武器音
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SPEARWEPON);
+				break;
+
+			case ITEMTYPE_IRON: // 鉄系統の武器音
+				// 音楽再生
+				PlaySound(SOUND_LABEL_METALWEPON);
+				break;
+
+			case ITEMTYPE_HARISEN: // ハリセン武器音
+				// 音楽再生
+				PlaySound(SOUND_LABEL_HARISENWEPON);
+				break;
+
+			case ITEMTYPE_TELEPHONEPOLE: // 電柱
+				// 音楽再生
+				PlaySound(SOUND_LABEL_TELPHONWEPON);
+				break;
+
+			default: // 武器持っていない時 
+				// 音楽再生
+				PlaySound(SOUND_LABEL_NOWEPON);
 				break;
 			}
 			g_bSound = true;
@@ -603,24 +633,54 @@ void HitEnemy(int nCnt,int nDamage)
 		{
 			switch (pItem[pPlayer->ItemIdx].nType)
 			{
-			case ITEMTYPE_BAT:
-
+			case ITEMTYPE_BAT: // バット持っているとき
 				// 音楽再生
 				PlaySound(SOUND_LABEL_BAT_SE);
-
 				break;
 
-			case ITEMTYPE_HUNMER:
-
+			case ITEMTYPE_HUNMER: // ハンマー持っているとき
 				// 音楽再生
 				PlaySound(SOUND_LABEL_HAMMER_SE);
-
 				break;
-			default:
 
+			case ITEMTYPE_TORCH: // 炎持っているとき
+				// 音楽再生
+				PlaySound(SOUND_LABEL_WEPONFIRESE);
+				break;
+
+			case ITEMTYPE_KATANA: // 刀持っているとき
 				// 音楽再生
 				PlaySound(SOUND_LABEL_ACTION_SE);
+				break;
 
+			case ITEMTYPE_FISH: // 魚系統
+				// 音楽再生
+				PlaySound(SOUND_LABEL_WATERWEPON);
+				break;
+
+			case ITEMTYPE_SPEAR: // 槍の武器音
+				// 音楽再生
+				PlaySound(SOUND_LABEL_SPEARWEPON);
+				break;
+
+			case ITEMTYPE_IRON: // 鉄系統の武器音
+				// 音楽再生
+				PlaySound(SOUND_LABEL_METALWEPON);
+				break;
+
+			case ITEMTYPE_HARISEN: // ハリセン武器音
+				// 音楽再生
+				PlaySound(SOUND_LABEL_HARISENWEPON);
+				break;
+
+			case ITEMTYPE_TELEPHONEPOLE: // 電柱
+				// 音楽再生
+				PlaySound(SOUND_LABEL_TELPHONWEPON);
+				break;
+
+			default: // 武器持っていない時 
+				// 音楽再生
+				PlaySound(SOUND_LABEL_NOWEPON);
 				break;
 			}
 			g_bSound = true;
