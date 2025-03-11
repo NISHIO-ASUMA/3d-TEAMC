@@ -167,7 +167,6 @@ typedef enum
 typedef struct
 {
 	D3DXVECTOR3 pos;//位置
-	D3DXVECTOR3 posDest;
 	D3DXVECTOR3 posOld;//前回の位置
 	D3DXVECTOR3 Size;//大きさ
 	D3DXVECTOR3 rot;//向き
@@ -181,20 +180,15 @@ typedef struct
 	bool bDisp;
 	float PlayerMove;
 	MOTION Motion;
-	bool bMove;
 	PLAYERSTATE state;
 	int nCounterState;
 	int nLife;
 	int nMaxLife;
-
 	D3DXVECTOR3 SwordOffpos;
-	D3DXVECTOR3 Swordpos, Swordrot;
 	D3DXMATRIX SwordMtx;//剣先につけるワールドマトリックスのオフセット
 	PLAYERHOLDTATE HandState;
 	int nCounterAction;
 	int PlayerType;
-	bool bImpactCollision;
-	bool bJumpAttack;
 	float fShadowSize;//影の大きさ
 	int Combostate; // コンボの状態をもつ変数 
 	int ItemIdx;    // アイテムのインデックス保管用変数

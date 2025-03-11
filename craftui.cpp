@@ -12,6 +12,7 @@
 #include "player.h"
 #include "craftui.h"
 #include "icon.h"
+#include "craftrecipe.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -226,7 +227,7 @@ void UpdateCraftUI(void)
 
 	for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
 	{
-		if (!g_CraftUI[nCnt].bUse)
+		if (g_CraftUI[nCnt].bUse == false)
 		{
 			continue;
 		}
@@ -285,6 +286,9 @@ void UpdateCraftUI(void)
 
 		//pVtx += 4;
 	}
+
+	UpdateCraftRecipe();
+
 	////頂点ロック解除
 	//g_pVtxBuffItemIcon->Unlock();
 }
@@ -334,7 +338,7 @@ void DrawCraftUI(void)
 		}
 	}
 
-	//DrawIcon();
+	DrawCraftRecipe();
 }
 //==============================================================================================================
 // UIの設定処理
