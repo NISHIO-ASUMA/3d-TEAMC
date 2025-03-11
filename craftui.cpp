@@ -190,13 +190,6 @@ void UninitCraftUI(void)
 		}
 	}
 
-	//頂点バッファの破棄
-	if (g_pVtxBuffCraftUI != NULL)
-	{
-		g_pVtxBuffCraftUI->Release();
-		g_pVtxBuffCraftUI = NULL;
-	}
-
 	//テクスチャの破棄
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
@@ -205,6 +198,13 @@ void UninitCraftUI(void)
 			g_pTextureItemIcon[nCnt]->Release();
 			g_pTextureItemIcon[nCnt] = NULL;
 		}
+	}
+
+	//頂点バッファの破棄
+	if (g_pVtxBuffCraftUI != NULL)
+	{
+		g_pVtxBuffCraftUI->Release();
+		g_pVtxBuffCraftUI = NULL;
 	}
 
 	//頂点バッファの破棄

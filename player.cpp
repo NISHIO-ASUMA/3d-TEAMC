@@ -56,6 +56,8 @@
 #define AVOID_MOVE (18.0f)      // 回避の移動量
 #define DAMAGEBLOW (20.0f)      // ダメージを受けた時の吹き飛び量
 #define BLOWCOUNT (5)           // 吹っ飛びカウント
+#define PLAYER_DAMAGE (100)     // プレイヤーの攻撃力(基準)
+#define PLAYER_SPEED (3.5f)     // プレイヤーの移動速度
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -86,6 +88,7 @@ void UpdatePlayerAvoid(void);																	 // プレイヤーの回避処理
 D3DXVECTOR3 SetMotionMoveAngle(void);                                                            // モーションのアングルの設定
 void SetWeponEffect(void);                                                                       // 武器ごとのエフェクト処理
 bool IsDamageAction(void);                                                                       // ダメージアクションかどうか
+void ChangeItemParam(int nHaveIdx, int nType);													 // アイテムの変更時のパラメーター設定
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -120,7 +123,6 @@ void InitPlayer(void)
 	g_player.nMaxLife = PLAYERLIFE;									// 最大体力
 	g_player.state = PLAYERSTATE_NORMAL;							// 状態
 	g_player.Motion.bLoopMotion = true;								// モーションのループ
-	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// 剣の角度
 	g_player.Motion.nKey = 0;										// キー数
 	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;				// モーションの種類
 	g_player.SwordOffpos.x = 0.0f;									// 剣のオフセットの座標x
@@ -130,21 +132,21 @@ void InitPlayer(void)
 	g_nCounterState = 0;											// 状態カウンター
 	g_AttackState = 0;												// 攻撃状態のカウンター
 	bNohand = false;												// 物を投げたか投げてないか
-	g_player.speed = 1.0f;											// 足の速さ
-	g_player.nDamage = 100;											// 攻撃力
+	g_player.speed = PLAYER_SPEED;									// 足の速さ
+	g_player.nDamage = PLAYER_DAMAGE;								// 攻撃力
 	bUsePad = false;												// パッドを使っているか
-	g_player.nStockDamage = 100;									// ダメージのストック
-	g_player.fStockSpeed = 3.5f;									// スピードのストック
+	g_player.nStockDamage = PLAYER_DAMAGE;							// ダメージのストック
+	g_player.fStockSpeed = PLAYER_SPEED;							// スピードのストック
 	g_player.FeverMode = false;										// フィーバーモードかどうか
 	g_player.SpMode = false;										// スペシャルを発動できるかどうか
 	g_player.WeponMotion = MOTION_KATANA;							// 武器ごとのモーション
 	g_player.AttackSp = false;										// スペシャル攻撃中かどうか
 	g_player.bLandingOBB = false;									// OBBに乗ってるか
-	nCntMotion = 0;													// モーションのカウント
-	nKey = 0;														// キーのカウント
+	nCntMotion = NULL;												// モーションのカウント
+	nKey = NULL;													// キーのカウント
 	g_player.bCraft = false;										// クラフト中かどうか
 	g_player.nElement = WEPONELEMENT_STANDARD;						// 属性の種類
-	g_EaseCount = 0;												// イージングのカウント
+	g_EaseCount = NULL;												// イージングのカウント
 	g_player.nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f, 1.0f); // 影を設定
 	g_player.nIdxMap = SetMiniMap(g_player.pos, MINIMAPTEX_PLAYER); // ミニマップにプレイヤーを設定
 	g_player.HandState = PLAYERHOLD_NO;								// 手の状態
@@ -152,9 +154,9 @@ void InitPlayer(void)
 	g_player.AttackState = PLAYERATTACKSTATE_NO;                    // 攻撃の状態
 	g_player.nCounterAttack = 0;                                    // 攻撃状態のカウンター
 	g_player.avoidMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);             // 回避の移動量
-	g_player.ItemIdx = 0;											// アイテムのインデックスの初期化
-	g_player.BlowCounter = 0;										// 吹っ飛ぶまでのカウンター
-	g_player.AttackerIdx = 0;										// 攻撃してきた敵のインデックス
+	g_player.ItemIdx = NULL;										// アイテムのインデックスの初期化
+	g_player.BlowCounter = NULL;									// 吹っ飛ぶまでのカウンター
+	g_player.AttackerIdx = NULL;									// 攻撃してきた敵のインデックス
 	g_player.bstiffness = false;									// ダメージの硬直
 
 	// アイテム分回す
@@ -1363,6 +1365,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 	Billboard* pBillboard = GetBillBoard();
 
+	TEXTURE_INFO* ItemTexture = GetItemOrigin();
+
 	bool bCollision = false; // 当たっているかどうか
 
 	// ダメージ状態かを判定
@@ -1405,7 +1409,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 			if (pItem[nIdx].nType == ITEMTYPE_ONIGIRI)
 			{
-				D3DXVECTOR3 pos(g_player.Motion.aModel[1].mtxWorld._41, g_player.Motion.aModel[1].mtxWorld._42, g_player.Motion.aModel[1].mtxWorld._43);
+				// モデルの位置を代入
+				D3DXVECTOR3 pos = SetMtxConversion(g_player.Motion.aModel[1].mtxWorld);
 
 				// シリンダーをセット
 				g_player.nIdxCylinder = SetMeshCylinder(D3DXVECTOR3(g_player.pos.x, g_player.pos.y, g_player.pos.z),1,60,40.0f,D3DCOLOR_RGBA(59,255,0,255),16,1,2.0f,12.0f);
@@ -1454,15 +1459,14 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				g_player.Itembreak[g_player.ItemIdx] = false;
 			}
 
+			// 武器を持っていたら
 			if (g_player.Motion.nNumModel == MAX_MODEL)
 			{
-				pItem[g_player.ItemIdx].bUse = true;
-				pItem[g_player.ItemIdx].pos.x = g_player.pos.x + (float)(rand() % 50 - 25.0f);
-				pItem[g_player.ItemIdx].pos.z = g_player.pos.z + (float)(rand() % 50 - 25.0f);
-				pItem[g_player.ItemIdx].state = ITEMSTATE_RELEASE;
-				pItem[g_player.ItemIdx].nCounterState = 60;
+				// アイテム変更時のパラメータ
+				ChangeItemParam(g_player.ItemIdx, pItem[g_player.ItemIdx].nType);
 			}
 
+			// 状態をホールドにする
 			pItem[nIdx].state = ITEMSTATE_HOLD;
 
 			// アイテムを変更する
@@ -3339,4 +3343,20 @@ void SetWeponEffect(void)
 bool IsDamageAction(void)
 {
 	return false;
+}
+//===============================================================================================================
+// アイテムの変更のパラメータ表示
+//===============================================================================================================
+void ChangeItemParam(int nHaveIdx,int nType)
+{
+	Item* pItem = GetItem();
+
+	TEXTURE_INFO* ItemTexture = GetItemOrigin();
+
+	pItem[nHaveIdx].bUse = true;
+	pItem[nHaveIdx].ItemTex[nType] = ItemTexture[nType];
+	pItem[nHaveIdx].pos.x = g_player.pos.x + (float)(rand() % 50 - 25.0f);
+	pItem[nHaveIdx].pos.z = g_player.pos.z + (float)(rand() % 50 - 25.0f);
+	pItem[nHaveIdx].state = ITEMSTATE_RELEASE;
+	pItem[nHaveIdx].nCounterState = 60;
 }
