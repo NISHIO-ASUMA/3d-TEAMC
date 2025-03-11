@@ -16,6 +16,7 @@
 #include "gameui.h"
 #include "count.h"
 #include "sound.h"
+#include "time.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -87,6 +88,16 @@ void UpdateEvent(void)
 	{
 		// インクリメント
 		g_nStartTime++;
+	}
+
+	int Minute = GetTimeMinute();
+	int Second = GetTimeSecond();
+
+	// 10秒いかだったら
+	if (Minute <= 0 && Second <= 10)
+	{
+		// 関数を抜ける
+		return;
 	}
 
 	// イベントの場所分回す

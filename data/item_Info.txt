@@ -177,3 +177,8 @@ ITEMSET
 	DURABILITY = 50    # アイテムの耐久力
 END_ITEMSET
 
+ITEMSET		
+	ITEMTYPE = 35	    # アイテムの種類<< ゴルフハンマー >>
+	DURABILITY = 150    # アイテムの耐久力
+END_ITEMSET
+

@@ -54,6 +54,7 @@ typedef enum
 	WEPONTYPE_SPEAR,		 // 槍
 	WEPONTYPE_MANDORIN,		 // マンドリン
 	WEPONTYPE_BONE,			 // 骨単体
+	WEPONTYPE_GOLFHUNMER,	 // ゴルフハンマー
 	WEPONTYPE_MAX
 }WEPON_TYPE;
 
@@ -109,6 +110,7 @@ static const char* ICON_TEXTURE[WEPONTYPE_MAX] =
 	"data\\TEXTURE\\spear.png",			// 槍
 	"data\\TEXTURE\\mandolin.png",			// マンドリン
 	"data\\TEXTURE\\bone.png",			// 骨
+	"data\\TEXTURE\\golfhunme.png",		// ゴルフハンマー
 };
 
 //**************************************************************************************************************

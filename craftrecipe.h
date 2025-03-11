@@ -18,6 +18,16 @@
 //**************************************************************************************************************
 
 //**************************************************************************************************************
+// クラフトレシピの状態
+//**************************************************************************************************************
+typedef enum
+{
+	RECIPEUISTATE_NONE = 0,
+	RECIPEUISTATE_SET,
+	RECIPEUISTATE_MAX
+}RECIPEUISTATE;
+
+//**************************************************************************************************************
 // クラフトレシピのテクスチャの種類
 //**************************************************************************************************************
 typedef enum
@@ -41,7 +51,7 @@ static const char* RECIPE_TEXTURE[RECIPETYPE_MAX] =
 	"data\\TEXTURE\\ui_Creat_fish.png",
 	"data\\TEXTURE\\ui_Creat_hex.png",
 	"data\\TEXTURE\\ui_Creat_hunmer.png",
-	"data\\TEXTURE\\ui_Creat_katana.png",
+	"data\\TEXTURE\\ui_Creat_katana.jpg",
 	"data\\TEXTURE\\ui_Creat_spear.png",
 	"data\\TEXTURE\\ui_Creat_torso.png",
 };
@@ -55,6 +65,7 @@ typedef struct
 	int nType;            // 種類
 	float fWidth,fHeight; // 横幅、高さ
 	bool bUse;            // 使用状態
+	int state;            // 状態
 }CraftRecipe;
 
 //**************************************************************************************************************
@@ -64,6 +75,6 @@ void InitCraftRecipe(void);						// クラフトレシピの初期化処理
 void UninitCraftRecipe(void);					// クラフトレシピの終了処理
 void UpdateCraftRecipe(void);					// クラフトレシピの更新処理
 void DrawCraftRecipe(void);						// クラフトレシピの描画処理
-void SetCraftRecipe(D3DXVECTOR3 pos,int nType,float fWidth,float fHeight); // クラフトレシピの設定処理
+void SetCraftRecipe(D3DXVECTOR3 pos, int nType0, int nType1, float fWidth, float fHeight); // クラフトレシピの設定処理
 void EnableRecipeUI(int nType,bool bUse); // クラフトレシピの有効無効処理
 #endif
