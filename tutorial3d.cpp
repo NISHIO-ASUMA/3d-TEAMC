@@ -113,18 +113,10 @@ void InitTutorial3d(void)
 	LoadEdit();
 	LoadEdit2d();
 
-	//// ステージを読み込む
-	//tutoload();
-
-	// ブロックをセット
-	//SetBlock(D3DXVECTOR3(-70.0f, 0.0f, 120.0f),D3DXVECTOR3(0.0f,D3DX_PI * 0.5f,0.0f), 19);
-	//SetBlock(D3DXVECTOR3(280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 20);
-	//SetBlock(D3DXVECTOR3(-280.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 21);
-	//SetBlock(D3DXVECTOR3(-115.0f, 0.0f, -230.0f), D3DXVECTOR3(0.0f, -12.0f, 0.0f), 47);
-
 	// アイテムをセット
-	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 29);
-	
+	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 0); // バット
+	SetItem(D3DXVECTOR3(-10.0f, 0.0f, 120.0f), 3); // 石
+
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(640.0f, 500.0f, 0.0f), UITYPE_TUTORIAL, 600.0f, 40.0f,false, 0);
 	SetGameUI(D3DXVECTOR3(70.0f, 640.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, false, 0);
