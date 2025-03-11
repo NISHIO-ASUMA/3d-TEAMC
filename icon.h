@@ -109,7 +109,6 @@ static const char* ICON_TEXTURE[WEPONTYPE_MAX] =
 	"data\\TEXTURE\\spear.png",			// ëÑ
 	"data\\TEXTURE\\mandolin.png",			// É}ÉìÉhÉäÉì
 	"data\\TEXTURE\\bone.png",			// çú
-
 };
 
 //**************************************************************************************************************

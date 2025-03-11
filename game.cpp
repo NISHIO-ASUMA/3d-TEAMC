@@ -54,6 +54,7 @@
 #include "bosslife.h"
 #include "event.h"
 #include "count.h"
+#include "craftrecipe.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -149,6 +150,9 @@ void InitGame(void)
 
 	// クラフト画面の初期化処理
 	InitCraftUI();
+
+	// クラフト画面のレシピの初期化処理
+	InitCraftRecipe();
 
 	// ビルボードの初期化処理
 	InitBillboard();
@@ -305,6 +309,9 @@ void UninitGame(void)
 
 	// クラフト画面の終了処理
 	UninitCraftUI();
+
+	// クラフト画面のレシピの終了処理
+	UninitCraftRecipe();
 
 	// 煙の終了処理
 	UninitExplosion();
