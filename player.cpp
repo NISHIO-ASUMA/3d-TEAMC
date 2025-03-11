@@ -3176,6 +3176,9 @@ void UpdatePlayerAvoid(void)
 	// ƒ‚[ƒVƒ‡ƒ“‚ª‰ñ”ğ‚¶‚á‚È‚¢
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)
 	{
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_AVOIDSE);
+
 		g_player.bstiffness = false;
 		g_player.avoidMove = SetMotionMoveAngle();
 

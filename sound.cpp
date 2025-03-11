@@ -53,6 +53,8 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/powerup.wav",0},  // フィーバー開始SE
 	{"data/SE/wepon_breakse.wav",0}, // 武器破壊SE
 	{"data/SE/eventSe.wav",0}, // イベント発生SE
+	{"data/SE/avoidSe.wav",0}, // 回避音
+	{"data/SE/TutoClearSe.wav",0}, // チュートリアルタスク成功音
 };
 //=============================================================================
 // 初期化処理

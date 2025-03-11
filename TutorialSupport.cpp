@@ -45,8 +45,8 @@ static const char* TUTOTEX[TYPE_MAX] =
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_3.5.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_5.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_6.png",
+	"data\\TEXTURE\\tutorial_Temporary\\tuto_key_5.5.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_key_7.png",
-	"data\\TEXTURE\\UI_craft.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_8.png",
 };
 
@@ -208,24 +208,24 @@ void UpdateManager(void)
 
 	if (nSteps == 0 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_MOVE && fALv2 == 1.0f)
 	{// Å‰
-		PlaySound(SOUND_LABEL_ENTER_SE);
+		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
 	else if (nSteps == 1 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_JUMP && fALv2 == 1.0f)
 	{// 2”Ô–Ú
-		PlaySound(SOUND_LABEL_ENTER_SE);
+		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
 	else if (nSteps == 2 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_AVOID && fALv2 == 1.0f)
 	{// 3”Ô–Ú
-		PlaySound(SOUND_LABEL_ENTER_SE);
+		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
 	else if (nSteps == 3 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION && fALv2 == 1.0f)
 	{// 4”Ô–Ú
 		if (pPlayer->AttackSp == false)
 		{
-			PlaySound(SOUND_LABEL_ENTER_SE);
+			PlaySound(SOUND_LABEL_TUTOCLEARSE);
 			AddSpgauge(300.0f);
 			bAmove = -0.01f;
 		}
@@ -234,30 +234,30 @@ void UpdateManager(void)
 	{// 5”Ô–Ú
 		if (pPlayer->AttackSp == true)
 		{
-			PlaySound(SOUND_LABEL_ENTER_SE);
+			PlaySound(SOUND_LABEL_TUTOCLEARSE);
 			bAmove = -0.01f;
 		}
 	}
 	else if (nSteps == 5 && pPlayer->Motion.nNumModel == 16 && fALv2 == 1.0f)
 	{// 6”Ô–Ú
-		PlaySound(SOUND_LABEL_ENTER_SE);
+		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
 	else if (nSteps == 6 && pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && fALv2 == 1.0f)
 	{// 7”Ô–Ú
-		PlaySound(SOUND_LABEL_ENTER_SE);
+		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
 	else if (nSteps == 7 && fALv2 == 1.0f)
 	{// 8”Ô–Ú
 		if (pItem[pPlayer->StockItemIdx].nType == ITEMTYPE_STONE && pItem[pPlayer->ItemIdx].nType == ITEMTYPE_BAT)
 		{
-			PlaySound(SOUND_LABEL_ENTER_SE);
+			PlaySound(SOUND_LABEL_TUTOCLEARSE);
 			bAmove = -0.01f;
 		}
 		else if (pItem[pPlayer->StockItemIdx].nType == ITEMTYPE_BAT && pItem[pPlayer->ItemIdx].nType == ITEMTYPE_STONE)
 		{
-			PlaySound(SOUND_LABEL_ENTER_SE);
+			PlaySound(SOUND_LABEL_TUTOCLEARSE);
 			bAmove = -0.01f;
 		}
 	}
@@ -265,7 +265,7 @@ void UpdateManager(void)
 	{// 9”Ô–Ú
 		if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_STONEBAT)
 		{
-			PlaySound(SOUND_LABEL_ENTER_SE);
+			PlaySound(SOUND_LABEL_TUTOCLEARSE);
 			bAmove = -0.01f;
 		}
 	}
