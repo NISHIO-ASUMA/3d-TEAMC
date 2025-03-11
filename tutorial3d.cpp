@@ -268,6 +268,9 @@ void UpdateTutorial3d(void)
 	// ビルボードの更新
 	UpdateBillboard();
 
+	// HPゲージの更新
+	UpdateGauge();
+
 	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_START)==true))
 	{//Enterキー or Startボタンが押された
 		//ゲーム画面へ
@@ -329,6 +332,9 @@ void DrawTutorial3d(void)
 
 	// チュートリアル補助の描画
 	DrawManager();
+
+	// HPゲージの描画
+	DrawGauge();
 
 	Player* pPlayer = GetPlayer();
 
