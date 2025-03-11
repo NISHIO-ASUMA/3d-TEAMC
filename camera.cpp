@@ -153,6 +153,8 @@ void UpdateCamera(void)
 		SetCameraAnim();
 	}
 
+#ifdef _DEBUG
+
 	// 編集モードをオンにする
 	if (KeyboardTrigger(DIK_F6) == true && g_camera.bEditMode == false)
 	{
@@ -163,6 +165,8 @@ void UpdateCamera(void)
 	{
 		g_camera.bEditMode = false;
 	}
+
+#endif // _DEBUG
 
 	// カメラのアニメーションの更新処理
 	UpdateCameraAnim();
@@ -1080,15 +1084,19 @@ void UpdateEventCamera(void)
 	switch (Eventtype)
 	{
 	case 0:
+		// カメラを向ける場所
 		EventCameraAngle(EVENTPOS_ONE);
 		break;
 	case 1:
+		// カメラを向ける場所
 		EventCameraAngle(EVENTPOS_TWO);
 		break;
 	case 2:
+		// カメラを向ける場所
 		EventCameraAngle(EVENTPOS_THREE);
 		break;
 	case 3:
+		// カメラを向ける場所
 		EventCameraAngle(EVENTPOS_FOUR);
 		break;
 	default:

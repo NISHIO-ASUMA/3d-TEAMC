@@ -921,6 +921,7 @@ void CraftItem(void)
 		EnableCraftIcon(nCnt, ITEMTYPE_FISH, ITEMTYPE_SURFBOARD, ITEMTYPE_SURFBOARDFISH);
 		EnableCraftIcon(nCnt, ITEMTYPE_HEX, ITEMTYPE_MANDORIN, ITEMTYPE_HEXMANDOLIN);
 		EnableCraftIcon(nCnt, ITEMTYPE_BONE, ITEMTYPE_SPEAR, ITEMTYPE_BONESPEAR);
+		EnableCraftIcon(nCnt, ITEMTYPE_GOLF, ITEMTYPE_HUNMER, ITEMTYPE_GOLFHUNMER);
 
 	}
 }
@@ -1251,6 +1252,16 @@ void UpdateCraftItemParam(int nCnt)
 
 			// ステータスの変更
 			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+		}
+
+		// ゴルフハンマーの材料がそろった
+		if (CheckMixItemMat(nCnt, ITEMTYPE_GOLF, ITEMTYPE_HUNMER, pPlayer->ItemIdx) == true)
+		{
+			// クラフト後のアイテムの処理
+			CraftMixItem(nCnt, ITEMTYPE_GOLFHUNMER, MOTION_BIGWEPON);
+
+			// ステータスの変更
+			StatusChange(2.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 180);
 		}
 
 	}

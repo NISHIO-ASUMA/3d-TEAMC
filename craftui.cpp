@@ -279,6 +279,9 @@ void UpdateCraftUI(void)
 			case WEPONTYPE_BONESPEAR:
 				g_MixUI[nCnt].bUse = false;
 				break;
+			case WEPONTYPE_GOLFHUNMER:
+				g_MixUI[nCnt].bUse = false;
+				break;
 			default:
 				break;
 			}
@@ -463,6 +466,10 @@ void SetMixItemUI(int nCnt)
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_BONESPEAR] && g_MixUI[nCnt].bUse == false)
 		{
 			SetMixUI(UIPOTISION, ITEMTYPE_BONESPEAR, 80.0f, 80.0f, 0);
+		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_GOLFHUNMER] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(UIPOTISION, ITEMTYPE_GOLFHUNMER, 80.0f, 80.0f, 0);
 		}
 
 	}

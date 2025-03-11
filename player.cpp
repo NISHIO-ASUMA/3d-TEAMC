@@ -3142,7 +3142,10 @@ void SetPlayerWepon(int nType,float SwordLength)
 		MotionChange(MOTION_ONE_HAND, 0);
 		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
 		break;
-
+	case ITEMTYPE_GOLFHUNMER:
+		MotionChange(MOTION_BIGWEPON, 0);
+		StatusChange(2.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 180);
+		break;
 	default:
 		break;
 	}
