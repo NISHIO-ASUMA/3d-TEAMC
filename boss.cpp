@@ -63,7 +63,7 @@ void SetRasuAttack(int nCntBoss);													// ボスの突進攻撃の設定
 void SetDoubleRasuAttack(int nCntBoss);                                             // ボスの二回突進してくる攻撃処理
 void UpdateAgentBoss(int nCntBoss);                                                 // ボスの追跡の更新処理
 void DeathMotionContlloer(int nCntBoss);                                            // ボスの死亡モーションの処理
-void EndEventBossState(int nCntBoss,D3DXMATERIAL* pMat);												// イベントが終わった後にボスを消す処理
+void EndEventBossState(int nCntBoss,D3DXMATERIAL* pMat);							// イベントが終わった後にボスを消す処理
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -495,6 +495,8 @@ void DrawBoss(void)
 
 				if (g_Boss[nCnt].bTransparent == true)
 				{
+					D3DXMATERIAL mat = pMat[nCntMat];
+
 					// マテリアルの設定
 					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 				}
@@ -506,10 +508,11 @@ void DrawBoss(void)
 				g_Boss[nCnt].Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 			}
 
-			// マテリアルの設定
-			pDevice->SetMaterial(&matDef);
 		}
 	}
+
+	// マテリアルをもとに戻す
+	pDevice->SetMaterial(&matDef);
 
 	//DrawBossLife();
 }
@@ -1788,6 +1791,21 @@ void DeathMotionContlloer(int nCntBoss)
 //========================================================================================================
 void EndEventBossState(int nCntBoss,D3DXMATERIAL *pMat)
 {
+	// 保存用マテリアル
+	D3DXMATERIAL saveMat = {};
+
+	// 最初に通ったかどうか
+	static bool bFirstSave = true;
+
+	// 最初だったら
+	if (bFirstSave == true)
+	{
+		// 二回目を通さない
+		bFirstSave = false;
+
+		// マテリアルを保存
+		saveMat = *pMat;
+	}
 	// イベントが終わった
 	if (EnableEvent() == false)
 	{
@@ -1821,8 +1839,11 @@ void EndEventBossState(int nCntBoss,D3DXMATERIAL *pMat)
 			// 透明化を初期化
 			g_Boss[nCntBoss].bTransparent = false;
 
-			// 透明度をもとに戻す
-			pMat->MatD3D.Diffuse.a = 1.0f;
+			// マテリアルをもとに戻す
+			pMat->MatD3D.Diffuse.a = saveMat.MatD3D.Diffuse.a;
+
+			// 最初に戻す
+			bFirstSave = true;
 		}
 	}
 }

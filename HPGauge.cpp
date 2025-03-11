@@ -31,7 +31,6 @@ LPDIRECT3DTEXTURE9 g_pTexture_Gauge = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_RedGauge = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Frame = NULL;
 
-LPDIRECT3DTEXTURE9 g_pTexture_Fevgauge = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Fevframe = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGauge = NULL;
 
@@ -63,7 +62,7 @@ void InitGauge(void)
 
 	// フィーバーのフレームとゲージのテクスチャ
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\feverframe2.png", &g_pTexture_Fevframe);
-	//D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_gage_2.png", &g_pTexture_Fevgauge);
+	
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * (NUM_HPGAUGE * NUM_FEVERGAUGE), D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 	VERTEX_2D* pVtx;
 
@@ -209,12 +208,6 @@ void UninitGauge(void)
 	{
 		g_pTexture_Fevframe->Release();
 		g_pTexture_Fevframe = NULL;
-	}
-	// テクスチャの破棄
-	if (g_pTexture_Fevgauge != NULL)
-	{
-		g_pTexture_Fevgauge->Release();
-		g_pTexture_Fevgauge = NULL;
 	}
 
 	// 頂点バッファの破棄
