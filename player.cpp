@@ -1388,7 +1388,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 	// 範囲内に入った
 	if (CanPickUp == true)
-	{		
+	{	
+		// アイテムの状態が普通だったら
 		if (pItem[nIdx].state == ITEMSTATE_NORMAL)
 		{
 			int nIdxBillboard = pItem[nIdx].nIdxBillboardCount;
@@ -1427,7 +1428,10 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 					2.0f, 4, 40, 20, 10.0f, 40.0f,
 					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 
+				// Hpを増やす
 				g_player.nLife += HEAL_VALUE;
+
+				// アイテムを使用状態にする
 				pItem[nIdx].bUse = false;
 
 				// 関数を抜ける

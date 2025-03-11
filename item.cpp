@@ -1007,8 +1007,9 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 
 	// アイテムの見た目を変える
 	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem];
-	g_Item[pPlayer->ItemIdx].durability = g_TexItem[MixItem].durability;
-	g_Item[pPlayer->ItemIdx].Maxdurability = g_TexItem[MixItem].durability;
+
+	//g_Item[pPlayer->ItemIdx].durability = g_TexItem[MixItem].durability;
+	//g_Item[pPlayer->ItemIdx].Maxdurability = g_TexItem[MixItem].Maxdurability;
 
 	// 手に持ってるアイテムの種類を石バットにする
 	g_Item[pPlayer->ItemIdx].nType = MixItem;
@@ -1020,9 +1021,20 @@ void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
 {
 	Player* pPlayer = GetPlayer();
 
-	// 石バットの素材が範囲内にある時
-	if (((g_Item[pPlayer->StockItemIdx].nType == Item1 && g_Item[pPlayer->ItemIdx].nType == Item2) || (g_Item[pPlayer->ItemIdx].nType == Item1 && g_Item[pPlayer->StockItemIdx].nType == Item2)) &&
-		g_Item[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD)
+	// クラフトの組み合わせ1を持っているかを判定
+	const bool HaveCraftItemSet0 = g_Item[pPlayer->StockItemIdx].nType == Item1 && g_Item[pPlayer->ItemIdx].nType == Item2;
+
+	// クラフトの組み合わせ2を持っているかを判定
+	const bool HaveCraftItemSet1 = g_Item[pPlayer->ItemIdx].nType == Item1 && g_Item[pPlayer->StockItemIdx].nType == Item2;
+
+	// アイテムがストックされている、持っているか判定
+	const bool is_CanCraftState = g_Item[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD;
+
+	// クラフトのアイコンを表示できるかを判定
+	const bool Cancraft = (HaveCraftItemSet0 || HaveCraftItemSet1) && is_CanCraftState;
+
+	// クラフトのアイコンを表示できる
+	if (Cancraft == true)
 	{
 		// アイコンを表示する
 		g_Item[nCntItem].bMixItem[MixItem] = true;
