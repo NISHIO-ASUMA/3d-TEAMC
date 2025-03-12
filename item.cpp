@@ -891,8 +891,11 @@ void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
 	// アイテムがストックされている、持っているか判定
 	const bool is_CanCraftState = g_Item[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD;
 
+	// アイテムがストックされている、持っているか判定
+	const bool is_CanCraftState2 = g_Item[pPlayer->ItemIdx].state == ITEMSTATE_STOCK && g_Item[pPlayer->StockItemIdx].state == ITEMSTATE_HOLD;
+
 	// クラフトのアイコンを表示できるかを判定
-	const bool Cancraft = (HaveCraftItemSet0 || HaveCraftItemSet1) && is_CanCraftState;
+	const bool Cancraft = (HaveCraftItemSet0 || HaveCraftItemSet1) && (is_CanCraftState || is_CanCraftState2);
 
 	// クラフトのアイコンを表示できる
 	if (Cancraft == true)

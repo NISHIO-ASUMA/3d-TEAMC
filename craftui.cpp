@@ -471,6 +471,10 @@ void SetMixItemUI(int nCnt)
 		{
 			SetMixUI(UIPOTISION, ITEMTYPE_GOLFHUNMER, 80.0f, 80.0f, 0);
 		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_SURFBOARDFISH] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(UIPOTISION, ITEMTYPE_SURFBOARDFISH, 80.0f, 80.0f, 0);
+		}
 
 	}
 }
