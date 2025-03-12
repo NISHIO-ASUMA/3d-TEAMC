@@ -65,6 +65,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/actionmusicSe.wav",0},  // マンドリン音
 	{"data/SE/actioniceSe.wav",0},    // 氷の音
 	{"data/SE/liferecovery.wav",0},   // 回復音
+	{"data/SE/itemthrowSe.wav",0},    // 投げアイテム音
 };
 //=============================================================================
 // 初期化処理

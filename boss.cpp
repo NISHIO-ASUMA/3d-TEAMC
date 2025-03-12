@@ -632,57 +632,24 @@ void HitBoss(int nCntBoss,int nDamage)
 			}
 		}
 
-		switch (pItem[pPlayer->ItemIdx].nType)
-		{
-		case ITEMTYPE_BAT:
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_BAT_SE);
+		// 通常武器が当たった時のサウンド
+		SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
 
-			break;
+		// 合成武器当たった時のサウンド
+		SetCreateWeponSound(pItem[pPlayer->ItemIdx].nType);
 
-		case ITEMTYPE_HUNMER:
-
-			// 音楽再生
-			PlaySound(SOUND_LABEL_HAMMER_SE);
-
-			break;
-		default:
-
-			// 音楽再生
-			PlaySound(SOUND_LABEL_ACTION_SE);
-
-			break;
-		}
 		return;
 	}
 	else
 	{
 		HitBossAbnormalCondition(nCntBoss);
 
-		// サウンドのせってい
-		switch (pItem[pPlayer->ItemIdx].nType)
-		{
-		case ITEMTYPE_BAT:
+		// 通常武器が当たった時のサウンド
+		SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_BAT_SE);
-
-			break;
-
-		case ITEMTYPE_HUNMER:
-
-			// 音楽再生
-			PlaySound(SOUND_LABEL_HAMMER_SE);
-
-			break;
-		default:
-
-			// 音楽再生
-			PlaySound(SOUND_LABEL_ACTION_SE);
-
-			break;
-		}
+		// 合成武器当たった時のサウンド
+		SetCreateWeponSound(pItem[pPlayer->ItemIdx].nType);
 
 		AddFever(10.0f);		// フィーバーポイントを取得
 

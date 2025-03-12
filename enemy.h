@@ -114,4 +114,7 @@ bool CollisionView(D3DXVECTOR3* pPos, D3DXVECTOR3* pRot, float fRange, float vie
 float SetAngle(D3DXVECTOR3* pRot, D3DXVECTOR3* pPos);
 //bool CollisionLine(D3DXVECTOR3* pFirstPos, D3DXVECTOR3* pEndPos,float fRadius); // 線と球の当たり判定
 int GetNumKill(void); // キル数
+void SetSoundWepon(int nType);									  // 武器が敵に当たった時の音の設定処理
+void SetCreateWeponSound(int nType);							  // 合成武器が当たった時のサウンド設定処理
+
 #endif
