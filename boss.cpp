@@ -1349,6 +1349,10 @@ void UpdateAbnormalCondition(int nCntBoss)
 	// 状態異常氷の処理
 	if (SetAbnormalCondition(2, 60, 0, nCntBoss) == true)
 	{
+		if (g_Boss[nCntBoss].nStateCount[2] % 2 == 0)
+		{
+			g_Boss[nCntBoss].Motion.nCountMotion--;
+		}
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
 			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
 			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -1583,8 +1587,16 @@ void UpdateAgentBoss(int nCntBoss)
 		D3DXVec3Normalize(&Dest, &Dest);
 
 		// 移動量に代入
-		g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed;
-		g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed;
+		if (g_Boss[nCntBoss].nStateCount[2] > 0)
+		{
+			g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed / 2.0f;
+			g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed / 2.0f;
+		}
+		else
+		{
+			g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed;
+			g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed;
+		}
 	}
 	//else
 	//{
@@ -1699,7 +1711,7 @@ void HitBossAbnormalCondition(int nCntBoss)
 		break;
 	case ITEMTYPE_HEXMANDOLIN:
 		//ダークハープなら確率で即死効果を与える
-		if (rand() % 40 == 0)
+		if (rand() % 32 == 0)
 		{
 			HitBoss(nCntBoss, 99999);
 		}
