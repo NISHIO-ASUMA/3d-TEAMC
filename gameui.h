@@ -54,7 +54,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\tutoirial005.png",
 	"data\\TEXTURE\\ui_weponbreak.png",
 	"data\\TEXTURE\\ui_event.png",
-	"data\\TEXTURE\\SP_Key.png",
+	"data\\TEXTURE\\SP_Key_1.png",
 };
 
 //**************************************************************************************************************

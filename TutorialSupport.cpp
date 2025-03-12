@@ -30,6 +30,7 @@ typedef enum
 	TYPE_7,     // 合成
 	TYPE_8,     // 
 	TYPE_9,		// 自由操作
+	OK_MARK,
 	TYPE_MAX
 }TYPE;
 
@@ -48,6 +49,7 @@ static const char* TUTOTEX[TYPE_MAX] =
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_key_5.5.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_key_7.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_8.png",
+	"data\\TEXTURE\\OKMark.png",
 };
 
 //**************************************************************************************************************
@@ -92,7 +94,7 @@ void InitManager(void)
 	}
 
 	// 頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4, 
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 8, 
 		D3DUSAGE_WRITEONLY, 
 		FVF_VERTEX_2D, 
 		D3DPOOL_MANAGED, 
@@ -110,6 +112,33 @@ void InitManager(void)
 	pVtx[1].pos = D3DXVECTOR3(1250.0f + fPlusX, 70.0f, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 240.0f, 0.0f);
 	pVtx[3].pos = D3DXVECTOR3(1250.0f + fPlusX, 240.0f, 0.0f);
+
+	// rhwの設定
+	pVtx[0].rhw = 1.0f;
+	pVtx[1].rhw = 1.0f;
+	pVtx[2].rhw = 1.0f;
+	pVtx[3].rhw = 1.0f;
+
+	// 頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+
+	// テクスチャ座標の設定
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//ここからは〇の頂点バッファ
+	pVtx += 4;
+
+	// 頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(950.0f + fPlusX, 70.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(1000.0f + fPlusX, 70.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 120.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(1000.0f + fPlusX, 120.0f, 0.0f);
 
 	// rhwの設定
 	pVtx[0].rhw = 1.0f;
@@ -179,6 +208,21 @@ void UpdateManager(void)
 	pVtx[1].pos = D3DXVECTOR3(1250.0f + fPlusX, 70.0f, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 240.0f, 0.0f);
 	pVtx[3].pos = D3DXVECTOR3(1250.0f + fPlusX, 240.0f, 0.0f);
+
+	// 頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+
+	//〇の処理
+	pVtx += 4;
+
+	// 頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(950.0f + fPlusX, 70.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(1100.0f + fPlusX, 70.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 220.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(1100.0f + fPlusX, 220.0f, 0.0f);
 
 	// 頂点カラーの設定
 	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
@@ -296,4 +340,13 @@ void DrawManager(void)
 
 	// ポリゴン描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+	if (bAmove < 0.0f)
+	{
+		// テクスチャを設定
+		pDevice->SetTexture(0, g_pTexture_Tutorial[10]);
+
+		// ポリゴン描画
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4, 2);
+	}
 }
