@@ -442,6 +442,9 @@ void LoadEffect(int nType,D3DXVECTOR3 pos)
 	case 2:
 		pFile = fopen("data\\EFFECT\\effect002.txt", "r");
 		break;
+	case 3:
+		pFile = fopen("data\\EFFECT\\effect003.txt", "r");
+		break;
 	default:
 		pFile = NULL;
 		break;

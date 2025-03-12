@@ -161,8 +161,11 @@ void UpdateEffectX(void)
 		// õ–½‚ğŒ¸‚ç‚·
 		g_EffectX[nCnt].nLife--;
 
-		// ƒ¿’l‚ğŒ¸­‚³‚¹‚é
-		g_EffectX[nCnt].col.a -= g_EffectX[nCnt].decfAlv;
+		if (g_EffectX[nCnt].col.a > 0.0f)
+		{
+			// ƒ¿’l‚ğŒ¸­‚³‚¹‚é
+			g_EffectX[nCnt].col.a -= g_EffectX[nCnt].decfAlv;
+		}
 
 		float fRadius = g_EffectX[nCnt].fRadius;
 

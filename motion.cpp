@@ -171,7 +171,7 @@ void UpdateMotion(MOTION *pMotion)
 //================================================================================================================
 void SetMotion(MOTION* pMotion, MOTIONTYPE motiontype, bool Blend, int nFrameBlend)
 {
-	Player* pPlayer = GetPlayer();                       // プレイヤーを取得
+	Player* pPlayer = GetPlayer();                 // プレイヤーを取得
 
 	// 最初のブレンド
 	// モーションブレンドがあるかどうか

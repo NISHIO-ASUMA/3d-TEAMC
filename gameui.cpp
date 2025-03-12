@@ -91,6 +91,8 @@ void InitGameUI(void)
 		g_GameUI[nCnt].col = COLOR_WHITE;
 		g_GameUI[nCnt].nEaseCnt = 0;
 		g_GameUI[nCnt].bLife = false;
+		g_GameUI[nCnt].nCounterAnim = 0;
+		g_GameUI[nCnt].nPatternAnim = 0;
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -220,15 +222,6 @@ void UpdateGameUI(void)
 
 				break;
 			case UITYPE_SYUTYUSEN:
-				g_nCounterAnim++;
-
-				if (g_nCounterAnim > 2)
-				{
-					g_nCounterAnim = 0;
-
-					g_nPatternAnim++;//パターンナンバーを更新
-
-				}
 
 				//頂点カラーの設定
 				pVtx[0].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
@@ -236,16 +229,7 @@ void UpdateGameUI(void)
 				pVtx[2].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
 				pVtx[3].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.2f);
 
-				//頂点座標の更新
-				pVtx[0].tex = D3DXVECTOR2(0.0f + g_nPatternAnim * 0.5f, 0.0f);
-				pVtx[1].tex = D3DXVECTOR2(0.5f + g_nPatternAnim * 0.5f, 0.0f);
-				pVtx[2].tex = D3DXVECTOR2(0.0f + g_nPatternAnim * 0.5f, 1.0f);
-				pVtx[3].tex = D3DXVECTOR2(0.5f + g_nPatternAnim * 0.5f, 1.0f);
-
-				if (g_nPatternAnim > 2)
-				{
-					g_nPatternAnim = 0;
-				}
+				SetTextureAnimation(2, 1, 2, &g_GameUI[nCnt].nCounterAnim, &g_GameUI[nCnt].nPatternAnim, pVtx, g_pVtxBuffGameUI, nCnt);
 
 				if (!pPlayer->FeverMode)
 				{
@@ -339,6 +323,9 @@ void UpdateGameUI(void)
 				pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 				pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
+				break;
+			case UITYPE_SP:
+				SetTextureAnimation(2, 1, 10, &g_GameUI[nCnt].nCounterAnim, &g_GameUI[nCnt].nPatternAnim, pVtx, g_pVtxBuffGameUI, nCnt);
 				break;
 			}
 

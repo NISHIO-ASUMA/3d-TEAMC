@@ -117,7 +117,7 @@ void UpdateParticleX(void)
 
 			fSize = g_aParticle[nCntParticle].fSize;
 
-			int nLife = (rand() % g_aParticle[nCntParticle].nLife) + 60;
+			int nLife = g_aParticle[nCntParticle].nLife;
 
 			/*int nLife = (rand() % 120) + 20;*/
 

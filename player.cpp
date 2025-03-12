@@ -486,10 +486,8 @@ void UpdatePlayer(void)
 		g_player.bLandingOBB = false;
 
 		// モーションがジャンプだったら
-		if (g_player.Motion.motiontypeBlend == MOTIONTYPE_JUMP)
+		if (g_player.Motion.motiontypeBlend == MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_LANDING)
 		{
-			// 煙
-			LoadEffect(0, g_player.pos);
 			SetMotion(&g_player.Motion,MOTIONTYPE_LANDING, true, 10); // モーションを着地にする
 		}
 		g_player.bJump = true; // ジャンプを可能にする
@@ -546,35 +544,27 @@ void UpdatePlayer(void)
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // コンボ1
-			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
-			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 			ResetMeshSword();
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION &&
-			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
+			CheckMotionBounds(nKey, nCounter, 0, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // コンボ2
-			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
-			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION2 &&
 			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // コンボ3
-			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
-			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION3 &&
 			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 45, 40, COMBO_ATTACK4); // コンボ4
-			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
-			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 	}
 
 	// [攻撃してない] かつ [手に何も持っていない] かつ [プレイヤーがスペシャルモーションを発動していない]
-	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE;
+	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE && g_player.bstiffness == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID;
 
 	// 投げ物を持っているときの攻撃
 	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && canAction == true)
@@ -999,15 +989,15 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 	float Radius = 50.0f;
 
 	// 剣先の位置
-	D3DXVECTOR3 SwordTopPos(g_player.SwordMtx._41, g_player.SwordMtx._42, g_player.SwordMtx._43);
+	D3DXVECTOR3 SwordTopPos = SetMtxConversion(g_player.SwordMtx);
 
 	// 剣の持ち手の位置
-	D3DXVECTOR3 SwordUnderPos(g_player.Motion.aModel[15].mtxWorld._41, g_player.Motion.aModel[15].mtxWorld._42, g_player.Motion.aModel[15].mtxWorld._43);
+	D3DXVECTOR3 SwordUnderPos = SetMtxConversion(g_player.Motion.aModel[15].mtxWorld);
 
 	for (int nCntModel = 0; nCntModel < pEnemy->Motion.nNumModel; nCntModel++)
 	{
 		// 敵の位置
-		D3DXVECTOR3 EnemyModel(pEnemy->Motion.aModel[nCntModel].mtxWorld._41, pEnemy->Motion.aModel[nCntModel].mtxWorld._42, pEnemy->Motion.aModel[nCntModel].mtxWorld._43);
+		D3DXVECTOR3 EnemyModel = SetMtxConversion(pEnemy->Motion.aModel[nCntModel].mtxWorld);
 
 		// 線分の終点から球体の中心点までのベクトル
 		D3DXVECTOR3 pvEnd = SwordTopPos - EnemyModel;
@@ -1363,6 +1353,14 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 //===============================================================================================================
 bool CollisionItem(int nIdx, float Itemrange, float plrange)
 {
+	GAMESTATE gamestate = GetGameState();
+
+	// ムービーだったら
+	if (gamestate == GAMESTATE_MOVIE)
+	{
+		// 関数を抜ける
+		return false;
+	}
 	Item* pItem = GetItem();
 
 	Billboard* pBillboard = GetBillBoard();
@@ -1375,7 +1373,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	const bool is_Damage = g_player.bstiffness == false;
 
 	// 範囲内かを判定
-	const bool Inbounds = sphererange(&g_player.pos, &pItem[nIdx].pos, 20.0f, 20.0f) == true;
+	const bool Inbounds = sphererange(&g_player.pos, &pItem[nIdx].pos, 100.0f, 20.0f) == true;
 
 	// 状態がノーマルか判定
 	const bool stateNormal = pItem[nIdx].state == ITEMSTATE_NORMAL;
@@ -1384,7 +1382,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	const bool NotDeth = g_player.Motion.motionType != MOTIONTYPE_DEATH;
 
 	// 拾えるかを判定
-	const bool CanPickUp = is_Damage && Inbounds && stateNormal && NotDeth;
+	const bool CanPickUp = is_Damage && sphererange(&g_player.pos, &pItem[nIdx].pos, 20.0f, 20.0f) == true && stateNormal && NotDeth;
 
 	// 範囲内だったら
 	if (Inbounds == true)
@@ -1631,8 +1629,7 @@ bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int 
 	// 判定用変数
 	bool bFlag = false;
 
-	if (nKey >= StartKey && nKey <= EndKey &&
-		nCountFrame >= startFrame && nCountFrame <= EndFrame)
+	if (nKey >= StartKey && nKey <= EndKey && nCountFrame >= startFrame && nCountFrame <= EndFrame)
 	{
 		// 判定開始
 		bFlag = true;
@@ -1650,6 +1647,7 @@ float SetAttackerAngle(int AttackerIdx, int AttackerType)
 	{
 		return g_player.rot.y;
 	}
+
 	// 角度
 	float OutAngle = 0.0f;
 
@@ -2531,6 +2529,11 @@ void SetMotionContller(void)
 		g_player.bstiffness = false;
 	}
 
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_LANDING && CheckMotionBounds(nKey,nCounter,0,0,1,1) == true)
+	{
+		// 煙
+		LoadEffect(0, SetMtxConversion(g_player.Motion.aModel[11].mtxWorld));
+	}
 	// 振動の更新処理
 	UpdateVibration(&vibrationState);
 }

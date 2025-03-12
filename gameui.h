@@ -32,6 +32,7 @@ typedef enum
 	UITYPE_KEY,
 	UITYPE_DESTORY,
 	UITYPE_EVENT,
+	UITYPE_SP,
 	UITYPE_MAX
 }UITYPE;
 
@@ -53,6 +54,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\tutoirial005.png",
 	"data\\TEXTURE\\ui_weponbreak.png",
 	"data\\TEXTURE\\ui_event.png",
+	"data\\TEXTURE\\SP_Key.png",
 };
 
 //**************************************************************************************************************
@@ -70,6 +72,7 @@ typedef struct
 	bool bLife;         // 寿命をつけるかつけないか
 	D3DXCOLOR col;      // 色
 	int nEaseCnt;       // イージングのカウント
+	int nCounterAnim, nPatternAnim; // テクスチャアニメーション
 }Gameui;
 
 //**************************************************************************************************************
@@ -81,5 +84,4 @@ void UpdateGameUI(void); // UIの更新処理
 void DrawGameUI(void);	 // UIの描画処理
 void SetGameUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, bool bLife, int nUseTime);
 void FlashGameUI(int nSelect);
-
 #endif
