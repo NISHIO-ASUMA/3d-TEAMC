@@ -1,6 +1,6 @@
 //====================================================================================================================
 //
-// エフェクト処理 [ Effect.cpp ]
+// エフェクト処理 [ Effect.cpp ] XXX 危険すぎるいい加減にするな
 // Author:長尾悠成
 //
 //=====================================================================================================================
@@ -13,7 +13,7 @@
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define MAX_EFFECT (7000)  // エフェクトの最大数
+#define MAX_EFFECT (2056)  // エフェクトの最大数
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -36,14 +36,15 @@ void InitEffect(void)
 		&g_pTextureEffect);
 
 	// デバイスの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_EFFECT * 6,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_EFFECT * 4,
 		D3DUSAGE_WRITEONLY, 
 		FVF_VERTEX_3D, 
 		D3DPOOL_MANAGED, 
-		&g_pVtxBuffEffect, NULL);
+		&g_pVtxBuffEffect, 
+		NULL);
 
 	// 頂点情報のポインタ
-	VERTEX_3D* pVtx;
+	VERTEX_3D* pVtx = NULL;
 
 	// 頂点バッファのロック
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
@@ -75,10 +76,10 @@ void InitEffect(void)
 		pVtx[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
 		// 頂点カラーの設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[0].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+		pVtx[1].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+		pVtx[2].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+		pVtx[3].col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
 
 		// テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -121,7 +122,7 @@ void UpdateEffect(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// 頂点情報のポインタ
-	VERTEX_3D* pVtx;
+	VERTEX_3D* pVtx = NULL;
 
 	// 頂点バッファのロック
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
@@ -267,7 +268,7 @@ void SetEffect(D3DXVECTOR3 pos, D3DXVECTOR3 dir, int nLife, D3DXCOLOR col, float
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// 頂点情報のポインタ
-	VERTEX_3D* pVtx;
+	VERTEX_3D* pVtx = NULL;
 
 	// 頂点バッファのロック
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
@@ -306,7 +307,7 @@ void SetEffect2(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nLife, D3DXCOLOR col, flo
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// 頂点情報のポインタ
-	VERTEX_3D* pVtx;
+	VERTEX_3D* pVtx = NULL;
 
 	// 頂点バッファのロック
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
