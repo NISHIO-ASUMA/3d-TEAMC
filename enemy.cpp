@@ -1560,6 +1560,11 @@ void SetSoundWepon(int nType)
 		PlaySound(SOUND_LABEL_HAMMER_SE);
 		break;
 
+	case ITEMTYPE_GOLFHUNMER: // ゴルフハンマー
+		// 音楽再生
+		PlaySound(SOUND_LABEL_HAMMER_SE);
+		break;
+
 	case ITEMTYPE_TORCH: // 炎持っているとき
 		// 音楽再生
 		PlaySound(SOUND_LABEL_WEPONFIRESE);
@@ -1600,4 +1605,5 @@ void SetSoundWepon(int nType)
 		PlaySound(SOUND_LABEL_NOWEPON);
 		break;
 	}
+
 }
