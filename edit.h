@@ -47,7 +47,7 @@ typedef enum
 //***************************************************************************************************************
 typedef struct
 {
-	TEXTURE_INFO pModel[MAX_TYPE];
+	MODEL_INFO pModel[MAX_TYPE];
 	int nNumModel;
 }EditTex;
 

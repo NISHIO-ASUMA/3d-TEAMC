@@ -46,25 +46,26 @@
 #define NUM_MTX (8)				 //　剣のワールドマトリックスの数
 #define BOSS_LIFE (10000)        // ボスの最大HP
 #define TRANSPARENT_FRAME (300.0f) // 透明化のフレーム
+#define MAX_ELEMENT (5) // 属性の最大数
 
 //**************************************************************************************************************
 // プロトタイプ宣言
 //**************************************************************************************************************
-void LoadBoss(void);																// ボスを読み込む
-int LoadBossFilename(FILE* pFile, int nNumModel, char* aString, int nType);			// ボスのモデルのロード処理
-void LoadBossCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);	// ボスのパーツの設定処理
-void LoadBossMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);		// ボスのモーションのロード処理
-void LoadBossKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);			// ボスのモーションのキーの読み込み処理
+void LoadBoss(void);																		// ボスを読み込む
+int LoadBossFilename(FILE* pFile, int nNumModel, char* aString, int nType);					// ボスのモデルのロード処理
+void LoadBossCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);			// ボスのパーツの設定処理
+void LoadBossMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);				// ボスのモーションのロード処理
+void LoadBossKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);					// ボスのモーションのキーの読み込み処理
 
-void colisionSword(int nCntBoss);													// 剣とボスの当たり判定
-void CollisionToBoss(int nCntBoss);													// ボスとボスの当たり判定
-bool SetAbnormalCondition(int nType, int nTime, int nDamage,int nCntBoss);          // 状態異常の設定
-void UpdateAbnormalCondition(int nCntBoss);                                         // 状態異常の更新処理
-void SetRasuAttack(int nCntBoss);													// ボスの突進攻撃の設定
-void SetDoubleRasuAttack(int nCntBoss);                                             // ボスの二回突進してくる攻撃処理
-void UpdateAgentBoss(int nCntBoss);                                                 // ボスの追跡の更新処理
-void DeathMotionContlloer(int nCntBoss);                                            // ボスの死亡モーションの処理
-void EndEventBossState(int nCntBoss);							// イベントが終わった後にボスを消す処理
+void colisionSword(int nCntBoss);															// 剣とボスの当たり判定
+void CollisionToBoss(int nCntBoss);															// ボスとボスの当たり判定
+bool SetAbnormalCondition(int nType, int nTime, int nDamage,int nCntBoss);					// 状態異常の設定
+void UpdateAbnormalCondition(int nCntBoss);													// 状態異常の更新処理
+void SetRasuAttack(int nCntBoss);															// ボスの突進攻撃の設定
+void SetDoubleRasuAttack(int nCntBoss);														// ボスの二回突進してくる攻撃処理
+void UpdateAgentBoss(int nCntBoss);															// ボスの追跡の更新処理
+void DeathMotionContlloer(int nCntBoss);													// ボスの死亡モーションの処理
+void EndEventBossState(int nCntBoss);														// イベントが終わった後にボスを消す処理
 void HitBossAbnormalCondition(int nCntBoss);												// ボスに当たった時のエフェクト
 void HitBossAbnormalConditionParam(int nCntBoss, int nElement, int ChargeValue, int MaxCharge, int stateCnt);  // ボスに当たった時のエフェクトのパラメータ
 
@@ -100,7 +101,7 @@ void InitBoss(void)
 		g_Boss[nCnt].BossMat = {};						   // ボスのマテリアル
 		g_Boss[nCnt].bTransparent = false;                 // ボスを透明にするフラグ
 
-		for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
+		for (int nCnt2 = 0; nCnt2 < MAX_ELEMENT; nCnt2++)
 		{
 			g_Boss[nCnt].nStateCharge[nCnt2] = 0;
 			g_Boss[nCnt].nStateCount[nCnt2] = 0;
@@ -1413,7 +1414,7 @@ void SetRasuAttack(int nCntBoss)
 				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		}
 	}
-	else if (g_Boss[nCntBoss].Motion.nKey == KEY_THREE)// 突進モーション中の			
+	else if (g_Boss[nCntBoss].Motion.nKey == KEY_THREE && g_Boss[nCntBoss].Motion.bFirstMotion == false)// 突進モーション中の			
 	{
 		if (g_Boss[nCntBoss].Motion.nCountMotion == 1)// 最初は加速させて
 		{
@@ -1665,6 +1666,10 @@ void HitBossAbnormalCondition(int nCntBoss)
 		//石バットなら出血特殊効果を与える
 		HitBossAbnormalConditionParam(nCntBoss, 0, 25, 100, 300);
 		break;
+	case ITEMTYPE_GOLFHUNMER:
+		//ゴルフハンマーなら出血特殊効果を与える
+		HitBossAbnormalConditionParam(nCntBoss, 0, 25, 100, 300);
+		break;
 	case ITEMTYPE_IRONBAT:
 		//金属バットなら出血特殊効果を与える
 		HitBossAbnormalConditionParam(nCntBoss, 0, 25, 100, 300);
@@ -1682,14 +1687,21 @@ void HitBossAbnormalCondition(int nCntBoss)
 		HitBossAbnormalConditionParam(nCntBoss, 3, 25, 100, 300);
 		break;
 	case ITEMTYPE_SURFBOARDFISH:
-		// 鮫浮き輪なら雷特殊効果を与える
+		// 鮫浮き輪なら水特殊効果を与える
 		HitBossAbnormalConditionParam(nCntBoss, 4, 25, 100, 300);
 		break;
 	case ITEMTYPE_BONESPEAR:
 		//骨槍なら確率で即死効果を与える
 		if (rand() % 40 == 0)
 		{
-			HitBoss(nCntBoss, 9999);
+			HitBoss(nCntBoss, 99999);
+		}
+		break;
+	case ITEMTYPE_HEXMANDOLIN:
+		//ダークハープなら確率で即死効果を与える
+		if (rand() % 40 == 0)
+		{
+			HitBoss(nCntBoss, 99999);
 		}
 		break;
 	default:
