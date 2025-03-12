@@ -1666,6 +1666,10 @@ void HitBossAbnormalCondition(int nCntBoss)
 		//石バットなら出血特殊効果を与える
 		HitBossAbnormalConditionParam(nCntBoss, 0, 25, 100, 300);
 		break;
+	case ITEMTYPE_GOLFHUNMER:
+		//ゴルフハンマーなら出血特殊効果を与える
+		HitBossAbnormalConditionParam(nCntBoss, 0, 25, 100, 300);
+		break;
 	case ITEMTYPE_IRONBAT:
 		//金属バットなら出血特殊効果を与える
 		HitBossAbnormalConditionParam(nCntBoss, 0, 25, 100, 300);
@@ -1683,14 +1687,21 @@ void HitBossAbnormalCondition(int nCntBoss)
 		HitBossAbnormalConditionParam(nCntBoss, 3, 25, 100, 300);
 		break;
 	case ITEMTYPE_SURFBOARDFISH:
-		// 鮫浮き輪なら雷特殊効果を与える
+		// 鮫浮き輪なら水特殊効果を与える
 		HitBossAbnormalConditionParam(nCntBoss, 4, 25, 100, 300);
 		break;
 	case ITEMTYPE_BONESPEAR:
 		//骨槍なら確率で即死効果を与える
 		if (rand() % 40 == 0)
 		{
-			HitBoss(nCntBoss, 9999);
+			HitBoss(nCntBoss, 99999);
+		}
+		break;
+	case ITEMTYPE_HEXMANDOLIN:
+		//ダークハープなら確率で即死効果を与える
+		if (rand() % 40 == 0)
+		{
+			HitBoss(nCntBoss, 99999);
 		}
 		break;
 	default:

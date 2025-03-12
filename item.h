@@ -104,7 +104,7 @@ typedef struct
 	int durability;			// 耐久力
 	int Maxdurability;		// 最大の耐久力
 	char Itemtag[TAGWORD];  // アイテムのタグ
-	int Powor;              // 攻撃力
+	int Power;              // 攻撃力
 }ITEM_INFO;
 
 //***************************
@@ -138,7 +138,7 @@ typedef struct
 	int nImpactCount;					// インパクトのカウント
 	char Itemtag[TAGWORD];
 	ITEM_INFO aItemInfo[ITEMTYPE_MAX];
-	int Powor;							// 攻撃力
+	int Power;							// 攻撃力
 }Item;
 
 //***************************
