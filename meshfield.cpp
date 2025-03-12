@@ -197,11 +197,8 @@ void DrawMeshField(void)
 //==================================================================================================================
 //メッシュフィールドの当たり判定
 //==================================================================================================================
-bool CollisionField(void)
+bool CollisionField(D3DXVECTOR3 *pPos, D3DXVECTOR3* pPosOld)
 {
-
-	Player* pPlayer = GetPlayer();//プレイヤーの取得
-
 	bool bLanding = false;
 
 	int nCntPos = 0;
@@ -229,7 +226,7 @@ bool CollisionField(void)
 
 		D3DXVECTOR3 VecBLine;//壁からプレイヤー
 
-		VecBLine = pPlayer->pos - g_MeshField.vtxPos[0];
+		VecBLine = *pPos - g_MeshField.vtxPos[0];
 
 		D3DXVec3Normalize(&VecBLine, &VecBLine);
 
@@ -240,7 +237,7 @@ bool CollisionField(void)
 		if (Cross.x < 0)
 		{
 			bLanding = true;
-			pPlayer->pos.y = pPlayer->posOld.y;
+			pPos->y = pPosOld->y;
 		}
 	//}
 	return bLanding;//判定を返す

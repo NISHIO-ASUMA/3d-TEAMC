@@ -34,6 +34,7 @@
 #include "camera.h"
 #include "meshimpact.h"
 #include "math.h"
+#include "meshfield.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -48,6 +49,7 @@
 #define SHADOWSIZEOFFSET (20.0f) // 影のサイズのオフセット
 #define SHADOW_A (1.0f)			 // 影のアルファ
 #define WAVE_ENEMY (15)			 // 敵の出現数
+#define KICKATTACK_MOVE (15.0f)  // けり攻撃の移動量
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -65,8 +67,9 @@ void AgentEnemy(int nCntEnemy);									  // 敵のホーミング処理
 void CollisionToEnemy(int nCntEnemy);							  // 敵と敵の当たり判定
 void UpdateHomingEnemy(int nCntEnemy);                            // 敵のホーミング処理
 void UpdateRunAwayEnemy(int nCntEnemy);                           // 逃げる敵の更新処理
-void UpdateAttackState(int nCntEnemy);                            // 敵の攻撃の更新処理
+void UpdateKickAttack(int nCntEnemy);                             // 敵の攻撃の更新処理
 void UpdateDroneEnemy(int nCntEnemy);                             // 飛んでる敵の更新処理
+void KickActionSet(int nCntEnemy,int nKey, int nCounter, int EndFrame, int LastKey, Player* pPlayer);                                // けり攻撃の処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -259,6 +262,10 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].pos.y = 170.0f;
 		}
 
+		CollisionField(&g_Enemy[nCntEnemy].pos,&g_Enemy[nCntEnemy].posOld);
+
+		g_Enemy[nCntEnemy].move.y -= MAX_GLABITY;
+
 		// 6番目の敵以外 && 7番目の敵以外
 		if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
 		{
@@ -328,8 +335,11 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_NO;					// ボスの攻撃状態を攻撃してない状態にする
 		}
 
-		// 敵の攻撃の更新処理
-		UpdateAttackState(nCntEnemy);
+		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_ONE || g_Enemy[nCntEnemy].nType == ENEMYTYPE_TWO || g_Enemy[nCntEnemy].nType == ENEMYTYPE_THREE)
+		{
+			// 敵の攻撃の更新処理
+			UpdateKickAttack(nCntEnemy);
+		}
 
 		//敵の角度の正規化
 		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
@@ -1350,7 +1360,7 @@ void UpdateRunAwayEnemy(int nCntEnemy)
 //===============================================================================================================
 // 敵の攻撃モーションの更新処理
 //===============================================================================================================
-void UpdateAttackState(int nCntEnemy)
+void UpdateKickAttack(int nCntEnemy)
 {
 	Player* pPlayer = GetPlayer();
 
@@ -1370,10 +1380,10 @@ void UpdateAttackState(int nCntEnemy)
 	int EndFrame = g_Enemy[nCntEnemy].Motion.aMotionInfo[Motiontype].aKeyInfo[LastKey].nFrame;
 
 	// プレイヤーのモデルの情報を代入
-	D3DXVECTOR3 PlayerModel(pPlayer->Motion.aModel[0].mtxWorld._41, pPlayer->Motion.aModel[0].mtxWorld._42, pPlayer->Motion.aModel[0].mtxWorld._43);
+	D3DXVECTOR3 PlayerModel = SetMtxConversion(pPlayer->Motion.aModel[0].mtxWorld);
 
 	// 敵のモデルの情報を代入
-	D3DXVECTOR3 EnemyModel(g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._41, g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._42, g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld._43);
+	D3DXVECTOR3 EnemyModel = SetMtxConversion(g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld);
 	
 	// 範囲内にいるかを判定
 	const bool is_sphereBounds = sphererange(&PlayerModel, &EnemyModel, 20.0f, 50.0f) == true;
@@ -1386,6 +1396,9 @@ void UpdateAttackState(int nCntEnemy)
 
 	// 攻撃をできるかを判定
 	const bool CanDamage = is_sphereBounds == true && is_EnemyNotAction == true && is_PlayerNotDamage == true;
+
+	// キックアクションの更新処理
+	KickActionSet(nCntEnemy, nKey, nCounter, EndFrame, LastKey, pPlayer);
 
 	// 攻撃範囲に入った
 	if (CanDamage == true && CheckMotionBounds(nKey, nCounter,4, LastKey,0, EndFrame) == true)
@@ -1436,6 +1449,42 @@ void UpdateDroneEnemy(int nCntEnemy)
 			g_Enemy[nCntEnemy].nCountAction = 0;
 		}
 	}
+}
+//===============================================================================================================
+// けり攻撃の処理
+//===============================================================================================================
+void KickActionSet(int nCntEnemy, int nKey, int nCounter, int EndFrame,int LastKey, Player* pPlayer)
+{
+	// 敵を上昇させる
+	if (CheckMotionBounds(nKey, nCounter, 0, 2, 0, EndFrame) == true && g_Enemy[nCntEnemy].Motion.motiontypeBlend == MOTIONTYPE_ACTION)
+	{
+		// 位置の差分を求める
+		D3DXVECTOR3 DiffPos = g_Enemy[nCntEnemy].pos - pPlayer->pos;
+
+		// 目的の角度を代入
+		g_Enemy[nCntEnemy].rotDest.y = atan2f(DiffPos.x, DiffPos.z);
+
+		// 上昇させる
+		g_Enemy[nCntEnemy].move.y = 1.0f;
+	}
+
+	if (CheckMotionBounds(nKey, nCounter, 4, 4, 0, 10) == true && g_Enemy[nCntEnemy].Motion.motionType == MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].Motion.bFirstMotion == false)
+	{
+		// 移動方向を求める
+		D3DXVECTOR3 move = SetSubtractVectors(D3DXVECTOR3(pPlayer->pos.x, pPlayer->pos.y, pPlayer->pos.z), D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y, g_Enemy[nCntEnemy].pos.z));
+		D3DXVec3Normalize(&move, &move);
+
+		// 移動方向を代入
+		g_Enemy[nCntEnemy].move.x = move.x * KICKATTACK_MOVE;
+		g_Enemy[nCntEnemy].move.z = move.z * KICKATTACK_MOVE;
+	}
+
+	if (CheckMotionBounds(nKey, nCounter, 4, LastKey, 0, EndFrame) == true && g_Enemy[nCntEnemy].Motion.motionType == MOTIONTYPE_ACTION && g_Enemy[nCntEnemy].Motion.bFirstMotion == false)
+	{
+		// 位置を0に近づける
+		g_Enemy[nCntEnemy].pos.y += (0.0f - g_Enemy[nCntEnemy].pos.y) * 0.3f;
+	}
+
 }
 //===============================================================================================================
 // 線と球の当たり判定

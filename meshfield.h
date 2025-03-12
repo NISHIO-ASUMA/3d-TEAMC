@@ -44,5 +44,5 @@ void InitMeshField(void);//メッシュフィールドの初期化処理
 void UninitMeshField(void);//メッシュフィールドの終了処理
 void UpdateMeshField(void);//メッシュフィールドの更新処理
 void DrawMeshField(void);//メッシュフィールドの描画処理
-bool CollisionField(void);
+bool CollisionField(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld);
 #endif

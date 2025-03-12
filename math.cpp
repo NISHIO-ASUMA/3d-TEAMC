@@ -60,6 +60,15 @@ D3DXVECTOR3 SetMtxConversion(D3DXMATRIX mtxworld)
 	return OutPut;
 }
 //=====================================================================================================
+// 目標までのベクトルを計算する
+//=====================================================================================================
+D3DXVECTOR3 SetSubtractVectors(D3DXVECTOR3 targetpos, D3DXVECTOR3 pos)
+{
+	D3DXVECTOR3 OutPut = targetpos - pos;
+
+	return OutPut;
+}
+//=====================================================================================================
 // エフェクトのテクスチャアニメーション
 //=====================================================================================================
 void SetTextureAnimation(int pPosX,int pPosY,int pAnimSpeed,int *pCounterAnim,int *pPatternAnim, VERTEX_2D *pVtx, LPDIRECT3DVERTEXBUFFER9 pVtxBuff,int nCnt)

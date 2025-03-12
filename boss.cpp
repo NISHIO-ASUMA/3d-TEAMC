@@ -1189,7 +1189,7 @@ void colisionSword(int nCntBoss)
 	else if (strcmp(&pItem[pPlayer->ItemIdx].Itemtag[0], "NORMAL") == 0)
 	{
 		// ダメージカットの割合
-		fCutDamage = 100;
+		fCutDamage = 5;
 	}
 
 	// スペシャル攻撃じゃない

@@ -114,7 +114,7 @@ void InitPlayer(void)
 	MODE mode = GetMode();//現在のモードを取得
 
 	//プレイヤーの初期化
-	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 100.0f);					// 座標
+	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 50.0f);					// 座標
 	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					// 角度
 	g_player.rotDestPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 目的の角度
 	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					// 移動量
@@ -482,7 +482,7 @@ void UpdatePlayer(void)
 		g_player.pos.y += g_player.move.y;
 	}
 
-	if (CollisionField() == true)
+	if (CollisionField(&g_player.pos,&g_player.posOld) == true)
 	{
 		g_player.bLandingOBB = false;
 
@@ -2997,7 +2997,7 @@ void UpdateItemStock(void)
 void UpdatePlayerAvoid(void)
 {
 	Camera* pCamera = GetCamera();
-
+	
 	// イージングのカウント
 	static int avoidEaseCnt = 0;
 
