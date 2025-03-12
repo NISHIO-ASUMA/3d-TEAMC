@@ -850,6 +850,7 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 
 	// 手に持ってるアイテムの種類を石バットにする
 	g_Item[pPlayer->ItemIdx].nType = MixItem;
+	g_Item[pPlayer->ItemIdx].nElement = g_aItemInfo[MixItem].nElement;
 
 	g_Item[pPlayer->ItemIdx].state = ITEMSTATE_HOLD;
 

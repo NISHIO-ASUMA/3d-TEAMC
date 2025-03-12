@@ -3377,9 +3377,49 @@ void ChangeItemParam(int nHaveIdx,int nType)
 //===============================================================================================================
 void LoadItemChange(int nType)
 {
-	Player* pPlayer = GetPlayer();
-	Item* pItem = GetItem();
+	//Player* pPlayer = GetPlayer();
+	//Item* pItem = GetItem();
 
+	//FILE* pFile; // ファイルのポインタ
+
+	//// ファイルを開く
+	//pFile = fopen("data\\ITEM\\StatusChange.txt", "r");
+
+	//int pType = 0;
+	//char skip[3] = {};
+
+	//// ファイルがNULLじゃなかったら
+	//if (pFile != NULL)
+	//{
+	//	char aString[MAX_WORD];
+
+	//	while (1)
+	//	{
+	//		// 文字を読み取る
+	//		int nData = fscanf(pFile, "%s", &aString[0]);
+
+	//		if (strcmp(&aString[0], "ITEMTYPE") == 0)
+	//		{
+	//			//[=]を飛ばす
+	//			nData = fscanf(pFile, "%s", &skip[0]);
+
+	//			// 種類を代入
+	//			nData = fscanf(pFile, "%d", &pType);
+	//		}
+
+	//		// 読み取った種類と一致していたら
+	//		if (pType == nType)
+	//		{
+
+	//		}
+	//		// EOFを読み取ったら
+	//		if (nData == EOF)
+	//		{
+	//			// while分を抜ける
+	//			break;
+	//		}
+	//	}
+	//}
 	//switch (nType)
 	//{
 	//case ITEMTYPE_BAT:
