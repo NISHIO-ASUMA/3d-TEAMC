@@ -1,7 +1,7 @@
 //=====================================================================================================================
 //
-//HPゲージのプログラム
-//Author;長尾悠成
+// HPゲージのプログラム
+// Author;長尾悠成
 //
 //=====================================================================================================================
 
@@ -19,7 +19,7 @@
 //**********************************************************************************************************************
 #define NUM_HPGAUGE (3) // HPゲージのUIの数
 #define NUM_FEVERGAUGE (2) // FEVERGAUGEの数
-#define MAX_HPLENGTH (390.0f) // HPゲージの横幅
+#define MAX_HPLENGTH (264.0f) // HPゲージの横幅
 #define FRAME (0)             // フレームのカウント
 #define FEVER_LENGTH (800.0f) // フィーバーゲージの長さ
 #define FEVERGAGE_LENGTH (300.0f)
@@ -31,7 +31,6 @@ LPDIRECT3DTEXTURE9 g_pTexture_Gauge = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_RedGauge = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Frame = NULL;
 
-LPDIRECT3DTEXTURE9 g_pTexture_Fevgauge = NULL;
 LPDIRECT3DTEXTURE9 g_pTexture_Fevframe = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGauge = NULL;
 
@@ -57,13 +56,13 @@ void InitGauge(void)
 	pDevice = GetDevice();
 
 	// HPのフレームとゲージのテクスチャ
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifebar_frame.png", &g_pTexture_Frame);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifeframe.png", &g_pTexture_Frame);
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifebar_red.png", &g_pTexture_RedGauge);
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\lifebar_gage.png", &g_pTexture_Gauge);
 
 	// フィーバーのフレームとゲージのテクスチャ
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\feverframe2.png", &g_pTexture_Fevframe);
-	//D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fever_gage_2.png", &g_pTexture_Fevgauge);
+	
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * (NUM_HPGAUGE * NUM_FEVERGAUGE), D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 	VERTEX_2D* pVtx;
 
@@ -92,9 +91,9 @@ void InitGauge(void)
 		{
 			// FRAMEの頂点座標
 			pVtx[0].pos = D3DXVECTOR3(5.0f, 9.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(MAX_HPLENGTH + 5.0f, 9.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(5.0f, 30.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(MAX_HPLENGTH + 5.0f, 30.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(390.0f + 5.0f, 9.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(5.0f, 70.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(390.0f + 5.0f, 70, 0.0f);
 		}
 		// gauge
 		else if(nCnt != FRAME)
@@ -210,12 +209,6 @@ void UninitGauge(void)
 		g_pTexture_Fevframe->Release();
 		g_pTexture_Fevframe = NULL;
 	}
-	// テクスチャの破棄
-	if (g_pTexture_Fevgauge != NULL)
-	{
-		g_pTexture_Fevgauge->Release();
-		g_pTexture_Fevgauge = NULL;
-	}
 
 	// 頂点バッファの破棄
 	if (g_pVtxBuffGauge != NULL)
@@ -269,11 +262,11 @@ void UpdateGauge(void)
 
 	g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
 
-	// 赤ゲージの頂点座標の更新
-	pVtx[4].pos = D3DXVECTOR3(10.0f, 15.0f, 0.0f);
-	pVtx[5].pos = D3DXVECTOR3(g_RedLength, 15.0f, 0.0f);
-	pVtx[6].pos = D3DXVECTOR3(10.0f, 26.0f, 0.0f);
-	pVtx[7].pos = D3DXVECTOR3(g_RedLength, 26.0f, 0.0f);
+	// FRAMEの頂点座標
+	pVtx[4].pos = D3DXVECTOR3(111.0f, 43.0f, 0.0f);
+	pVtx[5].pos = D3DXVECTOR3(111.0f + g_RedLength, 43.0f, 0.0f);
+	pVtx[6].pos = D3DXVECTOR3(111.0f, 69.0f, 0.0f);
+	pVtx[7].pos = D3DXVECTOR3(111.0f + g_RedLength, 69.0f, 0.0f);
 
 	// 赤ゲージテクスチャ座標の更新
 	pVtx[4].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -281,11 +274,11 @@ void UpdateGauge(void)
 	pVtx[6].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[7].tex = D3DXVECTOR2(fDestPer, 1.0f);
 
-	// ゲージの頂点座標の更新
-	pVtx[8].pos = D3DXVECTOR3(10.0f, 15.0f, 0.0f);
-	pVtx[9].pos = D3DXVECTOR3(g_fLength, 15.0f, 0.0f);
-	pVtx[10].pos = D3DXVECTOR3(10.0f, 26.0f, 0.0f);
-	pVtx[11].pos = D3DXVECTOR3(g_fLength, 26.0f, 0.0f);
+	// FRAMEの頂点座標
+	pVtx[8].pos = D3DXVECTOR3(111.0f, 43.0f, 0.0f);
+	pVtx[9].pos = D3DXVECTOR3(111.0f + g_fLength, 43.0f, 0.0f);
+	pVtx[10].pos = D3DXVECTOR3(111.0f, 69.0f, 0.0f);
+	pVtx[11].pos = D3DXVECTOR3(111.0f + g_fLength, 69.0f, 0.0f);
 
 	// ゲージのテクスチャ座標の更新
 	pVtx[8].tex = D3DXVECTOR2(0.0f, 0.0f);

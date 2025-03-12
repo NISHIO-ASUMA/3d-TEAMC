@@ -56,6 +56,8 @@
 #define AVOID_MOVE (18.0f)      // 回避の移動量
 #define DAMAGEBLOW (20.0f)      // ダメージを受けた時の吹き飛び量
 #define BLOWCOUNT (5)           // 吹っ飛びカウント
+#define PLAYER_DAMAGE (100)     // プレイヤーの攻撃力(基準)
+#define PLAYER_SPEED (3.5f)     // プレイヤーの移動速度
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -86,6 +88,7 @@ void UpdatePlayerAvoid(void);																	 // プレイヤーの回避処理
 D3DXVECTOR3 SetMotionMoveAngle(void);                                                            // モーションのアングルの設定
 void SetWeponEffect(void);                                                                       // 武器ごとのエフェクト処理
 bool IsDamageAction(void);                                                                       // ダメージアクションかどうか
+void ChangeItemParam(int nHaveIdx, int nType);													 // アイテムの変更時のパラメーター設定
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -120,7 +123,6 @@ void InitPlayer(void)
 	g_player.nMaxLife = PLAYERLIFE;									// 最大体力
 	g_player.state = PLAYERSTATE_NORMAL;							// 状態
 	g_player.Motion.bLoopMotion = true;								// モーションのループ
-	g_player.Swordrot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// 剣の角度
 	g_player.Motion.nKey = 0;										// キー数
 	g_player.Motion.motionType = MOTIONTYPE_NEUTRAL;				// モーションの種類
 	g_player.SwordOffpos.x = 0.0f;									// 剣のオフセットの座標x
@@ -130,21 +132,21 @@ void InitPlayer(void)
 	g_nCounterState = 0;											// 状態カウンター
 	g_AttackState = 0;												// 攻撃状態のカウンター
 	bNohand = false;												// 物を投げたか投げてないか
-	g_player.speed = 1.0f;											// 足の速さ
-	g_player.nDamage = 100;											// 攻撃力
+	g_player.speed = PLAYER_SPEED;									// 足の速さ
+	g_player.nDamage = PLAYER_DAMAGE;								// 攻撃力
 	bUsePad = false;												// パッドを使っているか
-	g_player.nStockDamage = 100;									// ダメージのストック
-	g_player.fStockSpeed = 3.5f;									// スピードのストック
+	g_player.nStockDamage = PLAYER_DAMAGE;							// ダメージのストック
+	g_player.fStockSpeed = PLAYER_SPEED;							// スピードのストック
 	g_player.FeverMode = false;										// フィーバーモードかどうか
 	g_player.SpMode = false;										// スペシャルを発動できるかどうか
 	g_player.WeponMotion = MOTION_KATANA;							// 武器ごとのモーション
 	g_player.AttackSp = false;										// スペシャル攻撃中かどうか
 	g_player.bLandingOBB = false;									// OBBに乗ってるか
-	nCntMotion = 0;													// モーションのカウント
-	nKey = 0;														// キーのカウント
+	nCntMotion = NULL;												// モーションのカウント
+	nKey = NULL;													// キーのカウント
 	g_player.bCraft = false;										// クラフト中かどうか
 	g_player.nElement = WEPONELEMENT_STANDARD;						// 属性の種類
-	g_EaseCount = 0;												// イージングのカウント
+	g_EaseCount = NULL;												// イージングのカウント
 	g_player.nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f, 1.0f); // 影を設定
 	g_player.nIdxMap = SetMiniMap(g_player.pos, MINIMAPTEX_PLAYER); // ミニマップにプレイヤーを設定
 	g_player.HandState = PLAYERHOLD_NO;								// 手の状態
@@ -152,10 +154,12 @@ void InitPlayer(void)
 	g_player.AttackState = PLAYERATTACKSTATE_NO;                    // 攻撃の状態
 	g_player.nCounterAttack = 0;                                    // 攻撃状態のカウンター
 	g_player.avoidMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);             // 回避の移動量
-	g_player.ItemIdx = 0;											// アイテムのインデックスの初期化
-	g_player.BlowCounter = 0;										// 吹っ飛ぶまでのカウンター
-	g_player.AttackerIdx = 0;										// 攻撃してきた敵のインデックス
+	g_player.ItemIdx = NULL;										// アイテムのインデックスの初期化
+	g_player.BlowCounter = NULL;									// 吹っ飛ぶまでのカウンター
+	g_player.AttackerIdx = NULL;									// 攻撃してきた敵のインデックス
 	g_player.bstiffness = false;									// ダメージの硬直
+	g_player.StockItemType = ITEMTYPE_NONEXISTENT;                  // ストックしているアイテムの種類
+	g_player.HoldItemType = ITEMTYPE_KATANA;						// 持っているアイテムの種類
 
 	// アイテム分回す
 	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -482,10 +486,8 @@ void UpdatePlayer(void)
 		g_player.bLandingOBB = false;
 
 		// モーションがジャンプだったら
-		if (g_player.Motion.motiontypeBlend == MOTIONTYPE_JUMP)
+		if (g_player.Motion.motiontypeBlend == MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_LANDING)
 		{
-			// 煙
-			LoadEffect(0, g_player.pos);
 			SetMotion(&g_player.Motion,MOTIONTYPE_LANDING, true, 10); // モーションを着地にする
 		}
 		g_player.bJump = true; // ジャンプを可能にする
@@ -542,35 +544,27 @@ void UpdatePlayer(void)
 		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
 		{
 			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // コンボ1
-			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
-			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 			ResetMeshSword();
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION &&
-			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
+			CheckMotionBounds(nKey, nCounter, 0, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // コンボ2
-			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
-			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION2 &&
 			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // コンボ3
-			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
-			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION3 &&
 			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
 		{
 			PlayerComb(MOTIONTYPE_ACTION4, 45, 40, COMBO_ATTACK4); // コンボ4
-			//g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 70.0f;
-			//g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 70.0f;
 		}
 	}
 
 	// [攻撃してない] かつ [手に何も持っていない] かつ [プレイヤーがスペシャルモーションを発動していない]
-	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE;
+	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE && g_player.bstiffness == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID;
 
 	// 投げ物を持っているときの攻撃
 	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && canAction == true)
@@ -995,15 +989,15 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 	float Radius = 50.0f;
 
 	// 剣先の位置
-	D3DXVECTOR3 SwordTopPos(g_player.SwordMtx._41, g_player.SwordMtx._42, g_player.SwordMtx._43);
+	D3DXVECTOR3 SwordTopPos = SetMtxConversion(g_player.SwordMtx);
 
 	// 剣の持ち手の位置
-	D3DXVECTOR3 SwordUnderPos(g_player.Motion.aModel[15].mtxWorld._41, g_player.Motion.aModel[15].mtxWorld._42, g_player.Motion.aModel[15].mtxWorld._43);
+	D3DXVECTOR3 SwordUnderPos = SetMtxConversion(g_player.Motion.aModel[15].mtxWorld);
 
 	for (int nCntModel = 0; nCntModel < pEnemy->Motion.nNumModel; nCntModel++)
 	{
 		// 敵の位置
-		D3DXVECTOR3 EnemyModel(pEnemy->Motion.aModel[nCntModel].mtxWorld._41, pEnemy->Motion.aModel[nCntModel].mtxWorld._42, pEnemy->Motion.aModel[nCntModel].mtxWorld._43);
+		D3DXVECTOR3 EnemyModel = SetMtxConversion(pEnemy->Motion.aModel[nCntModel].mtxWorld);
 
 		// 線分の終点から球体の中心点までのベクトル
 		D3DXVECTOR3 pvEnd = SwordTopPos - EnemyModel;
@@ -1359,9 +1353,19 @@ void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, floa
 //===============================================================================================================
 bool CollisionItem(int nIdx, float Itemrange, float plrange)
 {
+	GAMESTATE gamestate = GetGameState();
+
+	// ムービーだったら
+	if (gamestate == GAMESTATE_MOVIE)
+	{
+		// 関数を抜ける
+		return false;
+	}
 	Item* pItem = GetItem();
 
 	Billboard* pBillboard = GetBillBoard();
+
+	TEXTURE_INFO* ItemTexture = GetItemOrigin();
 
 	bool bCollision = false; // 当たっているかどうか
 
@@ -1369,7 +1373,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	const bool is_Damage = g_player.bstiffness == false;
 
 	// 範囲内かを判定
-	const bool Inbounds = sphererange(&g_player.pos, &pItem[nIdx].pos, 20.0f, 20.0f) == true;
+	const bool Inbounds = sphererange(&g_player.pos, &pItem[nIdx].pos, 100.0f, 20.0f) == true;
 
 	// 状態がノーマルか判定
 	const bool stateNormal = pItem[nIdx].state == ITEMSTATE_NORMAL;
@@ -1378,7 +1382,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	const bool NotDeth = g_player.Motion.motionType != MOTIONTYPE_DEATH;
 
 	// 拾えるかを判定
-	const bool CanPickUp = is_Damage && Inbounds && stateNormal && NotDeth;
+	const bool CanPickUp = is_Damage && sphererange(&g_player.pos, &pItem[nIdx].pos, 20.0f, 20.0f) == true && stateNormal && NotDeth;
 
 	// 範囲内だったら
 	if (Inbounds == true)
@@ -1388,7 +1392,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 	// 範囲内に入った
 	if (CanPickUp == true)
-	{		
+	{	
+		// アイテムの状態が普通だったら
 		if (pItem[nIdx].state == ITEMSTATE_NORMAL)
 		{
 			int nIdxBillboard = pItem[nIdx].nIdxBillboardCount;
@@ -1404,7 +1409,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 			if (pItem[nIdx].nType == ITEMTYPE_ONIGIRI)
 			{
-				D3DXVECTOR3 pos(g_player.Motion.aModel[1].mtxWorld._41, g_player.Motion.aModel[1].mtxWorld._42, g_player.Motion.aModel[1].mtxWorld._43);
+				// モデルの位置を代入
+				D3DXVECTOR3 pos = SetMtxConversion(g_player.Motion.aModel[1].mtxWorld);
 
 				// シリンダーをセット
 				g_player.nIdxCylinder = SetMeshCylinder(D3DXVECTOR3(g_player.pos.x, g_player.pos.y, g_player.pos.z),1,60,40.0f,D3DCOLOR_RGBA(59,255,0,255),16,1,2.0f,12.0f);
@@ -1427,7 +1433,10 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 					2.0f, 4, 40, 20, 10.0f, 40.0f,
 					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 
+				// Hpを増やす
 				g_player.nLife += HEAL_VALUE;
+
+				// アイテムを使用状態にする
 				pItem[nIdx].bUse = false;
 
 				// 関数を抜ける
@@ -1450,15 +1459,14 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				g_player.Itembreak[g_player.ItemIdx] = false;
 			}
 
+			// 武器を持っていたら
 			if (g_player.Motion.nNumModel == MAX_MODEL)
 			{
-				pItem[g_player.ItemIdx].bUse = true;
-				pItem[g_player.ItemIdx].pos.x = g_player.pos.x + (float)(rand() % 50 - 25.0f);
-				pItem[g_player.ItemIdx].pos.z = g_player.pos.z + (float)(rand() % 50 - 25.0f);
-				pItem[g_player.ItemIdx].state = ITEMSTATE_RELEASE;
-				pItem[g_player.ItemIdx].nCounterState = 60;
+				// アイテム変更時のパラメータ
+				ChangeItemParam(g_player.ItemIdx, pItem[g_player.ItemIdx].nType);
 			}
 
+			// 状態をホールドにする
 			pItem[nIdx].state = ITEMSTATE_HOLD;
 
 			// アイテムを変更する
@@ -1621,8 +1629,7 @@ bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int 
 	// 判定用変数
 	bool bFlag = false;
 
-	if (nKey >= StartKey && nKey <= EndKey &&
-		nCountFrame >= startFrame && nCountFrame <= EndFrame)
+	if (nKey >= StartKey && nKey <= EndKey && nCountFrame >= startFrame && nCountFrame <= EndFrame)
 	{
 		// 判定開始
 		bFlag = true;
@@ -1640,6 +1647,7 @@ float SetAttackerAngle(int AttackerIdx, int AttackerType)
 	{
 		return g_player.rot.y;
 	}
+
 	// 角度
 	float OutAngle = 0.0f;
 
@@ -2521,6 +2529,11 @@ void SetMotionContller(void)
 		g_player.bstiffness = false;
 	}
 
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_LANDING && CheckMotionBounds(nKey,nCounter,0,0,1,1) == true)
+	{
+		// 煙
+		LoadEffect(0, SetMtxConversion(g_player.Motion.aModel[11].mtxWorld));
+	}
 	// 振動の更新処理
 	UpdateVibration(&vibrationState);
 }
@@ -2898,9 +2911,6 @@ void HandleSpecialAttack(void)
 
 		g_player.SwordOffpos.y = 65.0f;		// 判定の長さを戻す
 		g_player.Itembreak[g_player.ItemIdx] = true;
-		//MotionChange(MOTION_DBHAND, 1);		// 素手に戻す
-		//g_player.Motion.nNumModel = 15;		// 武器を消す
-		//g_player.HandState = PLAYERHOLD_NO; // 何も持っていない状態にする
 		//StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //能力値を戻す
 		g_player.AttackSp = false;
 		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
@@ -2935,7 +2945,10 @@ void UpdateItemStock(void)
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
 
-		// アイテムの状態をストックにする
+		// もともとストックしていたアイテムをノーマルに戻す
+		pItem[g_player.StockItemIdx].state = ITEMSTATE_NORMAL;
+
+		// 持っているアイテムの状態をストックにする
 		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
 
 		// ストックされたアイテムのインデックスを渡す
@@ -3132,7 +3145,10 @@ void SetPlayerWepon(int nType,float SwordLength)
 		MotionChange(MOTION_ONE_HAND, 0);
 		StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
 		break;
-
+	case ITEMTYPE_GOLFHUNMER:
+		MotionChange(MOTION_BIGWEPON, 0);
+		StatusChange(2.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 180);
+		break;
 	default:
 		break;
 	}
@@ -3168,6 +3184,9 @@ void UpdatePlayerAvoid(void)
 	// モーションが回避じゃない
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)
 	{
+		// 音楽再生
+		PlaySound(SOUND_LABEL_AVOIDSE);
+
 		g_player.bstiffness = false;
 		g_player.avoidMove = SetMotionMoveAngle();
 
@@ -3335,4 +3354,20 @@ void SetWeponEffect(void)
 bool IsDamageAction(void)
 {
 	return false;
+}
+//===============================================================================================================
+// アイテムの変更のパラメータ表示
+//===============================================================================================================
+void ChangeItemParam(int nHaveIdx,int nType)
+{
+	Item* pItem = GetItem();
+
+	TEXTURE_INFO* ItemTexture = GetItemOrigin();
+
+	pItem[nHaveIdx].bUse = true;
+	pItem[nHaveIdx].ItemTex[nType] = ItemTexture[nType];
+	pItem[nHaveIdx].pos.x = g_player.pos.x + (float)(rand() % 50 - 25.0f);
+	pItem[nHaveIdx].pos.z = g_player.pos.z + (float)(rand() % 50 - 25.0f);
+	pItem[nHaveIdx].state = ITEMSTATE_RELEASE;
+	pItem[nHaveIdx].nCounterState = 60;
 }

@@ -35,6 +35,7 @@
 #include "meshcylinder.h"
 #include "mark.h"
 #include "event.h"
+#include "effectEdit.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -42,7 +43,7 @@
 #define MAX_WORD (256)			 // 最大の文字数
 #define SHADOWSIZEOFFSET (40.0f) // 影の大きさのオフセット
 #define SHADOW_A (1.0f)          // 影の濃さの基準
-#define NUM_MTX (8)
+#define NUM_MTX (8)				 //　剣のワールドマトリックスの数
 #define BOSS_LIFE (10000)        // ボスの最大HP
 #define TRANSPARENT_FRAME (300.0f) // 透明化のフレーム
 
@@ -63,7 +64,9 @@ void SetRasuAttack(int nCntBoss);													// ボスの突進攻撃の設定
 void SetDoubleRasuAttack(int nCntBoss);                                             // ボスの二回突進してくる攻撃処理
 void UpdateAgentBoss(int nCntBoss);                                                 // ボスの追跡の更新処理
 void DeathMotionContlloer(int nCntBoss);                                            // ボスの死亡モーションの処理
-void EndEventBossState(int nCntBoss,D3DXMATERIAL* pMat);												// イベントが終わった後にボスを消す処理
+void EndEventBossState(int nCntBoss);							// イベントが終わった後にボスを消す処理
+void HitBossAbnormalCondition(int nCntBoss);												// ボスに当たった時のエフェクト
+void HitBossAbnormalConditionParam(int nCntBoss, int nElement, int ChargeValue, int MaxCharge, int stateCnt);  // ボスに当たった時のエフェクトのパラメータ
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -248,13 +251,6 @@ void UpdateBoss(void)
 			continue;
 		}
 
-		// 0いかになったら
-		if (g_Boss[nCnt].pos.y <= 0.0f)
-		{
-			// 0に戻す
-			g_Boss[nCnt].pos.y = 0.0f;
-		}
-
 		if (g_Boss[nCnt].Motion.motiontypeBlend == MOTIONTYPE_DEATH)
 		{
 			DeathMotionContlloer(nCnt);
@@ -384,6 +380,11 @@ void UpdateBoss(void)
 			}
 		}
 
+
+		if (EnableEvent() == false)
+		{
+			EndEventBossState(nCnt);
+		}
 		CollisionToBoss(nCnt); // ボスとボスの当たり判定
 	}
 }
@@ -470,12 +471,12 @@ void DrawBoss(void)
 				// カラー変更用の変数
 				D3DXMATERIAL color;
 
-				if (g_Boss[nCnt].state != BOSSSTATE_DAMAGE && g_Boss[nCnt].bTransparent == false)
+				if (g_Boss[nCnt].state != BOSSSTATE_DAMAGE)
 				{
 					// マテリアルの設定
 					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 				}
-				else if (g_Boss[nCnt].state == BOSSSTATE_DAMAGE && g_Boss[nCnt].bTransparent == false)
+				else if (g_Boss[nCnt].state == BOSSSTATE_DAMAGE)
 				{
 					// カラーを代入
 					color = pMat[nCntMat];
@@ -490,15 +491,6 @@ void DrawBoss(void)
 					pDevice->SetMaterial(&color.MatD3D);
 				}
 
-				// イベントが終わった後のボスの処理
-				EndEventBossState(nCnt, &pMat[nCntMat]);
-
-				if (g_Boss[nCnt].bTransparent == true)
-				{
-					// マテリアルの設定
-					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-				}
-
 				// テクスチャの設定
 				pDevice->SetTexture(0, g_Boss[nCnt].Motion.aModel[nCntModel].pTexture[nCntMat]);
 
@@ -506,10 +498,11 @@ void DrawBoss(void)
 				g_Boss[nCnt].Motion.aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 			}
 
-			// マテリアルの設定
-			pDevice->SetMaterial(&matDef);
 		}
 	}
+
+	//// マテリアルをもとに戻す
+	//pDevice->SetMaterial(&matDef);
 
 	//DrawBossLife();
 }
@@ -599,7 +592,8 @@ void HitBoss(int nCntBoss,int nDamage)
 
 	GAMESTATE gamestate = GetGameState();
 
-	if (g_Boss[nCntBoss].nLife <= 0)
+	// ボスが死んだ
+	if (g_Boss[nCntBoss].nLife <= 0 && g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 	{
 		// ゲージを消す
 		DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
@@ -617,15 +611,17 @@ void HitBoss(int nCntBoss,int nDamage)
 		if (g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 		{
 			SetMotion(&g_Boss[nCntBoss].Motion, MOTIONTYPE_DEATH, true, 10);
+			AddTimeSecond(15); // 15秒増やす
 		}
-		g_Boss[nCntBoss].nLife = 0;
+
+		g_Boss[nCntBoss].nLife = -1;
 
 		if (gamestate != GAMESTATE_END)
 		{
 			if (pPlayer->FeverMode)
 			{
 				AddScore(30000);		// スコアを取得
-				AddSpgauge(2.5f);   // SPゲージを取得
+				AddSpgauge(10.5f);   // SPゲージを取得
 			}
 			else if (!pPlayer->FeverMode)
 			{
@@ -635,8 +631,6 @@ void HitBoss(int nCntBoss,int nDamage)
 			}
 		}
 
-		AddTimeSecond(15); // 15秒増やす
-
 		switch (pItem[pPlayer->ItemIdx].nType)
 		{
 		case ITEMTYPE_BAT:
@@ -659,10 +653,13 @@ void HitBoss(int nCntBoss,int nDamage)
 
 			break;
 		}
-
+		return;
 	}
 	else
 	{
+		HitBossAbnormalCondition(nCntBoss);
+
+		// サウンドのせってい
 		switch (pItem[pPlayer->ItemIdx].nType)
 		{
 		case ITEMTYPE_BAT:
@@ -685,6 +682,7 @@ void HitBoss(int nCntBoss,int nDamage)
 
 			break;
 		}
+
 		AddFever(10.0f);		// フィーバーポイントを取得
 
 		// パーティクルをセット
@@ -694,156 +692,6 @@ void HitBoss(int nCntBoss,int nDamage)
 		g_Boss[nCntBoss].nCounterState = 20;
 		g_Boss[nCntBoss].nHitStopCount = 8;
 		AddSpgauge(1.0f);   // SPゲージを取得
-
-		// 属性ゾーン
-		if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_STONEBAT) //石バットなら出血特殊効果を与える
-		{
-			if (g_Boss[nCntBoss].nStateCount[0] <= 0)
-			{
-				g_Boss[nCntBoss].nStateCharge[0] += 25;
-				if (g_Boss[nCntBoss].nStateCharge[0] >= 100)
-				{
-					g_Boss[nCntBoss].nStateCount[0] = 300;
-					g_Boss[nCntBoss].nStateCharge[0] = 0;
-				}
-			}
-		}
-		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_IRONBAT) //金属バットなら出血特殊効果を与える
-		{
-			if (g_Boss[nCntBoss].nStateCount[0] <= 0)
-			{
-				g_Boss[nCntBoss].nStateCharge[0] += 25;
-				if (g_Boss[nCntBoss].nStateCharge[0] >= 100)
-				{
-					g_Boss[nCntBoss].nStateCount[0] = 300;
-					g_Boss[nCntBoss].nStateCharge[0] = 0;
-				}
-			}
-		}
-		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_TORCHSWORD) //猛火剣なら炎特殊効果を与える
-		{
-			if (g_Boss[nCntBoss].nStateCount[1] <= 0)
-			{
-				g_Boss[nCntBoss].nStateCharge[1] += 25;
-				if (g_Boss[nCntBoss].nStateCharge[1] >= 100)
-				{
-					g_Boss[nCntBoss].nStateCount[1] = 300;
-					g_Boss[nCntBoss].nStateCharge[1] = 0;
-				}
-			}
-		}
-		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_ICEBLOCKSOWRD) //凍結剣なら氷特殊効果を与える
-		{
-			if (g_Boss[nCntBoss].nStateCount[2] <= 0)
-			{
-				g_Boss[nCntBoss].nStateCharge[2] += 25;
-				if (g_Boss[nCntBoss].nStateCharge[2] >= 100)
-				{
-					g_Boss[nCntBoss].nStateCount[2] = 300;
-					g_Boss[nCntBoss].nStateCharge[2] = 0;
-				}
-			}
-		}
-		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_LIGHTWOOD) //雷撃剣なら雷特殊効果を与える
-		{
-			if (g_Boss[nCntBoss].nStateCount[3] <= 0)
-			{
-				g_Boss[nCntBoss].nStateCharge[3] += 25;
-				if (g_Boss[nCntBoss].nStateCharge[3] >= 100)
-				{
-					g_Boss[nCntBoss].nStateCount[3] = 300;
-					g_Boss[nCntBoss].nStateCharge[3] = 0;
-				}
-			}
-		}
-		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_SURFBOARDFISH) //鮫浮き輪なら雷特殊効果を与える
-		{
-			if (g_Boss[nCntBoss].nStateCount[4] <= 0)
-			{
-				g_Boss[nCntBoss].nStateCharge[4] += 25;
-				if (g_Boss[nCntBoss].nStateCharge[4] >= 100)
-				{
-					g_Boss[nCntBoss].nStateCount[4] = 300;
-					g_Boss[nCntBoss].nStateCharge[4] = 0;
-				}
-			}
-		}
-		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_SURFBOARDFISH) //鮫浮き輪なら雷特殊効果を与える
-		{
-			if (g_Boss[nCntBoss].nStateCount[4] <= 0)
-			{
-				g_Boss[nCntBoss].nStateCharge[4] += 25;
-				if (g_Boss[nCntBoss].nStateCharge[4] >= 100)
-				{
-					g_Boss[nCntBoss].nStateCount[4] = 300;
-					g_Boss[nCntBoss].nStateCharge[4] = 0;
-				}
-			}
-		}
-		else if (pItem[pPlayer->ItemIdx].nType == ITEMTYPE_BONESPEAR) //骨槍なら確率で即死効果を与える
-		{
-			if (rand() % 40 == 0)
-			{
-				// ゲージを消す
-				DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
-
-				// 死んだらパーティクルを出す(雑魚より派手に)
-				SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + g_Boss[nCntBoss].Size.y / 1.5f, g_Boss[nCntBoss].pos.z),
-					g_Boss[nCntBoss].rot,
-					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-					7.0f, 40, 60, 20, 7.0f, 20.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-
-				// モーションがDeathじゃなかったら
-				if (g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
-				{
-					SetMotion(&g_Boss[nCntBoss].Motion, MOTIONTYPE_DEATH, true, 10);
-				}
-				g_Boss[nCntBoss].nLife = 0;
-
-				if (gamestate != GAMESTATE_END)
-				{
-					if (pPlayer->FeverMode)
-					{
-						AddScore(30000);		// スコアを取得
-						AddSpgauge(2.5f);   // SPゲージを取得
-					}
-					else if (!pPlayer->FeverMode)
-					{
-						AddFever(10.0f);		// フィーバーポイントを取得
-						AddScore(15000);		// スコアを取得
-						AddSpgauge(2.0f);   // SPゲージを取得
-					}
-				}
-
-				AddTimeSecond(15); // 15秒増やす
-
-				switch (pItem[pPlayer->ItemIdx].nType)
-				{
-				case ITEMTYPE_BAT:
-
-					// 音楽再生
-					PlaySound(SOUND_LABEL_BAT_SE);
-
-					break;
-
-				case ITEMTYPE_HUNMER:
-
-					// 音楽再生
-					PlaySound(SOUND_LABEL_HAMMER_SE);
-
-					break;
-				default:
-
-					// 音楽再生
-					PlaySound(SOUND_LABEL_ACTION_SE);
-
-					break;
-				}
-			}
-		}
 	}
 }
 //===============================================================================================================
@@ -1757,14 +1605,10 @@ void DeathMotionContlloer(int nCntBoss)
 	// キーが最後まで行ったかを判定
 	const bool LastKey = g_Boss[nCntBoss].Motion.nKey >= g_Boss[nCntBoss].Motion.aMotionInfo[MOTIONTYPE_DEATH].nNumkey - 1;
 
-	// 重力
-	g_Boss[nCntBoss].move.y -= MAX_GLABITY;
-
 	// 死亡モーションだったら
 	if (g_Boss[nCntBoss].Motion.nKey <= 0)
 	{
 		g_Boss[nCntBoss].move.x = sinf(pPlayer->rot.y + D3DX_PI) * 20.0f;
-		g_Boss[nCntBoss].move.y = 10.0f;
 		g_Boss[nCntBoss].move.z = cosf(pPlayer->rot.y + D3DX_PI) * 20.0f;
 	}
 
@@ -1786,43 +1630,91 @@ void DeathMotionContlloer(int nCntBoss)
 //========================================================================================================
 // イベントが終わった後にボスを消す処理
 //========================================================================================================
-void EndEventBossState(int nCntBoss,D3DXMATERIAL *pMat)
+void EndEventBossState(int nCntBoss)
 {
 	// イベントが終わった
 	if (EnableEvent() == false)
 	{
-		// 透明化を開始
-		g_Boss[nCntBoss].bTransparent = true;
+		LoadEffect(3, g_Boss[nCntBoss].pos);
 
-		// a値の減少値
-		static float DecAlv = 0.0f;
+		// マップから消す
+		EnableMap(g_Boss[nCntBoss].nIdxMap);
 
-		// 600フレームかけて消す
-		DecAlv = 1.0f / TRANSPARENT_FRAME;
+		// 影消す
+		KillShadow(g_Boss[nCntBoss].nIdxShadow);
 
-		// 透明にしていく
-		pMat->MatD3D.Diffuse.a -= DecAlv;
+		// ゲージを消す
+		DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
 
-		// α値が0になったら
-		if (pMat->MatD3D.Diffuse.a <= 0.0f)
+		// 消す
+		g_Boss[nCntBoss].bUse = false;
+	}
+}
+//========================================================================================================
+// ボスに当たった時の状態異常
+//========================================================================================================
+void HitBossAbnormalCondition(int nCntBoss)
+{
+	Player* pPlayer = GetPlayer();
+	Item* pItem = GetItem();
+
+	// 属性のパラメータ設定
+	switch (pItem[pPlayer->ItemIdx].nType)
+	{
+	case ITEMTYPE_STONEBAT:
+		//石バットなら出血特殊効果を与える
+		HitBossAbnormalConditionParam(nCntBoss, 0, 25, 100, 300);
+		break;
+	case ITEMTYPE_IRONBAT:
+		//金属バットなら出血特殊効果を与える
+		HitBossAbnormalConditionParam(nCntBoss, 0, 25, 100, 300);
+		break;
+	case ITEMTYPE_TORCHSWORD:
+		//猛火剣なら炎特殊効果を与える
+		HitBossAbnormalConditionParam(nCntBoss, 1, 25, 100, 300);
+		break;
+	case ITEMTYPE_ICEBLOCKSOWRD:
+		// 凍結剣なら氷特殊効果を与える
+		HitBossAbnormalConditionParam(nCntBoss, 2, 25, 100, 300);
+		break;
+	case ITEMTYPE_LIGHTWOOD:
+		// 雷撃剣なら雷特殊効果を与える
+		HitBossAbnormalConditionParam(nCntBoss, 3, 25, 100, 300);
+		break;
+	case ITEMTYPE_SURFBOARDFISH:
+		// 鮫浮き輪なら雷特殊効果を与える
+		HitBossAbnormalConditionParam(nCntBoss, 4, 25, 100, 300);
+		break;
+	case ITEMTYPE_BONESPEAR:
+		//骨槍なら確率で即死効果を与える
+		if (rand() % 40 == 0)
 		{
-			// マップから消す
-			EnableMap(g_Boss[nCntBoss].nIdxMap);
+			HitBoss(nCntBoss, 9999);
+		}
+		break;
+	default:
+		break;
+	}
+}
+//========================================================================================================
+// ボスに当たった時の状態異常のパラメータ
+//========================================================================================================
+void HitBossAbnormalConditionParam(int nCntBoss,int nElement,int ChargeValue,int MaxCharge,int stateCnt)
+{
+	// 状態カウントが0以下だったら
+	if (g_Boss[nCntBoss].nStateCount[nElement] <= 0)
+	{
+		// 状態異常値を加算
+		g_Boss[nCntBoss].nStateCharge[nElement] += ChargeValue;
 
-			// 影消す
-			KillShadow(g_Boss[nCntBoss].nIdxShadow);
+		// 蓄積値が最大になったら
+		if (g_Boss[nCntBoss].nStateCharge[nElement] >= MaxCharge)
+		{
+			// 状態異常の時間を設定
+			g_Boss[nCntBoss].nStateCount[nElement] = stateCnt;
 
-			// ゲージを消す
-			DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
-
-			// 消す
-			g_Boss[nCntBoss].bUse = false;
-
-			// 透明化を初期化
-			g_Boss[nCntBoss].bTransparent = false;
-
-			// 透明度をもとに戻す
-			pMat->MatD3D.Diffuse.a = 1.0f;
+			// 蓄積値を0に戻す
+			g_Boss[nCntBoss].nStateCharge[nElement] = 0;
 		}
 	}
 }

@@ -925,7 +925,7 @@ bool collisionObb(int nCnt)
 	// •ª—£² : Ae2
 	rA = D3DXVec3Length(&Ae2);
 	rB = LenSegOnSeparateAxis(&NAe2, &NBe1, &NBe2, &NBe3);
-	VecL = fabs(D3DXVec3Dot(&Interval, &NAe2));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &NAe2));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -934,7 +934,7 @@ bool collisionObb(int nCnt)
 	// •ª—£² : Ae3
 	rA = D3DXVec3Length(&Ae3);
 	rB = LenSegOnSeparateAxis(&NAe3, &NBe1, &NBe2, &NBe3);
-	VecL = fabs(D3DXVec3Dot(&Interval, &NAe3));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &NAe3));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -943,7 +943,7 @@ bool collisionObb(int nCnt)
 	// •ª—£² : Be1
 	rA = LenSegOnSeparateAxis(&NBe1, &Ae1, &Ae2, &Ae3);
 	rB = D3DXVec3Length(&NBe1);
-	VecL = fabs(D3DXVec3Dot(&Interval, &NBe1));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &NBe1));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -952,7 +952,7 @@ bool collisionObb(int nCnt)
 	// •ª—£² : Be2
 	rA = LenSegOnSeparateAxis(&NBe2, &Ae1, &Ae2, &Ae3);
 	rB = D3DXVec3Length(&NBe2);
-	VecL = fabs(D3DXVec3Dot(&Interval, &NBe2));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &NBe2));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -961,7 +961,7 @@ bool collisionObb(int nCnt)
 	// •ª—£² : Be3
 	rA = LenSegOnSeparateAxis(&NBe3, &Ae1, &Ae2, &Ae3);
 	rB = D3DXVec3Length(&NBe3);
-	VecL = fabs(D3DXVec3Dot(&Interval, &NBe3));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &NBe3));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -972,7 +972,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe1, &NBe1);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -982,7 +982,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe1, &NBe2);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -992,7 +992,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe1, &NBe3);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae2, &Ae3, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -1002,7 +1002,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe2, &NBe1);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -1012,7 +1012,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe2, &NBe2);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -1022,7 +1022,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe2, &NBe3);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae3, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -1032,7 +1032,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe3, &NBe1);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe2, &NBe3, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -1042,7 +1042,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe3, &NBe2);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe3, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;
@@ -1052,7 +1052,7 @@ bool collisionObb(int nCnt)
 	D3DXVec3Cross(&Cross, &NAe3, &NBe3);
 	rA = LenSegOnSeparateAxis(&Cross, &Ae1, &Ae2, 0);
 	rB = LenSegOnSeparateAxis(&Cross, &NBe1, &NBe2, 0);
-	VecL = fabs(D3DXVec3Dot(&Interval, &Cross));
+	VecL = fabsf(D3DXVec3Dot(&Interval, &Cross));
 	if (VecL > rA + rB)
 	{
 		return false;

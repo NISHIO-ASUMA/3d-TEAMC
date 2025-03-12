@@ -54,6 +54,7 @@
 #include "bosslife.h"
 #include "event.h"
 #include "count.h"
+#include "craftrecipe.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -150,6 +151,9 @@ void InitGame(void)
 	// クラフト画面の初期化処理
 	InitCraftUI();
 
+	// クラフト画面のレシピの初期化処理
+	InitCraftRecipe();
+
 	// ビルボードの初期化処理
 	InitBillboard();
 
@@ -215,7 +219,7 @@ void InitGame(void)
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(70.0f,640.0f,0.0f),UITYPE_ICONFRAME,70.0f, 80.0f,false,0);
 	SetGameUI(D3DXVECTOR3(200.0f, 660.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false,0);
-	//SetGameUI(D3DXVECTOR3(95.0f, 115.0f, 0.0f), UITYPE_KEY, 90.0f, 50.0f,false, 0);
+	SetGameUI(D3DXVECTOR3(95.0f, 115.0f, 0.0f), UITYPE_SP, 20.0f, 50.0f,false, 0);
 
 	// ストックアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);
@@ -305,6 +309,9 @@ void UninitGame(void)
 
 	// クラフト画面の終了処理
 	UninitCraftUI();
+
+	// クラフト画面のレシピの終了処理
+	UninitCraftRecipe();
 
 	// 煙の終了処理
 	UninitExplosion();

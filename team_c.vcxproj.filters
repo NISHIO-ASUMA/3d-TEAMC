@@ -181,6 +181,9 @@
     <ClCompile Include="TutorialSupport.cpp">
       <Filter>ソースファイル\base</Filter>
     </ClCompile>
+    <ClCompile Include="craftrecipe.cpp">
+      <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -362,6 +365,9 @@
     </ClInclude>
     <ClInclude Include="TutorialSupport.h">
       <Filter>ヘッダーファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="craftrecipe.h">
+      <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

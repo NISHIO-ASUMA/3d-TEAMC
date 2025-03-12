@@ -151,6 +151,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="count.cpp" />
+    <ClCompile Include="craftrecipe.cpp" />
     <ClCompile Include="craftui.cpp" />
     <ClCompile Include="Damegepop.cpp" />
     <ClCompile Include="easing.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="count.h" />
+    <ClInclude Include="craftrecipe.h" />
     <ClInclude Include="craftui.h" />
     <ClInclude Include="Damagepop.h" />
     <ClInclude Include="easing.h" />

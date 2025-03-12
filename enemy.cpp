@@ -66,7 +66,8 @@ void CollisionToEnemy(int nCntEnemy);							  // 敵と敵の当たり判定
 void UpdateHomingEnemy(int nCntEnemy);                            // 敵のホーミング処理
 void UpdateRunAwayEnemy(int nCntEnemy);                           // 逃げる敵の更新処理
 void UpdateAttackState(int nCntEnemy);                            // 敵の攻撃の更新処理
-void UpdateDroneEnemy(int nCntEnemy);                                  // 飛んでる敵の更新処理
+void UpdateDroneEnemy(int nCntEnemy);                             // 飛んでる敵の更新処理
+void SetSoundWepon(int nType);									  // 鳴らす音の設定処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -570,28 +571,9 @@ void HitEnemy(int nCnt,int nDamage)
 
 		if (g_bSound == false) // もしそのフレーム中一度も音が鳴らされてないなら鳴らす
 		{
-			switch (pItem[pPlayer->ItemIdx].nType)
-			{
-			case ITEMTYPE_BAT:
+			// サウンドを設定する
+			SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
 
-				// 音楽再生
-				PlaySound(SOUND_LABEL_BAT_SE);
-
-				break;
-
-			case ITEMTYPE_HUNMER:
-
-				// 音楽再生
-				PlaySound(SOUND_LABEL_HAMMER_SE);
-
-				break;
-			default:
-
-				// 音楽再生
-				PlaySound(SOUND_LABEL_ACTION_SE);
-
-				break;
-			}
 			g_bSound = true;
 
 		}
@@ -601,28 +583,9 @@ void HitEnemy(int nCnt,int nDamage)
 	{
 		if (g_bSound == false) // もしそのフレーム中一度も音が鳴らされてないなら鳴らす
 		{
-			switch (pItem[pPlayer->ItemIdx].nType)
-			{
-			case ITEMTYPE_BAT:
+			// サウンドを設定する
+			SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
 
-				// 音楽再生
-				PlaySound(SOUND_LABEL_BAT_SE);
-
-				break;
-
-			case ITEMTYPE_HUNMER:
-
-				// 音楽再生
-				PlaySound(SOUND_LABEL_HAMMER_SE);
-
-				break;
-			default:
-
-				// 音楽再生
-				PlaySound(SOUND_LABEL_ACTION_SE);
-
-				break;
-			}
 			g_bSound = true;
 		}
 
@@ -1574,4 +1537,73 @@ bool CollisionLine(D3DXVECTOR3* pFirstPos, D3DXVECTOR3* pEndPos,float fRadius)
 int GetNumKill(void)
 {
 	return g_nNumKill;
+}
+//===============================================================================================================
+// 鳴らす音の設定
+//===============================================================================================================
+void SetSoundWepon(int nType)
+{
+	switch (nType)
+	{
+	case ITEMTYPE_BAT: // バット持っているとき
+		// 音楽再生
+		PlaySound(SOUND_LABEL_BAT_SE);
+		break;
+
+	case ITEMTYPE_STONEBAT: // 石バット
+		// 音楽再生
+		PlaySound(SOUND_LABEL_BAT_SE);
+		break;
+
+	case ITEMTYPE_HUNMER: // ハンマー持っているとき
+		// 音楽再生
+		PlaySound(SOUND_LABEL_HAMMER_SE);
+		break;
+
+	case ITEMTYPE_GOLFHUNMER: // ゴルフハンマー
+		// 音楽再生
+		PlaySound(SOUND_LABEL_HAMMER_SE);
+		break;
+
+	case ITEMTYPE_TORCH: // 炎持っているとき
+		// 音楽再生
+		PlaySound(SOUND_LABEL_WEPONFIRESE);
+		break;
+
+	case ITEMTYPE_KATANA: // 刀持っているとき
+		// 音楽再生
+		PlaySound(SOUND_LABEL_ACTION_SE);
+		break;
+
+	case ITEMTYPE_FISH: // 魚系統
+		// 音楽再生
+		PlaySound(SOUND_LABEL_WATERWEPON);
+		break;
+
+	case ITEMTYPE_SPEAR: // 槍の武器音
+		// 音楽再生
+		PlaySound(SOUND_LABEL_SPEARWEPON);
+		break;
+
+	case ITEMTYPE_IRON: // 鉄系統の武器音
+		// 音楽再生
+		PlaySound(SOUND_LABEL_METALWEPON);
+		break;
+
+	case ITEMTYPE_HARISEN: // ハリセン武器音
+		// 音楽再生
+		PlaySound(SOUND_LABEL_HARISENWEPON);
+		break;
+
+	case ITEMTYPE_TELEPHONEPOLE: // 電柱
+		// 音楽再生
+		PlaySound(SOUND_LABEL_TELPHONWEPON);
+		break;
+
+	default: // 武器持っていない時 
+		// 音楽再生
+		PlaySound(SOUND_LABEL_NOWEPON);
+		break;
+	}
+
 }

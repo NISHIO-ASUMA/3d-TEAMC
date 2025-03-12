@@ -48,45 +48,58 @@ bool sphererange(D3DXVECTOR3* pPos1, D3DXVECTOR3* pPos2, float radius1, float ra
 	}
 	return bRange;
 }
-////=====================================================================================================
-//// エフェクトのテクスチャアニメーション
-////=====================================================================================================
-//void SetTextureAnimation(int *pPosX,int *pPosY,int *pAnimSpeed,int *pCounterAnim,int *pPatternAnim, VERTEX_3D *pVtx, LPDIRECT3DVERTEXBUFFER9 *pVtxBuff)
-//{
-//	VERTEX_3D* pVtx;
-//
-//	//頂点バッファをロック
-//	g_pVtxBuffEffectX->Lock(0, 0, (void**)&pVtx, 0);
-//
-//	// アニメーションカウンターを加算
-//	g_EffectX[nCnt].g_nCounterAnim++;
-//
-//	// テクスチャ座標を計算
-//	float Uv = 1.0f / XtexPos;
-//	float Hv = 1.0f / YtexPos;
-//
-//	// アニメーションのスピード
-//	if (g_EffectX[nCnt].g_nCounterAnim >= Animspeed)
-//	{
-//		g_EffectX[nCnt].g_nCounterAnim = NULL;//カウンターを初期値に戻す
-//
-//		g_EffectX[nCnt].g_nPatternAnim++;//パターンナンバーを更新
-//
-//		pVtx += 4 * nCnt;
-//
-//		// テクスチャ座標の更新
-//		pVtx[0].tex = D3DXVECTOR2(g_EffectX[nCnt].g_nPatternAnim * Uv, (g_EffectX[nCnt].g_nPatternAnim / XtexPos) * Hv);
-//		pVtx[1].tex = D3DXVECTOR2(Uv + g_EffectX[nCnt].g_nPatternAnim * Uv, (g_EffectX[nCnt].g_nPatternAnim / XtexPos) * Hv);
-//		pVtx[2].tex = D3DXVECTOR2(g_EffectX[nCnt].g_nPatternAnim * Uv, (g_EffectX[nCnt].g_nPatternAnim / XtexPos) * Hv + Hv);
-//		pVtx[3].tex = D3DXVECTOR2(Uv + g_EffectX[nCnt].g_nPatternAnim * Uv, (g_EffectX[nCnt].g_nPatternAnim / XtexPos) * Hv + Hv);
-//	}
-//
-//	// パターンが最大になったら
-//	if (g_EffectX[nCnt].g_nPatternAnim > XtexPos)
-//	{
-//		g_EffectX[nCnt].g_nPatternAnim = 0;//パターンナンバーを初期値に戻す
-//	}
-//
-//	// 頂点バッファのアンロック
-//	g_pVtxBuffEffectX->Unlock();
-//}
+//=====================================================================================================
+// ワールドマトリックスをD3DXVECTOR3に変換する
+//=====================================================================================================
+D3DXVECTOR3 SetMtxConversion(D3DXMATRIX mtxworld)
+{
+	// XYZに変換
+	D3DXVECTOR3 OutPut(mtxworld._41, mtxworld._42, mtxworld._43);
+
+	// 変換した値を返す
+	return OutPut;
+}
+//=====================================================================================================
+// エフェクトのテクスチャアニメーション
+//=====================================================================================================
+void SetTextureAnimation(int pPosX,int pPosY,int pAnimSpeed,int *pCounterAnim,int *pPatternAnim, VERTEX_2D *pVtx, LPDIRECT3DVERTEXBUFFER9 pVtxBuff,int nCnt)
+{
+	//頂点バッファをロック
+	if (FAILED(pVtxBuff->Lock(0, 0, (void**)&pVtx, 0)))
+	{
+		// エラーが起きたら関数を抜ける
+		return;
+	}
+
+	// アニメーションカウンターを加算
+	(*pCounterAnim)++;
+
+	// テクスチャ座標を計算
+	float Uv = 1.0f / pPosX;
+	float Hv = 1.0f / pPosY;
+
+	// アニメーションのスピード
+	if (*pCounterAnim >= pAnimSpeed)
+	{
+		*pCounterAnim = 0;//カウンターを初期値に戻す
+
+		(*pPatternAnim)++;//パターンナンバーを更新
+
+		pVtx += 4 * nCnt;
+
+		// テクスチャ座標の更新
+		pVtx[0].tex = D3DXVECTOR2(*pPatternAnim * Uv, (*pPatternAnim / pPosX) * Hv);
+		pVtx[1].tex = D3DXVECTOR2(Uv + *pPatternAnim * Uv, (*pPatternAnim / pPosX) * Hv);
+		pVtx[2].tex = D3DXVECTOR2(*pPatternAnim * Uv, (*pPatternAnim / pPosX) * Hv + Hv);
+		pVtx[3].tex = D3DXVECTOR2(Uv + *pPatternAnim * Uv, (*pPatternAnim / pPosX) * Hv + Hv);
+
+		// パターンが最大になったら
+		if (*pPatternAnim > (pPosX * pPosY))
+		{
+			*pPatternAnim = 0;//パターンナンバーを初期値に戻す
+		}
+	}
+
+	// 頂点バッファのアンロック
+	pVtxBuff->Unlock();
+}

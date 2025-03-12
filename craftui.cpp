@@ -12,10 +12,12 @@
 #include "player.h"
 #include "craftui.h"
 #include "icon.h"
+#include "craftrecipe.h"
 
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
+#define UIPOTISION (D3DXVECTOR3(600.0f, 400.0f, 0.0f)) // UIの位置
 
 //**************************************************************************************************************
 // プロトタイプ宣言
@@ -190,13 +192,6 @@ void UninitCraftUI(void)
 		}
 	}
 
-	//頂点バッファの破棄
-	if (g_pVtxBuffCraftUI != NULL)
-	{
-		g_pVtxBuffCraftUI->Release();
-		g_pVtxBuffCraftUI = NULL;
-	}
-
 	//テクスチャの破棄
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
@@ -205,6 +200,13 @@ void UninitCraftUI(void)
 			g_pTextureItemIcon[nCnt]->Release();
 			g_pTextureItemIcon[nCnt] = NULL;
 		}
+	}
+
+	//頂点バッファの破棄
+	if (g_pVtxBuffCraftUI != NULL)
+	{
+		g_pVtxBuffCraftUI->Release();
+		g_pVtxBuffCraftUI = NULL;
 	}
 
 	//頂点バッファの破棄
@@ -226,7 +228,7 @@ void UpdateCraftUI(void)
 
 	for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
 	{
-		if (!g_CraftUI[nCnt].bUse)
+		if (g_CraftUI[nCnt].bUse == false)
 		{
 			continue;
 		}
@@ -271,6 +273,15 @@ void UpdateCraftUI(void)
 			case WEPONTYPE_SURFBOARDFISH:
 				g_MixUI[nCnt].bUse = false;
 				break;
+			case WEPONTYPE_HEXMANDOLIN:
+				g_MixUI[nCnt].bUse = false;
+				break;
+			case WEPONTYPE_BONESPEAR:
+				g_MixUI[nCnt].bUse = false;
+				break;
+			case WEPONTYPE_GOLFHUNMER:
+				g_MixUI[nCnt].bUse = false;
+				break;
 			default:
 				break;
 			}
@@ -285,6 +296,9 @@ void UpdateCraftUI(void)
 
 		//pVtx += 4;
 	}
+
+	UpdateCraftRecipe();
+
 	////頂点ロック解除
 	//g_pVtxBuffItemIcon->Unlock();
 }
@@ -316,6 +330,9 @@ void DrawCraftUI(void)
 		}
 	}
 
+	// クラフトのレシピの描画処理
+	DrawCraftRecipe();
+
 	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffItemIcon, 0, sizeof(VERTEX_2D));
 
@@ -333,8 +350,6 @@ void DrawCraftUI(void)
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
 		}
 	}
-
-	//DrawIcon();
 }
 //==============================================================================================================
 // UIの設定処理
@@ -422,31 +437,39 @@ void SetMixItemUI(int nCnt)
 		// 作れるアイテムが石バット
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && g_MixUI[nCnt].bUse == false)
 		{
-			SetMixUI(D3DXVECTOR3(620.0f, 400.0f, 0.0f), WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
+			SetMixUI(UIPOTISION, WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
 		}
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_ICEBLOCKSOWRD] && g_MixUI[nCnt].bUse == false)
 		{
-			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_ICEBLOCKSOWRD, 80.0f, 80.0f, 0);
+			SetMixUI(UIPOTISION, ITEMTYPE_ICEBLOCKSOWRD, 80.0f, 80.0f, 0);
 		}
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_TORCHSWORD] && g_MixUI[nCnt].bUse == false)
 		{
-			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_TORCHSWORD, 80.0f, 80.0f, 0);
+			SetMixUI(UIPOTISION, ITEMTYPE_TORCHSWORD, 80.0f, 80.0f, 0);
 		}
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_LIGHTWOOD] && g_MixUI[nCnt].bUse == false)
 		{
-			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_LIGHTWOOD, 80.0f, 80.0f, 0);
+			SetMixUI(UIPOTISION, ITEMTYPE_LIGHTWOOD, 80.0f, 80.0f, 0);
 		}
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_IRONBAT] && g_MixUI[nCnt].bUse == false)
 		{
-			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_IRONBAT, 80.0f, 80.0f, 0);
+			SetMixUI(UIPOTISION, ITEMTYPE_IRONBAT, 80.0f, 80.0f, 0);
 		}
 		if (pItem[nCntItem].bMixItem[ITEMTYPE_HEADSTATUTORSO] && g_MixUI[nCnt].bUse == false)
 		{
-			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_HEADSTATUTORSO, 80.0f, 80.0f, 0);
+			SetMixUI(UIPOTISION, ITEMTYPE_HEADSTATUTORSO, 80.0f, 80.0f, 0);
 		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_SURFBOARDFISH] && g_MixUI[nCnt].bUse == false)
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_HEXMANDOLIN] && g_MixUI[nCnt].bUse == false)
 		{
-			SetMixUI(D3DXVECTOR3(600.0f, 400.0f, 0.0f), ITEMTYPE_SURFBOARDFISH, 80.0f, 80.0f, 0);
+			SetMixUI(UIPOTISION, ITEMTYPE_HEXMANDOLIN, 80.0f, 80.0f, 0);
+		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_BONESPEAR] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(UIPOTISION, ITEMTYPE_BONESPEAR, 80.0f, 80.0f, 0);
+		}
+		if (pItem[nCntItem].bMixItem[ITEMTYPE_GOLFHUNMER] && g_MixUI[nCnt].bUse == false)
+		{
+			SetMixUI(UIPOTISION, ITEMTYPE_GOLFHUNMER, 80.0f, 80.0f, 0);
 		}
 
 	}

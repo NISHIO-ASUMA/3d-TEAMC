@@ -28,6 +28,7 @@
 #define ATTACKER_ENEMY (0)      // 攻撃してきたのが敵
 #define ATTACKER_BOSS (1)       // 攻撃してきたのがボス
 #define MAX_GLABITY (1.0f)      // 重力
+#define ITEMTYPE_NONEXISTENT (4096) // 存在しないアイテムの種類
 
 //**************************************************************************************************************
 //ライフの種類
@@ -167,7 +168,6 @@ typedef enum
 typedef struct
 {
 	D3DXVECTOR3 pos;//位置
-	D3DXVECTOR3 posDest;
 	D3DXVECTOR3 posOld;//前回の位置
 	D3DXVECTOR3 Size;//大きさ
 	D3DXVECTOR3 rot;//向き
@@ -181,20 +181,15 @@ typedef struct
 	bool bDisp;
 	float PlayerMove;
 	MOTION Motion;
-	bool bMove;
 	PLAYERSTATE state;
 	int nCounterState;
 	int nLife;
 	int nMaxLife;
-
 	D3DXVECTOR3 SwordOffpos;
-	D3DXVECTOR3 Swordpos, Swordrot;
 	D3DXMATRIX SwordMtx;//剣先につけるワールドマトリックスのオフセット
 	PLAYERHOLDTATE HandState;
 	int nCounterAction;
 	int PlayerType;
-	bool bImpactCollision;
-	bool bJumpAttack;
 	float fShadowSize;//影の大きさ
 	int Combostate; // コンボの状態をもつ変数 
 	int ItemIdx;    // アイテムのインデックス保管用変数
@@ -220,7 +215,8 @@ typedef struct
 	int BlowCounter;       // 吹き飛ぶまでのカウンター
 	int AttackerIdx;       // 攻撃してきた敵のインデックス
 	bool bstiffness;        // ダメージの硬直時間
-
+	int StockItemType;		// ストックしているアイテムの種類
+	int HoldItemType;       // 持っているアイテムの種類
 }Player;
 
 //**************************

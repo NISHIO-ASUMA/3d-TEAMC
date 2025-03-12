@@ -2,7 +2,7 @@
 +   アイテムの読み込み処理(種類追加したら一応報告お願いします)   +     
 +----------------------------------------------------------------+
 
-MAX_TYPE = 35 # 読み込むモデル数
+MAX_TYPE = 36 # 読み込むモデル数
 
 #-------------------------
 # モデルファイル
@@ -42,7 +42,7 @@ MODEL_FILENAME = data/MODEL/ITEM/onigiri.x								# [31]回復アイテム(お�
 MODEL_FILENAME = data/MODEL/ITEM/wepon_spear.x							# [32]槍
 MODEL_FILENAME = data/MODEL/ITEM/wepon_mandolin.x						# [33]マンドリン
 MODEL_FILENAME = data/MODEL/ITEM/wepon_bone.x							# [34]骨
-
+MODEL_FILENAME = data/MODEL/ITEM/wepon_golfhunme.x						# [35]ゴルフハンマー
 
 # もしやり方わかるならITEM.hの列挙型追加頼む
 
