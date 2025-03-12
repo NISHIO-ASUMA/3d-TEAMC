@@ -220,7 +220,7 @@ void AddSpgauge(float fValue)
 
 	for (int nCnt = 0; nCnt < SPGAUGE_MAX; nCnt++)
 	{
-		if (g_SPgauge[nCnt].SpGauge < 100.0f && pPlayer->AttackSp == false && g_SPgauge[nCnt].state == SPGAUGESTATE_CHARGE)
+		if (g_SPgauge[nCnt].SpGauge < 300.0f && pPlayer->AttackSp == false && g_SPgauge[nCnt].state == SPGAUGESTATE_CHARGE)
 		{
 			// â¡éZèàóù
 			g_SPgauge[nCnt].SpGauge += fValue;

@@ -109,6 +109,11 @@ void UpdateManager(void)
 	}
 	fPlusX += bAmove * -100;
 
+	if (nSteps > 3)
+	{
+		AddSpgauge(1.0f);
+	}
+
 	if (nSteps == 0 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_MOVE && fALv2 == 1.0f)
 	{
 		PlaySound(SOUND_LABEL_ENTER_SE);
@@ -129,7 +134,6 @@ void UpdateManager(void)
 		if (pPlayer->AttackSp == false)
 		{
 			PlaySound(SOUND_LABEL_ENTER_SE);
-			AddSpgauge(300.0f);
 			bAmove = -0.01f;
 		}
 	}
