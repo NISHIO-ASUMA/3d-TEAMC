@@ -68,6 +68,7 @@ void DeathMotionContlloer(int nCntBoss);													// ボスの死亡モーションの処
 void EndEventBossState(int nCntBoss);														// イベントが終わった後にボスを消す処理
 void HitBossAbnormalCondition(int nCntBoss);												// ボスに当たった時のエフェクト
 void HitBossAbnormalConditionParam(int nCntBoss, int nElement, int ChargeValue, int MaxCharge, int stateCnt);  // ボスに当たった時のエフェクトのパラメータ
+void SpawnItem(D3DXVECTOR3 pos);
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -613,6 +614,7 @@ void HitBoss(int nCntBoss,int nDamage)
 		{
 			SetMotion(&g_Boss[nCntBoss].Motion, MOTIONTYPE_DEATH, true, 10);
 			AddTimeSecond(15); // 15秒増やす
+			SpawnItem(g_Boss[nCntBoss].pos);
 		}
 
 		g_Boss[nCntBoss].nLife = -1;
@@ -1174,10 +1176,26 @@ void colisionSword(int nCntBoss)
 	// 攻撃できる
 	const bool CanSwordDamage = is_HaveWepon == true && is_NotSpAttack == true && is_NotDamage == true && is_playerAction == true;
 
+	// ダメージカット
+	static int fCutDamage = 1;
+
+	// クラフト武器だったら
+	if (strcmp(&pItem[pPlayer->ItemIdx].Itemtag[0], "CRAFT") == 0)
+	{
+		// ダメージカットの割合
+		fCutDamage = 1;
+	}
+	// 普通の武器だったら
+	else if (strcmp(&pItem[pPlayer->ItemIdx].Itemtag[0], "NORMAL") == 0)
+	{
+		// ダメージカットの割合
+		fCutDamage = 100;
+	}
+
 	// スペシャル攻撃じゃない
 	if (CanSwordDamage == true && bHit == true && CheckMotionBounds(nKey,nCounter,KEY_ONE,LastKey,0,EndFrame) == true)
 	{
-		HitBoss(nCntBoss,pPlayer->nDamage * 5);
+		HitBoss(nCntBoss, (pPlayer->nDamage * 5) / fCutDamage);
 
 		pItem[pPlayer->ItemIdx].durability--;
 
@@ -1202,7 +1220,7 @@ void colisionSword(int nCntBoss)
 	// 素手で攻撃できる
 	if (CanPanchDamage == true && CheckMotionBounds(nKey, nCounter, KEY_TWO, LastKey, 0, EndFrame) == true)
 	{
-		HitBoss(nCntBoss,pPlayer->nDamage * 3); // 敵に当たった
+		HitBoss(nCntBoss,(pPlayer->nDamage * 3) / fCutDamage); // 敵に当たった
 	}
 
 	// 範囲内
@@ -1214,27 +1232,27 @@ void colisionSword(int nCntBoss)
 	// 刀のスペシャル攻撃
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, KEY_THREE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 15); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
 	}
 	// 両手持ちの必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPDOUBLE && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 15); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
 	}
 	// ハンマーのスペシャル攻撃
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPHAMMER && CheckMotionBounds(nKey, nCounter, KEY_ONE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 15); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
 	}
 	// 片手の必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 15); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
 	}
 	// 槍の必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, KEY_EIGHTEEN, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, pPlayer->nDamage * 15); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
 	}
 
 }
@@ -1316,6 +1334,10 @@ void UpdateAbnormalCondition(int nCntBoss)
 	// 状態異常氷の処理
 	if (SetAbnormalCondition(2, 60, 0, nCntBoss) == true)
 	{
+		if (g_Boss[nCntBoss].nStateCount[2] % 2 == 0)
+		{
+			g_Boss[nCntBoss].Motion.nCountMotion--;
+		}
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
 			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
 			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -1550,8 +1572,16 @@ void UpdateAgentBoss(int nCntBoss)
 		D3DXVec3Normalize(&Dest, &Dest);
 
 		// 移動量に代入
-		g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed;
-		g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed;
+		if (g_Boss[nCntBoss].nStateCount[2] > 0)
+		{
+			g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed / 2.0f;
+			g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed / 2.0f;
+		}
+		else
+		{
+			g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed;
+			g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed;
+		}
 	}
 	//else
 	//{
@@ -1666,7 +1696,7 @@ void HitBossAbnormalCondition(int nCntBoss)
 		break;
 	case ITEMTYPE_HEXMANDOLIN:
 		//ダークハープなら確率で即死効果を与える
-		if (rand() % 40 == 0)
+		if (rand() % 32 == 0)
 		{
 			HitBoss(nCntBoss, 99999);
 		}
@@ -1696,6 +1726,14 @@ void HitBossAbnormalConditionParam(int nCntBoss,int nElement,int ChargeValue,int
 			g_Boss[nCntBoss].nStateCharge[nElement] = 0;
 		}
 	}
+}
+//=======================================================================================================
+// アイテムのスポーン
+//=======================================================================================================
+void SpawnItem(D3DXVECTOR3 pos)
+{
+	// アイテムを設定
+	SetItem(pos, rand() % ITEMTYPE_MAX);
 }
 //========================================================================================================
 // ボスの取得処理

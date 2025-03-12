@@ -368,6 +368,7 @@ void UpdateItem(void)
 			{
 				// エフェクトを出す
 				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+
 				// パーティクルを出す、以下全て同じ
 				SetParticle(g_Item[nCntItem].pos,
 					g_Item[nCntItem].rot,
@@ -679,7 +680,12 @@ void Itemchange(int nIdx, int nType)
 		// 耐久力を代入
 		g_Item[nIdx].durability = g_aItemInfo[nType].durability;
 		g_Item[nIdx].Maxdurability = g_aItemInfo[nType].Maxdurability;
+
+
+		strcpy(&g_Item[nIdx].Itemtag[0], &g_aItemInfo[nType].Itemtag[0]);
 	}
+
+
 	// 大きさを代入
 	g_Item[nIdx].Size = g_TexItem[nType].Size;
 }
@@ -831,6 +837,8 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 	// SEを出す
 	PlaySound(SOUND_LABEL_CRAFT);
 
+	g_Item[pPlayer->ItemIdx].Power = g_aItemInfo[MixItem].Power;
+
 	// 持っているアイテムを変更
 	Itemchange(nCntItem,MixItem);
 
@@ -861,6 +869,9 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 	g_Item[pPlayer->ItemIdx].state = ITEMSTATE_HOLD;
 
 	g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
+
+	// 文字をコピー
+	strcpy(&g_Item[pPlayer->ItemIdx].Itemtag[0], &g_aItemInfo[MixItem].Itemtag[0]);
 
 	pPlayer->StockItemIdx = pPlayer->ItemIdx;
 }
@@ -1094,7 +1105,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_STONEBAT, MOTION_DBHAND);
 
 			// ステータスの変更
-			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// 氷の剣の材料がそろった
@@ -1104,7 +1115,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
 
 			// ステータスの変更
-			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// 炎の剣の材料がそろった
@@ -1114,7 +1125,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_TORCHSWORD, MOTION_KATANA);
 
 			// ステータスの変更
-			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// 雷の剣の材料がそろった
@@ -1124,7 +1135,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_LIGHTWOOD, MOTION_DBHAND);
 
 			// ステータスの変更
-			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// 金属バットの材料がそろった
@@ -1134,7 +1145,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_IRONBAT, MOTION_DBHAND);
 
 			// ステータスの変更
-			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// 全身マネキンの材料がそろった
@@ -1144,7 +1155,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_HEADSTATUTORSO, MOTION_BIGWEPON);
 
 			// ステータスの変更
-			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// 鮫浮き輪の材料がそろった
@@ -1154,7 +1165,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_SURFBOARDFISH, MOTION_BIGWEPON);
 
 			// ステータスの変更
-			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// 呪いの楽器の材料がそろった
@@ -1164,7 +1175,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_HEXMANDOLIN, MOTION_ONE_HAND);
 
 			// ステータスの変更
-			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// 骨の槍の材料がそろった
@@ -1174,7 +1185,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_BONESPEAR, MOTION_PIERCING);
 
 			// ステータスの変更
-			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 150);
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 		// ゴルフハンマーの材料がそろった
@@ -1184,7 +1195,7 @@ void UpdateCraftItemParam(int nCnt)
 			CraftMixItem(nCnt, ITEMTYPE_GOLFHUNMER, MOTION_BIGWEPON);
 
 			// ステータスの変更
-			StatusChange(2.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 180);
+			StatusChange(2.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
 		}
 
 	}
