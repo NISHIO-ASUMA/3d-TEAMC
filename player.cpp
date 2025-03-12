@@ -1357,7 +1357,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	GAMESTATE gamestate = GetGameState();
 
 	// ƒ€[ƒr[‚¾‚Á‚½‚ç
-	if (gamestate == GAMESTATE_MOVIE || g_player.bCraft == true)
+	if (gamestate == GAMESTATE_MOVIE || g_player.bCraft == true || g_player.AttackSp == true)
 	{
 		// ŠÖ”‚ğ”²‚¯‚é
 		return false;
