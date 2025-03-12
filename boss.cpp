@@ -630,7 +630,7 @@ void HitBoss(int nCntBoss,int nDamage)
 			{
 				AddFever(10.0f);		// フィーバーポイントを取得
 				AddScore(15000);		// スコアを取得
-				AddSpgauge(2.0f);   // SPゲージを取得
+				AddSpgauge(2.0f);       // SPゲージを取得
 			}
 		}
 
