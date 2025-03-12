@@ -749,9 +749,6 @@ void DrawGame(void)
 	// 軌跡の描画処理
 	DrawMeshSword();
 
-	// アイコンの描画処理
-	DrawIcon();
-
 	// ゲームのUIの描画処理
 	DrawGameUI();
 
@@ -781,6 +778,9 @@ void DrawGame(void)
 		// クラフト画面の描画処理
 		DrawCraftUI();
 	}
+
+	// アイコンの描画処理
+	DrawIcon();
 
 	if (g_bPause == true)
 	{//ポーズ中

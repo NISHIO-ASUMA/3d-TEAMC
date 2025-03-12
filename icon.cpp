@@ -12,6 +12,12 @@
 #include "icon.h"
 
 //******************************************************************************************************************
+// プロトタイプ宣言
+//******************************************************************************************************************
+void SetWeponDurabilityAnim(int nCnt);		// アイテムアイコンの点滅処理
+void CraftScreenAnim(int nCnt);             // クラフト画面のアイコンの設定
+
+//******************************************************************************************************************
 // グローバル変数宣言
 //******************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureIcon[WEPONTYPE_MAX] = {}; // テクスチャへのポインタ
@@ -117,9 +123,6 @@ void UninitIcon()
 //=================================================================================================================
 void UpdateIcon()
 {
-	Item* pItem = GetItem();
-	Player* pPlayer = GetPlayer();
-
 	// フレーム用変数
 	static int fFrame;
 	static bool bUP;
@@ -132,45 +135,16 @@ void UpdateIcon()
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)// 全てのアイコンを数え
 	{
-		if (g_Icon[nCnt].bUse && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD && g_Icon[nCnt].nIconType == ICONTYPE_HOLDITEM)// 使用されてるかつアイテム持ち
+		if (g_Icon[nCnt].bUse == false)
 		{
-			if ((float)pItem[pPlayer->ItemIdx].durability / (float)pItem[pPlayer->ItemIdx].Maxdurability < 0.3f)// 更に耐久力が減ってたら赤く点滅
-			{
-				if (bUP)
-				{
-					fFrame++;
-				}
-				else
-				{
-					fFrame--;
-				}
-
-				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
-				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
-				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
-				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
-
-				if (fFrame >= 10)
-				{
-					bUP = false;
-				}
-				else if (fFrame <= 0)
-				{
-					bUP = true;
-				}
-			}
-			else // そうでなかったら色を戻す
-			{
-				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				fFrame = 0;
-				bUP = true;
-			}
+			continue;
 		}
-		// 頂点座標を進める
-		pVtx += 4;
+
+		// アイテムアイコンの点滅処理
+		SetWeponDurabilityAnim(nCnt);
+
+		CraftScreenAnim(nCnt);
+
 	}
 
 	// アンロック
@@ -258,6 +232,129 @@ void SetIcon(D3DXVECTOR3 pos, float fWidth, float fHeight, int nType, int IconTy
 		pVtx += 4;
 	}
 
+	// アンロック
+	g_pVtxBuffIcon->Unlock();
+}
+//=================================================================================================================
+// アイテムアイコンの点滅処理
+//=================================================================================================================
+void SetWeponDurabilityAnim(int nCnt)
+{
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+	Item* pItem = GetItem();
+	Player* pPlayer = GetPlayer();
+
+	// フレーム用変数
+	static int fFrame;
+	static bool bUP;
+
+	// 頂点バッファのロック
+	g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
+
+	// アイテムを持っているか判定
+	const bool isStateHold = pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD;
+
+	// アイコンの種類が持っているアイテムか判定
+	const bool TypeHold = g_Icon[nCnt].nIconType == ICONTYPE_HOLDITEM;
+
+	// 点滅できるか判定
+	const bool is_frash = (float)pItem[pPlayer->ItemIdx].durability / (float)pItem[pPlayer->ItemIdx].Maxdurability < 0.3f;
+
+	// 点滅の処理に入れるか判定
+	const bool CanFrashProcess = isStateHold && TypeHold;
+
+	// 条件が違ったら
+	if (CanFrashProcess == false)
+	{// 関数を抜ける
+		return;
+	}
+
+	// 使用されてるかつアイテム持ち
+	if (is_frash == true)// 更に耐久力が減ってたら赤く点滅
+	{
+		if (bUP)
+		{
+			fFrame++;
+		}
+		else
+		{
+			fFrame--;
+		}
+
+		pVtx += 4 * nCnt;
+
+		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+
+		if (fFrame >= 10)
+		{
+			bUP = false;
+		}
+		else if (fFrame <= 0)
+		{
+			bUP = true;
+		}
+	}
+	else // そうでなかったら色を戻す
+	{
+		pVtx += 4 * nCnt;
+
+		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		fFrame = 0;
+		bUP = true;
+	}
+
+	// アンロック
+	g_pVtxBuffIcon->Unlock();
+}
+//=================================================================================================================
+// クラフト画面のアイコンの設定
+//=================================================================================================================
+void CraftScreenAnim(int nCnt)
+{
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	Player* pPlayer = GetPlayer();
+	Item* pItem = GetItem();
+
+	D3DXVECTOR3 pos = g_Icon[nCnt].pos;
+	float fWidth = g_Icon[nCnt].fWidth;
+	float fHeight = g_Icon[nCnt].fHeight;
+
+	// 頂点バッファのロック
+	g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
+
+	if (g_Icon[nCnt].nType == pItem[pPlayer->ItemIdx].nType && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD && pPlayer->bCraft == true)
+	{
+		D3DXVECTOR3(640.0f, 360.0f, 0.0f);
+
+		pVtx += 4 * nCnt;
+
+		// 頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
+	}
+	else if (g_Icon[nCnt].nType == pItem[pPlayer->StockItemIdx].nType && pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && pPlayer->bCraft == true)
+	{
+		D3DXVECTOR3(840.0f, 360.0f, 0.0f);
+
+		pVtx += 4 * nCnt;
+
+		// 頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
+	}
 	// アンロック
 	g_pVtxBuffIcon->Unlock();
 }

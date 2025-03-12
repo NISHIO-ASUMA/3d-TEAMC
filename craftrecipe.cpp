@@ -66,7 +66,7 @@ void InitCraftRecipe(void)
 	// レシピの種類分
 	for (int nCnt = 0; nCnt < RECIPETYPE_MAX; nCnt++)
 	{
-		g_aRecipe[nCnt].pos = D3DXVECTOR3(500.0f,350.0,0.0f); // 位置
+		g_aRecipe[nCnt].pos = D3DXVECTOR3(600.0f,300.0,0.0f); // 位置
 		g_aRecipe[nCnt].nType = nCnt;						  // 種類
 		g_aRecipe[nCnt].fWidth = 150.0f;					  // 横幅
 		g_aRecipe[nCnt].fHeight = 100.0f;					  // 高さ
@@ -223,10 +223,10 @@ void SetCraftRecipe(D3DXVECTOR3 pos, int nType0,int nType1, float fWidth, float 
 	pVtx += 4 * nType0;
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(-(fWidth * 1.5f) + pos.x - fWidth, pos.y - fHeight, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(-(fWidth * 1.5f) + pos.x + fWidth, pos.y - fHeight, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-(fWidth * 1.5f) + pos.x - fWidth, pos.y + fHeight, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(-(fWidth * 1.5f) + pos.x + fWidth, pos.y + fHeight, 0.0f);
 
 	// 頂点バッファのアンロック
 	g_pVtxBuffRecipe->Unlock();
@@ -238,10 +238,10 @@ void SetCraftRecipe(D3DXVECTOR3 pos, int nType0,int nType1, float fWidth, float 
 	pVtx += 4 * nType1;
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3((fWidth * 2.0f) + pos.x - fWidth, pos.y - fHeight, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3((fWidth * 2.0f) + pos.x + fWidth, pos.y - fHeight, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3((fWidth * 2.0f) + pos.x - fWidth, pos.y + fHeight, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3((fWidth * 2.0f) + pos.x + fWidth, pos.y + fHeight, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3((fWidth * 1.5f) + pos.x - fWidth, pos.y - fHeight, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3((fWidth * 1.5f) + pos.x + fWidth, pos.y - fHeight, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3((fWidth * 1.5f) + pos.x - fWidth, pos.y + fHeight, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3((fWidth * 1.5f) + pos.x + fWidth, pos.y + fHeight, 0.0f);
 
 	// 頂点バッファのアンロック
 	g_pVtxBuffRecipe->Unlock();

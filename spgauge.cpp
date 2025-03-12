@@ -255,6 +255,11 @@ void DecSpgauge(float fValue)
 	// 頂点ロック
 	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
 
+	if (NowChargeGage - 1 < 0)
+	{
+		return;
+	}
+
 	if (NowChargeGage != 1)
 	{
 		// 現在のゲージから減らせる分を消費
@@ -286,11 +291,6 @@ void DecSpgauge(float fValue)
 		pVtx[1].pos = D3DXVECTOR3(120.0f + fLength, 111.0f, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(120.0f, 131.5f, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(120.0f + fLength, 131.5f, 0.0f);
-
-	}
-	else
-	{
-		g_SPgauge[NowChargeGage].SpGauge -= fValue;
 	}
 
 	// 頂点ロック解除

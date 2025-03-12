@@ -2924,7 +2924,8 @@ void HandleSpecialAttack(void)
 		g_player.Itembreak[g_player.ItemIdx] = true;
 		//StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50); //”\—Í’l‚ð–ß‚·
 		g_player.AttackSp = false;
-		pItem[g_player.ItemIdx].state = ITEMSTATE_NORMAL;
+		pItem[g_player.ItemIdx].state = ITEMSTATE_RELEASE;
+		pItem[g_player.ItemIdx].nCounterState = 60;
 	}
 }
 //===============================================================================================================

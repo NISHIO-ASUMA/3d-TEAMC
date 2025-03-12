@@ -167,13 +167,13 @@ void InitCraftUI(void)
 	g_pVtxBuffItemIcon->Unlock();
 
 	// クラフト画面の背景
-	SetCraftUI(D3DXVECTOR3(625.0f, 350.0f, 0.0f), CRAFTUITYPE_BACKGROUND, 500.0f, 250.0f, 0);
+	SetCraftUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), CRAFTUITYPE_BACKGROUND, 640.0f, 360.0f, 0);
 
 	// クラフト画面のクラフトボタン
-	SetCraftUI(D3DXVECTOR3(325.0f, 550.0f, 0.0f), CRAFTUITYPE_CRAFT, 100.0f, 50.0f, -1);
+	SetCraftUI(D3DXVECTOR3(225.0f, 625.0f, 0.0f), CRAFTUITYPE_CRAFT, 100.0f, 50.0f, -1);
 
 	// クラフト画面の閉じるボタン
-	SetCraftUI(D3DXVECTOR3(925.0f, 550.0f, 0.0f), CRAFTUITYPE_CLOSE, 100.0f, 50.0f, -1);
+	SetCraftUI(D3DXVECTOR3(1025.0f, 625.0f, 0.0f), CRAFTUITYPE_CLOSE, 100.0f, 50.0f, -1);
 }
 //==============================================================================================================
 // UIの終了処理
