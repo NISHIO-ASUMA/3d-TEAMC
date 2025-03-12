@@ -686,7 +686,6 @@ void DrawCameraPos(void)
 	// テキスト描画
 	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
 	g_pFont->DrawText(NULL, &aString1[0], -1, &rect1, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
-
 }
 //==========================================================================================================
 // カメラの種類

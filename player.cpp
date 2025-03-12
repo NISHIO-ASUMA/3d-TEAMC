@@ -598,6 +598,10 @@ void UpdatePlayer(void)
 	// 必殺技の処理
 	HandleSpecialAttack();
 
+	if (KeyboardTrigger(DIK_H) == true)
+	{
+		AddSpgauge(100.0f);
+	}
 	// フォーバーモード
 	if (g_player.FeverMode == true)
 	{
@@ -1371,7 +1375,6 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 
 	MODEL_INFO* ItemTexture = GetItemOrigin();
-
 
 	bool bCollision = false; // 当たっているかどうか
 
