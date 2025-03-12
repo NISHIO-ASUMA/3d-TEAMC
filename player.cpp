@@ -1357,16 +1357,21 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	GAMESTATE gamestate = GetGameState();
 
 	// ムービーだったら
-	if (gamestate == GAMESTATE_MOVIE)
+	if (gamestate == GAMESTATE_MOVIE || g_player.bCraft == true)
 	{
 		// 関数を抜ける
 		return false;
 	}
+
 	Item* pItem = GetItem();
+
+	ITEM_INFO* pItemInfo = GetItemInfo();
 
 	Billboard* pBillboard = GetBillBoard();
 
+
 	MODEL_INFO* ItemTexture = GetItemOrigin();
+
 
 	bool bCollision = false; // 当たっているかどうか
 
@@ -1452,6 +1457,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
+
+			pItem[g_player.ItemIdx].Power = pItemInfo[pItem[nIdx].nType].Power;
 
 			Itemchange(nIdx,pItem[nIdx].nType); // アイテムを拾う
 			
@@ -3010,7 +3017,7 @@ void UpdatePlayerAvoid(void)
 	const bool NotFinish = g_player.Motion.bFinishMotion == false;
 
 	// 回避モーションを発動できるかを判定
-	const bool CanAvoid = NotAvoid == true && NotNeutral == true && NotFinish == true && g_player.AttackSp == false;
+	const bool CanAvoid = NotAvoid == true && NotNeutral == true && NotFinish == true && g_player.AttackSp == false && g_player.nLife > 0;
 
 	// モーションが回避じゃない
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)
@@ -3225,6 +3232,7 @@ void LoadItemChange(int nType, float swordLength)
 	// ファイルがNULLじゃなかったら
 	if (pFile != NULL)
 	{
+		// 文字読み取り変数
 		char aString[MAX_WORD];
 
 		while (1)

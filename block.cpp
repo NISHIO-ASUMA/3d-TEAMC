@@ -259,8 +259,6 @@ void UpdateBlock(void)
 
 		collisionObbBoss(nCntBlock); // ƒ{ƒX—p‚Ì”»’è(•ª‚¯‚È‚¢‚Æ‚¤‚Ü‚­‚¢‚©‚È‚©‚Á‚½)
 
-		CraftRange(&g_Block[nCntBlock]);
-
 #ifdef _DEBUG
 
 		if (GetKeyboardPress(DIK_L))

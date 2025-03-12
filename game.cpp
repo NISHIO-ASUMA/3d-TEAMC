@@ -219,7 +219,7 @@ void InitGame(void)
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(70.0f,640.0f,0.0f),UITYPE_ICONFRAME,70.0f, 80.0f,false,0);
 	SetGameUI(D3DXVECTOR3(200.0f, 660.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false,0);
-	SetGameUI(D3DXVECTOR3(85.0f, 120.0f, 0.0f), UITYPE_SP, 25.0f, 50.0f,false, 0);
+	SetGameUI(D3DXVECTOR3(60.0f, 120.0f, 0.0f), UITYPE_SP, 55.0f, 50.0f, false, 0);
 
 	// ストックアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);
@@ -752,6 +752,9 @@ void DrawGame(void)
 	// アイコンの描画処理
 	DrawIcon();
 
+	// ゲームのUIの描画処理
+	DrawGameUI();
+
 	//HPゲージの描写処理
 	DrawGauge();
 
@@ -760,9 +763,6 @@ void DrawGame(void)
 
 	//弾の描画処理
 	DrawBullet();
-
-	// ゲームのUIの描画処理
-	DrawGameUI();
 
 	// アイテムゲージの描画処理
 	DrawItemGage();
