@@ -195,6 +195,7 @@ void UninitEnemy(void)
 void UpdateEnemy(void)
 {
 	GAMESTATE gameState = GetGameState();
+	ITEM_INFO* ItemInfo = GetItemInfo();
 
 	g_bSound = false;
 	// ƒvƒŒƒCƒ„[‚Ìæ“¾

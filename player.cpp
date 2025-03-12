@@ -1364,9 +1364,13 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	}
 	Item* pItem = GetItem();
 
+	ITEM_INFO* pItemInfo = GetItemInfo();
+
 	Billboard* pBillboard = GetBillBoard();
 
+
 	MODEL_INFO* ItemTexture = GetItemOrigin();
+
 
 	bool bCollision = false; // 当たっているかどうか
 
@@ -1452,6 +1456,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 			// 音楽再生
 			PlaySound(SOUND_LABEL_ITEM_SE);
+
+			pItem[g_player.ItemIdx].Power = pItemInfo[pItem[nIdx].nType].Power;
 
 			Itemchange(nIdx,pItem[nIdx].nType); // アイテムを拾う
 			
@@ -3225,6 +3231,7 @@ void LoadItemChange(int nType, float swordLength)
 	// ファイルがNULLじゃなかったら
 	if (pFile != NULL)
 	{
+		// 文字読み取り変数
 		char aString[MAX_WORD];
 
 		while (1)
