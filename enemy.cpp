@@ -67,7 +67,8 @@ void UpdateHomingEnemy(int nCntEnemy);                            // “G‚Ìƒz[ƒ~ƒ
 void UpdateRunAwayEnemy(int nCntEnemy);                           // “¦‚°‚é“G‚ÌXVˆ—
 void UpdateAttackState(int nCntEnemy);                            // “G‚ÌUŒ‚‚ÌXVˆ—
 void UpdateDroneEnemy(int nCntEnemy);                             // ”ò‚ñ‚Å‚é“G‚ÌXVˆ—
-void SetSoundWepon(int nType);									  // –Â‚ç‚·‰¹‚Ìİ’èˆ—
+void SetSoundWepon(int nType);									  // •Ší‚ª“G‚É“–‚½‚Á‚½‚Ì‰¹‚Ìİ’èˆ—
+void SetCreateWeponSound(int nType);							  // ‡¬•Ší‚ª“–‚½‚Á‚½‚ÌƒTƒEƒ“ƒhİ’èˆ—
 
 //**************************************************************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -571,8 +572,11 @@ void HitEnemy(int nCnt,int nDamage)
 
 		if (g_bSound == false) // ‚à‚µ‚»‚ÌƒtƒŒ[ƒ€’†ˆê“x‚à‰¹‚ª–Â‚ç‚³‚ê‚Ä‚È‚¢‚È‚ç–Â‚ç‚·
 		{
-			// ƒTƒEƒ“ƒh‚ğİ’è‚·‚é
+			// ‡¬‚¶‚á‚È‚¢•Ší‚ÌƒTƒEƒ“ƒh‚ğİ’è‚·‚é
 			SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
+
+			// ‡¬•Ší‚ÌƒTƒEƒ“ƒh‚ğİ’è‚·‚é
+			SetCreateWeponSound(pItem[pPlayer->ItemIdx].nType);
 
 			g_bSound = true;
 
@@ -585,6 +589,9 @@ void HitEnemy(int nCnt,int nDamage)
 		{
 			// ƒTƒEƒ“ƒh‚ğİ’è‚·‚é
 			SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
+
+			// ‡¬•Ší‚ÌƒTƒEƒ“ƒh‚ğİ’è‚·‚é
+			SetCreateWeponSound(pItem[pPlayer->ItemIdx].nType);
 
 			g_bSound = true;
 		}
@@ -1550,17 +1557,7 @@ void SetSoundWepon(int nType)
 		PlaySound(SOUND_LABEL_BAT_SE);
 		break;
 
-	case ITEMTYPE_STONEBAT: // Îƒoƒbƒg
-		// ‰¹ŠyÄ¶
-		PlaySound(SOUND_LABEL_BAT_SE);
-		break;
-
 	case ITEMTYPE_HUNMER: // ƒnƒ“ƒ}[‚Á‚Ä‚¢‚é‚Æ‚«
-		// ‰¹ŠyÄ¶
-		PlaySound(SOUND_LABEL_HAMMER_SE);
-		break;
-
-	case ITEMTYPE_GOLFHUNMER: // ƒSƒ‹ƒtƒnƒ“ƒ}[
 		// ‰¹ŠyÄ¶
 		PlaySound(SOUND_LABEL_HAMMER_SE);
 		break;
@@ -1571,6 +1568,11 @@ void SetSoundWepon(int nType)
 		break;
 
 	case ITEMTYPE_KATANA: // “‚Á‚Ä‚¢‚é‚Æ‚«
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ACTION_SE);
+		break;
+
+	case ITEMTYPE_LIGHT: // ŒuŒõ“”
 		// ‰¹ŠyÄ¶
 		PlaySound(SOUND_LABEL_ACTION_SE);
 		break;
@@ -1600,9 +1602,84 @@ void SetSoundWepon(int nType)
 		PlaySound(SOUND_LABEL_TELPHONWEPON);
 		break;
 
-	default: // •Ší‚Á‚Ä‚¢‚È‚¢ 
+	case ITEMTYPE_SURFBOARD: // ƒT[ƒtƒ{[ƒh
 		// ‰¹ŠyÄ¶
-		PlaySound(SOUND_LABEL_NOWEPON);
+		PlaySound(SOUND_LABEL_WATERWEPON);
+		break;
+
+	case ITEMTYPE_TORSO: // ƒgƒ‹ƒ\[
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ACTION_SE);
+		break;
+
+	case ITEMTYPE_WOOD: // –ØŞ
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_BAT_SE);
+		break;
+
+	case ITEMTYPE_BONE: // œ
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_METALWEPON);
+		break;
+
+	default: // •Ší‚Á‚Ä‚¢‚È‚¢ 
+		break;
+	}
+
+}
+//===============================================================================================================
+// ‡¬•Ší‚Ì‰¹İ’è
+//===============================================================================================================
+void SetCreateWeponSound(int nType)
+{
+	switch (nType)
+	{
+	case ITEMTYPE_STONEBAT: // Îƒoƒbƒg
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_BAT_SE);
+		break;
+
+	case ITEMTYPE_GOLFHUNMER: // ƒSƒ‹ƒtƒnƒ“ƒ}[
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_HAMMER_SE);
+		break;
+
+	case ITEMTYPE_HEADSTATUTORSO: // ƒgƒ‹ƒ\[‚Æ“ª‚Ì‡¬
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_HAMMER_SE);
+		break;
+
+	case ITEMTYPE_BONESPEAR: // œ‚Ì‘„
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_SPEARWEPON);
+		break;
+
+	case ITEMTYPE_HEXMANDOLIN: // ô•¨‚Æƒ}ƒ“ƒhƒŠƒ“‚Ì‡¬
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_MUSICWEPON);
+		break;
+
+	case ITEMTYPE_ICEBLOCKSOWRD: // •X‚ÌŒ•
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ICEWEPONSE);
+		break;
+
+	case ITEMTYPE_TORCHSWORD: // ‰Š‚ÌŒ•
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_WEPONFIRESE);
+		break;
+
+	case ITEMTYPE_LIGHTWOOD: // ŒuŒõ“”‚Ì“
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ACTION_SE);
+		break;
+
+	case ITEMTYPE_SURFBOARDFISH: // ƒT[ƒtƒ{[ƒh‚Ì‡¬•Ší
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_WATERWEPON);
+		break;
+
+	default: // •Ší‚Á‚Ä‚¢‚È‚¢ 
 		break;
 	}
 
