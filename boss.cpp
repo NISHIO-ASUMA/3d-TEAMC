@@ -1316,6 +1316,7 @@ void UpdateAbnormalCondition(int nCntBoss)
 	// 状態異常氷の処理
 	if (SetAbnormalCondition(2, 60, 0, nCntBoss) == true)
 	{
+		// ここで半分くらいのペースでモーションカウントを減らし、実質モーション速度半減にする
 		if (g_Boss[nCntBoss].nStateCount[2] % 2 == 0)
 		{
 			g_Boss[nCntBoss].Motion.nCountMotion--;
