@@ -1357,11 +1357,12 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 	GAMESTATE gamestate = GetGameState();
 
 	// ムービーだったら
-	if (gamestate == GAMESTATE_MOVIE)
+	if (gamestate == GAMESTATE_MOVIE || g_player.bCraft == true)
 	{
 		// 関数を抜ける
 		return false;
 	}
+
 	Item* pItem = GetItem();
 
 	ITEM_INFO* pItemInfo = GetItemInfo();
@@ -3016,7 +3017,7 @@ void UpdatePlayerAvoid(void)
 	const bool NotFinish = g_player.Motion.bFinishMotion == false;
 
 	// 回避モーションを発動できるかを判定
-	const bool CanAvoid = NotAvoid == true && NotNeutral == true && NotFinish == true && g_player.AttackSp == false;
+	const bool CanAvoid = NotAvoid == true && NotNeutral == true && NotFinish == true && g_player.AttackSp == false && g_player.nLife > 0;
 
 	// モーションが回避じゃない
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)
