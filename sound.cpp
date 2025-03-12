@@ -48,20 +48,23 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/actionhammerSe.wav", 0},// 大型武器系統SE
 	{"data/SE/itemSe.wav", 0},		  // アイテム取得SE
 	{"data/SE/damageSe.wav", 0},	  // ダメージ音
-	{"data/SE/special_attack.wav",0},  // SP攻撃音
-	{"data/SE/craft.wav",0},  // 武器作成SE
-	{"data/SE/powerup.wav",0},  // フィーバー開始SE
-	{"data/SE/wepon_breakse.wav",0}, // 武器破壊SE
-	{"data/SE/eventSe.wav",0}, // イベント発生SE
-	{"data/SE/avoidSe.wav",0}, // 回避音
-	{"data/SE/TutoClearSe.wav",0}, // チュートリアルタスク成功音
-	{"data/SE/actionfireSe.wav",0},// 炎SE
-	{"data/SE/actionnormalSe.wav",0},// アイテムなし
-	{"data/SE/actionwaterSe.wav",0}, // 水武器
-	{"data/SE/actionspearSe.wav",0}, // 槍の武器音
-	{"data/SE/actionmetalSe.wav",0}, // 鉄の武器音
-	{"data/SE/actionharisenSe.wav",0}, // ハリセンの音
-	{"data/SE/actiontelphonSe.wav",0}, // 電柱の音
+	{"data/SE/special_attack.wav",0}, // SP攻撃音
+	{"data/SE/craft.wav",0},          // 武器作成SE
+	{"data/SE/powerup.wav",0},		  // フィーバー開始SE
+	{"data/SE/wepon_breakse.wav",0},  // 武器破壊SE
+	{"data/SE/eventSe.wav",0},		  // イベント発生SE
+	{"data/SE/avoidSe.wav",0},		  // 回避音
+	{"data/SE/TutoClearSe.wav",0},    // チュートリアルタスク成功音
+	{"data/SE/actionfireSe.wav",0},   // 炎SE
+	{"data/SE/actionnormalSe.wav",0}, // アイテムなし
+	{"data/SE/actionwaterSe.wav",0},  // 水武器
+	{"data/SE/actionspearSe.wav",0},  // 槍の武器音
+	{"data/SE/actionmetalSe.wav",0},  // 鉄の武器音
+	{"data/SE/actionharisenSe.wav",0},// ハリセンの音
+	{"data/SE/actiontelphonSe.wav",0},// 電柱の音
+	{"data/SE/actionmusicSe.wav",0},  // マンドリン音
+	{"data/SE/actioniceSe.wav",0},    // 氷の音
+	{"data/SE/liferecovery.wav",0},   // 回復音
 };
 //=============================================================================
 // 初期化処理

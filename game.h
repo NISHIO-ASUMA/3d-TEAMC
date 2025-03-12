@@ -17,7 +17,7 @@
 //**************************************************************************************************************
 typedef enum
 {
-	GAMESTATE_NONE=0, // ‰½‚à‚µ‚Ä‚¢‚È‚¢ó‘Ô
+	GAMESTATE_NONE = 0, // ‰½‚à‚µ‚Ä‚¢‚È‚¢ó‘Ô
 	GAMESTATE_NORMAL, // ’Êíó‘Ô
 	GAMESTATE_MOVIE,  // ƒ€[ƒr[
 	GAMESTATE_END,    // ’Êíó‘Ô

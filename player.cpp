@@ -1410,6 +1410,9 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 			if (pItem[nIdx].nType == ITEMTYPE_ONIGIRI)
 			{
+				// ‰¹ŠyÄ¶
+				PlaySound(SOUND_LABEL_LIFERECOVERY);
+
 				// ƒ‚ƒfƒ‹‚ÌˆÊ’u‚ğ‘ã“ü
 				D3DXVECTOR3 pos = SetMtxConversion(g_player.Motion.aModel[1].mtxWorld);
 
