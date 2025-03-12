@@ -604,6 +604,7 @@ void SetItem(D3DXVECTOR3 pos, int nType)
 		{// 未使用状態なら
 
 			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType]; // 必要な情報を代入
+			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;
 			g_Item[nCntItem].pos = pos;			 // 座標
 			g_Item[nCntItem].nType = nType;		 // 種類
 			g_Item[nCntItem].bUse = true;		 // 使用判定
@@ -850,7 +851,12 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 
 	// 手に持ってるアイテムの種類を石バットにする
 	g_Item[pPlayer->ItemIdx].nType = MixItem;
+
+	// 属性を代入
 	g_Item[pPlayer->ItemIdx].nElement = g_aItemInfo[MixItem].nElement;
+
+	// 攻撃力を代入
+	g_Item[pPlayer->ItemIdx].Power = g_aItemInfo[MixItem].Power;
 
 	g_Item[pPlayer->ItemIdx].state = ITEMSTATE_HOLD;
 
