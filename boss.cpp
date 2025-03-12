@@ -634,57 +634,24 @@ void HitBoss(int nCntBoss,int nDamage)
 			}
 		}
 
-		switch (pItem[pPlayer->ItemIdx].nType)
-		{
-		case ITEMTYPE_BAT:
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_BAT_SE);
+		// 通常武器が当たった時のサウンド
+		SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
 
-			break;
+		// 合成武器当たった時のサウンド
+		SetCreateWeponSound(pItem[pPlayer->ItemIdx].nType);
 
-		case ITEMTYPE_HUNMER:
-
-			// 音楽再生
-			PlaySound(SOUND_LABEL_HAMMER_SE);
-
-			break;
-		default:
-
-			// 音楽再生
-			PlaySound(SOUND_LABEL_ACTION_SE);
-
-			break;
-		}
 		return;
 	}
 	else
 	{
 		HitBossAbnormalCondition(nCntBoss);
 
-		// サウンドのせってい
-		switch (pItem[pPlayer->ItemIdx].nType)
-		{
-		case ITEMTYPE_BAT:
+		// 通常武器が当たった時のサウンド
+		SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
 
-			// 音楽再生
-			PlaySound(SOUND_LABEL_BAT_SE);
-
-			break;
-
-		case ITEMTYPE_HUNMER:
-
-			// 音楽再生
-			PlaySound(SOUND_LABEL_HAMMER_SE);
-
-			break;
-		default:
-
-			// 音楽再生
-			PlaySound(SOUND_LABEL_ACTION_SE);
-
-			break;
-		}
+		// 合成武器当たった時のサウンド
+		SetCreateWeponSound(pItem[pPlayer->ItemIdx].nType);
 
 		AddFever(10.0f);		// フィーバーポイントを取得
 
@@ -1367,6 +1334,10 @@ void UpdateAbnormalCondition(int nCntBoss)
 	// 状態異常氷の処理
 	if (SetAbnormalCondition(2, 60, 0, nCntBoss) == true)
 	{
+		if (g_Boss[nCntBoss].nStateCount[2] % 2 == 0)
+		{
+			g_Boss[nCntBoss].Motion.nCountMotion--;
+		}
 		SetParticle(D3DXVECTOR3(g_Boss[nCntBoss].pos.x, g_Boss[nCntBoss].pos.y + 50.0f, g_Boss[nCntBoss].pos.z),
 			D3DXVECTOR3(g_Boss[nCntBoss].rot.x, g_Boss[nCntBoss].rot.y - D3DX_PI, g_Boss[nCntBoss].rot.z),
 			D3DXVECTOR3(1.0f, 1.0f, 1.0f),
@@ -1601,8 +1572,16 @@ void UpdateAgentBoss(int nCntBoss)
 		D3DXVec3Normalize(&Dest, &Dest);
 
 		// 移動量に代入
-		g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed;
-		g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed;
+		if (g_Boss[nCntBoss].nStateCount[2] > 0)
+		{
+			g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed / 2.0f;
+			g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed / 2.0f;
+		}
+		else
+		{
+			g_Boss[nCntBoss].move.x = Dest.x * g_Boss[nCntBoss].Speed;
+			g_Boss[nCntBoss].move.z = Dest.z * g_Boss[nCntBoss].Speed;
+		}
 	}
 	//else
 	//{
@@ -1717,7 +1696,7 @@ void HitBossAbnormalCondition(int nCntBoss)
 		break;
 	case ITEMTYPE_HEXMANDOLIN:
 		//ダークハープなら確率で即死効果を与える
-		if (rand() % 40 == 0)
+		if (rand() % 32 == 0)
 		{
 			HitBoss(nCntBoss, 99999);
 		}

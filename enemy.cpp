@@ -67,8 +67,6 @@ void UpdateHomingEnemy(int nCntEnemy);                            // “G‚Ìƒz[ƒ~ƒ
 void UpdateRunAwayEnemy(int nCntEnemy);                           // “¦‚°‚é“G‚ÌXVˆ—
 void UpdateAttackState(int nCntEnemy);                            // “G‚ÌUŒ‚‚ÌXVˆ—
 void UpdateDroneEnemy(int nCntEnemy);                             // ”ò‚ñ‚Å‚é“G‚ÌXVˆ—
-void SetSoundWepon(int nType);									  // •Ší‚ª“G‚É“–‚½‚Á‚½‚Ì‰¹‚Ìİ’èˆ—
-void SetCreateWeponSound(int nType);							  // ‡¬•Ší‚ª“–‚½‚Á‚½‚ÌƒTƒEƒ“ƒhİ’èˆ—
 
 //**************************************************************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -907,7 +905,7 @@ void LoadEnemy(int nType)
 }
 //===============================================================================================================
 // “G‚Ìƒtƒ@ƒCƒ‹ƒl[ƒ€‚Ìƒ[ƒhˆ—
-//==============================================================================================================
+//===============================================================================================================
 int LoadEnemyFilename(FILE* pFile, int nNumModel, char* aString, int nType)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -1032,7 +1030,7 @@ int LoadEnemyFilename(FILE* pFile, int nNumModel, char* aString, int nType)
 }
 //===============================================================================================================
 // “G‚ÌƒLƒƒƒ‰ƒNƒ^[İ’èˆ—
-//==============================================================================================================
+//===============================================================================================================
 void LoadEnemyCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType)
 {
 	int nIdx = 0; // ƒCƒ“ƒfƒbƒNƒXŠi”[•Ï”
@@ -1086,7 +1084,7 @@ void LoadEnemyCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType)
 }
 //===============================================================================================================
 // “G‚Ìƒ‚[ƒVƒ‡ƒ“‚Ìƒ[ƒhˆ—
-//==============================================================================================================
+//===============================================================================================================
 void LoadEnemyMotionSet(FILE* pFile, char* aString, int nNumModel, int nType)
 {
 	char Skip[3] = {}; // [=]“Ç‚İ”ò‚Î‚µ•Ï”
@@ -1139,7 +1137,7 @@ void LoadEnemyMotionSet(FILE* pFile, char* aString, int nNumModel, int nType)
 }
 //===============================================================================================================
 // “G‚Ìƒ‚[ƒVƒ‡ƒ“‚ÌƒL[ˆ—
-//==============================================================================================================
+//===============================================================================================================
 void LoadEnemyKeySet(FILE* pFile, char* aString, int nType, int nCntMotion)
 {
 	char Skip[3] = {}; // [=]“Ç‚İ”ò‚Î‚µ•Ï”
@@ -1623,6 +1621,41 @@ void SetSoundWepon(int nType)
 		PlaySound(SOUND_LABEL_METALWEPON);
 		break;
 
+	case ITEMTYPE_GOLF: // ƒSƒ‹ƒt
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_METALWEPON);
+		break;
+
+	case ITEMTYPE_BAR: // ƒo[ƒ‹
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_METALWEPON);
+		break;
+
+	case ITEMTYPE_ICEBLOCK: // •XƒuƒƒbƒN
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ITEMTHROW);
+		break;
+
+	case ITEMTYPE_STONE: // Î
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ITEMTHROW);
+		break;
+
+	case ITEMTYPE_HEX: // ô•¨
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ITEMTHROW);
+		break;
+
+	case ITEMTYPE_MEGAPHONE: // ƒƒKƒzƒ“
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ITEMTHROW);
+		break;
+
+	case ITEMTYPE_HEADSTATUE: // “ª
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_ITEMTHROW);
+		break;
+
 	default: // •Ší‚Á‚Ä‚¢‚È‚¢ 
 		break;
 	}
@@ -1638,6 +1671,11 @@ void SetCreateWeponSound(int nType)
 	case ITEMTYPE_STONEBAT: // Îƒoƒbƒg
 		// ‰¹ŠyÄ¶
 		PlaySound(SOUND_LABEL_BAT_SE);
+		break;
+
+	case ITEMTYPE_IRONBAT: // “Sƒoƒbƒg
+		// ‰¹ŠyÄ¶
+		PlaySound(SOUND_LABEL_METALWEPON);
 		break;
 
 	case ITEMTYPE_GOLFHUNMER: // ƒSƒ‹ƒtƒnƒ“ƒ}[

@@ -47,6 +47,7 @@ typedef enum
 	SOUND_LABEL_MUSICWEPON,     // 音楽系統の音
 	SOUND_LABEL_ICEWEPONSE,     // 氷武器
 	SOUND_LABEL_LIFERECOVERY,   // 回復音
+	SOUND_LABEL_ITEMTHROW,      // 投げアイテム音
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 
