@@ -71,7 +71,7 @@ void InitEdit(void)
 
 	// アイテムとブロックのテクスチャ情報を取得
 	BLOCK* BlockOrigin = GetBlockOrigin();
-	TEXTURE_INFO* ItemOrigin = GetItemOrigin();
+	MODEL_INFO* ItemOrigin = GetItemOrigin();
 
 	// ブロックの種類
 	for (int nCntBlock = 0; nCntBlock < BLOCKTYPE_MAX; nCntBlock++)

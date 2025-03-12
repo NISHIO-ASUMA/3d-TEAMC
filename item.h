@@ -94,47 +94,51 @@ typedef enum
 	ITEMELEMENT_MAX
 }ITEMELEMENT;
 
-////***************************
-////ブロックのテクスチャ構造体
-////***************************
-//typedef struct
-//{
-//	LPD3DXMESH g_pMeshItem;//メッシュ(頂点座標)へのポインタ
-//	LPD3DXBUFFER g_pBuffMatItem;//マテリアルへのポインタ
-//	DWORD g_dwNumMatItem;//マテリアルの数
-//	LPDIRECT3DTEXTURE9 g_apTextureItem[32];
-//	D3DXVECTOR3 vtxMin, vtxMax;
-//}ItemTex;
+//***************************
+// アイテムの種類の情報
+//***************************
+typedef struct
+{
+	int nElement;			// 属性
+	int nType;				// 種類
+	int durability;			// 耐久力
+	int Maxdurability;		// 最大の耐久力
+	char Itemtag[TAGWORD];  // アイテムのタグ
+	int Powor;              // 攻撃力
+}ITEM_INFO;
 
 //***************************
 //ブロックの構造体
 //***************************
 typedef struct
 {
-	D3DXVECTOR3 pos,posOld;//位置
-	D3DXVECTOR3 move;//移動
-	D3DXVECTOR3 rot;//向き
-	D3DXVECTOR3 Scal;//大きさ
-	D3DXMATRIX mtxWorldItem;//ワールドマトリックス
+	D3DXVECTOR3 pos,posOld;				//位置
+	D3DXVECTOR3 move;					//移動
+	D3DXVECTOR3 rot;					//向き
+	D3DXVECTOR3 Scal;					//大きさ
+	D3DXMATRIX mtxWorldItem;			//ワールドマトリックス
 	D3DXVECTOR3 Size;
 	bool bUse;
 	int nType;
 	int nLife;
-	ItemSTATE state;//ブロックの状態
-	int nElement;//アイテムの属性
+	ItemSTATE state;					//ブロックの状態
+	int nElement;						//アイテムの属性
 	float fRadius;
-	TEXTURE_INFO ItemTex[ITEMTYPE_MAX];
+	MODEL_INFO ItemTex[ITEMTYPE_MAX];
 	D3DXMATRIX mtxParent;
-	int durability; // 耐久力
-	int nIdxShadow; // 影のインデックス
-	bool EnableCraft; // クラフトが有効なアイテムか否か
-	bool bMixItem[ITEMTYPE_MAX]; // 完成品表示用フラグ
+	int durability;						// 耐久力
+	int nIdxShadow;						// 影のインデックス
+	bool EnableCraft;					// クラフトが有効なアイテムか否か
+	bool bMixItem[ITEMTYPE_MAX];		// 完成品表示用フラグ
 	float grabity;
-	int nCounterState; // 状態カウンター
-	int Maxdurability; // 最大の耐久力
+	int nCounterState;					// 状態カウンター
+	int Maxdurability;					// 最大の耐久力
 	int nIdxBillboardCount;
-	int nEasingCnt;  // イージングのカウント
-	int nImpactCount; // インパクトのカウント
+	int nEasingCnt;						// イージングのカウント
+	int nImpactCount;					// インパクトのカウント
+	char Itemtag[TAGWORD];
+	ITEM_INFO aItemInfo[ITEMTYPE_MAX];
+	int Powor;							// 攻撃力
 }Item;
 
 //***************************
@@ -148,7 +152,7 @@ void SetItem(D3DXVECTOR3 pos, int nType);
 bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius);
 void Itemchange(int nIdx,int nType);
 Item* GetItem(void);
-void ElementChange(int nCountItem);
-TEXTURE_INFO* GetItemOrigin(void);
+MODEL_INFO* GetItemOrigin(void);
+ITEM_INFO* GetItemInfo(void);
 
 #endif

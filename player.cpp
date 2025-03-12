@@ -89,6 +89,7 @@ D3DXVECTOR3 SetMotionMoveAngle(void);                                           
 void SetWeponEffect(void);                                                                       // 武器ごとのエフェクト処理
 bool IsDamageAction(void);                                                                       // ダメージアクションかどうか
 void ChangeItemParam(int nHaveIdx, int nType);													 // アイテムの変更時のパラメーター設定
+void LoadItemChange(int nType);																	 // アイテムの変更する時のステータス読み込み
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -1365,7 +1366,7 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 
 	Billboard* pBillboard = GetBillBoard();
 
-	TEXTURE_INFO* ItemTexture = GetItemOrigin();
+	MODEL_INFO* ItemTexture = GetItemOrigin();
 
 	bool bCollision = false; // 当たっているかどうか
 
@@ -3362,7 +3363,7 @@ void ChangeItemParam(int nHaveIdx,int nType)
 {
 	Item* pItem = GetItem();
 
-	TEXTURE_INFO* ItemTexture = GetItemOrigin();
+	MODEL_INFO* ItemTexture = GetItemOrigin();
 
 	pItem[nHaveIdx].bUse = true;
 	pItem[nHaveIdx].ItemTex[nType] = ItemTexture[nType];
@@ -3370,4 +3371,179 @@ void ChangeItemParam(int nHaveIdx,int nType)
 	pItem[nHaveIdx].pos.z = g_player.pos.z + (float)(rand() % 50 - 25.0f);
 	pItem[nHaveIdx].state = ITEMSTATE_RELEASE;
 	pItem[nHaveIdx].nCounterState = 60;
+}
+//===============================================================================================================
+// アイテムの変更する時のステータス読み込み
+//===============================================================================================================
+void LoadItemChange(int nType)
+{
+	Player* pPlayer = GetPlayer();
+	Item* pItem = GetItem();
+
+	//switch (nType)
+	//{
+	//case ITEMTYPE_BAT:
+	//	MotionChange(MOTION_DBHAND, 0); // アイテムにあったモーションタイプを入れる(素手の場合は引数2に1を入れる)
+	//	StatusChange(4.0f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 70);
+	//	break;
+	//case ITEMTYPE_GOLF:
+	//	MotionChange(MOTION_KATANA, 0);
+	//	StatusChange(4.0f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
+	//	break;
+	//case ITEMTYPE_HUNMER:
+	//	MotionChange(MOTION_BIGWEPON, 0);
+	//	StatusChange(3.3f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
+
+	//	break;
+	//case ITEMTYPE_STONE:
+	//	MotionChange(MOTION_BIGWEPON, 1);
+	//	StatusChange(4.0f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
+
+	//	break;
+	//case ITEMTYPE_WOOD:
+	//	MotionChange(MOTION_DBHAND, 0);
+	//	StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
+
+	//	break;
+	//case ITEMTYPE_STONEBAT:
+	//	MotionChange(MOTION_DBHAND, 0);
+	//	StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 90);
+
+	//	break;
+	//case ITEMTYPE_LIGHT:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(4.2f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
+
+	//	break;
+	//case ITEMTYPE_LIGHTWOOD:
+	//	MotionChange(MOTION_KATANA, 0);
+	//	StatusChange(3.9f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
+	//	break;
+	//case ITEMTYPE_HARISEN:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(3.9f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
+	//	break;
+	//case ITEMTYPE_ICEBLOCK:
+	//	MotionChange(MOTION_DBHAND, 1);
+	//	StatusChange(3.9f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
+
+	//	break;
+	//case ITEMTYPE_ICEBLOCKSOWRD:
+	//	MotionChange(MOTION_KATANA, 0);
+	//	StatusChange(3.4f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
+
+	//	break;
+	//case ITEMTYPE_IRON:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 90);
+
+	//	break;
+	//case ITEMTYPE_IRONBAT:
+	//	MotionChange(MOTION_DBHAND, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 90);
+
+	//	break;
+	//case ITEMTYPE_SURFBOARD:
+	//	MotionChange(MOTION_DBHAND, 0);
+	//	StatusChange(3.3f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
+
+	//	break;
+	//case ITEMTYPE_TORCH:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
+
+	//	break;
+	//case ITEMTYPE_TORCHSWORD:
+	//	MotionChange(MOTION_KATANA, 0);
+	//	StatusChange(3.4f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
+
+	//	break;
+	//case ITEMTYPE_BAR:
+	//	MotionChange(MOTION_DBHAND, 0);
+	//	StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 90);
+
+	//	break;
+	//case ITEMTYPE_HEADSTATUE:
+	//	MotionChange(MOTION_BIGWEPON, 1);
+	//	StatusChange(3.6f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
+
+	//	break;
+	//case ITEMTYPE_HEADSTATUTORSO:
+	//	MotionChange(MOTION_BIGWEPON, 0);
+	//	StatusChange(3.4f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
+
+	//	break;
+	//case ITEMTYPE_MEGAPHONE:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 60);
+
+	//	break;
+	//case ITEMTYPE_RUBBERCUP:
+	//	MotionChange(MOTION_PIERCING, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
+
+	//	break;
+	//case ITEMTYPE_TELEPHONEPOLE:
+	//	MotionChange(MOTION_DBHAND, 0);
+	//	StatusChange(3.0f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 120);
+
+	//	break;
+	//case ITEMTYPE_TORSO:
+	//	MotionChange(MOTION_DBHAND, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 70);
+	//	break;
+	//case ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE:
+	//	MotionChange(MOTION_DBHAND, 1);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
+
+	//	break;
+	//case ITEMTYPE_BONESPEAR:
+	//	MotionChange(MOTION_PIERCING, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
+	//	break;
+	//case ITEMTYPE_FISH:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(3.3f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
+	//	break;
+	//case ITEMTYPE_HEX:
+	//	MotionChange(MOTION_DBHAND, 1);
+	//	StatusChange(1.8f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 300);
+	//	break;
+	//case ITEMTYPE_HEXMANDOLIN:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(2.8f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
+	//	break;
+	//case ITEMTYPE_SURFBOARDFISH:
+	//	MotionChange(MOTION_BIGWEPON, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
+	//	break;
+	//case ITEMTYPE_TUTORIAL:
+	//	MotionChange(MOTION_DBHAND, 1);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
+
+	//	break;
+	//case ITEMTYPE_KATANA:
+	//	MotionChange(MOTION_KATANA, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
+	//	break;
+	//case ITEMTYPE_SPEAR:
+	//	MotionChange(MOTION_PIERCING, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 100);
+	//	break;
+	//case ITEMTYPE_MANDORIN:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 80);
+	//	break;
+	//case ITEMTYPE_BONE:
+	//	MotionChange(MOTION_ONE_HAND, 0);
+	//	StatusChange(3.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 50);
+	//	break;
+	//case ITEMTYPE_GOLFHUNMER:
+	//	MotionChange(MOTION_BIGWEPON, 0);
+	//	StatusChange(2.5f, D3DXVECTOR3(0.0f, SwordLength, 0.0f), 180);
+	//	break;
+	//default:
+	//	break;
+	//}
+
 }

@@ -40,17 +40,18 @@ void LoadItemModel(void); // アイテムのロード処理
 void CraftItem(void);
 void CraftMixItem(int nCntItem,int MixItem,int motionchange);
 void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem);
-void LoadDurability(void); // アイテムの耐久力のロード処理
+void LoadItemInfo(void); // アイテムの情報のロード処理
 void PickUpItemAnimation(int nCntItem); // アイテムを拾える時の演出
-bool CheckMixItemMat(int nCntItem,int HoldItem,int StockItem,int HoldIdx);     // アイテムがクラフトできるかどうか
-void UpdateCraftItemParam(int nCnt);                                               // クラフトアイテムのパラメータ設定
+bool CheckMixItemMat(int nCntItem,int HoldItem,int StockItem,int HoldIdx);			// アイテムがクラフトできるかどうか
+void UpdateCraftItemParam(int nCnt);                                                // クラフトアイテムのパラメータ設定
 
 //**************************************************************************************************************
 //グローバル変数宣言
 //**************************************************************************************************************
-Item g_Item[MAX_ITEM];			// 構造体変数
-int g_ItemTypeMax;				// 種類数
-TEXTURE_INFO g_TexItem[ITEMTYPE_MAX];	// テクスチャ関係
+Item g_Item[MAX_ITEM];					// 構造体変数
+int g_ItemTypeMax;						// 種類数
+MODEL_INFO g_TexItem[ITEMTYPE_MAX];		// テクスチャ関係
+ITEM_INFO g_aItemInfo[ITEMTYPE_MAX];	// アイテムの情報
 bool bFIrstCraftItem = false;
 
 //===============================================================================================================
@@ -73,34 +74,32 @@ void InitItem(void)
 		g_Item[nCntItem].nLife = 120;						   // 体力
 		g_Item[nCntItem].state = ITEMSTATE_NORMAL;			   // 状態
 		g_Item[nCntItem].fRadius = 100.0f;					   // 半径
-		g_Item[nCntItem].nLife = 180;						   // 体力
-		g_Item[nCntItem].durability = 0;		   // 耐久力
+		g_Item[nCntItem].durability = 0;					   // 耐久力
 		g_Item[nCntItem].EnableCraft = false;				   // クラフトできるか否か
-		g_Item[nCntItem].grabity = 0.0f;				   // クラフトできるか否か
-		g_Item[nCntItem].nEasingCnt = 0;
-		g_Item[nCntItem].nImpactCount = 110;
-		g_Item[nCntItem].Maxdurability = 0;
+		g_Item[nCntItem].grabity = 0.0f;					   // クラフトできるか否か
+		g_Item[nCntItem].nEasingCnt = 0;					   // イージングのカウント
+		g_Item[nCntItem].nImpactCount = 110;				   // 衝撃波のカウント
+		g_Item[nCntItem].Maxdurability = 0;					   // 最大の耐久力
+		g_Item[nCntItem].Itemtag[0] = {};					   // タグ
+		g_Item[nCntItem].Power = 0;							   // 攻撃力
 
-
+		// アイテムの種類分
 		for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
 		{
 			g_Item[nCntItem].bMixItem[nCntNum] = false;				   // クラフト後のアイテム表示用フラグ
 		}
 	}
 
-	LoadDurability();
+	LoadItemInfo();  // アイテムの情報
 	LoadItemModel(); // アイテムのロード処理
 
 	bFIrstCraftItem = false;
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
-		g_TexItem[nCntNum].nType = nCntNum;			            // 番号
-		g_TexItem[nCntNum].nElement = ITEMELEMENT_STANDARD;     // 初期化
-		g_TexItem[nCntNum].Maxdurability = 0;     // 初期化
-
-		ElementChange(nCntNum);
-		g_TexItem[nCntNum].Maxdurability = g_TexItem[nCntNum].durability;
+		g_aItemInfo[nCntNum].nType = nCntNum;			            // 番号
+		g_aItemInfo[nCntNum].Maxdurability = 0;     // 初期化
+		g_aItemInfo[nCntNum].Maxdurability = g_aItemInfo[nCntNum].durability;
 
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
@@ -108,6 +107,7 @@ void InitItem(void)
 		{
 			continue;
 		}
+
 		// マテリアルのデータへのポインタを取得
 		pMat = (D3DXMATERIAL*)g_TexItem[nCntNum].g_pBuffMatModel->GetBufferPointer();
 
@@ -363,7 +363,7 @@ void UpdateItem(void)
 		{
 			// アイテムの属性を反映し
 			int nType = g_Item[nCntItem].nType;
-			g_Item[nCntItem].nElement = g_TexItem[nType].nElement;
+			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
 			if (g_Item[nCntItem].nElement == ITEMELEMENT_STANDARD)// 無属性なら
 			{
 				// エフェクトを出す
@@ -670,14 +670,14 @@ void Itemchange(int nIdx, int nType)
 	pPlayer->Motion.aModel[15].dwNumMat = g_TexItem[nType].g_dwNumMatModel; // アイテムのマテリアルの情報を代入
 	pPlayer->Motion.aModel[15].pBuffMat = g_TexItem[nType].g_pBuffMatModel; // アイテムのバッファの情報を代入
 	pPlayer->Motion.aModel[15].pMesh = g_TexItem[nType].g_pMeshModel;       // アイテムのメッシュの情報を代入
-	pPlayer->nElement = g_TexItem[nType].nElement; // アイテムの属性情報を代入
+	pPlayer->nElement = g_aItemInfo[nType].nElement; // アイテムの属性情報を代入
 
 	// 同じインデックスじゃないかつ耐久値が減っていないなら
 	if (nIdx != pPlayer->ItemIdx && g_Item[nIdx].durability == g_Item[nIdx].Maxdurability)
 	{
 		// 耐久力を代入
-		g_Item[nIdx].durability = g_TexItem[nType].durability;
-		g_Item[nIdx].Maxdurability = g_TexItem[nType].Maxdurability;
+		g_Item[nIdx].durability = g_aItemInfo[nType].durability;
+		g_Item[nIdx].Maxdurability = g_aItemInfo[nType].Maxdurability;
 	}
 	// 大きさを代入
 	g_Item[nIdx].Size = g_TexItem[nType].Size;
@@ -758,144 +758,19 @@ void LoadItemModel(void)
 	// ファイルを閉じる
 	fclose(pFile);
 }
-
-//==============================================================================================================
-// アイテムの属性変更処理
-//==============================================================================================================
-void ElementChange(int nTypeItem)
-{
-	// 属性を武器ごとに判別する
-	if (g_TexItem[nTypeItem].nType == ITEMTYPE_BAT) // バットの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_GOLF) // ゴルフクラブの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HUNMER) // ハンマーの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if(g_TexItem[nTypeItem].nType == ITEMTYPE_STONE) // 石の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_WOOD) // 角材の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_STONEBAT) // 石付きバットの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_LIGHT) // 蛍光灯の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_SPARK;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_LIGHTWOOD) // 電撃剣の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_SPARK;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HARISEN) // ハリセンの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_ICEBLOCK) // 氷塊の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FREEZE;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_ICEBLOCKSOWRD) // 凍結剣の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FREEZE;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_IRON) // 鉄パイプの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_IRONBAT) // 金属バットの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_SURFBOARD) // サーフボードの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_AQUA;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TORCH) // 松明の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FIRE;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TORCHSWORD) // 猛火剣の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_FIRE;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_BAR) // バールの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HEADSTATUE) // 頭像の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HEADSTATUTORSO) // マネキンの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_MEGAPHONE) // メガホンの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_RUBBERCUP) // すっぽんの属性(仮)
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TELEPHONEPOLE) // 電柱の属性(仮)
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TORSO) // トルソーの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_FLUORESCENTLIGHTMEGAPHONE) // 拡声器の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_SPARK;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_BONESPEAR) // 骨槍の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_DARK;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_FISH) // 魚の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_AQUA;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HEX) // 呪物の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_DARK;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_HEXMANDOLIN) // ハープの属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_DARK;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_SURFBOARDFISH) // 鮫浮き輪の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_AQUA;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_TUTORIAL) // 看板の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_BLOOD;
-	}
-	else if (g_TexItem[nTypeItem].nType == ITEMTYPE_KATANA) // 初期刀の属性
-	{
-		g_TexItem[nTypeItem].nElement = ITEMELEMENT_STANDARD;
-	}
-}
 //==============================================================================================================
 // アイテムの取得
 //==============================================================================================================
-TEXTURE_INFO* GetItemOrigin(void)
+MODEL_INFO* GetItemOrigin(void)
 {
 	return &g_TexItem[0];
+}
+//==============================================================================================================
+// アイテムの情報の取得
+//==============================================================================================================
+ITEM_INFO* GetItemInfo(void)
+{
+	return &g_aItemInfo[0];
 }
 //==============================================================================================================
 // アイテムのクラフト
@@ -970,8 +845,8 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 	// アイテムの見た目を変える
 	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem];
 
-	g_Item[pPlayer->ItemIdx].durability = g_TexItem[MixItem].durability;
-	g_Item[pPlayer->ItemIdx].Maxdurability = g_TexItem[MixItem].Maxdurability;
+	g_Item[pPlayer->ItemIdx].durability = g_aItemInfo[MixItem].durability;
+	g_Item[pPlayer->ItemIdx].Maxdurability = g_aItemInfo[MixItem].Maxdurability;
 
 	// 手に持ってるアイテムの種類を石バットにする
 	g_Item[pPlayer->ItemIdx].nType = MixItem;
@@ -1016,12 +891,12 @@ void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
 //==============================================================================================================
 // アイテムの耐久力のロード処理
 //==============================================================================================================
-void LoadDurability(void)
+void LoadItemInfo(void)
 {
 	FILE* pFile; // ファイルのポインタ
 
 	// ファイルを開く
-	pFile = fopen("data\\item_Info.txt", "r");
+	pFile = fopen("data\\ITEM\\item_Info.txt", "r");
 
 	// 文字列格納変数
 	char aString[MAX_WORD] = {};
@@ -1037,22 +912,63 @@ void LoadDurability(void)
 	{
 		while (1)
 		{
+			// 文字を読み取る
 			int nData = fscanf(pFile, "%s", &aString[0]);
 
+			// ITEMTYPEを読み取ったら
 			if (strcmp(&aString[0], "ITEMTYPE") == 0)
 			{
-				fscanf(pFile, "%s", &skip[0]);
-				fscanf(pFile, "%d", &nType);
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 種類を代入
+				nData = fscanf(pFile, "%d", &nType);
 			}
 
+			// DURABILITYを読み取ったら
 			if (strcmp(&aString[0], "DURABILITY") == 0)
 			{
-				fscanf(pFile, "%s", &skip[0]);
-				fscanf(pFile, "%d", &g_TexItem[nType].durability);			
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 耐久力を代入
+				nData = fscanf(pFile, "%d", &g_aItemInfo[nType].durability);
 			}
 
+			// TAGを読み取ったら
+			if (strcmp(&aString[0], "TAG") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// アイテムのタグを代入
+				nData = fscanf(pFile, "%s", &g_aItemInfo[nType].Itemtag[0]);
+			}
+
+			// ELEMENTを読み取ったら
+			if (strcmp(&aString[0], "ELEMENT") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 属性を代入
+				nData = fscanf(pFile, "%d", &g_aItemInfo[nType].nElement);
+			}
+
+			// POWERを読み取ったら
+			if (strcmp(&aString[0], "POWER") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 攻撃力を代入
+				nData = fscanf(pFile, "%d", &g_aItemInfo[nType].Power);
+			}
+
+			// END_ITEMSETを読み取ったら
 			if (strcmp(&aString[0], "END_ITEMSET") == 0)
 			{
+				// つぎの種類の情報へ
 				nType++;
 			}
 

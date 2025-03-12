@@ -18,6 +18,7 @@
 #define MAX_TEX (32)
 #define MAX_BLOCK (450)
 #define INDXPARENT (5)
+#define TAGWORD (64)
 
 //***************************
 // ブロックの種類
@@ -105,11 +106,8 @@ typedef struct
 	LPDIRECT3DTEXTURE9 g_apTextureModel[MAX_TEX]; // テクスチャ
 	D3DXVECTOR3 vtxMin, vtxMax;		// 最小値,最大値
 	D3DXVECTOR3 Size;
-	int nElement;
-	int nType;
-	int durability;
-	int Maxdurability; // 最大の耐久力
-}TEXTURE_INFO;
+}MODEL_INFO;
+
 
 //***************************
 //ブロックの構造体
@@ -140,7 +138,7 @@ typedef struct
 	int nLife;
 	BLOCKSTATE state; // ブロックの状態
 	float fRadius;
-	TEXTURE_INFO BlockTex[BLOCKTYPE_MAX];
+	MODEL_INFO BlockTex[BLOCKTYPE_MAX];
 	D3DXMATRIX mtxParent;
 	OBB Obb;
 	int nIdxShadow;   // 影のインデックス
