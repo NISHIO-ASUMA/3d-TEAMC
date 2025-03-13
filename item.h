@@ -129,7 +129,7 @@ typedef struct
 	int durability;						// 耐久力
 	int nIdxShadow;						// 影のインデックス
 	bool EnableCraft;					// クラフトが有効なアイテムか否か
-	bool bMixItem[ITEMTYPE_MAX];		// 完成品表示用フラグ
+	//bool bMixItem[ITEMTYPE_MAX];		// 完成品表示用フラグ
 	float grabity;
 	int nCounterState;					// 状態カウンター
 	int Maxdurability;					// 最大の耐久力
@@ -154,5 +154,6 @@ void Itemchange(int nIdx,int nType);
 Item* GetItem(void);
 MODEL_INFO* GetItemOrigin(void);
 ITEM_INFO* GetItemInfo(void);
-
+void EnableCraftIcon(int Item1, int Item2);
+void CraftMixItem(int HoldIdx, int StockIdx);
 #endif

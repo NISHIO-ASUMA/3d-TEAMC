@@ -237,6 +237,8 @@ void MotionChange(int itemtype, int LoadPlayer);													 // モーション変更
 void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage);							 // プレイヤーのステータス変更
 bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int startFrame, int EndFrame); // モーションの開始判定処理
 float SetAttackerAngle(int AttackerIdx, int AttackerType); // アタッカーを調べる関数
+void LoadItemChange(int nType, float swordLength);																	 // アイテムの変更する時のステータス読み込み
+int LoadPlayerParamCharge(char* aStr, FILE* pFile, float swordLength);
 
 //bool CollisionLine(float Radius, D3DXVECTOR3* pEndPos, D3DXVECTOR3* pFirstPos,int nMaxModel, D3DXVECTOR3* pSphereCenterPos);       // 線分と円の当たり判定
 #endif

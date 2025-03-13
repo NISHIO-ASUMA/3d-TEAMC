@@ -1,0 +1,64 @@
++------------------------------------------------------+
++                 クラフトのレシピ                     +
++------------------------------------------------------+
+
+CRAFTSET
+	MIXWEPON = 5            # [ クラフト先のアイテム ] << 石バット >>
+	CRAFT_MATERIAL_ONE = 0  # [ 材料1 ] << 石 >>
+	CRAFT_MATERIAL_TWO = 3  # [ 材料2 ] << バット >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 7             # [ クラフト先のアイテム ] << 光の剣 >>
+	CRAFT_MATERIAL_ONE = 6   # [ 材料1 ] << 蛍光灯 >>
+	CRAFT_MATERIAL_TWO = 30  # [ 材料2 ] << 剣 >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 10            # [ クラフト先のアイテム ] << 氷の剣 >>
+	CRAFT_MATERIAL_ONE = 9   # [ 材料1 ] << 氷の塊 >>
+	CRAFT_MATERIAL_TWO = 30  # [ 材料2 ] << 剣 >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 12            # [ クラフト先のアイテム ] << 金属バット >>
+	CRAFT_MATERIAL_ONE = 0   # [ 材料1 ] << バット >>
+	CRAFT_MATERIAL_TWO = 11  # [ 材料2 ] << 鉄パイプ >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 15            # [ クラフト先のアイテム ] << 炎の剣 >>
+	CRAFT_MATERIAL_ONE = 0   # [ 材料1 ] << バット >>
+	CRAFT_MATERIAL_TWO = 11  # [ 材料2 ] << バール >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 18            # [ クラフト先のアイテム ] << 首付きマネキン >>
+	CRAFT_MATERIAL_ONE = 17   # [ 材料1 ] << 頭 >>
+	CRAFT_MATERIAL_TWO = 22  # [ 材料2 ] << 胴体 >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 24             # [ クラフト先のアイテム ] << 骨の槍 >>
+	CRAFT_MATERIAL_ONE = 32   # [ 材料1 ] << 槍 >>
+	CRAFT_MATERIAL_TWO = 34   # [ 材料2 ] << 骨 >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 27             # [ クラフト先のアイテム ] << 呪いの楽器 >>
+	CRAFT_MATERIAL_ONE = 26   # [ 材料1 ] << 楽器 >>
+	CRAFT_MATERIAL_TWO = 33   # [ 材料2 ] << 呪物 >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 28             # [ クラフト先のアイテム ] << サーフボード魚 >>
+	CRAFT_MATERIAL_ONE = 25   # [ 材料1 ] << 魚 >>
+	CRAFT_MATERIAL_TWO = 13   # [ 材料2 ] << サーフボード >>
+END_CRAFTSET
+
+CRAFTSET
+	MIXWEPON = 35             # [ クラフト先のアイテム ] << ゴルフハンマー >>
+	CRAFT_MATERIAL_ONE = 1    # [ 材料1 ] << ハンマー >>
+	CRAFT_MATERIAL_TWO = 2    # [ 材料2 ] << ゴルフ >>
+END_CRAFTSET
+

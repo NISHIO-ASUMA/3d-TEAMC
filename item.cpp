@@ -37,12 +37,10 @@
 //プロトタイプ宣言
 //**************************************************************************************************************
 void LoadItemModel(void); // アイテムのロード処理
-void CraftItem(void);
-void CraftMixItem(int nCntItem,int MixItem,int motionchange);
-void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem);
+void CraftItem(int nCnt);
 void LoadItemInfo(void); // アイテムの情報のロード処理
 void PickUpItemAnimation(int nCntItem); // アイテムを拾える時の演出
-bool CheckMixItemMat(int nCntItem,int HoldItem,int StockItem,int HoldIdx);			// アイテムがクラフトできるかどうか
+bool CheckMixItemMat(int pCraftMat, int pStockMat,int HoldIdx,int StockIdx);			// アイテムがクラフトできるかどうか
 void UpdateCraftItemParam(int nCnt);                                                // クラフトアイテムのパラメータ設定
 
 //**************************************************************************************************************
@@ -53,6 +51,7 @@ int g_ItemTypeMax;						// 種類数
 MODEL_INFO g_TexItem[ITEMTYPE_MAX];		// テクスチャ関係
 ITEM_INFO g_aItemInfo[ITEMTYPE_MAX];	// アイテムの情報
 bool bFIrstCraftItem = false;
+bool bCraftAnim = false;
 
 //===============================================================================================================
 //ブロックの初期化処理
@@ -82,17 +81,12 @@ void InitItem(void)
 		g_Item[nCntItem].Maxdurability = 0;					   // 最大の耐久力
 		g_Item[nCntItem].Itemtag[0] = {};					   // タグ
 		g_Item[nCntItem].Power = 0;							   // 攻撃力
-
-		// アイテムの種類分
-		for (int nCntNum = 0; nCntNum < ITEMTYPE_MAX; nCntNum++)
-		{
-			g_Item[nCntItem].bMixItem[nCntNum] = false;				   // クラフト後のアイテム表示用フラグ
-		}
 	}
 
 	LoadItemInfo();  // アイテムの情報
 	LoadItemModel(); // アイテムのロード処理
 
+	bCraftAnim = false;
 	bFIrstCraftItem = false;
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
@@ -513,7 +507,7 @@ void UpdateItem(void)
 		// プレイヤーがクラフト状態だったら
 		if (pPlayer->bCraft == true)
 		{
-			CraftItem();
+			CraftItem(nCntItem);
 		}
 
 		// 状態を投げるにする
@@ -721,18 +715,18 @@ void LoadItemModel(void)
 
 		while (1)
 		{
-			fscanf(pFile, "%s", &aString[0]);
+			int nData = fscanf(pFile, "%s", &aString[0]);
 
 			if (strcmp(aString, "MAX_TYPE") == 0)
 			{// MAX_TYPEを読み取った
-				fscanf(pFile, "%s", &skip[0]);
-				fscanf(pFile, "%d", &g_ItemTypeMax);
+				nData = fscanf(pFile, "%s", &skip[0]);
+				nData = fscanf(pFile, "%d", &g_ItemTypeMax);
 			}
 			else if (strcmp(aString, "MODEL_FILENAME") == 0)
 			{// MODEL_FILENAMEを読み取った
-				fscanf(pFile, "%s", &skip[0]);
+				nData = fscanf(pFile, "%s", &skip[0]);
 
-				fscanf(pFile, "%s", &aString[0]);
+				nData = fscanf(pFile, "%s", &aString[0]);
 
 				const char* MODEL_FILENAME = {};
 
@@ -750,8 +744,11 @@ void LoadItemModel(void)
 
 				nType++;
 			}
-			else if (strcmp(aString, "END_SCRIPT") == 0)
-			{// END_SCRIPTを読み取った
+
+			// EOFを読み取ったら
+			if (nData == EOF)
+			{
+				// while文を抜ける
 				break;
 			}
 		}
@@ -782,40 +779,110 @@ ITEM_INFO* GetItemInfo(void)
 //==============================================================================================================
 // アイテムのクラフト
 //==============================================================================================================
-void CraftItem(void)
+void CraftItem(int nCnt)
 {
-	Player* pPlayer = GetPlayer();
-	Craftui* pMix = GetMixUI();
-
-	// キーを押したら
-	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
-	{
-		// クラフトのパラメーターの設定処理
-		UpdateCraftItemParam(nCnt);
-
-		// クラフトアイコンを表示するかしないか
-		EnableCraftIcon(nCnt, ITEMTYPE_STONE, ITEMTYPE_BAT, ITEMTYPE_STONEBAT);
-		EnableCraftIcon(nCnt, ITEMTYPE_ICEBLOCK, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCKSOWRD);
-		EnableCraftIcon(nCnt, ITEMTYPE_TORCH, ITEMTYPE_KATANA, ITEMTYPE_TORCHSWORD);
-		EnableCraftIcon(nCnt, ITEMTYPE_KATANA, ITEMTYPE_LIGHT, ITEMTYPE_LIGHTWOOD);
-		EnableCraftIcon(nCnt, ITEMTYPE_BAT, ITEMTYPE_IRON, ITEMTYPE_IRONBAT);
-		EnableCraftIcon(nCnt, ITEMTYPE_HEADSTATUE, ITEMTYPE_TORSO, ITEMTYPE_HEADSTATUTORSO);
-		EnableCraftIcon(nCnt, ITEMTYPE_FISH, ITEMTYPE_SURFBOARD, ITEMTYPE_SURFBOARDFISH);
-		EnableCraftIcon(nCnt, ITEMTYPE_HEX, ITEMTYPE_MANDORIN, ITEMTYPE_HEXMANDOLIN);
-		EnableCraftIcon(nCnt, ITEMTYPE_BONE, ITEMTYPE_SPEAR, ITEMTYPE_BONESPEAR);
-		EnableCraftIcon(nCnt, ITEMTYPE_GOLF, ITEMTYPE_HUNMER, ITEMTYPE_GOLFHUNMER);
-
-	}
+	// クラフトのパラメーターの設定処理
+	UpdateCraftItemParam(nCnt);
 }
 //==============================================================================================================
 // クラフト先のアイテム
 //==============================================================================================================
-void CraftMixItem(int nCntItem, int MixItem, int motionchange)
+void CraftMixItem(int HoldIdx,int StockIdx)
 {
 	Player* pPlayer = GetPlayer();
 
+	FILE* pFile; // ファイルのポインタ
+
+	// ファイルを開く
+	pFile = fopen("data\\ITEM\\craftrecipe.txt", "r");
+
+	int nMixWepon = -1;
+	int nCraftmat0 = -2;
+	int nCraftmat1 = -3;
+
+	char skip[10] = {};
+
+	// ファイルが読み込めたら
+	if (pFile != NULL)
+	{
+		// 文字を読み取る
+		char aString[MAX_WORD] = {};
+
+		while (1)
+		{
+			// 文字を読み取る
+			int nData = fscanf(pFile, "%s", &aString[0]);
+
+			// 合成先のアイテム
+			if (strcmp(&aString[0], "MIXWEPON") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 合成先のアイテムを読み取る
+				nData = fscanf(pFile, "%d", &nMixWepon);
+			}
+
+			// クラフトの素材1
+			if (strcmp(&aString[0], "CRAFT_MATERIAL_ONE") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// クラフトの素材を読み取る
+				nData = fscanf(pFile, "%d", &nCraftmat0);
+			}
+
+			// クラフトの素材2
+			if (strcmp(&aString[0], "CRAFT_MATERIAL_TWO") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// クラフトの素材を読み取る
+				nData = fscanf(pFile, "%d", &nCraftmat1);
+			}
+
+			// アイテムをストックしているか判定
+			const bool ItemStock = g_Item[StockIdx].state == ITEMSTATE_STOCK;
+
+			// アイテムを持っているか判定
+			const bool ItemHold = g_Item[HoldIdx].state == ITEMSTATE_HOLD;
+
+			// レシピと一致しているか判定
+			const bool bRecipeCheck = (nCraftmat0 == g_Item[HoldIdx].nType && nCraftmat1 == g_Item[StockIdx].nType) || (nCraftmat1 == g_Item[HoldIdx].nType && nCraftmat0 == g_Item[StockIdx].nType);
+
+			// クラフトできるか判定
+			const bool isCraft = ItemStock && ItemHold && bRecipeCheck;
+
+			// 手に持っているアイテムとストックしているアイテムがレシピと一致していたら
+			if (isCraft == true)
+			{
+				break;
+			}
+
+			// EOFを読み取ったら
+			if (nData == EOF)
+			{
+				// ファイルを閉じる
+				fclose(pFile);
+
+				return;
+			}
+		}
+	}
+	else
+	{
+		// エラーメッセージ
+		MessageBox(NULL, "ファイルが開けません", "クラフトレシピ", MB_OK);
+		return;
+	}
+
+	// ファイルを閉じる
+	fclose(pFile);
+
 	// 火花っぽいエフェクト
-	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
+	SetParticle(D3DXVECTOR3(g_Item[HoldIdx].pos.x, g_Item[HoldIdx].pos.y + 30.0f, g_Item[HoldIdx].pos.z),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
@@ -823,7 +890,7 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 		2.0f, 2, 40, 20, 5.0f, 2.0f, false,
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z),
+	SetParticle(D3DXVECTOR3(g_Item[HoldIdx].pos.x, g_Item[HoldIdx].pos.y + 30.0f, g_Item[HoldIdx].pos.z),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 		D3DXVECTOR3(3.14f, 3.14f, 3.14f),
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
@@ -831,85 +898,139 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 		3.0f, 2, 40, 20, 3.0f, 2.0f, false,
 		D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-	SetParticle(D3DXVECTOR3(g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y + 30.0f, g_Item[nCntItem].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+	SetParticle(D3DXVECTOR3(g_Item[HoldIdx].pos.x, g_Item[HoldIdx].pos.y + 30.0f, g_Item[HoldIdx].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+	SetParticle(D3DXVECTOR3(g_Item[HoldIdx].pos.x, g_Item[HoldIdx].pos.y + 30.0f, g_Item[HoldIdx].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 3.0f, 2, 30, 10, 10.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	
 	// SEを出す
 	PlaySound(SOUND_LABEL_CRAFT);
 
-	g_Item[pPlayer->ItemIdx].Power = g_aItemInfo[MixItem].Power;
-
-	EnableCraftIconAnim(true);
+	g_Item[pPlayer->ItemIdx].Power = g_aItemInfo[nMixWepon].Power;
 
 	// 持っているアイテムを変更
-	Itemchange(nCntItem,MixItem);
+	Itemchange(HoldIdx, nMixWepon);
 
 	// クラフトに使ったアイテムを消す
-	g_Item[nCntItem].bUse = false;
-
-	// モーションの変更
-	MotionChange(motionchange, 0);
+	g_Item[HoldIdx].bUse = false;
 
 	// 種類を代入
-	int nType = g_Item[pPlayer->ItemIdx].nType;
+	int nType = g_Item[HoldIdx].nType;
 
 	// アイテムの見た目を変える
-	g_Item[pPlayer->ItemIdx].ItemTex[nType] = g_TexItem[MixItem];
+	g_Item[HoldIdx].ItemTex[nType] = g_TexItem[nMixWepon];
 
-	g_Item[pPlayer->ItemIdx].durability = g_aItemInfo[MixItem].durability;
-	g_Item[pPlayer->ItemIdx].Maxdurability = g_aItemInfo[MixItem].Maxdurability;
+	g_Item[HoldIdx].durability = g_aItemInfo[nMixWepon].durability;
+	g_Item[HoldIdx].Maxdurability = g_aItemInfo[nMixWepon].Maxdurability;
 
 	// 手に持ってるアイテムの種類を石バットにする
-	g_Item[pPlayer->ItemIdx].nType = MixItem;
+	g_Item[HoldIdx].nType = nMixWepon;
 
 	// 属性を代入
-	g_Item[pPlayer->ItemIdx].nElement = g_aItemInfo[MixItem].nElement;
+	g_Item[HoldIdx].nElement = g_aItemInfo[nMixWepon].nElement;
 
 	// 攻撃力を代入
-	g_Item[pPlayer->ItemIdx].Power = g_aItemInfo[MixItem].Power;
+	g_Item[HoldIdx].Power = g_aItemInfo[nMixWepon].Power;
 
-	g_Item[pPlayer->ItemIdx].state = ITEMSTATE_HOLD;
+	g_Item[HoldIdx].state = ITEMSTATE_HOLD;
 
-	g_Item[pPlayer->StockItemIdx].state = ITEMSTATE_NORMAL;
+	g_Item[StockIdx].state = ITEMSTATE_NORMAL;
 
 	// 文字をコピー
-	strcpy(&g_Item[pPlayer->ItemIdx].Itemtag[0], &g_aItemInfo[MixItem].Itemtag[0]);
+	strcpy(&g_Item[HoldIdx].Itemtag[0], &g_aItemInfo[nMixWepon].Itemtag[0]);
 
 	pPlayer->StockItemIdx = pPlayer->ItemIdx;
+
+	// ステータスの変更
+	LoadItemChange(nMixWepon, g_Item[HoldIdx].Size.y);
 }
 //==============================================================================================================
 // クラフト先のアイテムのアイコンの表示
 //==============================================================================================================
-void EnableCraftIcon(int nCntItem, int Item1, int Item2, int MixItem)
+void EnableCraftIcon(int Item1, int Item2)
 {
 	Player* pPlayer = GetPlayer();
 
-	// クラフトの組み合わせ1を持っているかを判定
-	const bool HaveCraftItemSet0 = g_Item[pPlayer->StockItemIdx].nType == Item1 && g_Item[pPlayer->ItemIdx].nType == Item2;
+	FILE* pFile; // ファイルのポインタ
 
-	// クラフトの組み合わせ2を持っているかを判定
-	const bool HaveCraftItemSet1 = g_Item[pPlayer->ItemIdx].nType == Item1 && g_Item[pPlayer->StockItemIdx].nType == Item2;
+	// ファイルを開く
+	pFile = fopen("data\\ITEM\\craftrecipe.txt", "r");
 
-	// アイテムがストックされている、持っているか判定
-	const bool is_CanCraftState = g_Item[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && g_Item[pPlayer->ItemIdx].state == ITEMSTATE_HOLD;
+	int nMixWepon = -1;
+	int nCraftmat0 = -2;
+	int nCraftmat1 = -3;
 
-	// アイテムがストックされている、持っているか判定
-	const bool is_CanCraftState2 = g_Item[pPlayer->ItemIdx].state == ITEMSTATE_STOCK && g_Item[pPlayer->StockItemIdx].state == ITEMSTATE_HOLD;
+	char skip[10] = {};
 
-	// クラフトのアイコンを表示できるかを判定
-	const bool Cancraft = (HaveCraftItemSet0 || HaveCraftItemSet1) && (is_CanCraftState || is_CanCraftState2);
-
-	// クラフトのアイコンを表示できる
-	if (Cancraft == true)
+	// ファイルが読み込めたら
+	if (pFile != NULL)
 	{
-		// アイコンを表示する
-		g_Item[nCntItem].bMixItem[MixItem] = true;
+		// 文字を読み取る
+		char aString[MAX_WORD] = {};
+
+		while (1)
+		{
+			// 文字を読み取る
+			int nData = fscanf(pFile, "%s", &aString[0]);
+
+			// 合成先のアイテム
+			if (strcmp(&aString[0], "MIXWEPON") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 合成先のアイテムを読み取る
+				nData = fscanf(pFile, "%d", &nMixWepon);
+			}
+
+			// クラフトの素材1
+			if (strcmp(&aString[0], "CRAFT_MATERIAL_ONE") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// クラフトの素材を読み取る
+				nData = fscanf(pFile, "%d", &nCraftmat0);
+			}
+
+			// クラフトの素材2
+			if (strcmp(&aString[0], "CRAFT_MATERIAL_TWO") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// クラフトの素材を読み取る
+				nData = fscanf(pFile, "%d", &nCraftmat1);
+			}
+
+			// 手に持っているアイテムとストックしているアイテムがレシピと一致していたら
+			if ((nCraftmat0 == Item1 && nCraftmat1 == Item2) || (nCraftmat1 == Item1 && nCraftmat0 == Item2))
+			{
+				// while文を抜ける
+				break;
+			}
+
+			// EOFを読み取ったら
+			if (nData == EOF)
+			{
+				// ファイルを閉じる
+				fclose(pFile);
+				
+				// レシピと一致するものが無かったら強制的に関数を抜ける
+				return;
+			}
+		}
 	}
 	else
 	{
-		// アイコンを消す
-		g_Item[nCntItem].bMixItem[MixItem] = false;
+		// エラーメッセージ
+		MessageBox(NULL, "ファイルが開けません", "クラフトレシピ", MB_OK);
+		return;
 	}
+
+	// ファイルを閉じる
+	fclose(pFile);
+
+	// 合成先アイテムを表示
+	SetMixUI(UIPOTISION, nMixWepon, 80.0f, 80.0f, 0);
 }
 //==============================================================================================================
 // アイテムの耐久力のロード処理
@@ -1069,30 +1190,101 @@ void PickUpItemAnimation(int nCntItem)
 //==============================================================================================================
 // アイテムがクラフトできるかどうか
 //==============================================================================================================
-bool CheckMixItemMat(int nCntItem, int HoldItem, int StockItem, int HoldIdx) 
+bool CheckMixItemMat(int pCraftMat, int pStockMat, int HoldIdx, int StockIdx)
 {
-	// 合成のテンプレートがあっているか判定
-	const bool SetMixTemplate1 = g_Item[nCntItem].nType == StockItem && g_Item[HoldIdx].nType == HoldItem;
+	Player* pPlayer = GetPlayer();
 
-	// 合成のテンプレート2があっているか判定
-	const bool SetMixTemplate2 = g_Item[nCntItem].nType == HoldItem && g_Item[HoldIdx].nType == StockItem;
+	FILE* pFile; // ファイルのポインタ
 
-	// アイテムをストックしているか判定
-	const bool ItemStock = g_Item[nCntItem].state == ITEMSTATE_STOCK;
+	// ファイルを開く
+	pFile = fopen("data\\ITEM\\craftrecipe.txt", "r");
 
-	// アイテムを持っているか判定
-	const bool ItemHold = g_Item[HoldIdx].state == ITEMSTATE_HOLD;
+	int nMixWepon = -1;
+	int nCraftmat0 = -2;
+	int nCraftmat1 = -3;
 
-	// クラフトできるか判定
-	const bool CanCraft = (SetMixTemplate1 || SetMixTemplate2) && ItemStock && ItemHold;
+	char skip[10] = {};
 
-	// 材料がそろった
-	if (CanCraft == true)
+	// ファイルが読み込めたら
+	if (pFile != NULL)
 	{
-		return true;
-	}
+		// 文字を読み取る
+		char aString[MAX_WORD] = {};
 
-	return false;
+		while (1)
+		{
+			// 文字を読み取る
+			int nData = fscanf(pFile, "%s", &aString[0]);
+
+			// 合成先のアイテム
+			if (strcmp(&aString[0], "MIXWEPON") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 合成先のアイテムを読み取る
+				nData = fscanf(pFile, "%d", &nMixWepon);
+			}
+
+			// クラフトの素材1
+			if (strcmp(&aString[0], "CRAFT_MATERIAL_ONE") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// クラフトの素材を読み取る
+				nData = fscanf(pFile, "%d", &nCraftmat0);
+			}
+
+			// クラフトの素材2
+			if (strcmp(&aString[0], "CRAFT_MATERIAL_TWO") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// クラフトの素材を読み取る
+				nData = fscanf(pFile, "%d", &nCraftmat1);
+			}
+
+			// アイテムをストックしているか判定
+			const bool ItemStock = g_Item[StockIdx].state == ITEMSTATE_STOCK;
+
+			// アイテムを持っているか判定
+			const bool ItemHold = g_Item[HoldIdx].state == ITEMSTATE_HOLD;
+
+			// レシピと一致しているか判定
+			const bool bRecipeCheck = (nCraftmat0 == pCraftMat && nCraftmat1 == pStockMat) || (nCraftmat1 == pCraftMat && nCraftmat0 == pStockMat);
+
+			// クラフトできるか判定
+			const bool isCraft = ItemStock && ItemHold && bRecipeCheck;
+
+			// 手に持っているアイテムとストックしているアイテムがレシピと一致していたら
+			if (isCraft == true)
+			{
+				// ファイルを閉じる
+				fclose(pFile);
+
+				// while文を抜ける
+				return true;
+			}
+
+			// EOFを読み取ったら
+			if (nData == EOF)
+			{
+				// ファイルを閉じる
+				fclose(pFile);
+
+				// レシピと一致するものが無かったら強制的に関数を抜ける
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// エラーメッセージ
+		MessageBox(NULL, "ファイルが開けません", "クラフトレシピ", MB_OK);
+		return false;
+	}
 }
 //==============================================================================================================
 // クラフトアイテムのパラメータ設定
@@ -1101,107 +1293,17 @@ void UpdateCraftItemParam(int nCnt)
 {
 	Player* pPlayer = GetPlayer();
 
-	if (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_A))
+	// キーを押したら
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_A)) && GetIconAnim() == false)
 	{
-		// 石バットの素材がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_BAT, ITEMTYPE_STONE, pPlayer->ItemIdx) == true)
+		// プレイヤーが持っているアイテムがレシピと一致するか確認
+		const bool CheckMatItem = CheckMixItemMat(g_Item[pPlayer->ItemIdx].nType, g_Item[pPlayer->StockItemIdx].nType, pPlayer->ItemIdx, pPlayer->StockItemIdx) == true;
+
+		// クラフトの素材が揃っていたら
+		if (CheckMatItem == true)
 		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_STONEBAT, MOTION_DBHAND);
-
-			// ステータスの変更
-			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
+			// クラフトアイコンのアニメーション処理
+			EnableCraftIconAnim(true);
 		}
-
-		// 氷の剣の材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_KATANA, ITEMTYPE_ICEBLOCK, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_ICEBLOCKSOWRD, MOTION_KATANA);
-
-			// ステータスの変更
-			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
-		// 炎の剣の材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_KATANA, ITEMTYPE_TORCH, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_TORCHSWORD, MOTION_KATANA);
-
-			// ステータスの変更
-			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
-		// 雷の剣の材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_LIGHT, ITEMTYPE_KATANA, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_LIGHTWOOD, MOTION_DBHAND);
-
-			// ステータスの変更
-			StatusChange(3.7f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
-		// 金属バットの材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_IRON, ITEMTYPE_BAT, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_IRONBAT, MOTION_DBHAND);
-
-			// ステータスの変更
-			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
-		// 全身マネキンの材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_HEADSTATUE, ITEMTYPE_TORSO, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_HEADSTATUTORSO, MOTION_BIGWEPON);
-
-			// ステータスの変更
-			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
-		// 鮫浮き輪の材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_FISH, ITEMTYPE_SURFBOARD, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_SURFBOARDFISH, MOTION_BIGWEPON);
-
-			// ステータスの変更
-			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
-		// 呪いの楽器の材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_HEX, ITEMTYPE_MANDORIN, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_HEXMANDOLIN, MOTION_ONE_HAND);
-
-			// ステータスの変更
-			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
-		// 骨の槍の材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_BONE, ITEMTYPE_SPEAR, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_BONESPEAR, MOTION_PIERCING);
-
-			// ステータスの変更
-			StatusChange(3.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
-		// ゴルフハンマーの材料がそろった
-		if (CheckMixItemMat(nCnt, ITEMTYPE_GOLF, ITEMTYPE_HUNMER, pPlayer->ItemIdx) == true)
-		{
-			// クラフト後のアイテムの処理
-			CraftMixItem(nCnt, ITEMTYPE_GOLFHUNMER, MOTION_BIGWEPON);
-
-			// ステータスの変更
-			StatusChange(2.5f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), g_Item[pPlayer->ItemIdx].Power);
-		}
-
 	}
 }

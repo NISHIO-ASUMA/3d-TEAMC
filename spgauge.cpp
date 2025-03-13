@@ -257,7 +257,6 @@ void DecSpgauge(float fValue)
 
 #endif
 
-
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 

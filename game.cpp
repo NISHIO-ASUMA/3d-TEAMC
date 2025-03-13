@@ -221,8 +221,11 @@ void InitGame(void)
 	SetGameUI(D3DXVECTOR3(200.0f, 660.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false,0);
 	SetGameUI(D3DXVECTOR3(60.0f, 120.0f, 0.0f), UITYPE_SP, 55.0f, 50.0f, false, 0);
 
-	// ストックアイテムのアイコン
+	// ホールドアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);
+
+	// ストックアイテムのアイコン
+	SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
 
 	// テスト用 : 　ビルボードのセット
 	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);

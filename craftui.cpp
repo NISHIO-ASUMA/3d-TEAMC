@@ -13,15 +13,19 @@
 #include "craftui.h"
 #include "icon.h"
 #include "craftrecipe.h"
+#include "math.h"
+#include "game.h"
 
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define UIPOTISION (D3DXVECTOR3(600.0f, 400.0f, 0.0f)) // UIの位置
+#define MAX_FALLPOS (720.0f) // 落下できる最大の場所
 
 //**************************************************************************************************************
 // プロトタイプ宣言
 //**************************************************************************************************************
+void UpdateCraftIconAnim(int nCnt); // クラフトアイコンのアニメーションの更新
+void ResetCraftAnim(int nCnt);      // クラフトアイコンのアニメーションの初期化
 
 //**************************************************************************************************************
 // グローバル変数
@@ -222,85 +226,42 @@ void UninitCraftUI(void)
 //==============================================================================================================
 void UpdateCraftUI(void)
 {
-
-	Item* pItem = GetItem();
 	Player* pPlayer = GetPlayer();
 
-	for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
-	{
-		if (g_CraftUI[nCnt].bUse == false)
-		{
-			continue;
-		}
-	}
-
-	//// 頂点ロック
-	//g_pVtxBuffItemIcon->Lock(0, 0, (void**)&pVtx, 0);
+	//for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
+	//{
+	//	if (g_CraftUI[nCnt].bUse == false)
+	//	{
+	//		continue;
+	//	}
+	//}
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
-		// 合成のUIを設定
-		SetMixItemUI(nCnt);
-
 		if (g_MixUI[nCnt].bUse == false)
 		{
 			continue;
 		}
 
-		// アイコンの非表示
-		if (pPlayer->HandState != PLAYERHOLD_HOLD)
+		// クラフトをやめたら
+		if (pPlayer->bCraft == false)
 		{
-			switch (g_MixUI[nCnt].nIconType)
-			{
-			case WEPONTYPE_STONEBAT:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_ICEBLOCKSOWRD:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_TORCHSWORD:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_LIGHTWOOD:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_IRONBAT:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_HEADSTATUTORSO:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_SURFBOARDFISH:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_HEXMANDOLIN:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_BONESPEAR:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			case WEPONTYPE_GOLFHUNMER:
-				g_MixUI[nCnt].bUse = false;
-				break;
-			default:
-				break;
-			}
+			// リセット
+			g_MixUI[nCnt].bUse = false;
 		}
-		
 
-		//// 頂点座標の設定
-		//pVtx[0].pos = D3DXVECTOR3(g_MixUI[nCnt].pos.x - g_MixUI[nCnt].fWidth, g_MixUI[nCnt].pos.y - g_MixUI[nCnt].fHeight, 0.0f);
-		//pVtx[1].pos = D3DXVECTOR3(g_MixUI[nCnt].pos.x + g_MixUI[nCnt].fWidth, g_MixUI[nCnt].pos.y - g_MixUI[nCnt].fHeight, 0.0f);
-		//pVtx[2].pos = D3DXVECTOR3(g_MixUI[nCnt].pos.x - g_MixUI[nCnt].fWidth, g_MixUI[nCnt].pos.y + g_MixUI[nCnt].fHeight, 0.0f);
-		//pVtx[3].pos = D3DXVECTOR3(g_MixUI[nCnt].pos.x + g_MixUI[nCnt].fWidth, g_MixUI[nCnt].pos.y + g_MixUI[nCnt].fHeight, 0.0f);
-
-		//pVtx += 4;
+		if (GetIsCraftIconAnim() == true)
+		{
+			UpdateCraftIconAnim(nCnt);
+		}
+		else
+		{
+			ResetCraftAnim(nCnt);
+		}
 	}
 
 	UpdateCraftRecipe();
 
-	////頂点ロック解除
-	//g_pVtxBuffItemIcon->Unlock();
 }
 //==============================================================================================================
 // UIの描画処理
@@ -341,7 +302,7 @@ void DrawCraftUI(void)
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
-		if (g_MixUI[nCnt].bUse)
+		if (g_MixUI[nCnt].bUse == true)
 		{
 			// テクスチャの設定
 			pDevice->SetTexture(0, g_pTextureItemIcon[g_MixUI[nCnt].nIconType]);
@@ -430,53 +391,6 @@ void SetMixUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUseT
 void SetMixItemUI(int nCnt)
 {
 	Item* pItem = GetItem();
-
-	// アイテムの最大数分回す
-	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
-	{
-		// 作れるアイテムが石バット
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_STONEBAT] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, WEPONTYPE_STONEBAT, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_ICEBLOCKSOWRD] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_ICEBLOCKSOWRD, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_TORCHSWORD] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_TORCHSWORD, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_LIGHTWOOD] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_LIGHTWOOD, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_IRONBAT] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_IRONBAT, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_HEADSTATUTORSO] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_HEADSTATUTORSO, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_HEXMANDOLIN] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_HEXMANDOLIN, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_BONESPEAR] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_BONESPEAR, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_GOLFHUNMER] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_GOLFHUNMER, 80.0f, 80.0f, 0);
-		}
-		if (pItem[nCntItem].bMixItem[ITEMTYPE_SURFBOARDFISH] && g_MixUI[nCnt].bUse == false)
-		{
-			SetMixUI(UIPOTISION, ITEMTYPE_SURFBOARDFISH, 80.0f, 80.0f, 0);
-		}
-
-	}
 }
 //==============================================================================================================
 // 取得処理
@@ -484,4 +398,97 @@ void SetMixItemUI(int nCnt)
 Craftui* GetMixUI(void)
 {
 	return &g_MixUI[0];
+}
+//==============================================================================================================
+// クラフトアイコンのアニメーションの更新
+//==============================================================================================================
+void UpdateCraftIconAnim(int nCnt)
+{
+	// 頂点座標のポインタ
+	VERTEX_2D* pVtx;
+
+	// プレイヤ―を取得
+	Player* pPlayer = GetPlayer();
+
+	// ジャンプのカウンター
+	static int JumpCounter = 0;
+
+	// 位置を更新
+	g_MixUI[nCnt].pos.y += g_MixUI[nCnt].move.y;
+
+	// 重力を加算
+	g_MixUI[nCnt].move.y += MAX_GLABITY;
+
+	// ジャンプのカウンターが0の時のみ通す
+	if (JumpCounter == 0)
+	{
+		// アイテムのアイコンをジャンプさせる
+		g_MixUI[nCnt].move.y = -15.0f;
+
+		// 2回目通したくないので1にする
+		JumpCounter = 1;
+	}
+
+	// 頂点ロック
+	g_pVtxBuffItemIcon->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点座標のポインタを進める
+	pVtx += 4 * nCnt;
+
+	// 頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(g_MixUI[nCnt].pos.x - g_MixUI[nCnt].fWidth, g_MixUI[nCnt].pos.y - g_MixUI[nCnt].fHeight, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(g_MixUI[nCnt].pos.x + g_MixUI[nCnt].fWidth, g_MixUI[nCnt].pos.y - g_MixUI[nCnt].fHeight, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(g_MixUI[nCnt].pos.x - g_MixUI[nCnt].fWidth, g_MixUI[nCnt].pos.y + g_MixUI[nCnt].fHeight, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(g_MixUI[nCnt].pos.x + g_MixUI[nCnt].fWidth, g_MixUI[nCnt].pos.y + g_MixUI[nCnt].fHeight, 0.0f);
+
+	// 頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//頂点ロック解除
+	g_pVtxBuffItemIcon->Unlock();
+
+	if (g_MixUI[nCnt].pos.y >= MAX_FALLPOS)
+	{
+		// プレイヤーのアイテムの変更
+		CraftMixItem(pPlayer->ItemIdx, pPlayer->StockItemIdx);
+
+		// アイコンのアニメーションを止める
+		EnableCraftIconAnim(false);
+
+		// クラフトアイコンのアニメーションを止める
+		EnableMixIconAnim(false);
+
+		// ジャンプ制限を初期化
+		JumpCounter = 0;
+
+		// プレイヤーのクラフト状態を解除
+		pPlayer->bCraft = false;
+
+		// クラフト状態を解除
+		EnableCraft(false);
+	}
+}
+//==============================================================================================================
+// クラフトアイコンのアニメーションの初期化
+//==============================================================================================================
+void ResetCraftAnim(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	// 頂点ロック
+	g_pVtxBuffItemIcon->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	// 頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+
+	//頂点ロック解除
+	g_pVtxBuffItemIcon->Unlock();
 }

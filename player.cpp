@@ -88,8 +88,6 @@ D3DXVECTOR3 SetMotionMoveAngle(void);                                           
 void SetWeponEffect(void);                                                                       // 武器ごとのエフェクト処理
 bool IsDamageAction(void);                                                                       // ダメージアクションかどうか
 void ChangeItemParam(int nHaveIdx, int nType);													 // アイテムの変更時のパラメーター設定
-void LoadItemChange(int nType,float swordLength);																	 // アイテムの変更する時のステータス読み込み
-int LoadPlayerParamCharge(char* aStr, FILE* pFile, float swordLength);
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -2699,6 +2697,8 @@ void PlayerMove(void)
 //===============================================================================================================
 void UpdatePlayerCraft(void)
 {
+	Item* pItem = GetItem();
+
 	// クラフト状態じゃなかったら
 	if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && g_player.bCraft == false && g_player.AttackSp == false)
 	{
@@ -2707,9 +2707,11 @@ void UpdatePlayerCraft(void)
 
 		// クラフト状態にする
 		EnableCraft(true);
+
+		EnableCraftIcon(pItem[g_player.ItemIdx].nType, pItem[g_player.StockItemIdx].nType);
 	}
 	// クラフト状態だったら
-	else if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && g_player.bCraft == true && g_player.AttackSp == false)
+	else if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && g_player.bCraft == true && g_player.AttackSp == false && GetIconAnim() == false)
 	{
 		// クラフト状態
 		g_player.bCraft = false;
@@ -2961,9 +2963,6 @@ void UpdateItemStock(void)
 
 		// プレイヤーの速度をリセット
 		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
-
-		// 持っているアイテムのアイコン
-		SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, pItem[g_player.StockItemIdx].nType, ICONTYPE_STOCKITEM);
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);

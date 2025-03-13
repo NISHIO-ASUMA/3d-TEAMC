@@ -128,7 +128,8 @@ typedef struct
 	int EaseCnt;     // イージングのカウント
 	bool bUp;        // 上昇できるか
 	float fRadius;   // 半径
-	D3DXVECTOR3 rot; // 角度 
+	D3DXVECTOR3 rot; // 角度
+	float fDistance; // 距離
 }ICON;
 
 //**************************************************************************************************************
@@ -140,4 +141,7 @@ void UpdateIcon();	// 更新処理
 void DrawIcon();	// 描画処理
 void SetIcon(D3DXVECTOR3 pos, float fWidth,float fHeight,int nType,int IconType); // 設定処理
 void EnableCraftIconAnim(bool bCraftAnim); // クラフトのアニメーション開始処理
+bool GetIconAnim(void); // アイコンのアニメーション状態取得
+bool GetIsCraftIconAnim(void); // クラフトアイコンのアニメーションができるか
+void EnableMixIconAnim(bool bEnable);
 #endif
