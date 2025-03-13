@@ -1,22 +1,24 @@
 //=====================================================================================================================
 //
-//ダメージ表示関連のヘッダー
-//Author;長尾悠成
+// ダメージ表示関連処理 [ damegepop.h ]
+// Author;長尾悠成
 //
 //=====================================================================================================================
-
-// 重複確認
 #ifndef _DAMEGE_H_
 #define _DAMEGE_H_
 
-// インクルードファイル
-#include "Main.h"
+//*************************************
+// インクルードファイル宣言
+//*************************************
+#include "main.h"
 
+//*************************************
 // プロトタイプ宣言
-void InitDamege(void);
-void UninitDamege(void);
-void UpdateDamege(void);
-void DrawDamege(void);
-void SetDamege(D3DXVECTOR3 pos, int nDamege, int nLife, bool Heal);
+//*************************************
+void InitDamege(void);   // ダメージポップの初期化処理
+void UninitDamege(void); // ダメージポップの終了処理
+void UpdateDamege(void); // ダメージポップの更新処理
+void DrawDamege(void);   // ダメージポップの描画処理
+void SetDamege(D3DXVECTOR3 pos, int nDamege, int nLife, bool Heal); // ダメージポップの設定処理
 
 #endif

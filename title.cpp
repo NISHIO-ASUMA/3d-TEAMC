@@ -6,7 +6,7 @@
 //==============================================================================================================
 
 //**************************************************************************************************************
-//インクルードファイル
+// インクルードファイル宣言
 //**************************************************************************************************************
 #include "title.h"
 #include "input.h"
@@ -14,15 +14,15 @@
 #include "gameui.h"
 #include "sound.h"
 #include "mouse.h"
-#include"math.h"
+#include "math.h"
 #include "easing.h"
 
 //**************************************************************************************************************
-//マクロ定義
+// マクロ定義
 //**************************************************************************************************************
 
 //**************************************************************************************************************
-//プロトタイプ宣言
+// プロトタイプ宣言
 //**************************************************************************************************************
 void SelectTitle(int select);					   // タイトル画面の選択
 void TitleFlash(int state, int nSelect, int nIdx); // タイトルの点滅
@@ -30,17 +30,16 @@ void TitleMenuFlash(int nSelect);				   // タイトルメニューの点滅
 void TitleMenuAnimation(int nSelect);              // タイトルメニューのアニメーション処理
 
 //**************************************************************************************************************
-//グローバル変数宣言
+// グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureTitle[TITLETYPE_MAX] = {}; // テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitle = NULL;			// 頂点バッファへのポインタ
 TITLE g_Title[TITLETYPE_MAX];							// 構造体変数
-int g_nTitleCount;										// 画面遷移カウント
 bool bModeSet;
 int g_EasingCnt = 0;
 
 //==============================================================================================================
-//タイトルの初期化処理
+// タイトルの初期化処理
 //==============================================================================================================
 void InitTitle(void)
 {
@@ -66,9 +65,9 @@ void InitTitle(void)
 		&g_pVtxBuffTitle,
 		NULL);
 
-	// 決定ボタンを押したかどうか
-	bModeSet = false;
-	g_EasingCnt = 0;
+	// グローバル変数の初期化
+	bModeSet = false; 	// 決定ボタンを押したかどうか
+	g_EasingCnt = 0;    // イージングカウント
 
 	// 頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
@@ -114,9 +113,6 @@ void InitTitle(void)
 		pVtx += 4;
 	}
 
-	// グローバル変数の初期化
-	g_nTitleCount = 0;
-
 	// タイトルをセット
 	SetTitle(D3DXVECTOR3(640.0f, 350.0f, 0.0f), TITLETYPE_TITLE, 200.0f, 40.0f);
 	SetTitle(D3DXVECTOR3(640.0f, 500.0f, 0.0f), TITLETYPE_TUTO, 200.0f, 40.0f);
@@ -127,7 +123,7 @@ void InitTitle(void)
 
 }
 //==============================================================================================================
-//タイトルの終了処理
+// タイトルの終了処理
 //==============================================================================================================
 void UninitTitle(void)
 {
@@ -152,7 +148,7 @@ void UninitTitle(void)
 	}
 }
 //==============================================================================================================
-//タイトルの更新処理
+// タイトルの更新処理
 //==============================================================================================================
 void UpdateTitle(void)
 {
@@ -160,7 +156,7 @@ void UpdateTitle(void)
 	{
 		switch (g_Title[nCnt].TitleMenu)
 		{
-		case TITLESELECT_GAME:
+		case TITLESELECT_GAME: // ゲームが選ばれている
 
 			if ((KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN)) && bModeSet == false)
 			{
@@ -169,6 +165,7 @@ void UpdateTitle(void)
 
 				g_Title[nCnt].TitleMenu = TITLESELECT_TUTO; // メニューチュートリアル
 
+				// イージングカウントを初期化
 				g_EasingCnt = 0;
 			}
 			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
@@ -178,6 +175,7 @@ void UpdateTitle(void)
 
 				g_Title[nCnt].TitleMenu = TITLESELECT_RANKING; // メニューゲーム
 
+				// イージングカウントを初期化
 				g_EasingCnt = 0;
 			}
 
@@ -187,9 +185,9 @@ void UpdateTitle(void)
 			}
 
 			if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE)) && bModeSet == false)
-			{//Enterキーを押したら
+			{// Enterキーを押したら
 				bModeSet = true;
-				//ゲーム画面へ
+				// ゲーム画面へ
 				SetFade(MODE_GAME);
 
 				// 音楽再生
@@ -201,9 +199,10 @@ void UpdateTitle(void)
 			FlashGameUI(TITLESELECT_GAME);
 			break;
 
-		case TITLESELECT_TUTO:
+		case TITLESELECT_TUTO: // チュートリアルが選ばれている
 			if ((KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN)) && bModeSet == false)
 			{
+				// イージングカウントを初期化
 				g_EasingCnt = 0;
 
 				// 音楽再生
@@ -213,7 +212,8 @@ void UpdateTitle(void)
 			}
 
 			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
-			{
+			{				
+				// イージングカウントを初期化
 				g_EasingCnt = 0;
 
 				// 音楽再生
@@ -245,6 +245,7 @@ void UpdateTitle(void)
 		case TITLESELECT_RANKING:
 			if ((KeyboardTrigger(DIK_DOWN) || KeyboardTrigger(DIK_S) || JoypadTrigger(JOYKEY_DOWN)) && bModeSet == false)
 			{
+				// イージングカウントを初期化
 				g_EasingCnt = 0;
 
 				// 音楽再生
@@ -256,6 +257,7 @@ void UpdateTitle(void)
 
 			if ((KeyboardTrigger(DIK_UP) || KeyboardTrigger(DIK_W) || JoypadTrigger(JOYKEY_UP)) && bModeSet == false)
 			{
+				// イージングカウントを初期化
 				g_EasingCnt = 0;
 
 				// 音楽再生
@@ -270,8 +272,8 @@ void UpdateTitle(void)
 			}
 
 			if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_START) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE)) && bModeSet == false)
-			{//Enterキーを押したら
-				//ランキング画面へ
+			{// Enterキーを押したら
+				// ランキング画面へ
 				SetFade(MODE_RANKING);
 				// モードを決定した
 				bModeSet = true;
@@ -291,20 +293,13 @@ void UpdateTitle(void)
 
 		// タイトルの点滅処理
 		TitleFlash(g_Title[nCnt].state,g_Title[nCnt].TitleMenu,nCnt);
+
+		// タイトルメニューのアニメーション処理
 		TitleMenuAnimation(g_Title[nCnt].TitleMenu);
 	}
-
-	//// カウンターを加算
-	//g_nTitleCount++;
-
-	//if (g_nTitleCount >= 600)
-	//{// 10秒経過
-	//	// ランキング画面へ
-	//	SetFade(MODE_RANKING);
-	//}
 }
 //==============================================================================================================
-//タイトルの描画処理
+// タイトルの描画処理
 //==============================================================================================================
 void DrawTitle(void)
 {
@@ -322,16 +317,16 @@ void DrawTitle(void)
 		// テクスチャの設定
 		pDevice->SetTexture(0, g_pTextureTitle[g_Title[nCnt].nType]);
 
-		//ポリゴンの描画
+		// ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
 	}
 }
 //==============================================================================================================
-//タイトルの描画処理
+// タイトルの設定処理
 //==============================================================================================================
 void SetTitle(D3DXVECTOR3 pos, int nType,float fWidth, float fHeight)
 {	
-	//頂点情報のポインタ
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx; 
 
 	// 頂点バッファをロック
@@ -362,7 +357,7 @@ void SetTitle(D3DXVECTOR3 pos, int nType,float fWidth, float fHeight)
 	g_pVtxBuffTitle->Unlock();
 }
 //==============================================================================================================
-//タイトルの選択処理
+// タイトルの選択処理
 //==============================================================================================================
 void SelectTitle(int select)
 {
@@ -376,7 +371,7 @@ void SelectTitle(int select)
 	{
 		if (nCnt == select)
 		{
-			// 頂点カラーの設定
+			// 頂点カラーの設定 (白)
 			pVtx[0].col = D3DCOLOR_RGBA(255,255,255,255);
 			pVtx[1].col = D3DCOLOR_RGBA(255,255,255,255);
 			pVtx[2].col = D3DCOLOR_RGBA(255,255,255,255);
@@ -384,7 +379,7 @@ void SelectTitle(int select)
 		}
 		else
 		{
-			// 頂点カラーの設定
+			// 頂点カラーの設定(透明度を下げる)
 			pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 100);
 			pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 100);
 			pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 100);
@@ -399,14 +394,14 @@ void SelectTitle(int select)
 	g_pVtxBuffTitle->Unlock();
 }
 //==============================================================================================================
-//タイトルの点滅処理
+// タイトルの点滅処理
 //==============================================================================================================
 void TitleFlash(int state,int nSelect,int nIdx)
 {
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	//点滅カウント用のローカル変数
+	// 点滅カウント用のローカル変数
 	static int nCounterFlash = 0; 
 
 	// 頂点バッファをロック
@@ -477,7 +472,7 @@ void TitleFlash(int state,int nSelect,int nIdx)
 	g_pVtxBuffTitle->Unlock();
 }
 //==============================================================================================================
-//タイトルのメニューの点滅処理
+// タイトルのメニューの点滅処理
 //==============================================================================================================
 void TitleMenuFlash(int nSelect)
 {
@@ -488,7 +483,7 @@ void TitleMenuFlash(int nSelect)
 	static float fA = 1.0f;	  // 透明度
 	static bool bAlv = false; // 判定用
 
-	//頂点バッファをロック
+	// 頂点バッファをロック
 	g_pVtxBuffTitle->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCnt = 0; nCnt < TITLETYPE_MAX; nCnt++)
@@ -602,10 +597,11 @@ void TitleMenuAnimation(int nSelect)
 			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
 			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
 		}
+
+		// 頂点情報のポインタを進める
 		pVtx += 4;
 	}
 
 	// 頂点バッファをアンロック
 	g_pVtxBuffTitle->Unlock();
-
 }

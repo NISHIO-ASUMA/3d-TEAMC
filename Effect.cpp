@@ -36,7 +36,7 @@ void InitEffect(void)
 		&g_pTextureEffect);
 
 	// デバイスの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_EFFECT * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 *MAX_EFFECT ,
 		D3DUSAGE_WRITEONLY, 
 		FVF_VERTEX_3D, 
 		D3DPOOL_MANAGED, 

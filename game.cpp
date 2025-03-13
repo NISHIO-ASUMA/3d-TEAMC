@@ -224,13 +224,15 @@ void InitGame(void)
 	// ホールドアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);
 
-	// ストックアイテムのアイコン
+// ストックアイテムのアイコン
 	SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
 
 	// テスト用 : 　ビルボードのセット
 	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);
+SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
 
-#ifdef _DEBUG
+	// テスト用 : 　ビルボードのセット
+	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);#ifdef _DEBUG
 
 	//SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 6, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
@@ -245,20 +247,14 @@ void InitGame(void)
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f),0);
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f),0);
 
-	//// 壁を設置する
-	//SetWall(D3DXVECTOR3(1600.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 4.0f, 1.0f), 1);
-	//SetWall(D3DXVECTOR3(-1650.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 4.0f, 1.0f), 1);
-	//SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1900.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 4.0f, 1.0f), 1);
-	//SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1950.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 4.0f, 1.0f), 1);
-
 	g_gameState = GAMESTATE_NORMAL; // 通常状態に設定
 	g_nCounterGameState = 0;		// 画面遷移の時間
 
-	g_bPause = false; // ポーズ解除
+	g_bPause = false;   // ポーズ解除
 	g_bEditMode = false;// エディットモード解除
-	g_MovieCnt = 0; // 敵が出てくる時間
-	g_bCraft = false;
-	g_bMovie = false;
+	g_MovieCnt = 0;     // 敵が出てくる時間
+	g_bCraft = false;   // クラフト状態の初期化
+	g_bMovie = false;   // カメラムービー状態の初期化
 
 	// 音楽を再生
 	PlaySound(SOUND_LABEL_GAME_BGM);
@@ -343,19 +339,19 @@ void UninitGame(void)
 	// スコアの終了処理
 	UninitScore();
 
-	//敵の終了処理
+	// 敵の終了処理
 	UninitEnemy();
 
-	//ブロックの終了処理
+	// ブロックの終了処理
 	UninitBlock();
 
-	//アイテムの終了処理
+	// アイテムの終了処理
 	UninitItem();
 
-	//壁の終了処理
+	// 壁の終了処理
 	UninitWall();
 
-	//HPゲージの終了処理
+	// HPゲージの終了処理
 	UninitGauge();
 
 	// SPゲージの終了処理
@@ -378,7 +374,7 @@ void UninitGame(void)
 
 #ifdef _DEBUG
 
-	//エディットの終了処理
+	// エディットの終了処理
 	UninitEdit();
 
 #endif // DEBUG
@@ -398,25 +394,20 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	if (g_bMovie == true && g_bPause == false)
-	{
-		g_gameState = GAMESTATE_MOVIE;
-		UpdateEventMovie();
+	{// ムービー状態じゃない かつ ポーズ中じゃない
+		g_gameState = GAMESTATE_MOVIE; // ムービー状態にする
+		UpdateEventMovie();            // イベントのムービー更新
 
-		g_MovieCnt--;
+		g_MovieCnt--;    // カウントをデクリメントする
+
 		if (g_MovieCnt <= 0)
 		{
 			// サウンドを止める
 			StopSound(SOUND_LABEL_EVENTSE);
 
-			g_gameState = GAMESTATE_NORMAL;
-			g_bMovie = false;
+			g_gameState = GAMESTATE_NORMAL; // 通常のゲーム状態に
+			g_bMovie = false;               // ムービーフラグをfalseにする
 		}
-	}
-
-	if (g_bCraft == false && g_bPause == false && g_bEditMode == false)
-	{
-		// 敵の出現時間を加算する
-		//g_EnemyWaveTime++;
 	}
 
 	// プレイヤーの取得
@@ -424,44 +415,14 @@ void UpdateGame(void)
 
 	// 敵の取得
 	int nNumEnemy = GetNumEnemy();
-
-	//// タイマーの取得
-	//int nTime = GetTimer();
 	
 	// タイマーの取得
 	int TimeMinute = GetTimeMinute(); // 分
 	int TimeSecond = GetTimeSecond(); // 秒
 
+	// 敵を倒した数を取得
 	int nNumKill = GetNumKill(); // キル数
 
-	//// 百の位、十の位、一の位
-	//int HandredPlace = nNumKill / 100 % 10;
-	//int tenPlace = nNumKill / 10 % 10;
-	//int onePlace = nNumKill % 10;
-
-	//static bool bSet = false;
-
-	//int nSetSpawn = (HandredPlace * 100) + (tenPlace * 10) + onePlace;
-
-	//else if ((nSetSpawn % 40 != 0))
-	//{
-	//	bSet = false;
-	//}
-
-	//// 敵が出てくるまでの時間
-	//if (g_EnemyWaveTime >= 900)
-	//{// カウントが900 or 場に出ている敵が0体以下の時
-
-	//	int nSpawner = rand() % 4;
-
-	//	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
-	//	{
-	//		// 敵を出す処理
-	//		Enemy(nSpawner);
-	//	}
-
-	//	// タイムを初期化する
-	//}
 
 	if (TimeMinute <= 0 && TimeSecond <= 0)
 	{// 敵が全滅 or タイマーが0秒以下
@@ -475,27 +436,26 @@ void UpdateGame(void)
 
 	switch (g_gameState)
 	{
-	case GAMESTATE_NORMAL: //通常状態
+	case GAMESTATE_NORMAL: // 通常状態
 		break;
 
-	case GAMESTATE_END: //終了状態
+	case GAMESTATE_END: // 終了状態
 		g_nCounterGameState++;
 
 		if (g_nCounterGameState >= 60)
 		{
 			g_nCounterGameState = 0;	 // カウントを初期化
-			g_gameState = GAMESTATE_NONE;//何もしていない状態
+			g_gameState = GAMESTATE_NONE;// 何もしていない状態
 
-			//画面(モード)の設定
+			// 画面(モード)の設定
 			SetFade(MODE_RESULT);
 
-			//ランキングのリセット
+			// ランキングのリセット
 			ResetRanking();
 
-			//ランキングのセット
+			// ランキングのセット
 			SetRanking(GetScore());
 		}
-
 		break;
 	}
 
@@ -517,6 +477,7 @@ void UpdateGame(void)
 		g_bEditMode = true;
 	}
 
+	// カメラ情報の取得
 	Camera* pCamera = GetCamera();
 
 	if (g_bPause == false)
@@ -562,16 +523,16 @@ void UpdateGame(void)
 				// スコアの更新処理
 				UpdateScore();
 
-				//敵の更新処理
+				// 敵の更新処理
 				UpdateEnemy();
 
-				//HPゲージの更新処理
+				// HPゲージの更新処理
 				UpdateGauge();
 
 				// タイマーの更新処理
 				UpdateTime();
 
-				//壁の更新処理
+				// 壁の更新処理
 				UpdateWall();
 
 				// 軌跡の更新処理
@@ -589,7 +550,7 @@ void UpdateGame(void)
 				// メッシュドームの更新処理
 				UpdatemeshFan();
 
-				//更新処理
+				// 弾の更新処理
 				UpdateBullet();
 
 				// ミニマップの更新処理
@@ -650,6 +611,7 @@ void UpdateGame(void)
 
 	if (KeyboardTrigger(DIK_F10))
 	{// F10を押した
+		// ゲームを終了状態にする
 		g_gameState = GAMESTATE_END;
 	}
 
@@ -679,10 +641,10 @@ void DrawGame(void)
 	// メッシュドームの描画処理
 	DrawmeshFan();
 
-	//プレイヤーの描画処理
+	// プレイヤーの描画処理
 	DrawPlayer();
 
-	//敵の描画処理
+	// 敵の描画処理
 	DrawEnemy();
 
 	// 矢印の描画処理
@@ -703,7 +665,7 @@ void DrawGame(void)
 
 	if (!g_bEditMode)
 	{
-		//ブロックの描画処理
+		// ブロックの描画処理
 		DrawBlock();
 
 		// ポリゴンの描画処理
@@ -725,13 +687,13 @@ void DrawGame(void)
 	// 影の描画処理
 	DrawShadow();
 
-	//壁の描画処理
+	// 壁の描画処理
 	DrawWall();
 
 	// ボスの体力ゲージ描画処理
 	DrawBossLife();
 
-	//メッシュシリンダーの描画処理
+	// メッシュシリンダーの描画処理
 	DrawMeshCylinder();
 
 	// エフェクトの描画処理
@@ -755,13 +717,13 @@ void DrawGame(void)
 	// ゲームのUIの描画処理
 	DrawGameUI();
 
-	//HPゲージの描写処理
+	// HPゲージの描写処理
 	DrawGauge();
 
 	// SPゲージの描画処理
 	DrawSPgauge();
 
-	//弾の描画処理
+	// 弾の描画処理
 	DrawBullet();
 
 	// アイテムゲージの描画処理
@@ -786,8 +748,8 @@ void DrawGame(void)
 	DrawIcon();
 
 	if (g_bPause == true)
-	{//ポーズ中
-		//ポーズ中の描画処理
+	{// ポーズ中
+		// ポーズ中の描画処理
 		DrawPause();
 	}
 }
@@ -848,5 +810,6 @@ void SetMovie(int nTime)
 //=======================================================================================================
 void UpdateEventMovie(void)
 {
+	// イベントカメラの更新
 	UpdateEventCamera();
 }

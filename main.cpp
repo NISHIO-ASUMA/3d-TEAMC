@@ -153,10 +153,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hInstancePrev, 
 	ShowWindow(hWnd, SW_SHOWMAXIMIZED); // ウインドウの表示状態の設定
 	UpdateWindow(hWnd);				    // クライアント領域の更新
 
-	// TODO : 初期状態をフルスクリーンにしたいとき
-	//ShowWindow(hWnd, nCmdShow);			//ウインドウの表示状態の設定
-	//UpdateWindow(hWnd);					//クライアント領域の更新
-
 	// 初期化
 	DWORD dwFrameCount;					// フレームカウント
 	DWORD dwFPSLastTime;				// 最後にFPSを計測した時刻
@@ -583,15 +579,16 @@ void Draw(void)
 			}
 			else if (GetEdit2d())
 			{
-				DrawEditmode2d(); // エディター2dの描画
+				// エディター2dの描画
+				DrawEditmode2d(); 
 			}
 		}
 
 		if (g_mode == MODE_EFFECT)
 		{
+			// エフェクトエディター画面の描画
 			DrawEffectEditMode();
 		}
-		// プレイヤーの座標表示
 #endif
 		// フェードの描画
 		DrawFade();
@@ -785,20 +782,6 @@ void offWireFrame()
 {
 	g_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 }
-
-
-// FPSの表示
-//DrawFPS();
-
-//// カメラ
-//DrawCameraPos();
-
-//// プレイヤーの座標
-//DrawDebugPlayerPos();
-
-//// カメラの種類
-//DrawCameraType();
-
 //=============================================================================================================
 // 現在の画面の表示
 //=============================================================================================================
