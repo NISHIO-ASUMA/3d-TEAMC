@@ -53,12 +53,12 @@ void InitBossLife()
 	// 構造体変数の初期化
 	for (int nCnt = 0; nCnt < NUM_BOSSLIFE; nCnt++)
 	{
-		g_BossLife[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 座標
-		g_BossLife[nCnt].nType = 0;			                // 種類
-		g_BossLife[nCnt].fLength = 0.0f;                    // バーの長さ
-		g_BossLife[nCnt].DelayLength = MAX_LENGTH;                // バーの長さ
-		g_BossLife[nCnt].nEasingCnt = 0;                // イージングのカウント
-		g_BossLife[nCnt].bUse = false;						// 使用判定
+		g_BossLife[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 座標
+		g_BossLife[nCnt].nType = 0;								// 種類
+		g_BossLife[nCnt].fLength = 0.0f;						// バーの長さ
+		g_BossLife[nCnt].DelayLength = MAX_LENGTH;				// バーの長さ
+		g_BossLife[nCnt].nEasingCnt = 0;						// イージングのカウント
+		g_BossLife[nCnt].bUse = false;							// 使用判定
 	}
 
 	// 頂点バッファの生成
