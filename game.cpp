@@ -67,10 +67,10 @@
 void UpdateEventMovie(void); // イベントのムービー
 
 //**************************************************************************************************************
-//グローバル変数
+// グローバル変数
 //**************************************************************************************************************
-GAMESTATE g_gameState = GAMESTATE_NONE;//ゲームの状態
-int g_nCounterGameState = 0;//状態管理カウンター
+GAMESTATE g_gameState = GAMESTATE_NONE;// ゲームの状態
+int g_nCounterGameState = 0;// 状態管理カウンター
 bool g_bPause = false;//ポーズ中かどうか
 bool g_bEditMode = false; // エディットモードかどうか
 int g_MovieCnt = 0;
@@ -78,23 +78,23 @@ bool g_bCraft = false;
 bool g_bMovie = false;
 
 //=========================================================================================================
-//ゲーム画面の初期化処理
+// ゲーム画面の初期化処理
 //=========================================================================================================
 void InitGame(void)
 {
 	// カーソルを無効化
 	SetCursorVisibility(false);
 
-	//カメラの初期化処理
+	// カメラの初期化処理
 	InitCamera();
 
-	//ライトの初期化処理
+	// ライトの初期化処理
 	InitLight();
 
 	// ゲームのUIの初期化
 	InitGameUI();
 
-	//影の初期化処理
+	// 影の初期化処理
 	InitShadow();
 
 	//ポーズの初期化処理
@@ -224,12 +224,12 @@ void InitGame(void)
 	// ホールドアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);
 
-// ストックアイテムのアイコン
+	// ストックアイテムのアイコン
 	SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
 
 	// テスト用 : 　ビルボードのセット
 	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);
-SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
+	SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
 
 	// テスト用 : 　ビルボードのセット
 	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);#ifdef _DEBUG
@@ -239,7 +239,6 @@ SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTY
 	//SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 	//SetBoss(D3DXVECTOR3(761.0f, 0.0f, 675.0f), 3.0f, 10000); // ボスをセット
 
-#endif // _DEBUG
 
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f),0);
@@ -260,7 +259,7 @@ SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTY
 	PlaySound(SOUND_LABEL_GAME_BGM);
 }
 //=========================================================================================================
-//ゲーム画面の終了処理
+// ゲーム画面の終了処理
 //=========================================================================================================
 void UninitGame(void)
 {
