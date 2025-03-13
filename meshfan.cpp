@@ -127,6 +127,7 @@ void InitmeshFan(void)
             pIdx[idx++] = baseIndex + meshwall_X_BLOCK + 1;
             pIdx[idx++] = baseIndex + meshwall_X_BLOCK + 2;
         }
+
     }
 
     // インデックスバッファをアンロック

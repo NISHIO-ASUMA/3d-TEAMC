@@ -216,6 +216,8 @@ void InitGame(void)
 		SpawnEnemy(1); // 敵を出す処理
 	}
 
+	//UpdateEnemySpawn();
+
 	// UIをセット
 	SetGameUI(D3DXVECTOR3(70.0f,640.0f,0.0f),UITYPE_ICONFRAME,70.0f, 80.0f,false,0);
 	SetGameUI(D3DXVECTOR3(200.0f, 660.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false,0);
@@ -229,10 +231,12 @@ void InitGame(void)
 
 	// テスト用 : 　ビルボードのセット
 	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);
-SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
+	SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
 
 	// テスト用 : 　ビルボードのセット
-	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);#ifdef _DEBUG
+	//SetBillboard(D3DXVECTOR3(200.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, 0.f, 0.0f), 0, 200.0f, 100.0f);
+
+#ifdef _DEBUG
 
 	//SetEnemy(D3DXVECTOR3(200.0f, 0.0f, 200.0f), 6, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 
@@ -665,14 +669,14 @@ void DrawGame(void)
 
 	if (!g_bEditMode)
 	{
-		// ブロックの描画処理
-		DrawBlock();
-
 		// ポリゴンの描画処理
 		DrawPolygon();
 
 		//アイテムの描画処理
 		DrawItem();
+
+		// ブロックの描画処理
+		DrawBlock();
 	}
 
 	//メッシュインパクトの描画処理

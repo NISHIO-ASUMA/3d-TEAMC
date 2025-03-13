@@ -26,6 +26,7 @@
 #include "math.h"
 #include "easing.h"
 #include "meshimpact.h"
+#include <cassert>
 
 //**************************************************************************************************************
 //マクロ定義
@@ -216,6 +217,26 @@ void UninitItem(void)
 		}
 	}
 
+#ifdef _DEBUG
+
+	// 種類分回す
+	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
+	{
+		// テクスチャの破棄
+		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
+		{
+			// テクスチャがNULLか確認
+			assert(g_TexItem[nCntNum].g_apTextureModel[nCntTex] == NULL && "Item.cpp、originテクスチャの破棄ができてません");
+		}
+
+		// メッシュがNULLか確認
+		assert(g_TexItem[nCntNum].g_pMeshModel == NULL && "Item.cpp、originメッシュの破棄ができてません");
+
+		// バッファがNULLか確認
+		assert(g_TexItem[nCntNum].g_pBuffMatModel == NULL && "Item.cpp、originバッファの破棄ができてません");
+	}
+#endif
+
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		int nType = g_Item[nCntItem].nType;
@@ -241,6 +262,28 @@ void UninitItem(void)
 			g_Item[nCntItem].ItemTex[nType].g_pBuffMatModel = NULL;
 		}
 	}
+
+#ifdef _DEBUG
+
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+	{
+		int nType = g_Item[nCntItem].nType;
+
+		// テクスチャの破棄
+		for (int nCntTex = 0; nCntTex < MAX_TEX; nCntTex++)
+		{
+			// テクスチャがNULLか確認
+			assert(g_Item[nCntItem].ItemTex[nType].g_apTextureModel[nCntTex] == NULL && "Item.cpp、テクスチャの破棄ができてません");
+		}
+
+		// メッシュがNULLか確認
+		assert(g_Item[nCntItem].ItemTex[nType].g_pMeshModel == NULL && "Item.cpp、メッシュの破棄ができてません");
+
+		// バッファがNULLか確認
+		assert(g_Item[nCntItem].ItemTex[nType].g_pBuffMatModel == NULL && "Item.cpp、バッファの破棄ができてません");
+	}
+
+#endif
 }
 //===============================================================================================================
 //ブロックの更新処理
@@ -1161,7 +1204,7 @@ void PickUpItemAnimation(int nCntItem)
 			D3DXVECTOR3(0.2f, 3.14f, 0.2f),
 			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f),
-			2.0f, 2, 20, 4, 4.0f, 40.0f,
+			2.0f, 3, 5, 4, 4.0f, 40.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 	else
@@ -1171,7 +1214,7 @@ void PickUpItemAnimation(int nCntItem)
 			D3DXVECTOR3(0.2f, 3.14f, 0.2f),
 			D3DXVECTOR3(0.0f, 0.0f, 0.0f),
 			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-			2.0f, 2, 20, 4, 4.0f, 40.0f,
+			2.0f, 3, 5, 4, 4.0f, 40.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 

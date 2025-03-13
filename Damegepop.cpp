@@ -196,7 +196,7 @@ void UpdateDamege(void)
 			// 桁数によって数値のTEXTURE座標を変える
 			for (int nCnt = 0; nCnt < MAXDIGI; nCnt++)
 			{
-				nMath = pow(10.0f, 5.0f - nCnt);
+				nMath = pow(10.0, 5.0 - nCnt);
 
 				// １の位以外かつ最大の桁数を超えているなら表示しない
 				if (g_aDamege[nCntDamege].nDamege >= nMath || nCnt == 5)

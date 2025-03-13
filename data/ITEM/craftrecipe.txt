@@ -28,8 +28,8 @@ END_CRAFTSET
 
 CRAFTSET
 	MIXWEPON = 15            # [ クラフト先のアイテム ] << 炎の剣 >>
-	CRAFT_MATERIAL_ONE = 0   # [ 材料1 ] << バット >>
-	CRAFT_MATERIAL_TWO = 11  # [ 材料2 ] << バール >>
+	CRAFT_MATERIAL_ONE = 30   # [ 材料1 ] << 剣 >>
+	CRAFT_MATERIAL_TWO = 14  # [ 材料2 ] << 松明 >>
 END_CRAFTSET
 
 CRAFTSET

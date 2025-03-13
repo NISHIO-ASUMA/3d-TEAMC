@@ -12,6 +12,7 @@
 #include "player.h"
 #include "meshimpact.h"
 #include "Effect.h"
+#include <cassert>
 
 //**************************************************************************************************************
 // マクロ定義
@@ -60,6 +61,7 @@ void InitMeshImpact(void)
 //=================================================================================================================ccc
 void UninitMeshImpact(void)
 {
+	// すべてのインパクト分回す
 	for (int nCnt = 0; nCnt < MAX_IMPACT; nCnt++)
 	{
 		//テクスチャの解放
@@ -83,6 +85,22 @@ void UninitMeshImpact(void)
 			g_MeshImpact[nCnt].g_pIdxBuffMeshImpact = NULL;
 		}
 	}
+
+#ifdef _DEBUG
+	// すべてのインパクト分回す
+	for (int nCnt = 0; nCnt < MAX_IMPACT; nCnt++)
+	{
+		// テクスチャがNULLか確認
+		assert(g_MeshImpact[nCnt].g_pTextureMeshImpact == NULL && "meshImpact.cpp正しくテクスチャを破棄できてません");
+
+		// インデックスバッファがNULLか確認
+		assert(g_MeshImpact[nCnt].g_pIdxBuffMeshImpact == NULL && "meshImpact.cpp正しくインデックスバッファを破棄できてません");
+
+		// 頂点バッファがNULLか確認
+		assert(g_MeshImpact[nCnt].g_pVtxBuffMeshImpact == NULL && "meshImpact.cpp正しく頂点バッファを破棄できてません");
+	}
+#endif // DEBUG
+
 }
 
 //=================================================================================================================
@@ -338,6 +356,13 @@ void CreateImpact(int nCntImpact, int nImpactPosX, int Vertex, int Index)
 			pIdx[IdxCnt + 1] = Num;
 			IdxCnt += 2;
 		}
+
+#ifdef _DEBUG
+
+		// 配列がオーバーランしてないかを確認
+		assert(IdxCnt <= Index && "インパクトINDEX配列オーバーラン");
+
+#endif // _DEBUG
 	}
 
 	//インデックスバッファのアンロック
@@ -382,12 +407,14 @@ bool CollisionImpact(D3DXVECTOR3* pPos)
 			if (fDistance <= DiffSize * 0.5f && g_MeshImpact[nCnt].nType == IMPACTTYPE_PLAYER)
 			{	
 				// 当たっている
-				bHit = true;
+				return true;
 			}
 			else if (fDistance <= DiffSize * 0.5f && g_MeshImpact[nCnt].nType != IMPACTTYPE_PLAYER)
 			{
 				// 当たっている
 				HitPlayer(20,false,0,0);
+				break;
+
 				//pPlayer->rotDestPlayer.y = SetAttackerAngle(nCnt, ATTACKER_BOSS);
 			}
 		}

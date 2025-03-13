@@ -88,6 +88,9 @@ D3DXVECTOR3 SetMotionMoveAngle(void);                                           
 void SetWeponEffect(void);                                                                       // 武器ごとのエフェクト処理
 bool IsDamageAction(void);                                                                       // ダメージアクションかどうか
 void ChangeItemParam(int nHaveIdx, int nType);													 // アイテムの変更時のパラメーター設定
+void MotionTransition(void);																	 // モーションタイプの遷移
+void StateTransition(void);																		 // 状態の遷移
+void ComboTransition(void);																		 // コンボ状態の遷移
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -141,11 +144,11 @@ void InitPlayer(void)
 	g_player.WeponMotion = MOTION_KATANA;							// 武器ごとのモーション
 	g_player.AttackSp = false;										// スペシャル攻撃中かどうか
 	g_player.bLandingOBB = false;									// OBBに乗ってるか
-	nCntMotion = NULL;												// モーションのカウント
-	nKey = NULL;													// キーのカウント
+	nCntMotion = 0;												// モーションのカウント
+	nKey = 0;													// キーのカウント
 	g_player.bCraft = false;										// クラフト中かどうか
 	g_player.nElement = WEPONELEMENT_STANDARD;						// 属性の種類
-	g_EaseCount = NULL;												// イージングのカウント
+	g_EaseCount = 0;												// イージングのカウント
 	g_player.nIdxShadow = SetShadow(g_player.pos, g_player.rot, 20.0f, 1.0f); // 影を設定
 	g_player.nIdxMap = SetMiniMap(g_player.pos, MINIMAPTEX_PLAYER); // ミニマップにプレイヤーを設定
 	g_player.HandState = PLAYERHOLD_NO;								// 手の状態
@@ -153,9 +156,9 @@ void InitPlayer(void)
 	g_player.AttackState = PLAYERATTACKSTATE_NO;                    // 攻撃の状態
 	g_player.nCounterAttack = 0;                                    // 攻撃状態のカウンター
 	g_player.avoidMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);             // 回避の移動量
-	g_player.ItemIdx = NULL;										// アイテムのインデックスの初期化
-	g_player.BlowCounter = NULL;									// 吹っ飛ぶまでのカウンター
-	g_player.AttackerIdx = NULL;									// 攻撃してきた敵のインデックス
+	g_player.ItemIdx = 0;										// アイテムのインデックスの初期化
+	g_player.BlowCounter = 0;									// 吹っ飛ぶまでのカウンター
+	g_player.AttackerIdx = 0;									// 攻撃してきた敵のインデックス
 	g_player.bstiffness = false;									// ダメージの硬直
 	g_player.StockItemType = ITEMTYPE_NONEXISTENT;                  // ストックしているアイテムの種類
 	g_player.HoldItemType = ITEMTYPE_KATANA;						// 持っているアイテムの種類
@@ -191,8 +194,8 @@ void InitPlayer(void)
 		g_player.Motion = g_LoadPlayer[0];
 	}
 
-	// 矢印を設定
-	SetMark(g_player.pos, g_player.rot);
+	//// 矢印を設定
+	//SetMark(g_player.pos, g_player.rot);
 }
 //===============================================================================================================
 //プレイヤーの終了処理
@@ -328,11 +331,8 @@ void UpdatePlayer(void)
 		StickPad(); // パッドの移動処理
 	}
 
-	D3DXVECTOR3 SwordPos(
-		g_player.SwordMtx._41, // X方向
-		g_player.SwordMtx._42, // Y方向
-		g_player.SwordMtx._43  // Z方向
-	);
+	// 剣のマトリクスを代入
+	D3DXVECTOR3 SwordPos = SetMtxConversion(g_player.SwordMtx);
 
 	switch (g_player.AttackState)
 	{
@@ -348,119 +348,17 @@ void UpdatePlayer(void)
 	default:
 		break;
 	}
-	switch (g_player.Motion.motionType)
-	{
-	case MOTIONTYPE_NEUTRAL:
-		break;
-	case MOTIONTYPE_MOVE:
-		break;
-	case MOTIONTYPE_ACTION:
-		SetElementEffect();
-		break;
-	case MOTIONTYPE_JUMP:
-		break;
-	case MOTIONTYPE_LANDING:
-		break;
-	case MOTIONTYPE_ACTION2:
-		SetElementEffect();
-		break;
-	case MOTIONTYPE_ACTION3:
-		SetElementEffect();
-		break;
-	case MOTIONTYPE_ACTION4:
-		SetElementEffect();
-		break;
-	default:
-		break;
-	}
-
-	switch (g_player.state)
-	{
-	case PLAYERSTATE_NORMAL:
-		break;
-	case PLAYERSTATE_MOVE:
-		g_nCounterState--;
-
-		if (g_nCounterState < 0)
-		{
-			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
-		}
-		break;
-	case PLAYERSTATE_ATTACK:
-		g_nCounterState--;
-
-		if (g_nCounterState < 0)
-		{
-			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
-		}
-		break;
-	case PLAYERSTATE_JUMP:
-		g_nCounterState--;
-		if (g_nCounterState < 0)
-		{
-			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
-		}
-		break;
-	case PLAYERSTATE_LANDING:
-		g_nCounterState--;
-
-		if (g_nCounterState < 0)
-		{
-			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
-		}
-		break;
-	case PLAYERSTATE_DAMAGE:
-		g_nCounterState--;
-
-		if (g_nCounterState < 0)
-		{
-			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
-		}
-		break;
-	default:
-		break;
-	}
 	
-	// ムービーじゃ無かったら
-	if (gameState != GAMESTATE_MOVIE)
-	{
-		switch (g_player.Combostate)
-		{
-		case COMBO_NO:
-			break;
-		case COMBO_ATTACK1:
-			g_AttackState--;
-			if (g_AttackState < 0)
-			{
-				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
-			}
-			break;
-		case COMBO_ATTACK2:
-			g_AttackState--;
-			if (g_AttackState < 0)
-			{
-				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
-			}
-			break;
-		case COMBO_ATTACK3:
-			g_AttackState--;
-			if (g_AttackState < 0)
-			{
-				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
-			}
-			break;
-		case COMBO_ATTACK4:
-			g_AttackState--;
-			if (g_AttackState < 0)
-			{
-				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
-			}
-			break;
-		default:
-			break;
-		}
-	}
+	// モーションタイプの遷移
+	MotionTransition();
 
+	// プレイヤーの状態の遷移
+	StateTransition();
+
+	// コンボ状態の遷移
+	ComboTransition();
+
+	// ムービーじゃなかったら
 	if (gameState != GAMESTATE_MOVIE)
 	{
 		//移動量を減衰
@@ -475,11 +373,14 @@ void UpdatePlayer(void)
 	}
 	else
 	{
+		//前回の位置を保存
 		g_player.posOld.y = g_player.pos.y;
 
+		//プレイヤーの位置の更新
 		g_player.pos.y += g_player.move.y;
 	}
 
+	// メッシュフィールドの当たり判定
 	if (CollisionField(&g_player.pos,&g_player.posOld) == true)
 	{
 		g_player.bLandingOBB = false;
@@ -558,7 +459,7 @@ void UpdatePlayer(void)
 		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION3 &&
 			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
 		{
-			PlayerComb(MOTIONTYPE_ACTION4, 45, 40, COMBO_ATTACK4); // コンボ4
+			PlayerComb(MOTIONTYPE_ACTION4, 70, 40, COMBO_ATTACK4); // コンボ4
 		}
 	}
 
@@ -566,7 +467,7 @@ void UpdatePlayer(void)
 	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE && g_player.bstiffness == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID;
 
 	// 投げ物を持っているときの攻撃
-	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && canAction == true)
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && canAction == true && g_player.Motion.nNumModel == 16)
 	{
 		PlayerComb(MOTIONTYPE_ACTION, 40, 20, COMBO_ATTACK1); // コンボ1
 	}
@@ -596,10 +497,18 @@ void UpdatePlayer(void)
 	// 必殺技の処理
 	HandleSpecialAttack();
 
+#ifdef _DEBUG
+
 	if (KeyboardTrigger(DIK_H) == true)
 	{
+		// 衝撃波を発生指せる
+		SetImpact(g_player.pos, D3DCOLOR_RGBA(100, 100, 100, 255), 32, 30.0f, 20.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 0);
+
 		AddSpgauge(100.0f);
 	}
+
+#endif // DEBUG
+
 	// フォーバーモード
 	if (g_player.FeverMode == true)
 	{
@@ -636,7 +545,6 @@ void UpdatePlayer(void)
 	{
 		FiverCnt = 0; // 制限回数をリセット
 	}
-
 
 	// 死亡モーションだったら
 	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_DEATH && g_player.Motion.nKey <= 0)
@@ -1087,7 +995,7 @@ void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 	const bool is_NotDamageState = pEnemy->state != ENEMYSTATE_DAMAGE;
 
 	// 攻撃状態を判定する
-	const bool is_NotAction = g_player.Combostate != COMBO_NO;
+	const bool is_NotAction = isPlayerAttaking() == true;
 
 	// 攻撃できるかどうかを判定する
 	const bool is_Damage = is_HaveWepon == true && is_NotSpAttack == true && is_NotDamageState == true && is_NotAction == true;
@@ -2446,7 +2354,7 @@ void SetMotionContller(void)
 		if (g_player.Motion.nKey % SetKey== 0 && g_player.Motion.nKey <= 16)
 		{
 			// 衝撃波を発生指せる
-			SetImpact(g_player.pos, D3DCOLOR_RGBA(100,100,100,255), 32, 30.0f, 20.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 0);
+			SetImpact(g_player.pos, D3DCOLOR_RGBA(100,100,100,255), 32, 30.0f, 20.0f, 3.0f, 60, IMPACTTYPE_NORMAL, 0);
 		}
 
 		if (CheckMotionBounds(nKey, nCounter, 21, 21, 0, 0) == true)
@@ -3201,6 +3109,168 @@ void ChangeItemParam(int nHaveIdx,int nType)
 	pItem[nHaveIdx].pos.z = g_player.pos.z + (float)(rand() % 50 - 25.0f);
 	pItem[nHaveIdx].state = ITEMSTATE_RELEASE;
 	pItem[nHaveIdx].nCounterState = 60;
+}
+//===============================================================================================================
+// モーションタイプの遷移
+//===============================================================================================================
+void MotionTransition(void)
+{
+	// モーションタイプの遷移
+	switch (g_player.Motion.motionType)
+	{
+	case MOTIONTYPE_NEUTRAL:
+		break;
+	case MOTIONTYPE_MOVE:
+		break;
+	case MOTIONTYPE_ACTION:
+		SetElementEffect();
+		break;
+	case MOTIONTYPE_JUMP:
+		break;
+	case MOTIONTYPE_LANDING:
+		break;
+	case MOTIONTYPE_ACTION2:
+		SetElementEffect();
+		break;
+	case MOTIONTYPE_ACTION3:
+		SetElementEffect();
+		break;
+	case MOTIONTYPE_ACTION4:
+		SetElementEffect();
+		break;
+	default:
+		break;
+	}
+}
+//===============================================================================================================
+// 状態の遷移
+//===============================================================================================================
+void StateTransition(void)
+{
+	// プレイヤーの状態の遷移
+	switch (g_player.state)
+	{
+	case PLAYERSTATE_NORMAL:
+		break;
+	case PLAYERSTATE_MOVE:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	case PLAYERSTATE_ATTACK:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	case PLAYERSTATE_JUMP:
+		g_nCounterState--;
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	case PLAYERSTATE_LANDING:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	case PLAYERSTATE_DAMAGE:
+		g_nCounterState--;
+
+		if (g_nCounterState < 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL; // 状態をノーマルにする
+		}
+		break;
+	default:
+		break;
+	}
+}
+//===============================================================================================================
+// コンボ状態の遷移
+//===============================================================================================================
+void ComboTransition(void)
+{
+	GAMESTATE gameState = GetGameState();
+
+	// ムービーじゃ無かったら
+	if (gameState != GAMESTATE_MOVIE)
+	{
+		switch (g_player.Combostate)
+		{
+		case COMBO_NO:
+			break;
+		case COMBO_ATTACK1:
+			g_AttackState--;
+			if (g_AttackState < 0)
+			{
+				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+			}
+			break;
+		case COMBO_ATTACK2:
+			g_AttackState--;
+			if (g_AttackState < 0)
+			{
+				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+			}
+			break;
+		case COMBO_ATTACK3:
+			g_AttackState--;
+			if (g_AttackState < 0)
+			{
+				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+			}
+			break;
+		case COMBO_ATTACK4:
+			g_AttackState--;
+			if (g_AttackState < 0)
+			{
+				g_player.Combostate = COMBO_NO; // コンボ状態を初期化
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+}
+//===============================================================================================================
+// プレイヤーが攻撃状態か
+//===============================================================================================================
+bool isPlayerAttaking(void)
+{
+	// 最初のブレンドが終わったら
+	const bool NotFirstBlend = g_player.Motion.bFirstMotion == false;
+
+	// モーションが終わって無かったら
+	const bool NotFinishMotion = g_player.Motion.bFinishMotion == false;
+
+	// モーションタイプ1がアクションだったら
+	const bool isAttack1 = g_player.Motion.motionType == MOTIONTYPE_ACTION;
+
+	// モーションタイプ2がアクションだったら
+	const bool isAttack2 = g_player.Motion.motionType == MOTIONTYPE_ACTION2;
+
+	// モーションタイプ3がアクションだったら
+	const bool isAttack3 = g_player.Motion.motionType == MOTIONTYPE_ACTION3;
+
+	// モーションタイプ4がアクションだったら
+	const bool isAttack4 = g_player.Motion.motionType == MOTIONTYPE_ACTION4;
+
+	// 攻撃状態かを判定
+	const bool isAttacking = (NotFirstBlend && NotFinishMotion) && (isAttack1 || isAttack2 || isAttack3 || isAttack4);
+
+	// 判定を返す
+	return isAttacking;
 }
 //===============================================================================================================
 // アイテムの変更する時のステータス読み込み

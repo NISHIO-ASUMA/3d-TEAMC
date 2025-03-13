@@ -613,8 +613,6 @@ void HitBoss(int nCntBoss,int nDamage)
 		if (g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 		{
 			SetMotion(&g_Boss[nCntBoss].Motion, MOTIONTYPE_DEATH, true, 10);
-			AddTimeSecond(15); // 15秒増やす
-			SpawnItem(g_Boss[nCntBoss].pos);
 		}
 
 		g_Boss[nCntBoss].nLife = -1;
@@ -1171,7 +1169,7 @@ void colisionSword(int nCntBoss)
 	const bool is_NotDamage = g_Boss[nCntBoss].state != BOSSSTATE_DAMAGE;
 
 	// プレイヤーが攻撃状態だったら
-	const bool is_playerAction = pPlayer->Combostate != COMBO_NO;
+	const bool is_playerAction = isPlayerAttaking() == true;
 
 	// 攻撃できる
 	const bool CanSwordDamage = is_HaveWepon == true && is_NotSpAttack == true && is_NotDamage == true && is_playerAction == true;
@@ -1624,6 +1622,9 @@ void DeathMotionContlloer(int nCntBoss)
 
 		// イベントを強制終了
 		SetEndEvent(false);
+
+		AddTimeSecond(20); // 15秒増やす
+		SpawnItem(g_Boss[nCntBoss].pos);
 	}
 }
 //========================================================================================================

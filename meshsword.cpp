@@ -12,6 +12,7 @@
 #include "input.h"
 #include "player.h"
 #include "mouse.h"
+#include <cassert>
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -171,6 +172,13 @@ void InitMeshSword(void)
 	for (int nCnt = 0; nCnt < ORBIT_INDEX; nCnt++)
 	{
 		pIdx[nCnt] = nCnt;
+
+#ifdef _DEBUG
+
+		// 配列がオーバーランしてないかを確認
+		assert(nCnt <= ORBIT_INDEX && "剣の軌跡INDEX配列オーバーラン");
+
+#endif // _DEBUG
 	}
 	//インデックスバッファのアンロック
 	g_pIdxBuffMeshSword->Unlock();
@@ -205,6 +213,21 @@ void UninitMeshSword(void)
 		g_pIdxBuffMeshSword->Release();
 		g_pIdxBuffMeshSword = NULL;
 	}
+
+#ifdef _DEBUG
+
+	for (int nCount = 0; nCount < WEPONELEMENT_MAX; nCount++)
+	{
+		// テクスチャがNULLか確認
+		assert(g_pTextureMeshSword[nCount] == NULL && "meshsword.cpp正しくテクスチャを破棄できてません");
+	}
+	// インデックスバッファがNULLか確認
+	assert(g_pIdxBuffMeshSword == NULL && "meshsword.cpp正しくインデックスバッファを破棄できてません");
+
+	// 頂点バッファがNULLか確認
+	assert(g_pVtxBuffMeshSword == NULL && "meshsword.cpp正しく頂点バッファを破棄できてません");
+
+#endif
 }
 
 //=================================================================================================================

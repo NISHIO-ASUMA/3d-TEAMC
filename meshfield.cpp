@@ -11,6 +11,7 @@
 #include "meshfield.h"
 #include "input.h"
 #include "player.h"
+#include <cassert>
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -115,6 +116,13 @@ void InitMeshField(void)
 			pIdx[IdxCnt + 1] = IndxNum;
 			IdxCnt += 2;
 		}
+
+#ifdef _DEBUG
+
+		// 配列がオーバーランしてないかを確認
+		assert(IdxCnt <= INDEX && "メッシュフィールドINDEX配列オーバーラン");
+
+#endif // _DEBUG
 	}
 
 	//インデックスバッファのアンロック
@@ -146,6 +154,20 @@ void UninitMeshField(void)
 		g_pIdxBuffMeshFiled->Release();
 		g_pIdxBuffMeshFiled = NULL;
 	}
+
+#ifdef _DEBUG
+
+	// テクスチャがNULLか確認
+	assert(g_pTextureMeshField == NULL && "meshfield.cpp正しくテクスチャを破棄できてません");
+
+	// インデックスバッファがNULLか確認
+	assert(g_pIdxBuffMeshFiled == NULL && "meshfield.cpp正しくインデックスバッファを破棄できてません");
+
+	// 頂点バッファがNULLか確認
+	assert(g_pVtxBuffMeshField == NULL && "meshfield.cpp正しく頂点バッファを破棄できてません");
+
+#endif // DEBUG
+
 }
 
 //=================================================================================================================

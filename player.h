@@ -222,23 +222,22 @@ typedef struct
 //**************************
 //プロトタイプ宣言
 //**************************
-void InitPlayer(void);//プレイヤーの初期化処理
-void UninitPlayer(void);//プレイヤーの終了処理
-void UpdatePlayer(void);//プレイヤーの更新処理
-void DrawPlayer(void);//プレイヤーの描画処理
-Player* GetPlayer(void);//プレイヤーの取得処理
-void SetMtxPos(void);//ワールドマトリックスのオフセット設定処理
-void HitPlayer(int nDamage, bool SetDamageMotion, int AttackerIdx, int AttackerType);//プレイヤーのヒット処理
-bool CollisionItem(int nIdx, float Itemrange, float plrange);
-void HitSowrd(ENEMY* pEnemy,int nCntEnemy);
-void ThrowItem(void); // アイテムを投げる
-void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, float ENradius); // プレイヤーと敵の当たり判定
-void MotionChange(int itemtype, int LoadPlayer);													 // モーション変更
-void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage);							 // プレイヤーのステータス変更
-bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int startFrame, int EndFrame); // モーションの開始判定処理
-float SetAttackerAngle(int AttackerIdx, int AttackerType); // アタッカーを調べる関数
-void LoadItemChange(int nType, float swordLength);																	 // アイテムの変更する時のステータス読み込み
-int LoadPlayerParamCharge(char* aStr, FILE* pFile, float swordLength);
-
-//bool CollisionLine(float Radius, D3DXVECTOR3* pEndPos, D3DXVECTOR3* pFirstPos,int nMaxModel, D3DXVECTOR3* pSphereCenterPos);       // 線分と円の当たり判定
+void InitPlayer(void);																							// プレイヤーの初期化処理
+void UninitPlayer(void);																						// プレイヤーの終了処理
+void UpdatePlayer(void);																						// プレイヤーの更新処理
+void DrawPlayer(void);																							// プレイヤーの描画処理
+Player* GetPlayer(void);																						// プレイヤーの取得処理
+void SetMtxPos(void);																							// ワールドマトリックスのオフセット設定処理
+void HitPlayer(int nDamage, bool SetDamageMotion, int AttackerIdx, int AttackerType);							// プレイヤーのヒット処理
+bool CollisionItem(int nIdx, float Itemrange, float plrange);													// アイテムとの判定
+void HitSowrd(ENEMY* pEnemy,int nCntEnemy);                                                                     // 剣の当たり判定
+void ThrowItem(void);																							// アイテムを投げる
+void CollisionPlayer(D3DXVECTOR3* pPos, D3DXVECTOR3* pMove, float PLradius, float ENradius);					// プレイヤーと敵の当たり判定
+void MotionChange(int itemtype, int LoadPlayer);																// モーション変更
+void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage);											// プレイヤーのステータス変更
+bool CheckMotionBounds(int nKey, int nCountFrame, int StartKey, int EndKey, int startFrame, int EndFrame);		// モーションの開始判定処理
+float SetAttackerAngle(int AttackerIdx, int AttackerType);														// アタッカーを調べる関数
+void LoadItemChange(int nType, float swordLength);																// アイテムの変更する時のステータス読み込み
+int LoadPlayerParamCharge(char* aStr, FILE* pFile, float swordLength);											// アイテムのロード
+bool isPlayerAttaking(void);																					// プレイヤーが攻撃状態か
 #endif

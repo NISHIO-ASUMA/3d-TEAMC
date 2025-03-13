@@ -35,6 +35,8 @@
 #include "meshimpact.h"
 #include "math.h"
 #include "meshfield.h"
+#include "meshcylinder.h"
+#include <cassert>
 
 //**************************************************************************************************************
 //マクロ定義
@@ -50,26 +52,28 @@
 #define SHADOW_A (1.0f)			 // 影のアルファ
 #define WAVE_ENEMY (15)			 // 敵の出現数
 #define KICKATTACK_MOVE (15.0f)  // けり攻撃の移動量
+#define NUM_SPAWNPOSITION (4)    // スポーン位置の数
+#define TERRITTORYPOS_ONE (D3DXVECTOR3(-15.0f,0.0f,890.0f)) // テリトリー1
 
 //**************************************************************************************************************
 //プロトタイプ宣言
 //**************************************************************************************************************
-void LoadEnemy(int nType);										  // 読み込み処理
+void LoadEnemy(int nType);																	// 読み込み処理
 
-int LoadEnemyFilename(FILE* pFile, int nNumModel, char* aString, int nType);							 // 敵のモデルのロード処理
-void LoadEnemyCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);					 // 敵のパーツの設定処理
-void LoadEnemyMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);						 // 敵のモーションのロード処理
-void LoadEnemyKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);							 // 敵のモーションのキーの読み込み処理
-
+int LoadEnemyFilename(FILE* pFile, int nNumModel, char* aString, int nType);				// 敵のモデルのロード処理
+void LoadEnemyCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);			// 敵のパーツの設定処理
+void LoadEnemyMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);				// 敵のモーションのロード処理
+void LoadEnemyKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);				// 敵のモーションのキーの読み込み処理
 
 //bool AgentRange(float plrange, float playerrange, int nCntEnemy); // ホーミングの範囲にいるかどうか
-void AgentEnemy(int nCntEnemy);									  // 敵のホーミング処理
-void CollisionToEnemy(int nCntEnemy);							  // 敵と敵の当たり判定
-void UpdateHomingEnemy(int nCntEnemy);                            // 敵のホーミング処理
-void UpdateRunAwayEnemy(int nCntEnemy);                           // 逃げる敵の更新処理
-void UpdateKickAttack(int nCntEnemy);                             // 敵の攻撃の更新処理
-void UpdateDroneEnemy(int nCntEnemy);                             // 飛んでる敵の更新処理
-void KickActionSet(int nCntEnemy,int nKey, int nCounter, int EndFrame, int LastKey, Player* pPlayer);                                // けり攻撃の処理
+void AgentEnemy(int nCntEnemy);									    // 敵のホーミング処理
+void CollisionToEnemy(int nCntEnemy);							    // 敵と敵の当たり判定
+void UpdateHomingEnemy(int nCntEnemy);                              // 敵のホーミング処理
+void UpdateRunAwayEnemy(int nCntEnemy);                             // 逃げる敵の更新処理
+void UpdateKickAttack(int nCntEnemy);                               // 敵の攻撃の更新処理
+void UpdateDroneEnemy(int nCntEnemy);                               // 飛んでる敵の更新処理
+void KickActionSet(int nCntEnemy,int nKey, int nCounter, int EndFrame, int LastKey, Player* pPlayer);        // けり攻撃の処理
+void UpdateDeathParam(int nCntEnemy);																		 // 敵の死亡モーションの処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -205,10 +209,10 @@ void UpdateEnemy(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		// ヒットストップのカウントを減らす
-		g_Enemy[nCntEnemy].HitStopCount--;
+		//// ヒットストップのカウントを減らす
+		//g_Enemy[nCntEnemy].HitStopCount--;
 
-		if (g_Enemy[nCntEnemy].bUse == false || g_Enemy[nCntEnemy].HitStopCount > 0)
+		if (g_Enemy[nCntEnemy].bUse == false)
 		{// 未使用状態だったら
 			// とばしてカウントを進める
 			continue;
@@ -273,6 +277,20 @@ void UpdateEnemy(void)
 			UpdateMotion(&g_Enemy[nCntEnemy].Motion);
 		}
 
+		// 影の計算
+		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
+		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
+
+		// モーションの種類が死亡
+		if (g_Enemy[nCntEnemy].Motion.motiontypeBlend == MOTIONTYPE_DEATH)
+		{
+			// 死亡モーションの更新処理
+			UpdateDeathParam(nCntEnemy);
+
+			// 処理を飛ばす
+			continue;
+		}
+
 		// ゲームの状態がムービーだったら
 		if (gameState == GAMESTATE_MOVIE)
 		{
@@ -295,10 +313,6 @@ void UpdateEnemy(void)
 
 		// 剣と敵の当たり判定
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);
-
-		// 影の計算
-		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
-		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
 		// ホーミングの更新処理
 		UpdateHomingEnemy(nCntEnemy);
@@ -341,7 +355,7 @@ void UpdateEnemy(void)
 			UpdateKickAttack(nCntEnemy);
 		}
 
-		//敵の角度の正規化
+		// 敵の角度の正規化
 		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
 		{
 			g_Enemy[nCntEnemy].rot.y += D3DX_PI * 2.0f;
@@ -354,6 +368,12 @@ void UpdateEnemy(void)
 		// 目的の角度に近づける
 		g_Enemy[nCntEnemy].rot.y += (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y) * 0.1f;
 	}
+
+	if (KeyboardTrigger(DIK_J))
+	{
+		UpdateEnemySpawn();
+	}
+
 }
 //===============================================================================================================
 //敵の描画処理
@@ -518,11 +538,15 @@ void HitEnemy(int nCnt,int nDamage)
 	if (g_Enemy[nCnt].nLife <= 0)
 	{// 体力が0以下なら
 
-		g_nNumKill++;
 		int nSpawner = rand() % 4;
 
 		// 敵をスポーンさせる
 		SpawnEnemy(nSpawner);
+
+		if (g_Enemy[nCnt].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
+		{
+			SetMotion(&g_Enemy[nCnt].Motion, MOTIONTYPE_DEATH, true, 10);
+		}
 
 		if (pPlayer->nElement == WEPONELEMENT_DARK)
 		{
@@ -573,9 +597,8 @@ void HitEnemy(int nCnt,int nDamage)
 		}
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH; // 敵の状態を死亡状態にする
-		KillShadow(g_Enemy[nCnt].nIdxShadow);   // 敵の影を消す
-		EnableMap(g_Enemy[nCnt].nIdxMap);		// マップから消す
-		g_Enemy[nCnt].bUse = false;			    // 未使用判定
+		//KillShadow(g_Enemy[nCnt].nIdxShadow);   // 敵の影を消す
+		//EnableMap(g_Enemy[nCnt].nIdxMap);		// マップから消す
 
 		g_nNumEnemy--; // デクリメント
 
@@ -617,6 +640,7 @@ void HitEnemy(int nCnt,int nDamage)
 		{
 			AddScore(4300);
 		}
+		return;
 	}
 }
 //=========================================================================================================
@@ -668,8 +692,8 @@ void SpawnEnemy(int nSpawner)
 		// スポナー0
 		if (nSpawner == 0)
 		{
-			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3(1065.0f, 0.0f, 188.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(TERRITTORYPOS_ONE, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(TERRITTORYPOS_ONE, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
 		// スポナー1
 		else if (nSpawner == 1)
@@ -1275,13 +1299,13 @@ void UpdateHomingEnemy(int nCntEnemy)
 	Player* pPlayer = GetPlayer();
 
 	// 絶対に追跡する範囲にいるかを判定
-	const bool is_absolute = sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 50.0f, 500.0f) == true;
+	const bool is_absolute = sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 50.0f, 100.0f) == true;
 
 	// 追跡する範囲にいるか判定
-	const bool is_sphereBounds = sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 50.0f, 1800.0f) == true;
+	const bool is_sphereBounds = sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 50.0f, 300.0f) == true;
 
 	// 視界内にいるかを判定
-	const bool is_ViewBounds = CollisionView(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].rot, 200.0f, 0.75f) == true;
+	const bool is_ViewBounds = CollisionView(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].rot, 300.0f, 0.75f) == true;
 
 	// 攻撃状態かを判定
 	const bool is_NotAction = g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION;
@@ -1414,41 +1438,58 @@ void UpdateDroneEnemy(int nCntEnemy)
 {
 	Player* pPlayer = GetPlayer();
 
-	if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
+	if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX)
+	{
+		// ドローンの敵じゃなかったら
+		return;
+	}
+
+	float fDistance = GetDistance(g_Enemy[nCntEnemy].pos, pPlayer->pos);
+
+	if (fDistance >= 250.0f)
 	{
 		// 追尾処理
 		AgentEnemy(nCntEnemy);
-
-		// 範囲内だったら
-		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 300.0f))
-		{
-			g_Enemy[nCntEnemy].nCountAction++;
-		}
-
-		float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
-		D3DXVECTOR3 dest = pPlayer->pos - g_Enemy[nCntEnemy].pos; // プレイヤーのベクトルを求める
-		D3DXVec3Normalize(&dest, &dest); // 正規化する
-
-		g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
-
-		// 弾を発射する処理
-		if (g_Enemy[nCntEnemy].nCountAction >= 120)
-		{
-			// 左から場所、ベクトル、方向、寿命、威力、大きさ、速度
-			SetBullet(g_Enemy[nCntEnemy].pos, dest, D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 50.0f, 3.0f, true);
-
-			// こっちはショットガン化する為の処理
-			/*float fRand[3];
-			for (int nCount = 0; nCount < 10; nCount++)
-			{
-				fRand[0] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
-				fRand[1] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
-				fRand[2] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
-				SetBullet(g_Enemy[nCntEnemy].pos, D3DXVECTOR3(dest.x + fRand[0], dest.y + fRand[1], dest.z + fRand[2]), D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
-			}*/
-			g_Enemy[nCntEnemy].nCountAction = 0;
-		}
 	}
+	else
+	{
+		g_Enemy[nCntEnemy].move.x = 0.0f;
+		g_Enemy[nCntEnemy].move.z = 0.0f;
+	}
+	// 範囲内だったら
+	if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 300.0f))
+	{
+		g_Enemy[nCntEnemy].nCountAction++;
+	}
+
+	float fAngle = atan2f(pPlayer->pos.x - g_Enemy[nCntEnemy].pos.x, pPlayer->pos.z - g_Enemy[nCntEnemy].pos.z); // 敵からプレイやまでの角度を求める
+
+	// ワールドマトリックスを変換
+	D3DXVECTOR3 ModelPos = SetMtxConversion(pPlayer->Motion.aModel[2].mtxWorld);
+
+	D3DXVECTOR3 dest = ModelPos - g_Enemy[nCntEnemy].pos; // プレイヤーのベクトルを求める
+	D3DXVec3Normalize(&dest, &dest); // 正規化する
+
+	g_Enemy[nCntEnemy].rotDest.y = fAngle + D3DX_PI; // 角度を代入
+
+	// 弾を発射する処理
+	if (g_Enemy[nCntEnemy].nCountAction >= 120)
+	{
+		// 左から場所、ベクトル、方向、寿命、威力、大きさ、速度
+		SetBullet(g_Enemy[nCntEnemy].pos, dest, D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 50.0f, 3.0f, true);
+
+		// こっちはショットガン化する為の処理
+		/*float fRand[3];
+		for (int nCount = 0; nCount < 10; nCount++)
+		{
+			fRand[0] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+			fRand[1] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+			fRand[2] = (rand() / (double)RAND_MAX) * 0.4 - 0.2;
+			SetBullet(g_Enemy[nCntEnemy].pos, D3DXVECTOR3(dest.x + fRand[0], dest.y + fRand[1], dest.z + fRand[2]), D3DXVECTOR3(0.0f, fAngle, 0.0f), 60, 2, 10.0f, 3.0f, true);
+		}*/
+		g_Enemy[nCntEnemy].nCountAction = 0;
+	}
+	
 }
 //===============================================================================================================
 // けり攻撃の処理
@@ -1485,6 +1526,64 @@ void KickActionSet(int nCntEnemy, int nKey, int nCounter, int EndFrame,int LastK
 		g_Enemy[nCntEnemy].pos.y += (0.0f - g_Enemy[nCntEnemy].pos.y) * 0.3f;
 	}
 
+}
+//===============================================================================================================
+// 敵の死亡モーションの処理
+//===============================================================================================================
+void UpdateDeathParam(int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	// 現在のキー
+	int nKey = g_Enemy[nCntEnemy].Motion.nKey;
+
+	// 最後のキー
+	int nLastKey = g_Enemy[nCntEnemy].Motion.aMotionInfo[g_Enemy[nCntEnemy].Motion.motionType].nNumkey - 1;
+
+	int nCountMotion = g_Enemy[nCntEnemy].Motion.nCountMotion;
+
+	if (nKey == 0 && nCountMotion == 1)
+	{
+		g_Enemy[nCntEnemy].move.y = 5.0f;
+	}
+
+	// キーが3いないだったら
+	if (nKey <= 3)
+	{
+		g_Enemy[nCntEnemy].move.x = sinf(g_Enemy[nCntEnemy].rot.y) * 10.0f;
+		g_Enemy[nCntEnemy].move.z = cosf(g_Enemy[nCntEnemy].rot.y) * 10.0f;
+	}
+	// 最後のキーまで行ったら
+	if (nKey >= nLastKey)
+	{
+		g_Enemy[nCntEnemy].bUse = false;
+
+		// 敵の影を消す
+		KillShadow(g_Enemy[nCntEnemy].nIdxShadow);
+
+		// マップから消す
+		EnableMap(g_Enemy[nCntEnemy].nIdxMap);		
+	}
+}
+//===============================================================================================================
+// スポナーの処理
+//===============================================================================================================
+void UpdateEnemySpawn(void)
+{
+	//int SpawnPos = rand() % NUM_SPAWNPOSITION;
+
+	int SpawnPos = 0;
+
+	switch (SpawnPos)
+	{
+	case 0:
+		SetMeshCylinder(TERRITTORYPOS_ONE, CYLINDERTYPE_TERRITORY,0,500.0f,COLOR_AQUA,16,1,0.0f,3000.0f);
+		SpawnEnemy(SpawnPos);
+		break;
+	default:
+		assert(false && "UpdateEnemySpawn");
+		break;
+	}
 }
 //===============================================================================================================
 // 線と球の当たり判定

@@ -116,5 +116,6 @@ float SetAngle(D3DXVECTOR3* pRot, D3DXVECTOR3* pPos);
 int GetNumKill(void); // キル数
 void SetSoundWepon(int nType);									  // 武器が敵に当たった時の音の設定処理
 void SetCreateWeponSound(int nType);							  // 合成武器が当たった時のサウンド設定処理
+void UpdateEnemySpawn(void);									  // 敵のスポナーの処理
 
 #endif

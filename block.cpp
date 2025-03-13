@@ -19,6 +19,7 @@
 #include "player.h"
 #include "math.h"
 #include "mark.h"
+#include <cassert>
 
 //**************************************************************************************************************
 // マクロ定義
@@ -189,6 +190,25 @@ void UninitBlock(void)
 		}
 	}
 
+#ifdef _DEBUG
+
+	for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
+	{
+		// テクスチャの破棄
+		for (int nCntTex = 0; nCntTex < (int)g_TexBlock[nCntNum].BlockTex[nCntNum].g_dwNumMatModel; nCntTex++)
+		{
+			// テクスチャがNULLか確認
+			assert(g_TexBlock[nCntNum].BlockTex[nCntNum].g_apTextureModel[nCntTex] == NULL && "block.cpp正しくOriginテクスチャを破棄できてません");
+		}
+
+		// メッシュがNULLか確認
+		assert(g_TexBlock[nCntNum].BlockTex[nCntNum].g_pMeshModel == NULL && "block.cpp正しくOriginメッシュを破棄できてません");
+
+		// バッファがNULLか確認
+		assert(g_TexBlock[nCntNum].BlockTex[nCntNum].g_pBuffMatModel == NULL && "block.cpp正しくOriginバッファを破棄できてません");
+	}
+#endif
+
 	for (int nCnt = 0; nCnt < MAX_BLOCK; nCnt++)
 	{
 		for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
@@ -215,6 +235,28 @@ void UninitBlock(void)
 			}
 		}
 	}
+
+#ifdef _DEBUG
+
+	for (int nCnt = 0; nCnt < MAX_BLOCK; nCnt++)
+	{
+		for (int nCntNum = 0; nCntNum < g_BlockTypeMax; nCntNum++)
+		{
+			// テクスチャの破棄
+			for (int nCntTex = 0; nCntTex < (int)g_Block[nCnt].BlockTex[nCntNum].g_dwNumMatModel; nCntTex++)
+			{
+				// テクスチャがNULLか確認
+				assert(g_Block[nCnt].BlockTex[nCntNum].g_apTextureModel[nCntTex] == NULL && "block.cpp正しくテクスチャを破棄できてません");
+			}
+
+			// メッシュがNULLか確認
+			assert(g_Block[nCnt].BlockTex[nCntNum].g_pMeshModel == NULL && "block.cpp正しくメッシュを破棄できてません");
+
+			// バッファがNULLか確認
+			assert(g_Block[nCnt].BlockTex[nCntNum].g_pBuffMatModel == NULL && "block.cpp正しくバッファを破棄できてません");
+		}
+	}
+#endif
 
 }
 //=============================
@@ -330,23 +372,32 @@ void DrawBlock(void)
 		// 現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
-		if ((sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, (g_Block[nCntBlock].Size.x + g_Block[nCntBlock].Size.z) * 0.5f) == false) || mode == MODE_TITLE)
+		for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
 		{
-			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
+			// マテリアルのデータへのポインタを取得
+			pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatModel->GetBufferPointer();
+
+			if ((sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, g_Block[nCntBlock].Size.y) == true) && mode != MODE_TITLE)
 			{
-				// マテリアルのデータへのポインタを取得
-				pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatModel->GetBufferPointer();
+				D3DXMATERIAL mat = pMat[nCntMat];
+
+				mat.MatD3D.Diffuse.a = 0.5f;
 
 				// マテリアルの設定
-				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-
-				// テクスチャの設定
-				pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureModel[nCntMat]);
-
-				// ブロック(パーツ)の描画
-				g_Block[nCntBlock].BlockTex[nType].g_pMeshModel->DrawSubset(nCntMat);
+				pDevice->SetMaterial(&mat.MatD3D);
 			}
+			else
+			{
+				// マテリアルの設定
+				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+			}
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureModel[nCntMat]);
+
+			// ブロック(パーツ)の描画
+			g_Block[nCntBlock].BlockTex[nType].g_pMeshModel->DrawSubset(nCntMat);
 		}
+		
 		SetMtx(nCntBlock);
 	}
 	//マテリアルの設定
@@ -376,16 +427,6 @@ void SetBlock(D3DXVECTOR3 pos,D3DXVECTOR3 rot,int nType)
 			{
 				// 影をセット
 				g_Block[nCntBlock].nIdxShadow = SetShadow(D3DXVECTOR3(g_Block[nCntBlock].pos.x, 1.0f, g_Block[nCntBlock].pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), ShadowSize(g_Block[nCntBlock].Size), 0.3f);
-			}
-
-			// ブロックの種類がクラフトベンチだったら
-			if (g_Block[nCntBlock].nType == BLOCKTYPE_WORKBENCH && (mode == MODE_GAME || mode == MODE_TUTORIAL))
-			{
-				// ビルボードを設定
-				SetBillboard(D3DXVECTOR3(g_Block[nCntBlock].pos.x,g_Block[nCntBlock].pos.y + 80.0f,g_Block[nCntBlock].pos.z),
-					BILLBOARDTYPE_FIRST,
-					30.0f, 20.0f,
-					BILLBOARDSTATE_SET);
 			}
 
 			g_NumBlock++; // インクリメント
@@ -490,14 +531,13 @@ bool CollisionBlockItem(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pM
 
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
 	{
-		if (!g_Block[nCntBlock].bUse)
+		if (g_Block[nCntBlock].bUse == false)
 		{// 未使用だったら
 			// 読み飛ばしてカウントを進める
 			continue;
 		}
 
-		if (pPosOld->y <= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y
-			&& pPosOld->y + pSize->y >= g_Block[nCntBlock].pos.y)
+		if (pPosOld->y <= g_Block[nCntBlock].pos.y + g_Block[nCntBlock].Size.y * g_Block[nCntBlock].Scal.y && pPosOld->y + pSize->y >= g_Block[nCntBlock].pos.y)
 		{
 			// 左右のめり込み判定
 			if (pPos->z - pSize->z * HALF_VALUE < g_Block[nCntBlock].pos.z + g_Block[nCntBlock].Size.z * HALF_VALUE * g_Block[nCntBlock].Scal.z

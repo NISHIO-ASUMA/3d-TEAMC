@@ -12,12 +12,20 @@
 #include "effectEdit.h"
 #include "mark.h"
 #include "player.h"
+#include <cassert>
 
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define MAX_CYLINDER (10) // シリンダーの数
-#define CYLINDER_ALV (0.6f) // α値の基準
+#define MAX_CYLINDER (20) // シリンダーの数
+#define CYLINDER_ALV (0.5f) // α値の基準
+
+//**************************************************************************************************************
+// プロトタイプ宣言
+//**************************************************************************************************************
+void UpdateHealCylinder(int CylinderIdx);		// 回復の時のシリンダーの更新処理
+void UpdateEventCylinder(int CylinderIdx);		// イベント発生時のシリンダーの設定
+void UpdateTrritoryCylinder(int CylinderIdx);	// テリトリーのシリンダーの設定
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -89,14 +97,29 @@ void UninitMeshCylinder(void)
 			g_MeshCylinder[nCnt].g_pVtxBuffMeshCylinder = NULL;
 		}
 	}
+
+#ifdef _DEBUG
+	// すべてのシリンダー分回す
+	for (int nCnt = 0; nCnt < MAX_CYLINDER; nCnt++)
+	{
+
+		// テクスチャがNULLか確認
+		assert(g_MeshCylinder[nCnt].g_pTextureMeshCylinder == NULL && "cylinder.cpp正しくテクスチャを破棄できてません");
+
+		// インデックスバッファがNULLか確認
+		assert(g_MeshCylinder[nCnt].g_pIdxBuffMeshCylinder == NULL && "cylinder.cpp正しくインデックスバッファを破棄できてません");
+
+		// 頂点バッファがNULLか確認
+		assert(g_MeshCylinder[nCnt].g_pVtxBuffMeshCylinder == NULL && "cylinder.cpp正しく頂点バッファを破棄できてません");
+	}
+
+#endif // DEBUG
 }
 //===================================================================================================================
 // メッシュシリンダーの更新処理
 //===================================================================================================================
 void UpdateMeshCylinder(void)
-{
-	VERTEX_3D* pVtx = NULL;
-	
+{	
 	// 全シリンダー分回す
 	for (int nCntCylinder = 0; nCntCylinder < MAX_CYLINDER; nCntCylinder++)
 	{
@@ -106,35 +129,27 @@ void UpdateMeshCylinder(void)
 			// 処理を読み飛ばす
 			continue;
 		}
-
-		//頂点バッファをロック
-		g_MeshCylinder[nCntCylinder].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
 		
+		// 剣シリンダーの種類
 		switch (g_MeshCylinder[nCntCylinder].nType)
 		{
 		case CYLINDERTYPE_NORMAL:
 			break;
 		case CYLINDERTYPE_HEAL:
-			g_MeshCylinder[nCntCylinder].pos.y += g_MeshCylinder[nCntCylinder].Speed;
-
-			for (int nCntVtx = 0; nCntVtx < g_MeshCylinder[nCntCylinder].Vertex; nCntVtx++)
-			{
-				pVtx[nCntVtx].col = g_MeshCylinder[nCntCylinder].col;
-			}
-
-			g_MeshCylinder[nCntCylinder].col.a -= g_MeshCylinder[nCntCylinder].decAlv;
-
-			g_MeshCylinder[nCntCylinder].nLife--;
-
-			if (g_MeshCylinder[nCntCylinder].nLife <= 0)
-			{
-				g_MeshCylinder[nCntCylinder].bUse = false;
-			}
+			// 回復シリンダー
+			UpdateHealCylinder(nCntCylinder);
+			break;
+		case CYLINDERTYPE_EVENT:
+			// イベントのシリンダーの更新
+			UpdateEventCylinder(nCntCylinder);
+			break;
+		case CYLINDERTYPE_TERRITORY:
+			// テリトリーのシリンダーの更新
+			UpdateTrritoryCylinder(nCntCylinder);
 			break;
 		default:
 			break;
 		}
-		g_MeshCylinder[nCntCylinder].g_pVtxBuffMeshCylinder->Unlock();
 	}
 
 }
@@ -160,7 +175,7 @@ void DrawMeshCylinder(void)
 
 		int nType = g_MeshCylinder[nCnt].nType;
 
-		if (nType == CYLINDERTYPE_HEAL || nType == CYLINDERTYPE_EVENT)
+		if (nType != CYLINDERTYPE_NORMAL)
 		{
 			pDevice->SetRenderState(D3DRS_CULLMODE, TRUE);
 		}
@@ -223,7 +238,7 @@ int SetMeshCylinder(D3DXVECTOR3 pos, int nType, int nLife, float fRadius, D3DXCO
 			g_MeshCylinder[nCnt].nNumPosZ = nNumPosZ;
 			g_MeshCylinder[nCnt].decAlv = CYLINDER_ALV / nLife;
 			g_MeshCylinder[nCnt].Speed = speed;
-			g_MeshCylinder[nCnt].fHeight= fHeight;
+			g_MeshCylinder[nCnt].fHeight = fHeight;
 			g_MeshCylinder[nCnt].bUse = true;
 
 			// 代入
@@ -278,7 +293,7 @@ void CreateMeshCylinder(int nCntCylinder, int Vertex, int Index, int nNumPosX, i
 	float fTexY = 1.0f / nNumPosZ;
 
 	D3DXVECTOR3 nor;
-	D3DXVECTOR3 pos = g_MeshCylinder[nCnt].pos;
+	D3DXVECTOR3 pos = g_MeshCylinder[nCntCylinder].pos;
 
 	//縦
 	for (int nCntV = 0; nCntV <= nNumPosZ; nCntV++)
@@ -290,9 +305,9 @@ void CreateMeshCylinder(int nCntCylinder, int Vertex, int Index, int nNumPosX, i
 
 			//頂点座標の設定
 			pVtx[nCnt].pos = D3DXVECTOR3(
-				sinf(fAngel) * fRadius,
+				pos.x + sinf(fAngel) * fRadius,
 				(nCntV * (fHeight / nNumPosZ)),
-				cosf(fAngel) * fRadius);
+				pos.z + cosf(fAngel) * fRadius);
 
 			//法線ベクトルの設定
 			pVtx[nCnt].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -303,7 +318,6 @@ void CreateMeshCylinder(int nCntCylinder, int Vertex, int Index, int nNumPosX, i
 
 			//頂点カラーの設定
 			pVtx[nCnt].col = g_MeshCylinder[nCntCylinder].col;
-
 
 			//テクスチャ座標の設定
 			pVtx[nCnt].tex = D3DXVECTOR2(fTexX * nCntH, nCntV * fTexY);
@@ -341,6 +355,12 @@ void CreateMeshCylinder(int nCntCylinder, int Vertex, int Index, int nNumPosX, i
 			pIdx[IdxCnt + 1] = IndxCount3;
 			IdxCnt += 2;
 		}
+#ifdef _DEBUG
+
+		// 配列がオーバーランしてないかを確認
+		assert(IdxCnt <= Index && "シリンダーINDEX配列オーバーラン");
+
+#endif // _DEBUG
 	}
 
 	//インデックスバッファのアンロック
@@ -358,8 +378,8 @@ void DeleteCylinder(int nIdx)
 //===================================================================================================================
 bool CollisionCylinder(D3DXVECTOR3* pPos)
 {
-	VERTEX_3D* pVtx = NULL;
-	bool b = false;
+	VERTEX_3D* pVtx;
+	bool bHit = false;
 
 	// 全部のシリンダー分回す
 	for (int nCnt = 0; nCnt < MAX_CYLINDER; nCnt++)
@@ -371,12 +391,12 @@ bool CollisionCylinder(D3DXVECTOR3* pPos)
 			continue;
 		}
 
-		//頂点バッファをロック
-		g_MeshCylinder[nCnt].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
-
 		// 全部の頂点分回す
 		for (int nCntvtx = 0; nCntvtx < g_MeshCylinder[nCnt].nNumPosX; nCntvtx++)
 		{
+			//頂点バッファをロック
+			g_MeshCylinder[nCnt].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
+
 			// 頂点から目標までのベクトル
 			D3DXVECTOR3 posDirection = *pPos - (g_MeshCylinder[nCnt].pos + pVtx[nCntvtx].pos);
 
@@ -388,15 +408,14 @@ bool CollisionCylinder(D3DXVECTOR3* pPos)
 
 			if (Cross.y <= 0.0f)
 			{
-				b = true;
+				bHit = true;
 			}
 
 			//頂点バッファをアンロック
 			g_MeshCylinder[nCnt].g_pVtxBuffMeshCylinder->Unlock();
 		}
 	}
-	return b
-		;
+	return bHit;
 }
 //===================================================================================================================
 // メッシュシリンダーの位置設定処理
@@ -408,4 +427,176 @@ void SetPotisionCylinder(int nIdx,D3DXVECTOR3 pos)
 		g_MeshCylinder[nIdx].pos.x = pos.x;
 		g_MeshCylinder[nIdx].pos.z = pos.z;
 	}
+}
+//===================================================================================================================
+// 回復の時のシリンダーの更新処理
+//===================================================================================================================
+void UpdateHealCylinder(int CylinderIdx)
+{
+	VERTEX_3D* pVtx;
+
+	// 位置の更新
+	g_MeshCylinder[CylinderIdx].pos.y += g_MeshCylinder[CylinderIdx].Speed;
+
+	//頂点バッファをロック
+	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点のカウント
+	int nCnt = 0;
+
+	// 頂点X
+	int vtxX = g_MeshCylinder[CylinderIdx].nNumPosX;
+
+	// 頂点Z
+	int vtxZ = g_MeshCylinder[CylinderIdx].nNumPosZ;
+
+	// 半径
+	float fRadius = g_MeshCylinder[CylinderIdx].fRadius;
+
+	// 高さ
+	float fHeight = g_MeshCylinder[CylinderIdx].fHeight;
+
+	// 位置を代入
+	D3DXVECTOR3 pos = g_MeshCylinder[CylinderIdx].pos;
+
+	//縦
+	for (int nCntV = 0; nCntV <= vtxZ; nCntV++)
+	{
+		//横
+		for (int nCntH = 0; nCntH <= vtxX; nCntH++)
+		{
+			// 角度を求める
+			float fAngel = (D3DX_PI * 2.0f) / vtxX * nCntH;
+
+			//頂点座標の設定
+			pVtx[nCnt].pos = D3DXVECTOR3(
+				sinf(fAngel) * fRadius,
+				(nCntV * (fHeight / vtxZ)),
+				cosf(fAngel) * fRadius);
+
+			pVtx[nCnt].col = g_MeshCylinder[CylinderIdx].col;
+
+			nCnt++;//加算
+		}
+	}
+
+	// 透明度を上げる
+	g_MeshCylinder[CylinderIdx].col.a -= g_MeshCylinder[CylinderIdx].decAlv;
+
+	// 寿命を減らす
+	g_MeshCylinder[CylinderIdx].nLife--;
+
+	// 寿命が0になったら
+	if (g_MeshCylinder[CylinderIdx].nLife <= 0)
+	{
+		// 未使用にする
+		g_MeshCylinder[CylinderIdx].bUse = false;
+	}
+
+	//頂点バッファをロック
+	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Unlock();
+}
+//===================================================================================================================
+// イベント発生時のシリンダーの設定
+//===================================================================================================================
+void UpdateEventCylinder(int CylinderIdx)
+{
+	VERTEX_3D* pVtx;
+
+	//頂点バッファをロック
+	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点のカウント
+	int nCnt = 0;
+
+	// 頂点X
+	int vtxX = g_MeshCylinder[CylinderIdx].nNumPosX;
+
+	// 頂点Z
+	int vtxZ = g_MeshCylinder[CylinderIdx].nNumPosZ;
+
+	// 半径
+	float fRadius = g_MeshCylinder[CylinderIdx].fRadius;
+
+	// 高さ
+	float fHeight = g_MeshCylinder[CylinderIdx].fHeight;
+
+	// 位置を代入
+	D3DXVECTOR3 pos = g_MeshCylinder[CylinderIdx].pos;
+
+	//縦
+	for (int nCntV = 0; nCntV <= vtxZ; nCntV++)
+	{
+		//横
+		for (int nCntH = 0; nCntH <= vtxX; nCntH++)
+		{
+			// 角度を求める
+			float fAngel = (D3DX_PI * 2.0f) / vtxX * nCntH;
+
+			//頂点座標の設定
+			pVtx[nCnt].pos = D3DXVECTOR3(
+				sinf(fAngel) * fRadius,
+				(nCntV * (fHeight / vtxZ)),
+				cosf(fAngel) * fRadius);
+
+			pVtx[nCnt].col = g_MeshCylinder[CylinderIdx].col;
+
+			nCnt++;//加算
+		}
+	}
+
+	//頂点バッファをロック
+	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Unlock();
+}
+//===================================================================================================================
+// テリトリーのシリンダーの設定
+//===================================================================================================================
+void UpdateTrritoryCylinder(int CylinderIdx)
+{
+	VERTEX_3D* pVtx;
+
+	//頂点バッファをロック
+	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点のカウント
+	int nCnt = 0;
+
+	// 頂点X
+	int vtxX = g_MeshCylinder[CylinderIdx].nNumPosX;
+
+	// 頂点Z
+	int vtxZ = g_MeshCylinder[CylinderIdx].nNumPosZ;
+
+	// 半径
+	float fRadius = g_MeshCylinder[CylinderIdx].fRadius;
+
+	// 高さ
+	float fHeight = g_MeshCylinder[CylinderIdx].fHeight;
+
+	// 位置を代入
+	D3DXVECTOR3 pos = g_MeshCylinder[CylinderIdx].pos;
+
+	//縦
+	for (int nCntV = 0; nCntV <= vtxZ; nCntV++)
+	{
+		//横
+		for (int nCntH = 0; nCntH <= vtxX; nCntH++)
+		{
+			// 角度を求める
+			float fAngel = (D3DX_PI * 2.0f) / vtxX * nCntH;
+
+			//頂点座標の設定
+			pVtx[nCnt].pos = D3DXVECTOR3(
+				sinf(fAngel) * fRadius,
+				(nCntV * (fHeight / vtxZ)),
+				cosf(fAngel) * fRadius);
+
+			pVtx[nCnt].col = g_MeshCylinder[CylinderIdx].col;
+
+			nCnt++;//加算
+		}
+	}
+
+	//頂点バッファをロック
+	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Unlock();
 }

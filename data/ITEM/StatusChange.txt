@@ -185,8 +185,8 @@ END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 26		# アイテムの種類  		   << 呪物 >>
-	CHANGEMOTION = 2    # アイテムごとのモーション << 大型武器 >>
-	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
+	CHANGEMOTION = 2    # アイテムごとのモーション << 投げ武器 >>
+	PLAYERTYPE = 1      # プレイヤーの種類         << 武器なし >>
 	SPEED = 1.8			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
