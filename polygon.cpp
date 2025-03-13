@@ -222,7 +222,7 @@ void SetPolygon(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight, i
 
 	for (int nCnt = 0; nCnt < MAX_POLYGON; nCnt++)
 	{
-		if (!g_Polygon[nCnt].bUse)
+		if (g_Polygon[nCnt].bUse == false)
 		{
 			g_Polygon[nCnt].pos = pos;
 			g_Polygon[nCnt].rot = rot;
@@ -232,7 +232,7 @@ void SetPolygon(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight, i
 			g_Polygon[nCnt].bUse = true;
 
 			//’¸“_À•W‚ÌÝ’è
-			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth,1.0f, pos.z + fHeight);
+			pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, 1.0f, pos.z + fHeight);
 			pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, 1.0f, pos.z + fHeight);
 			pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, 1.0f, pos.z - fHeight);
 			pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, 1.0f, pos.z - fHeight);

@@ -839,6 +839,8 @@ void CraftMixItem(int nCntItem, int MixItem, int motionchange)
 
 	g_Item[pPlayer->ItemIdx].Power = g_aItemInfo[MixItem].Power;
 
+	EnableCraftIconAnim(true);
+
 	// 持っているアイテムを変更
 	Itemchange(nCntItem,MixItem);
 

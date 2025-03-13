@@ -680,8 +680,8 @@ void DrawCameraPos(void)
 	Camera* pCamera = GetCamera();
 
 	// 文字列に代入
-	sprintf(&aString[0], "%.2f %.2f %.2f\n", pCamera->posV.x, pCamera->posV.y, pCamera->posV.z);
-	sprintf(&aString1[0], "%.2f %.2f %.2f\n", pCamera->posR.x, pCamera->posR.y, pCamera->posR.z);
+	snprintf(&aString[0], sizeof(aString),"%.2f %.2f %.2f\n", pCamera->posV.x, pCamera->posV.y, pCamera->posV.z);
+	snprintf(&aString1[0], sizeof(aString1),"%.2f %.2f %.2f\n", pCamera->posR.x, pCamera->posR.y, pCamera->posR.z);
 
 	// テキスト描画
 	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
@@ -810,7 +810,7 @@ void DrawMode(void)
 	char aStr[128] = {};
 	char aStrState[256] = {};
 
-	wsprintf(&aStrState[0],
+	snprintf(&aStrState[0],sizeof(aStrState),
 		"+=================================================+\n"
 		"+   現在のモード[プレイモード]::編集モード[F2]    +\n"
 		"+=================================================+\n");
@@ -819,23 +819,23 @@ void DrawMode(void)
 	{
 	case MODE_TITLE:
 		//文字列に代入
-		wsprintf(&aStr[0], "現在のモード[ タイトル ]\n");
+		snprintf(&aStr[0], sizeof(aStr), "現在のモード[ タイトル ]\n");
 		break;
 	case MODE_TUTORIAL:
 		//文字列に代入
-		wsprintf(&aStr[0], "現在のモード[ チュートリアル ]\n");
+		snprintf(&aStr[0], sizeof(aStr), "現在のモード[ チュートリアル ]\n");
 		break;
 	case MODE_GAME:
 		//文字列に代入
-		wsprintf(&aStr[0], "現在のモード[ ゲーム ]\n");
+		snprintf(&aStr[0], sizeof(aStr), "現在のモード[ ゲーム ]\n");
 		break;
 	case MODE_RESULT:
 		//文字列に代入
-		wsprintf(&aStr[0], "現在のモード[ リザルト ]\n");
+		snprintf(&aStr[0], sizeof(aStr), "現在のモード[ リザルト ]\n");
 		break;
 	case MODE_RANKING:
 		//文字列に代入
-		wsprintf(&aStr[0], "現在のモード[ ランキング ]\n");
+		snprintf(&aStr[0], sizeof(aStr), "現在のモード[ ランキング ]\n");
 		break;
 	default:
 		break;
@@ -879,23 +879,23 @@ void DrawEditMode(void)
 	char aStrpMove[256];
 	char aStrObjPos[256];
 
-	wsprintf(&aStrGame[0],
+	snprintf(&aStrGame[0],sizeof(aStrGame),
 		"+=============================================================+\n"
 		"+   現在のモード[編集モード3d:変更:[2d:F9]::ゲームモード[F2]  +\n"
 		"+=============================================================+\n");
 
-	wsprintf(&aStrType[0], "設置するブロック変更:[ %d種類目 ]:[ + F / - G ]\n",pEdit[nNumBlock].nType);
+	snprintf(&aStrType[0], sizeof(aStrType), "設置するブロック変更:[ %d種類目 ]:[ + F / - G ]\n",pEdit[nNumBlock].nType);
 	
-	wsprintf(&aStrNum[0], "ブロックの設置数[%d]\n", nNumBlock);
-	wsprintf(&aStrKill[0], "ブロックを消去:[ BACKSPACE ]\n");
-	wsprintf(&aStrSet[0], "ブロックを設置:[ ENTER ]\n");
-	wsprintf(&aStrScal[0], "ブロックの大きさ変更:[ + V / - B ]\n");
-	wsprintf(&aStrMove[0], "移動:[ WASD ]:高さ変更:[ +↑ / -↓ ]\n");
-	wsprintf(&aStrSave[0], "セーブ[ F7 ]:前回の配置物読み込み[ F8 ] <data/saveEdit.txt>\n");
-	wsprintf(&aStrCategory[0], "カテゴリー変更:[ 現在のカテゴリー **%d番目** ][ + Y / - U ]\n",pEdit[nNumBlock].EditCategory);
-	wsprintf(&aStrCamera[0], "注視点移動:[ 右クリック ]:視点移動:[ 左クリック ]:ズーム:[ ホイール ]\n");
-	sprintf(&aStrpMove[0], "移動量変更:[ %3.2f ]:[ + H / -J ]\n",pEdit[nNumBlock].fMove);
-	wsprintf(&aStrObjPos[0], "選択中のオブジェクトの場所へ移動:[ F6 ]\n");
+	snprintf(&aStrNum[0], sizeof(aStrNum), "ブロックの設置数[%d]\n", nNumBlock);
+	snprintf(&aStrKill[0], sizeof(aStrKill), "ブロックを消去:[ BACKSPACE ]\n");
+	snprintf(&aStrSet[0], sizeof(aStrSet), "ブロックを設置:[ ENTER ]\n");
+	snprintf(&aStrScal[0], sizeof(aStrScal), "ブロックの大きさ変更:[ + V / - B ]\n");
+	snprintf(&aStrMove[0], sizeof(aStrMove), "移動:[ WASD ]:高さ変更:[ +↑ / -↓ ]\n");
+	snprintf(&aStrSave[0], sizeof(aStrSave), "セーブ[ F7 ]:前回の配置物読み込み[ F8 ] <data/saveEdit.txt>\n");
+	snprintf(&aStrCategory[0], sizeof(aStrCategory), "カテゴリー変更:[ 現在のカテゴリー **%d番目** ][ + Y / - U ]\n",pEdit[nNumBlock].EditCategory);
+	snprintf(&aStrCamera[0], sizeof(aStrCamera), "注視点移動:[ 右クリック ]:視点移動:[ 左クリック ]:ズーム:[ ホイール ]\n");
+	snprintf(&aStrpMove[0], sizeof(aStrpMove), "移動量変更:[ %3.2f ]:[ + H / -J ]\n",pEdit[nNumBlock].fMove);
+	snprintf(&aStrObjPos[0], sizeof(aStrObjPos), "選択中のオブジェクトの場所へ移動:[ F6 ]\n");
 
 	//テキストの描画
 	g_pFont->DrawText(NULL, &aStrType[0], -1, &rectBlockType, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
@@ -931,12 +931,12 @@ void DrawPlayerInfo(void)
 	char aStrBlend[256] = {};
 	char aStrmotiontype[256] = {};
 
-	sprintf(&aStrPos[0], "プレイヤーの位置X:[ %3.2f ] Y:[ %3.2f ] Z:[ %3.2f ]\n", pPlayer->pos.x,pPlayer->pos.y,pPlayer->pos.z);
+	snprintf(&aStrPos[0],sizeof(aStrPos), "プレイヤーの位置X:[ %3.2f ] Y:[ %3.2f ] Z:[ %3.2f ]\n", pPlayer->pos.x,pPlayer->pos.y,pPlayer->pos.z);
 
-	wsprintf(&aStrState[0], "プレイヤーの状態[%d]", pPlayer->state);
-	wsprintf(&aStrMotion[0], "モーションのキー[ %d ]:モーションのフレーム:[ %d ]", pPlayer->Motion.nKey, pPlayer->Motion.nCountMotion);
-	wsprintf(&aStrBlend[0], "モーションブレンドのキー[ %d ]:モーションブレンドのフレーム:[ %d ]", pPlayer->Motion.nKeyBlend, pPlayer->Motion.nCounterBlend);
-	wsprintf(&aStrmotiontype[0], "現在のモーション:[ %d ] / ブレンドモーション:[ %d ]", pPlayer->Motion.motionType, pPlayer->Motion.motiontypeBlend);
+	snprintf(&aStrState[0], sizeof(aStrState), "プレイヤーの状態[%d]", pPlayer->state);
+	snprintf(&aStrMotion[0], sizeof(aStrMotion), "モーションのキー[ %d ]:モーションのフレーム:[ %d ]", pPlayer->Motion.nKey, pPlayer->Motion.nCountMotion);
+	snprintf(&aStrBlend[0], sizeof(aStrBlend), "モーションブレンドのキー[ %d ]:モーションブレンドのフレーム:[ %d ]", pPlayer->Motion.nKeyBlend, pPlayer->Motion.nCounterBlend);
+	snprintf(&aStrmotiontype[0], sizeof(aStrmotiontype), "現在のモーション:[ %d ] / ブレンドモーション:[ %d ]", pPlayer->Motion.motionType, pPlayer->Motion.motiontypeBlend);
 
 	g_pFont->DrawText(NULL, &aStrPos[0], -1, &rectPos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
 	g_pFont->DrawText(NULL, &aStrState[0], -1, &rectState, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
@@ -980,15 +980,15 @@ void DrawEditmode2d(void)
 		"+   現在のモード[編集モード2d:変更:[3d:F9]::ゲームモード[F2]  +\n"
 		"+=============================================================+\n");
 
-	wsprintf(&aStrMove[0], "移動:[ WASD  Q / E ]");
-	wsprintf(&aStrNumObj[0], "配置数:[ %d ]", nNumCnt);
-	wsprintf(&aStrDelet[0], "消去:[ BACKSPACE ]");
-	wsprintf(&aStrSet[0], "設置:[ ENTER ]");
-	wsprintf(&aStrscal[0], "大きさ変更:横幅:[ ← / →]:高さ:[ ↑ / ↓ ]");
-	wsprintf(&aStrRot[0], "角度変更:X:[ Z / C ]:Y:[ V / B ]:Z:[ F / G ]");
-	wsprintf(&aStrMouse[0], "注視点移動:[ 右クリック ]:視点移動:[ 左クリック ]:ズーム:[ ホイール ]\n");
-	wsprintf(&aStrFile[0], "セーブ[ F7 ]:前回の配置物読み込み:[ F8 ] <data/saveEdit2d.txt>\n");
-	wsprintf(&aStrObj[0], "選択中のオブジェクトの場所へ移動:[ F6 ]\n");
+	snprintf(&aStrMove[0],sizeof(aStrMove), "移動:[ WASD  Q / E ]");
+	snprintf(&aStrNumObj[0], sizeof(aStrMove), "配置数:[ %d ]", nNumCnt);
+	snprintf(&aStrDelet[0], sizeof(aStrMove), "消去:[ BACKSPACE ]");
+	snprintf(&aStrSet[0], sizeof(aStrMove), "設置:[ ENTER ]");
+	snprintf(&aStrscal[0], sizeof(aStrMove), "大きさ変更:横幅:[ ← / →]:高さ:[ ↑ / ↓ ]");
+	snprintf(&aStrRot[0], sizeof(aStrMove), "角度変更:X:[ Z / C ]:Y:[ V / B ]:Z:[ F / G ]");
+	snprintf(&aStrMouse[0], sizeof(aStrMove), "注視点移動:[ 右クリック ]:視点移動:[ 左クリック ]:ズーム:[ ホイール ]\n");
+	snprintf(&aStrFile[0], sizeof(aStrMove), "セーブ[ F7 ]:前回の配置物読み込み:[ F8 ] <data/saveEdit2d.txt>\n");
+	snprintf(&aStrObj[0], sizeof(aStrMove), "選択中のオブジェクトの場所へ移動:[ F6 ]\n");
 
 	g_pFont->DrawText(NULL, &aStrGame[0], -1, &rectGameMode, DT_LEFT, D3DCOLOR_RGBA(0, 200, 0, 255));
 	g_pFont->DrawText(NULL, &aStrGame[0], -1, &rectMove, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));

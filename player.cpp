@@ -2797,16 +2797,6 @@ void DropItem(void)
 
 		StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
 
-		//// ‘fè‚Ì‚Ìƒ‚[ƒVƒ‡ƒ“î•ñ‚ğ‘ã“ü
-		//for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
-		//{
-		//	g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].aModel[nCntModel]; // ƒ‚ƒfƒ‹‚Ìî•ñ‚ğ‘ã“ü
-		//}
-		//for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
-		//{
-		//	g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].aMotionInfo[nCntMotion];
-		//}
-
 		// “Š‚°‚½Œã‚É•Ší‚ğÁ‚·
 		g_player.Motion.nNumModel -= 1;
 

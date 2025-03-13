@@ -125,6 +125,10 @@ typedef struct
 	float fHeight;	 // 高さ
 	bool bUse;		 // 使用しているか
 	int nIconType;   // アイコンのカテゴリー
+	int EaseCnt;     // イージングのカウント
+	bool bUp;        // 上昇できるか
+	float fRadius;   // 半径
+	D3DXVECTOR3 rot; // 角度 
 }ICON;
 
 //**************************************************************************************************************
@@ -135,5 +139,5 @@ void UninitIcon();	// 終了処理
 void UpdateIcon();	// 更新処理
 void DrawIcon();	// 描画処理
 void SetIcon(D3DXVECTOR3 pos, float fWidth,float fHeight,int nType,int IconType); // 設定処理
-
+void EnableCraftIconAnim(bool bCraftAnim); // クラフトのアニメーション開始処理
 #endif

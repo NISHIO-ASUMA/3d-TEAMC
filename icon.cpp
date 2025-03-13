@@ -10,12 +10,17 @@
 //******************************************************************************************************************
 #include "item.h"
 #include "icon.h"
+#include"math.h"
+#include "easing.h"
 
 //******************************************************************************************************************
 // プロトタイプ宣言
 //******************************************************************************************************************
 void SetWeponDurabilityAnim(int nCnt);		// アイテムアイコンの点滅処理
 void CraftScreenAnim(int nCnt);             // クラフト画面のアイコンの設定
+void SetVtxBufferIcon(int nCnt,float fWidth,float fHeight, D3DXVECTOR3 pos); // アイコンの頂点バッファの設定
+void SetUpDownIcon(int nCnt,int *EaseCnt);
+void ShowCraftingAnim(int nCnt);
 
 //******************************************************************************************************************
 // グローバル変数宣言
@@ -23,6 +28,7 @@ void CraftScreenAnim(int nCnt);             // クラフト画面のアイコンの設定
 LPDIRECT3DTEXTURE9 g_pTextureIcon[WEPONTYPE_MAX] = {}; // テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffIcon = NULL;      // 頂点バッファへのポインタ
 ICON g_Icon[WEPONTYPE_MAX]; // 構造体変数
+bool g_bCraftIconAnim = false;
 
 //=================================================================================================================
 // アイコンの初期化処理
@@ -34,6 +40,8 @@ void InitIcon()
 
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
+
+	g_bCraftIconAnim = false;
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
@@ -57,13 +65,17 @@ void InitIcon()
 	// 構造体変数の初期化
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
-		g_Icon[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 座標
-		g_Icon[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 移動量
-		g_Icon[nCnt].fHeight = 0.0f;					  // 高さ
-		g_Icon[nCnt].fWidth = 0.0f;						  // 横幅
-		g_Icon[nCnt].bUse = false;						  // 未使用判定
-		g_Icon[nCnt].nType = WEPONTYPE_BAT;				  // 種類
-		g_Icon[nCnt].nIconType = ICONTYPE_HOLDITEM;		  // 種類
+		g_Icon[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	  // 座標
+		g_Icon[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	  // 移動量
+		g_Icon[nCnt].fHeight = 0.0f;						  // 高さ
+		g_Icon[nCnt].fWidth = 0.0f;							  // 横幅
+		g_Icon[nCnt].bUse = false;							  // 未使用判定
+		g_Icon[nCnt].nType = WEPONTYPE_BAT;					  // 種類
+		g_Icon[nCnt].nIconType = ICONTYPE_HOLDITEM;			  // 種類
+		g_Icon[nCnt].EaseCnt = 0;							  // イージング
+		g_Icon[nCnt].bUp = true;							  // 上昇できるか
+		g_Icon[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	  // 向き
+		g_Icon[nCnt].fRadius = 0.0f;						  // 半径
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -123,9 +135,8 @@ void UninitIcon()
 //=================================================================================================================
 void UpdateIcon()
 {
-	// フレーム用変数
-	static int fFrame;
-	static bool bUP;
+
+	Player* pPlayer = GetPlayer();
 
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
@@ -143,8 +154,14 @@ void UpdateIcon()
 		// アイテムアイコンの点滅処理
 		SetWeponDurabilityAnim(nCnt);
 
-		CraftScreenAnim(nCnt);
-
+		//if (g_bCraftIconAnim == false)
+		//{
+		//	CraftScreenAnim(nCnt);
+		//}
+		//else
+		//{
+		//	ShowCraftingAnim(nCnt);
+		//}
 	}
 
 	// アンロック
@@ -166,6 +183,11 @@ void DrawIcon()
 
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
+
+	//if (pPlayer->bCraft == true && strcmp(pItem[pPlayer->ItemIdx].Itemtag, "CRAFT") == 0)
+	//{
+	//	return;
+	//}
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
@@ -236,6 +258,14 @@ void SetIcon(D3DXVECTOR3 pos, float fWidth, float fHeight, int nType, int IconTy
 	g_pVtxBuffIcon->Unlock();
 }
 //=================================================================================================================
+// クラフトのアニメーション開始処理
+//=================================================================================================================
+void EnableCraftIconAnim(bool bCraftAnim)
+{
+	// 有効、無効にする
+	g_bCraftIconAnim = bCraftAnim;
+}
+//=================================================================================================================
 // アイテムアイコンの点滅処理
 //=================================================================================================================
 void SetWeponDurabilityAnim(int nCnt)
@@ -248,9 +278,6 @@ void SetWeponDurabilityAnim(int nCnt)
 	// フレーム用変数
 	static int fFrame;
 	static bool bUP;
-
-	// 頂点バッファのロック
-	g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
 
 	// アイテムを持っているか判定
 	const bool isStateHold = pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD;
@@ -270,6 +297,24 @@ void SetWeponDurabilityAnim(int nCnt)
 		return;
 	}
 
+	// クラフト状態だったら
+	if (pPlayer->bCraft == true)
+	{
+		// 頂点バッファのロック
+		g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
+
+		pVtx += 4 * nCnt;
+
+		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f,1.0f,1.0f);
+		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f,1.0f,1.0f);
+		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f,1.0f,1.0f);
+		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f,1.0f,1.0f);
+
+		// アンロック
+		g_pVtxBuffIcon->Unlock();
+
+		return;
+	}
 	// 使用されてるかつアイテム持ち
 	if (is_frash == true)// 更に耐久力が減ってたら赤く点滅
 	{
@@ -282,12 +327,18 @@ void SetWeponDurabilityAnim(int nCnt)
 			fFrame--;
 		}
 
+		// 頂点バッファのロック
+		g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
+
 		pVtx += 4 * nCnt;
 
 		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
 		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f - (fFrame / 15.0f), 1.0f - (fFrame / 15.0f), 1.0f);
+
+		// アンロック
+		g_pVtxBuffIcon->Unlock();
 
 		if (fFrame >= 10)
 		{
@@ -300,18 +351,22 @@ void SetWeponDurabilityAnim(int nCnt)
 	}
 	else // そうでなかったら色を戻す
 	{
+		// 頂点バッファのロック
+		g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
+
 		pVtx += 4 * nCnt;
 
 		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+		// アンロック
+		g_pVtxBuffIcon->Unlock();
+
 		fFrame = 0;
 		bUP = true;
 	}
-
-	// アンロック
-	g_pVtxBuffIcon->Unlock();
 }
 //=================================================================================================================
 // クラフト画面のアイコンの設定
@@ -324,37 +379,101 @@ void CraftScreenAnim(int nCnt)
 	Player* pPlayer = GetPlayer();
 	Item* pItem = GetItem();
 
-	D3DXVECTOR3 pos = g_Icon[nCnt].pos;
 	float fWidth = g_Icon[nCnt].fWidth;
 	float fHeight = g_Icon[nCnt].fHeight;
+
+	// クラフト画面を開いてるとき
+	if (pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD && pPlayer->bCraft == true && g_Icon[nCnt].nIconType == ICONTYPE_HOLDITEM)
+	{
+		SetUpDownIcon(nCnt, &g_Icon[nCnt].EaseCnt);
+
+		// 頂点座標の更新
+		SetVtxBufferIcon(nCnt, fWidth * 2.0f, fHeight * 2.0f, D3DXVECTOR3(400.0f, g_Icon[nCnt].pos.y, 0.0f));
+	}
+	// クラフト画面を閉じているとき
+	else if(pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD && pPlayer->bCraft == false && g_Icon[nCnt].nIconType == ICONTYPE_HOLDITEM)
+	{
+		// 頂点座標の更新
+		SetVtxBufferIcon(nCnt, fWidth, fHeight, D3DXVECTOR3(70.0f, 640.0f, 0.0f));
+	}
+
+	// クラフト画面を開いてるとき
+	if (pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && pPlayer->bCraft == true && g_Icon[nCnt].nIconType == ICONTYPE_STOCKITEM)
+	{
+		SetUpDownIcon(nCnt,&g_Icon[nCnt].EaseCnt);
+
+		// 頂点座標の更新
+		SetVtxBufferIcon(nCnt, fWidth * 3.0f, fHeight * 3.0f, D3DXVECTOR3(840.0f, g_Icon[nCnt].pos.y, 0.0f));
+	}
+	// クラフト画面を閉じているとき
+	else if(pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && pPlayer->bCraft == false && g_Icon[nCnt].nIconType == ICONTYPE_STOCKITEM)
+	{
+		// 頂点座標の更新
+		SetVtxBufferIcon(nCnt, fWidth, fHeight, D3DXVECTOR3(200.0f, 670.0f, 0.0f));
+	}
+}
+//=================================================================================================================
+// アイコンの頂点バッファの設定
+//=================================================================================================================
+void SetVtxBufferIcon(int nCnt, float fWidth, float fHeight,D3DXVECTOR3 pos)
+{
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
 
 	// 頂点バッファのロック
 	g_pVtxBuffIcon->Lock(0, 0, (void**)&pVtx, 0);
 
-	if (g_Icon[nCnt].nType == pItem[pPlayer->ItemIdx].nType && pItem[pPlayer->ItemIdx].state == ITEMSTATE_HOLD && pPlayer->bCraft == true)
-	{
-		D3DXVECTOR3(640.0f, 360.0f, 0.0f);
+	pVtx += 4 * nCnt;
 
-		pVtx += 4 * nCnt;
+	// 頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
 
-		// 頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
-	}
-	else if (g_Icon[nCnt].nType == pItem[pPlayer->StockItemIdx].nType && pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && pPlayer->bCraft == true)
-	{
-		D3DXVECTOR3(840.0f, 360.0f, 0.0f);
-
-		pVtx += 4 * nCnt;
-
-		// 頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(pos.x - fWidth, pos.y - fHeight, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(pos.x + fWidth, pos.y - fHeight, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(pos.x - fWidth, pos.y + fHeight, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(pos.x + fWidth, pos.y + fHeight, 0.0f);
-	}
 	// アンロック
 	g_pVtxBuffIcon->Unlock();
+}
+//=================================================================================================================
+//=================================================================================================================
+void SetUpDownIcon(int nCnt, int* EaseCnt)
+{
+	Player* pPlayer = GetPlayer();
+
+	const bool bSetPos = g_Icon[nCnt].pos.y >= 390.0f && g_Icon[nCnt].pos.y <= 510.0f;
+
+	if (bSetPos == false)
+	{
+		g_Icon[nCnt].pos.y = 450.0f;
+	}
+	if (g_Icon[nCnt].pos.y <= 410.0f)
+	{
+		(*EaseCnt) = 0;
+		g_Icon[nCnt].bUp = false;
+	}
+	else if (g_Icon[nCnt].pos.y >= 490.0f)
+	{
+		(*EaseCnt) = 0;
+		g_Icon[nCnt].bUp = true;
+	}
+	if (g_Icon[nCnt].bUp == true)
+	{
+		(*EaseCnt)++;
+		float time = SetEase((*EaseCnt), 360);
+
+		g_Icon[nCnt].pos.y += SetSmoothAprroach(400.0f, g_Icon[nCnt].pos.y, EaseOutSine(time));
+	}
+	else
+	{
+		(*EaseCnt)++;
+		float time = SetEase((*EaseCnt), 360);
+
+		g_Icon[nCnt].pos.y += SetSmoothAprroach(500.0f, g_Icon[nCnt].pos.y, EaseOutSine(time));
+	}
+}
+//=================================================================================================================
+//=================================================================================================================
+void ShowCraftingAnim(int nCnt)
+{
+
 }

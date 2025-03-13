@@ -19,6 +19,7 @@
 #include "Timer.h"
 #include"spgauge.h"
 #include "meshsword.h"
+#include <cassert>
 
 //**************************************************************************************************************
 // マクロ定義
@@ -249,16 +250,16 @@ void DecSpgauge(float fValue)
 		}
 	}
 
+#ifdef _DEBUG
+
+	// 配列オーバーまたは配列が-番だったら
+	assert((NowChargeGage - 1) > 0 && "SPGAUGE配列違反");
+
+#endif
+
+
 	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
-
-	// 頂点ロック
-	g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
-
-	if (NowChargeGage - 1 < 0)
-	{
-		return;
-	}
 
 	if (NowChargeGage != 1)
 	{
@@ -269,6 +270,9 @@ void DecSpgauge(float fValue)
 		float fRateLength = g_SPgauge[NowChargeGage].SpGauge / 100.0f;
 		float fLength = fRateLength * SPGAUGE_WIDTH;
 
+		// 頂点ロック
+		g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
+
 		pVtx += 4 * NowChargeGage;
 
 		// 頂点座標の設定
@@ -277,12 +281,18 @@ void DecSpgauge(float fValue)
 		pVtx[2].pos = D3DXVECTOR3(120.0f, 131.5f, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(120.0f + fLength, 131.5f, 0.0f);
 
+		// 頂点ロック解除
+		g_pVtxBuffSPgauge->Unlock();
+
 		float Dec2 = fValue - Dec;
 
 		g_SPgauge[NowChargeGage - 1].SpGauge -= Dec2;
 
 		float fRateLength2 = g_SPgauge[NowChargeGage - 1].SpGauge / 100.0f;
 		float fLength2 = fRateLength2 * SPGAUGE_WIDTH;
+
+		// 頂点ロック
+		g_pVtxBuffSPgauge->Lock(0, 0, (void**)&pVtx, 0);
 
 		pVtx += 4 * (NowChargeGage - 1);
 
@@ -291,10 +301,10 @@ void DecSpgauge(float fValue)
 		pVtx[1].pos = D3DXVECTOR3(120.0f + fLength, 111.0f, 0.0f);
 		pVtx[2].pos = D3DXVECTOR3(120.0f, 131.5f, 0.0f);
 		pVtx[3].pos = D3DXVECTOR3(120.0f + fLength, 131.5f, 0.0f);
-	}
 
-	// 頂点ロック解除
-	g_pVtxBuffSPgauge->Unlock();
+		// 頂点ロック解除
+		g_pVtxBuffSPgauge->Unlock();
+	}
 }
 //=======================================================================================================
 // ゲージ0の更新

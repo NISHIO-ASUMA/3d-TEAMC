@@ -580,9 +580,6 @@ void UpdateGame(void)
 				// ボスの更新処理
 				UpdateBoss();
 
-				// アイコンの更新処理
-				UpdateIcon();
-
 				// ポリゴンの更新処理
 				UpdatePolygon();
 
@@ -616,6 +613,9 @@ void UpdateGame(void)
 				// カウンターの更新処理
 				UpdateCounter();
 			}
+
+			// アイコンの更新処理
+			UpdateIcon();
 
 			//プレイヤーの更新処理
 			UpdatePlayer();
