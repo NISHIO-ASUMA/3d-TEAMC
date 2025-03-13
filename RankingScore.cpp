@@ -1,32 +1,34 @@
 //=========================================================================================================================
 //
-// ランキングスコア [rankingscore.cpp]
+// ランキングスコア処理 [ rankingscore.cpp ]
 // Author:TEAM_C
 //
 //=========================================================================================================================
 
 //**************************************************************************************************************
-//インクルードファイル
+// インクルードファイル
 //**************************************************************************************************************
 #include "RankingScore.h"
-#include"ranking.h"
-#include"input.h"
+#include "ranking.h"
+#include "input.h"
 #include "fade.h"
 #include <stdio.h>
-#include"Score.h"
+#include "Score.h"
 #include "game.h"
 #include "mouse.h"
 
 //**************************************************************************************************************
-//マクロ定義
+// マクロ定義
 //**************************************************************************************************************
-#define MAX_POLYGON (40) //最大ポリゴン数
-#define MAX_DIGIT (8)    //桁数	
+#define MAX_POLYGON (40) // 最大ポリゴン数
+#define MAX_DIGIT (8)    // 桁数	
 #define MAX_HEIGHT (105.0f) // 高さ
 #define MAX_WIDTH (80.0f)	// 横幅
+#define NUM_DIGITS_8 (10000000) // 割る最大桁数(8桁)
+#define NUM_DIGITS_7 (1000000) // 割る桁数(7桁)
 
 //**************************************************************************************************************
-//グローバル変数
+// グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureRankScore = NULL;		// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffRankScore = NULL; // 頂点バッファへのポインタ
@@ -40,17 +42,17 @@ bool bFlash;
 int g_nRankingCount;
 
 //==========================================================================================================
-//ランキングスコアの初期化
+// ランキングスコアの初期化
 //==========================================================================================================
 void InitRankingScore(void)
 {
-	//デバイスを取得
+	// デバイスを取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	// 頂点バッファの作成
+	// 頂点バッファの生成
 	VERTEX_2D* pVtx;
 
-	//テクスチャの読み込み
+	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\score001.png",
 		&g_pTextureRankScore);
@@ -128,18 +130,18 @@ void InitRankingScore(void)
 
 }
 //==========================================================================================================
-//ランキングスコアの終了
+// ランキングスコアの終了
 //==========================================================================================================
 void UninitRankingScore(void)
 {
-	//テクスチャの破棄
+	// テクスチャの破棄
 	if (g_pTextureRankScore != NULL)
 	{
 		g_pTextureRankScore->Release();
 		g_pTextureRankScore = NULL;
 	}
 
-	// バッファの破棄
+	// 頂点バッファの破棄
 	if (g_pVtxBuffRankScore != NULL)
 	{
 		g_pVtxBuffRankScore->Release();
@@ -147,7 +149,7 @@ void UninitRankingScore(void)
 	}
 }
 //==========================================================================================================
-//ランキングスコアの更新
+// ランキングスコアの更新
 //==========================================================================================================
 void UpdateRankingScore(void)
 {
@@ -264,7 +266,7 @@ void UpdateRankingScore(void)
 	{
 		nCounter++;   // 加算
 
-		//該当スコアを点滅
+		// 該当スコアを点滅
 		if (nCounter == 10)
 		{
 			VERTEX_2D* pVtx{};       // 頂点情報のポインタ
@@ -316,35 +318,35 @@ void UpdateRankingScore(void)
 	}
 }
 //==========================================================================================================
-//ランキングスコアの描画
+// ランキングスコアの描画
 //==========================================================================================================
 void DrawRankingScore(void)
 {
-	// デバイスの習得
+	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//頂点バッファをデータストリームに設定
+	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffRankScore, 0, sizeof(VERTEX_2D));
 
-	//頂点フォーマットの設定
+	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	for (int nCntScore = 0; nCntScore < MAX_POLYGON; nCntScore++)
 	{
-		//テクスチャの設定
+		// テクスチャの設定
 		pDevice->SetTexture(0, g_pTextureRankScore);
 
-		//ポリゴンの描画
+		// ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntScore * 4, 2);
 	}
 }
 //=======================================================================================================
-//ランキングのリセット
+// ランキングのリセット
 //=======================================================================================================
 void ResetRanking(void)
 {
-	//ランキングスコア情報の初期設定
-	//ファイルを開く
+	// ランキングスコア情報の初期設定
+	// ファイルを開く
 	FILE* pFile;
 
 	pFile = fopen(RANK000, "r");
@@ -369,15 +371,12 @@ void ResetRanking(void)
 
 }
 ///==================================================================================================================
-//ランキングの書き出し
+// ランキングの書き出し
 //===================================================================================================================
 void WriteScore(void)
 {
 	// ファイルポインタを宣言
 	FILE* pFile;
-
-	// 現在のモードを取得
-	MODE Mode = GetMode();
 
 	// ファイルを開く
 	pFile = fopen(RANK000, "w");
@@ -402,10 +401,10 @@ void WriteScore(void)
 	fclose(pFile);
 }
 //======================================================================================================
-//ランキングの設定
+// ランキングの設定
 //======================================================================================================
 void SetRanking(int nScore)
-{//ランキングスコアの並び替え→指定のスコアがランクインしたらg_nRankUpdateを更新
+{// ランキングスコアの並び替え→指定のスコアがランクインしたらg_nRankUpdateを更新
 	// スコア保存用の変数
 	int nData = {};
 
@@ -423,7 +422,7 @@ void SetRanking(int nScore)
 	// 桁数分回す
 	for (int nCntRank = 0; nCntRank < MAX_DIGIT; nCntRank++)
 	{
-		// 順位文
+		// 順位分
 		for (int nCntScore = nCntRank + 1; nCntScore < MAX_RANK; nCntScore++)
 		{
 			if (g_RankScore[nCntRank].nScore <= g_RankScore[nCntScore].nScore)
@@ -449,57 +448,62 @@ void SetRanking(int nScore)
 		}
 	}
 
-	//スコア書き出し
+	// スコア書き出し
 	WriteScore();
 }
 //=============================================================================================================
-//ランキングのテクスチャ
+// ランキングのテクスチャ
 //=============================================================================================================
 void RankingTexture(void)
 {
+	// 頂点情報のポインタ
 	VERTEX_2D* pVtx;
 
-	int aPosTexU[MAX_DIGIT] = {}; // 各桁の数字を格納
-	int aData = 10000000;
-	int aData2 = 1000000;
+	int aPosTexU[MAX_DIGIT] = {}; // 各桁の数字を格納する配列
+	int aData = NUM_DIGITS_8;     // 8桁の数値を取得するための除数
+	int aData2 = NUM_DIGITS_7;    // 7桁目を取得するための除数
 
+	// 頂点バッファをロック
 	g_pVtxBuffRankScore->Lock(0, 0, (void**)&pVtx, 0);
 
+	// ランキングスコアの処理
 	for (int nCntScore = 0; nCntScore < MAX_RANK; nCntScore++)
 	{
+		// 各スコアを桁ごとに分解
 		for (int nCntScore1 = 0; nCntScore1 < MAX_DIGIT; nCntScore1++)
 		{
-			if (nCntScore1 == 0) // 0番目
+			if (nCntScore1 == 0) // 1桁目（最上位桁）の処理
 			{
-				aPosTexU[0] = g_RankScore[nCntScore].nScore / aData;
+				aPosTexU[0] = g_RankScore[nCntScore].nScore / aData; // 最上位桁を取得
 			}
 			else
 			{
-				// 0番目以外のとき
-				aPosTexU[nCntScore1] = g_RankScore[nCntScore].nScore % aData / aData2;
-				aData = aData / 10;
-				aData2 = aData2 / 10;
+				// 2桁目以降の処理
+				aPosTexU[nCntScore1] = g_RankScore[nCntScore].nScore % aData / aData2; // 対応する桁を取得
+				aData = aData / 10;   // 除数を10で割って次の桁へ
+				aData2 = aData2 / 10; // 7桁目、6桁目...と処理するため更新
 			}
-			// テクスチャの設定
+
+			// テクスチャ座標の設定
 			pVtx[0].tex = D3DXVECTOR2(0.0f + (0.1f * aPosTexU[nCntScore1]), 0.0f);
 			pVtx[1].tex = D3DXVECTOR2(0.1f + (0.1f * aPosTexU[nCntScore1]), 0.0f);
 			pVtx[2].tex = D3DXVECTOR2(0.0f + (0.1f * aPosTexU[nCntScore1]), 1.0f);
 			pVtx[3].tex = D3DXVECTOR2(0.1f + (0.1f * aPosTexU[nCntScore1]), 1.0f);
 
-			// 頂点情報を進める
+			// 頂点バッファのポインタを次の位置へ進める
 			pVtx += 4;
-
 		}
-		// 変数の初期化
-		aData = 10000000;
-		aData2 = 1000000;
+
+		// 除数の初期化（次のスコア処理のため）
+		aData = NUM_DIGITS_8;
+		aData2 = NUM_DIGITS_7;
 	}
-	
-	// アンロック
+
+	// 頂点バッファをアンロック
 	g_pVtxBuffRankScore->Unlock();
 }
 //=============================================================================================================
-//終了判定の取得
+// 終了判定の取得
 //=============================================================================================================
 END* GetStageEnd(void)
 {

@@ -1,9 +1,9 @@
-//======================
+//=============================
 //
-//Author:長尾悠成
-//弾関係のヘッダー
+// 弾の処理 [ bullet.h ]
+// Author:長尾悠成
 //
-//======================
+//=============================
 #ifndef _BULLET_H_
 #define _BULLET_H_
 
@@ -13,35 +13,34 @@
 #include "main.h"
 
 //****************************
-// 構造体
+// 弾の構造体宣言
 //****************************
 typedef struct
 {
-	D3DXVECTOR3 pos;
-	D3DXVECTOR3 posDest;
-	D3DXVECTOR3 rot;
-	D3DXVECTOR3 dir;
-	D3DXVECTOR3 move;
-	D3DXMATRIX mtxWorld;
-	int nLife;
-	int nIdxShadow;
-	int nDamege;
-	float fSize;
-	float fSpeed;
-	bool bUse;
-	bool bEnemy;
+	D3DXVECTOR3 pos; // 座標
+	D3DXVECTOR3 posDest; // 目的の座標
+	D3DXVECTOR3 rot; // 角度
+	D3DXVECTOR3 dir; // 方向ベクトル
+	D3DXVECTOR3 move;// 移動量
+	D3DXMATRIX mtxWorld; // ワールドマトリックス
+	int nLife;       // 寿命
+	int nIdxShadow;  // 影のインデックス
+	int nDamege;     // ダメージ量
+	float fSize;     // 弾の大きさ
+	float fSpeed;    // 速度
+	bool bUse;       // 使用しているか否か
+	bool bEnemy;     // 敵か否か
 }Bullet;
+
 //****************************
-// 処理一覧
+// プロトタイプ宣言
 //****************************
-void InitBullet(void);
-void UninitBullet(void);
-void UpdateBullet(void);
-void DrawBullet(void);
+void InitBullet(void);  // 弾の初期化処理
+void UninitBullet(void);// 弾の終了処理
+void UpdateBullet(void);// 弾の更新処理
+void DrawBullet(void);  // 弾の描画処理
+void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 dir, int nLife, int nDamege,float fSize, float fSpeed,bool Enemy); // 弾の設定処理
+void KillBullet(int nNum); // 未使用にする処理
+Bullet* GetBullet();    // 弾情報の取得処理
 
-void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 dir, int nLife, int nDamege,float fSize, float fSpeed,bool Enemy);
-
-Bullet* GetBullet();
-
-void KillBullet(int nNum);
 #endif
