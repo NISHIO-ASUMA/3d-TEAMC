@@ -1220,9 +1220,18 @@ void PickUpItemAnimation(int nCntItem)
 
 	if (g_Item[nCntItem].nImpactCount >= 60)
 	{
-		SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x,0.0f, g_Item[nCntItem].pos.z),COLOR_GOLD,20,10.0f,7.0f,1.0f,30,IMPACTTYPE_NORMAL,0);
-		SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x,0.0f, g_Item[nCntItem].pos.z), COLOR_GOLD, 20, 1.0f, 0.0f, 1.0f, 30, IMPACTTYPE_NORMAL, 0);
-		g_Item[nCntItem].nImpactCount = 0;
+		if (g_Item[nCntItem].nType == ITEMTYPE_ONIGIRI)
+		{
+			SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x, 0.0f, g_Item[nCntItem].pos.z), COLOR_GREEN, 20, 10.0f, 7.0f, 1.0f, 30, IMPACTTYPE_NORMAL, 0);
+			SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x, 0.0f, g_Item[nCntItem].pos.z), COLOR_GREEN, 20, 1.0f, 0.0f, 1.0f, 30, IMPACTTYPE_NORMAL, 0);
+			g_Item[nCntItem].nImpactCount = 0;
+		}
+		else
+		{
+			SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x, 0.0f, g_Item[nCntItem].pos.z), COLOR_GOLD, 20, 10.0f, 7.0f, 1.0f, 30, IMPACTTYPE_NORMAL, 0);
+			SetImpact(D3DXVECTOR3(g_Item[nCntItem].pos.x, 0.0f, g_Item[nCntItem].pos.z), COLOR_GOLD, 20, 1.0f, 0.0f, 1.0f, 30, IMPACTTYPE_NORMAL, 0);
+			g_Item[nCntItem].nImpactCount = 0;
+		}
 	}
 	else
 	{
