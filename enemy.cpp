@@ -54,7 +54,7 @@
 #define MAX_ENEMYMOVE (1.0f)     // 敵の移動量
 #define SHADOWSIZEOFFSET (20.0f) // 影のサイズのオフセット
 #define SHADOW_A (1.0f)			 // 影のアルファ
-#define NUMSPAWN_ENEMY (15)			 // 敵の出現数
+#define NUMSPAWN_ENEMY (25)			 // 敵の出現数
 #define KICKATTACK_MOVE (15.0f)  // けり攻撃の移動量
 #define NUM_SPAWNPOSITION (4)    // スポーン位置の数
 #define SETNUM_TERRITORY (2)		// テリトリーを配置する数

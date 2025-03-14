@@ -231,7 +231,7 @@ void SetEventParam(D3DXVECTOR3 pos)
 	SetBoss(pos, 3.0f, 10000);
 
 	// ムービーを設定
-	SetMovie(300);
+	SetMovie(180);
 
 	// ムービーを有効にする
 	EnableMovie(true);
