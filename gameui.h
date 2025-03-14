@@ -1,7 +1,7 @@
 //==============================================================================================================
 //
 // ÉQÅ[ÉÄÇ…ïKóvÇ»UI [gameui.h]
-// Author: TEAM_C
+// Author: Asuma Nishio
 //
 //==============================================================================================================
 
@@ -53,7 +53,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\icon_framestoku.png",
 	"data\\TEXTURE\\tutoirial005.png",
 	"data\\TEXTURE\\ui_weponbreak.png",
-	"data\\TEXTURE\\ui_event.png",
+	"data\\TEXTURE\\ui_event_1.png",
 	"data\\TEXTURE\\SP_Key_1.png",
 };
 

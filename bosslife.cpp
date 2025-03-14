@@ -17,8 +17,8 @@
 //**************************************************************************************************************
 #define NUM_BOSSLIFE (100) // 最大数
 #define MAX_LENGTH (100.0f) // 横幅
-#define TOPPOS (105.0f) // いちばん上の位置
-#define UNDERPOS (90.0f) // いちばん上の位置
+#define TOPPOS (105.0f)  // いちばん上の位置
+#define UNDERPOS (90.0f) // いちばん下の位置
 
 //**************************************************************************************************************
 // プロトタイプ宣言
@@ -136,6 +136,7 @@ void UninitBossLife()
 //==============================================================================================================
 void UpdateBossLife(Boss* pBoss)
 {
+	// 体力バーの更新処理関数
 	UpdateLifegage(pBoss);
 }
 //==============================================================================================================
@@ -252,9 +253,9 @@ int SetBossLife(D3DXVECTOR3 pos, int nType)
 	{
 		if (g_BossLife[nCnt].bUse == false)
 		{// 未使用なら
-			g_BossLife[nCnt].pos = pos; // 座標
+			g_BossLife[nCnt].pos = pos;		// 座標
 			g_BossLife[nCnt].nType = nType; // 種類
-			g_BossLife[nCnt].bUse = true; // 使用判定
+			g_BossLife[nCnt].bUse = true;	// 使用判定
 
 			// 頂点座標の設定
 			pVtx[0].pos = D3DXVECTOR3(-MAX_LENGTH * 0.5f, TOPPOS, 0.0f);

@@ -48,7 +48,7 @@
 #define MAX_WORD (256)			// 最大文字数
 #define PLAYERLIFE (1000)		// プレイヤーの体力
 #define MAX_TEXPLAYER (128)		// テクスチャの最大数
-#define MAX_JUMP (15.0f)		// ジャンプ量
+#define MAX_JUMP (12.0f)		// ジャンプ量
 #define MAX_MOVE (1.0f)			// プレイヤーの移動量
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
