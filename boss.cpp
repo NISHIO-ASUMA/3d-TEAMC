@@ -1636,7 +1636,12 @@ void DeathMotionContlloer(int nCntBoss)
 		// ‰eÁ‚·
 		KillShadow(g_Boss[nCntBoss].nIdxShadow);
 
-		AddTimeSecond(20); // 15•b‘‚â‚·
+		GAMESTATE gamestate = GetGameState();
+
+		if (gamestate != GAMESTATE_END)
+		{
+			AddTimeSecond(20); // 15•b‘‚â‚·
+		}
 
 		// ƒeƒŠƒgƒŠ[‚ğÁ‚·
 		SetEnableBossTerritory(false);
