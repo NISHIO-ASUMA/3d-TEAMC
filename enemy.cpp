@@ -1676,8 +1676,8 @@ void UpdateEnemySpawn(void)
 		// ボスが出る確率
 		int BossSpawnChance = rand() % 101;
 
-		// ボスが体なら && 20%の確率で出現
-		if (BossSpawnChance <= 20 && nNumBoss == 0)
+		// ボスが体なら && 40%の確率で出現
+		if (BossSpawnChance <= 40 && nNumBoss == 0)
 		{
 			// ボスを出現させる
 			EnableSetBoss = true;
