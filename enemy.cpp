@@ -88,7 +88,8 @@ void SetSpawnCount(void);																					 // スポーンカウントの設定
 void SetTerritoryparam(int nTerritoryIdx,D3DXVECTOR3 pos, int SpawnerPos,bool bSetBoss);					 // テリトリーの設定
 void OutTerritorySpawner(int nSpawner);																		 // テリトリーの外のスポナー
 void UpdateTargetPosition(int nCntEnemy);																	 // ターゲットの位置の更新
-void UpdateTerritoryMark(void);																	 // テリトリーにマークする
+void UpdateTerritoryMark(void);																				 // テリトリーにマークする
+void UpdateScoreAndGage(int nCntEnemy);																				 // 敵を倒したときのスコアとゲージの更新処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -595,13 +596,17 @@ void HitEnemy(int nCnt,int nDamage)
 			// テリトリーの敵の減少処理
 			DecreaseTerritoryEnemy(nCnt);
 
+			// 敵の数を減らす
+			g_nNumEnemy--;
+
 			// カウントを止める
 			g_Enemy[nCnt].isKillCount = false;
 
-			// 敵の数を減らす
-			g_nNumEnemy--;
+			// 敵を倒したときのスコアとゲージの更新処理
+			UpdateScoreAndGage(nCnt);
 		}
 
+		// モーションの種類が死亡じゃなかったら
 		if (g_Enemy[nCnt].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 		{
 			SetMotion(&g_Enemy[nCnt].Motion, MOTIONTYPE_DEATH, true, 10);
@@ -622,38 +627,6 @@ void HitEnemy(int nCnt,int nDamage)
 				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		}
 
-		// ゲームが続いていたら
-		if (gamestate != GAMESTATE_END)
-		{
-			if (pPlayer->FeverMode)
-			{
-				if (g_Enemy[nCnt].nType == ENEMYTYPE_SEVEN)
-				{
-					AddScore(32000);		// スコアを取得
-					AddSpgauge(5.0f);   // SPゲージを取得
-				}
-				else
-				{
-					AddScore(16000);		// スコアを取得
-					AddSpgauge(2.5f);   // SPゲージを取得
-				}
-			}
-			else if (!pPlayer->FeverMode)
-			{
-				if (g_Enemy[nCnt].nType == ENEMYTYPE_SEVEN)
-				{
-					AddFever(10.0f);		// フィーバーポイントを取得
-					AddScore(16200);		// スコアを取得
-					AddSpgauge(4.0f);   // SPゲージを取得
-				}
-				else
-				{
-					AddFever(5.0f);		// フィーバーポイントを取得
-					AddScore(8100);		// スコアを取得
-					AddSpgauge(2.0f);   // SPゲージを取得
-				}
-			}
-		}
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH; // 敵の状態を死亡状態にする
 		//KillShadow(g_Enemy[nCnt].nIdxShadow);   // 敵の影を消す
@@ -689,8 +662,6 @@ void HitEnemy(int nCnt,int nDamage)
 		{
 			g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE; // 敵の状態をダメージにする
 		}
-
-		g_Enemy[nCnt].g_bDamage = false;		 // ダメージを通らなくする
 
 		g_Enemy[nCnt].nCounterState = 20;		 // ダメージ状態からノーマルに戻るまでの時間
 		g_Enemy[nCnt].HitStopCount = 10;         // ヒットストップの時間
@@ -1644,11 +1615,6 @@ void UpdateDeathParam(int nCntEnemy)
 
 	int nCountMotion = g_Enemy[nCntEnemy].Motion.nCountMotion;
 
-	if (nKey == 0 && nCountMotion == 1)
-	{
-		g_Enemy[nCntEnemy].move.y = 5.0f;
-	}
-
 	// 吹き飛びモーション
 	if (nKey == 0 && nCountMotion == 1 && g_Enemy[nCntEnemy].Motion.bFirstMotion == false)
 	{
@@ -1658,8 +1624,8 @@ void UpdateDeathParam(int nCntEnemy)
 	// キーが3いないだったら
 	if (nKey <= 5)
 	{
-		float fMoveX = sinf(g_Enemy[nCntEnemy].rot.y) * 10.0f;
-		float fMoveZ = cosf(g_Enemy[nCntEnemy].rot.y) * 10.0f;
+		float fMoveX = sinf(g_Enemy[nCntEnemy].rot.y) * 4.0f;
+		float fMoveZ = cosf(g_Enemy[nCntEnemy].rot.y) * 4.0f;
 
 		g_Enemy[nCntEnemy].move.x = fMoveX;
 		g_Enemy[nCntEnemy].move.z = fMoveZ;
@@ -1711,7 +1677,7 @@ void UpdateEnemySpawn(void)
 		int BossSpawnChance = rand() % 101;
 
 		// ボスが体なら && 20%の確率で出現
-		if (BossSpawnChance <= 100 && nNumBoss == 0)
+		if (BossSpawnChance <= 20 && nNumBoss == 0)
 		{
 			// ボスを出現させる
 			EnableSetBoss = true;
@@ -2267,6 +2233,8 @@ void UpdateTerritoryMark(void)
 	// テリトリー分回す
 	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
 	{
+		if (g_Territory[nCnt].bUse == false) continue;
+
 		// 距離を取得
 		fDistance = GetDistance(g_Territory[nCnt].pos, MarkPos);
 
@@ -2305,18 +2273,82 @@ void UpdateTerritoryMark(void)
 	// 目的の角度に代入
 	pMark->rotDest.y = fAngle;
 
-	if (g_Territory[nIdx].bUse == false)
+
+	// テリトリーが未使用状態だったら
+	if (g_Territory[0].bUse == false && g_Territory[1].bUse == false)
 	{
+		// 未使用にする
 		pMark->bUse = false;
 	}
+	// テリトリーの中に入ったら
 	if (StockDistance <= TERRITORYRADIUS)
 	{
+		// 未使用にする
 		pMark->bUse = false;
 	}
 	else
 	{
-		pMark->bUse = true;
+		if (g_Territory[0].bUse == true || g_Territory[1].bUse == true)
+		{
+			// テリトリーの外だったら使用状態
+			pMark->bUse = true;
+		}
 	}
+}
+//==============================================================================================================
+// 敵を倒したときのスコアとゲージの更新処理
+//==============================================================================================================
+void UpdateScoreAndGage(int nCntEnemy)
+{
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
+
+	// ゲーム状態の取得
+	GAMESTATE gamestate = GetGameState();
+
+	// ゲームが終わっていたら関数を抜ける
+	if (gamestate == GAMESTATE_END) return;
+
+	// 種類がスコアの高い敵だったら
+	const bool isTypeSeven = g_Enemy[nCntEnemy].nType == ENEMYTYPE_SEVEN;
+
+	// テリトリーにいるか
+	const bool isTerritory = g_Enemy[nCntEnemy].TerritoryNumber != -1;
+
+	// フィーバーモードか判定
+	const bool isFeverMode = pPlayer->FeverMode == true;
+	
+	// テリトリー内の敵だったら
+	if (isTerritory == true)
+	{
+		// スコアを求める
+		float score = isFeverMode ? (isTypeSeven ? 62000 : 26000) : (isTypeSeven ? 36200 : 18100);
+
+		// スペシャルゲージを求める
+		float spgage = isTypeSeven ? 8.0f : 4.0f;
+
+		// スコアを加算
+		AddScore(score);
+
+		// spゲージを加算
+		AddSpgauge(spgage);
+	}
+	else
+	{
+		// スコアを求める
+		float score = isFeverMode ? (isTypeSeven ? 32000 : 16000) : (isTypeSeven ? 16200 : 8100);
+
+		// スペシャルゲージを求める
+		float spgage = isTypeSeven ? 5.0f : 2.5f;
+
+		// スコアを加算
+		AddScore(score);
+
+		// spゲージを加算
+		AddSpgauge(spgage);
+	}
+
+
 }
 //==============================================================================================================
 // ボスがいるテリトリーの消去

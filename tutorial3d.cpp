@@ -136,6 +136,9 @@ void InitTutorial3d(void)
 	// ストックアイテムのアイコンをセット
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0, ICONTYPE_HOLDITEM);
 
+	// ストックアイテムのアイコン
+	SetIcon(D3DXVECTOR3(200.0f, 670.0f, 0.0f), 40.0f, 40.0f, ITEMTYPE_KATANA, ICONTYPE_STOCKITEM);
+
 	// チュートリアルシステム関数の初期化
 	InitManager();
 
@@ -250,32 +253,34 @@ void UpdateTutorial3d(void)
 		// アイテムゲージの更新処理
 		UpdateItemGage();
 
-		// アイコンの更新処理
-		UpdateIcon();
-
 		// チュートリアルシステムの更新
 		UpdateManager();
 
 		// スペシャルゲージの更新処理
 		UpdateSPgauge();
+
+		// ブロックの更新処理
+		UpdateBlock();
+
+		// HPゲージの更新
+		UpdateGauge();
 	}
+
+
+	// アイコンの更新処理
+	UpdateIcon();
+
 	// プレイヤーの更新処理
 	UpdatePlayer();
 
 	// クラフト画面の更新処理
 	UpdateCraftUI();
 
-	// ブロックの更新処理
-	UpdateBlock();
-
 	// アイテムの更新処理
 	UpdateItem();
 
 	// ビルボードの更新
 	UpdateBillboard();
-
-	// HPゲージの更新
-	UpdateGauge();
 
 	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_START)==true))
 	{// Enterキー or Startボタンが押された
@@ -330,9 +335,6 @@ void DrawTutorial3d(void)
 	// UIの描画処理
 	DrawGameUI();
 
-	// アイコンの描画処理
-	DrawIcon();
-
 	// アイテムゲージ
 	DrawItemGage();
 
@@ -347,6 +349,9 @@ void DrawTutorial3d(void)
 		// クラフト画面の描画処理
 		DrawCraftUI();
 	}
+
+	// アイコンの描画処理
+	DrawIcon();
 }
 //==============================================================================================================
 //編集モードの取得処理

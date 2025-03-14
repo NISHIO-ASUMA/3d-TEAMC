@@ -104,7 +104,6 @@ typedef struct
 	int nIdxShadow;
 	int nIdxLifeBar,nIdxLifeFrame;
 	int nIdxUi;
-	bool g_bDamage;
 	float fMove;//ƒ‰ƒ“ƒ_ƒ€
 	int nCountAction;
 	int AttackState;
