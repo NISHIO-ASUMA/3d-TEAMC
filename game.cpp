@@ -212,8 +212,8 @@ void InitGame(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < SPAWN_ENEMY; nCntEnemy++)
 	{
-		SpawnEnemy(2); // “G‚ðo‚·ˆ—
-		SpawnEnemy(1); // “G‚ðo‚·ˆ—
+		//SpawnEnemy(2); // “G‚ðo‚·ˆ—
+		//SpawnEnemy(1); // “G‚ðo‚·ˆ—
 	}
 
 	//UpdateEnemySpawn();
@@ -422,9 +422,6 @@ void UpdateGame(void)
 	// ƒ^ƒCƒ}[‚ÌŽæ“¾
 	int TimeMinute = GetTimeMinute(); // •ª
 	int TimeSecond = GetTimeSecond(); // •b
-
-	// “G‚ð“|‚µ‚½”‚ðŽæ“¾
-	int nNumKill = GetNumKill(); // ƒLƒ‹”
 
 
 	if (TimeMinute <= 0 && TimeSecond <= 0)
@@ -684,9 +681,6 @@ void DrawGame(void)
 	// ‰Œ‚Ì•`‰æˆ—
 	DrawExplosion();
 
-	// ƒ_ƒ[ƒW‚Ì•`‰æˆ—
-	DrawDamege();
-
 	// ‰e‚Ì•`‰æˆ—
 	DrawShadow();
 
@@ -698,6 +692,9 @@ void DrawGame(void)
 
 	// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[‚Ì•`‰æˆ—
 	DrawMeshCylinder();
+
+	// ƒ_ƒ[ƒW‚Ì•`‰æˆ—
+	DrawDamege();
 
 	// ƒGƒtƒFƒNƒg‚Ì•`‰æˆ—
 	DrawEffect();

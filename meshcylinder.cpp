@@ -376,7 +376,7 @@ void DeleteCylinder(int nIdx)
 //===================================================================================================================
 // メッシュシリンダーの当たり判定
 //===================================================================================================================
-bool CollisionCylinder(D3DXVECTOR3* pPos)
+bool KeepInCylinder(D3DXVECTOR3* pPos)
 {
 	VERTEX_3D* pVtx;
 	bool bHit = false;
@@ -599,4 +599,36 @@ void UpdateTrritoryCylinder(int CylinderIdx)
 
 	//頂点バッファをロック
 	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Unlock();
+}
+//===================================================================================================================
+// シリンダーの当たり判定
+//===================================================================================================================
+bool CollisionCylinder(int nIdx, D3DXVECTOR3* pPos)
+{
+	VERTEX_3D* pVtx;
+
+	// 全部の頂点分回す
+	for (int nCntvtx = 0; nCntvtx < g_MeshCylinder[nIdx].nNumPosX; nCntvtx++)
+	{
+		//頂点バッファをロック
+		g_MeshCylinder[nIdx].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
+
+		// 頂点から目標までのベクトル
+		D3DXVECTOR3 posDirection = *pPos - (g_MeshCylinder[nIdx].pos + pVtx[nCntvtx].pos);
+
+		D3DXVECTOR3 edgeVector = (pVtx[(nCntvtx + 1) % g_MeshCylinder[nIdx].nNumPosX].pos + g_MeshCylinder[nIdx].pos) - (g_MeshCylinder[nIdx].pos + pVtx[nCntvtx].pos);
+
+		D3DXVECTOR3 Cross = NULLVECTOR3;
+		D3DXVec3Cross(&Cross, &edgeVector, &posDirection);
+		D3DXVec3Normalize(&Cross, &Cross);
+
+		if (Cross.y <= 0.0f)
+		{
+			return true;
+		}
+
+		//頂点バッファをアンロック
+		g_MeshCylinder[nIdx].g_pVtxBuffMeshCylinder->Unlock();
+	}
+	return false;
 }

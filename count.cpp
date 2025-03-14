@@ -33,6 +33,7 @@ void UpdateTextureSecond(int nCnt, int Second);								  // 秒のテクスチャの更新
 void SetCountDown(int nCnt);												  // カウントダウン
 void SetCountUp(int nCnt);                                                    // カウントアップ
 void SetEventTimer(int nCnt);												  // イベントのタイマーのカウント
+void SetTerritoryTimer(int nCnt);											  // テリトリーのタイマー
 
 //**************************************************************************************************************
 // グローバル変数
@@ -198,6 +199,9 @@ void UpdateCounter(void)
 		{
 		case COUNTERTYPE_EVENTTIMER:
 			SetEventTimer(nCnt);
+			break;
+		case COUNTERTYPE_TERRITORY:
+			SetTerritoryTimer(nCnt);
 			break;
 		default:
 			break;
@@ -606,5 +610,17 @@ void SetEventTimer(int nCnt)
 		{
 			g_Counter[nCnt].bUse = false;
 		}
+	}
+}
+//==============================================================================================================
+// テリトリーのタイマー
+//==============================================================================================================
+void SetTerritoryTimer(int nCnt)
+{
+	// カウントが終了したら
+	if (g_Counter[nCnt].nMinute <= 0 && g_Counter[nCnt].nSecond <= 0)
+	{
+		// 未使用にスル
+		g_Counter[nCnt].bUse = false;
 	}
 }

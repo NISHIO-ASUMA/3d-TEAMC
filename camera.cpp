@@ -39,7 +39,6 @@ void SaveCameraAnim(int nType);
 void LoadCameraAnim(int nType);
 void LoadAmimationKey(FILE* pFile, int nType, char* aStr);
 int LoadAnimationKeySet(FILE* pFile, int nType, char* aStr);
-void EventCameraAngle(D3DXVECTOR3 pos);
 //***************************************************************************************************************
 // グローバル変数宣言
 //***************************************************************************************************************
@@ -144,7 +143,6 @@ void UpdateCamera(void)
 		g_camera.posR.x += ((g_camera.posRDest.x - g_camera.posR.x) * 0.3f);
 		g_camera.posR.y += ((g_camera.posRDest.y - g_camera.posR.y) * 0.3f);
 		g_camera.posR.z += ((g_camera.posRDest.z - g_camera.posR.z) * 0.3f);
-
 	}
 	// カメラの編集モードがオンだったら
 	else if (g_camera.bEditMode == true)
@@ -1079,25 +1077,26 @@ void UpdateEventCamera(void)
 {
 	Player* pPlayer = GetPlayer();
 
-	int Eventtype = GetEventPos();
+	int BossPos = GetTerritoryBossPos();
 
-	switch (Eventtype)
+	// ボスの位置にカメラを向ける
+	switch (BossPos)
 	{
 	case 0:
 		// カメラを向ける場所
-		EventCameraAngle(EVENTPOS_ONE);
+		EventCameraAngle(TERRITTORYPOS_ONE);
 		break;
 	case 1:
 		// カメラを向ける場所
-		EventCameraAngle(EVENTPOS_TWO);
+		EventCameraAngle(TERRITTORYPOS_TWO);
 		break;
 	case 2:
 		// カメラを向ける場所
-		EventCameraAngle(EVENTPOS_THREE);
+		EventCameraAngle(TERRITTORYPOS_THREE);
 		break;
 	case 3:
 		// カメラを向ける場所
-		EventCameraAngle(EVENTPOS_FOUR);
+		EventCameraAngle(TERRITTORYPOS_ONE);
 		break;
 	default:
 		break;

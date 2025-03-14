@@ -124,4 +124,5 @@ void MouseWheel(int zDelta);// マウスホイール
 void WaveCamera(int WaveTime); // カメラを揺らす処理
 void SetAnimation(int nAnimType); // カメラのアニメーション設定
 void UpdateEventCamera(void);     // イベントのカメラ
+void EventCameraAngle(D3DXVECTOR3 pos); // カメラをどこに向けるか設定
 #endif

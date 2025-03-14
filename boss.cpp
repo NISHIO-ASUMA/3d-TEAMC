@@ -288,7 +288,7 @@ void UpdateBoss(void)
 		}
 		
 		// 範囲内にいる
-		if (CollisionCylinder(&pPlayer->pos) == false)
+		if (KeepInCylinder(&pPlayer->pos) == false)
 		{
 			// ボスの追跡処理の更新
 			UpdateAgentBoss(nCnt);
@@ -1609,21 +1609,23 @@ void DeathMotionContlloer(int nCntBoss)
 		g_Boss[nCntBoss].move.z = cosf(pPlayer->rot.y + D3DX_PI) * 20.0f;
 	}
 
+	// 最後にキーになったら
 	if (LastKey == true)
 	{
+		// 消す
+		g_Boss[nCntBoss].bUse = false;
+
 		// マップから消す
 		EnableMap(g_Boss[nCntBoss].nIdxMap);
 
 		// 影消す
 		KillShadow(g_Boss[nCntBoss].nIdxShadow);
 
-		// 消す
-		g_Boss[nCntBoss].bUse = false;
-
-		// イベントを強制終了
-		SetEndEvent(false);
-
 		AddTimeSecond(20); // 15秒増やす
+
+		// テリトリーを消す
+		SetEnableBossTerritory(false);
+
 		SpawnItem(g_Boss[nCntBoss].pos);
 	}
 }
@@ -1632,23 +1634,6 @@ void DeathMotionContlloer(int nCntBoss)
 //========================================================================================================
 void EndEventBossState(int nCntBoss)
 {
-	// イベントが終わった
-	if (EnableEvent() == false)
-	{
-		LoadEffect(3, g_Boss[nCntBoss].pos);
-
-		// マップから消す
-		EnableMap(g_Boss[nCntBoss].nIdxMap);
-
-		// 影消す
-		KillShadow(g_Boss[nCntBoss].nIdxShadow);
-
-		// ゲージを消す
-		DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
-
-		// 消す
-		g_Boss[nCntBoss].bUse = false;
-	}
 }
 //========================================================================================================
 // ボスに当たった時の状態異常
@@ -1735,7 +1720,7 @@ void HitBossAbnormalConditionParam(int nCntBoss,int nElement,int ChargeValue,int
 void SpawnItem(D3DXVECTOR3 pos)
 {
 	// アイテムを設定
-	SetItem(pos, rand() % ITEMTYPE_MAX);
+	//SetItem(pos, rand() % ITEMTYPE_MAX);
 }
 //========================================================================================================
 // ボスの取得処理

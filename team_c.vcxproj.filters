@@ -148,12 +148,6 @@
     <ClCompile Include="event.cpp">
       <Filter>ソースファイル\gimic</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>ソースファイル\cahrctor</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy.cpp">
-      <Filter>ソースファイル\cahrctor</Filter>
-    </ClCompile>
     <ClCompile Include="boss.cpp">
       <Filter>ソースファイル\cahrctor</Filter>
     </ClCompile>
@@ -183,6 +177,12 @@
     </ClCompile>
     <ClCompile Include="craftrecipe.cpp">
       <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>ソースファイル\cahrctor</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>ソースファイル\cahrctor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

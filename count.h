@@ -51,7 +51,9 @@ typedef enum
 //**************************************************************************************************************
 typedef enum
 {
-	COUNTERTYPE_EVENTTIMER = 0,
+	COUNTERTYPE_NORMAL = 0,
+	COUNTERTYPE_EVENTTIMER,
+	COUNTERTYPE_TERRITORY,
 	COUNTERTYPE_MAX
 }COUNTERTYPE;
 

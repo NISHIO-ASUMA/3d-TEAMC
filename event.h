@@ -53,5 +53,5 @@ void UpdateEvent(void); // イベントの更新処理
 bool EnableEvent(void); // イベントが発生してるかどうか
 int GetEventPos(void);  // イベントの発生地点の取得
 void SetEndEvent(bool bEnableEvent); // イベントの強制終了
-
+void SetEventParam(D3DXVECTOR3 pos);  // イベントのパラメーターの設定
 #endif

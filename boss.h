@@ -74,16 +74,17 @@ typedef struct
 	int nMaxLife;
 	D3DXMATERIAL BossMat; // ボスのマテリアル
 	bool bTransparent;    // 透明にしていくフラグ
+	int nIdxCylinder;     // シリンダーのインデックス
 }Boss;
 
 //**************************************************************************************************************
 //プロトタイプ宣言
 //**************************************************************************************************************
-void InitBoss(void);//ボスの初期化処理
-void UninitBoss(void);//ボスの終了処理
-void UpdateBoss(void);//ボスの更新処理
-void DrawBoss(void);//ボスの描画処理
-void SetBoss(D3DXVECTOR3 pos, float speed,int nLife);
-void HitBoss(int nCnt,int nDamage);//ボスのヒット処理
-Boss* Getboss(void);
+void InitBoss(void);									// ボスの初期化処理
+void UninitBoss(void);									// ボスの終了処理
+void UpdateBoss(void);									// ボスの更新処理
+void DrawBoss(void);									// ボスの描画処理
+void SetBoss(D3DXVECTOR3 pos, float speed,int nLife);	// ボスの設定処理
+void HitBoss(int nCnt,int nDamage);						// ボスのヒット処理
+Boss* Getboss(void);									// ボスの取得処理
 #endif

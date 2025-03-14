@@ -37,6 +37,8 @@
 #include "meshfield.h"
 #include "meshcylinder.h"
 #include <cassert>
+#include "count.h"
+#include "event.h"
 
 //**************************************************************************************************************
 //ƒ}ƒNƒ’è‹`
@@ -50,10 +52,12 @@
 #define MAX_ENEMYMOVE (1.0f)     // “G‚ÌˆÚ“®—Ê
 #define SHADOWSIZEOFFSET (20.0f) // ‰e‚ÌƒTƒCƒY‚ÌƒIƒtƒZƒbƒg
 #define SHADOW_A (1.0f)			 // ‰e‚ÌƒAƒ‹ƒtƒ@
-#define WAVE_ENEMY (15)			 // “G‚ÌoŒ»”
+#define NUMSPAWN_ENEMY (15)			 // “G‚ÌoŒ»”
 #define KICKATTACK_MOVE (15.0f)  // ‚¯‚èUŒ‚‚ÌˆÚ“®—Ê
 #define NUM_SPAWNPOSITION (4)    // ƒXƒ|[ƒ“ˆÊ’u‚Ì”
-#define TERRITTORYPOS_ONE (D3DXVECTOR3(-15.0f,0.0f,890.0f)) // ƒeƒŠƒgƒŠ[1
+#define SETNUM_TERRITORY (2)		// ƒeƒŠƒgƒŠ[‚ğ”z’u‚·‚é”
+#define TERRITORYRADIUS (500.0f)	// ƒeƒŠƒgƒŠ[‚Ì”¼Œa
+#define FRAME (60)				    // ƒtƒŒ[ƒ€
 
 //**************************************************************************************************************
 //ƒvƒƒgƒ^ƒCƒvéŒ¾
@@ -74,6 +78,12 @@ void UpdateKickAttack(int nCntEnemy);                               // “G‚ÌUŒ‚‚
 void UpdateDroneEnemy(int nCntEnemy);                               // ”ò‚ñ‚Å‚é“G‚ÌXVˆ—
 void KickActionSet(int nCntEnemy,int nKey, int nCounter, int EndFrame, int LastKey, Player* pPlayer);        // ‚¯‚èUŒ‚‚Ìˆ—
 void UpdateDeathParam(int nCntEnemy);																		 // “G‚Ì€–Sƒ‚[ƒVƒ‡ƒ“‚Ìˆ—
+void DeletTerritory(void);																					 // ƒeƒŠƒgƒŠ[‚ÌÁ‹
+void DecreaseTerritoryEnemy(int nCntEnemy);																	 // ƒeƒŠƒgƒŠ[‚Ì“G‚ÌŒ¸­ˆ—
+void NormalizeNumEnemy(void);																				 // “G‚Ì”‚Ì³‹K‰»
+bool KeepInTerritory(int nCntEnemy);																		 // ƒeƒŠƒgƒŠ[‚Ì’†‚©‚ço‚³‚È‚¢ˆ—
+void SetSpawnCount(void);																					 // ƒXƒ|[ƒ“ƒJƒEƒ“ƒg‚Ìİ’è
+void SetTerritoryparam(int nTerritoryIdx,D3DXVECTOR3 pos, int SpawnerPos,bool bSetBoss);					 // ƒeƒŠƒgƒŠ[‚Ìİ’è
 
 //**************************************************************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -82,8 +92,9 @@ ENEMY g_Enemy[MAX_ENEMY];		  // \‘¢‘Ì•Ï”
 MOTION g_LoadEnemy[ENEMYTYPE_MAX]; // “Ç‚İ‚İ
 int g_nNumEnemy;				  // “G‚Ì‘”ƒJƒEƒ“ƒg
 bool g_bSound;
-int g_nNumKill;
 int nCntMotionEnemy, nKeyEnemy;
+Territory g_Territory[SETNUM_TERRITORY];
+int g_nBossPos = 0;
 
 //===============================================================================================================
 // “G‚Ì‰Šú‰»ˆ—
@@ -115,11 +126,23 @@ void InitEnemy(void)
 		g_Enemy[nCntEnemy].Motion.motionType = MOTIONTYPE_NEUTRAL;// ƒ‚[ƒVƒ‡ƒ“‚Ìí—Ş
 		g_Enemy[nCntEnemy].Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);  // ƒTƒCƒY
 		g_Enemy[nCntEnemy].nIdxShadow = -1;
+		g_Enemy[nCntEnemy].TerritoryNumber = -1;                  // ƒeƒŠƒgƒŠ[‚Ì”Ô†
+		g_Enemy[nCntEnemy].isKillCount = true;                    // ƒLƒ‹ƒJƒEƒ“ƒg‚ğ‚Å‚«‚é‚©‚Å‚«‚È‚¢‚©
 	}
 
 	//ƒOƒ[ƒoƒ‹•Ï”‚Ì‰Šú‰»
 	g_nNumEnemy = 0; // “G‚Ì”
-	g_nNumKill = 0;  // ƒLƒ‹”
+	g_nBossPos = 0;  // ƒ{ƒX‚ª‚Ç‚ÌƒeƒŠƒgƒŠ[‚É‚¢‚é‚©
+
+	// ƒeƒŠƒgƒŠ[‚Ì”
+	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
+	{
+		g_Territory[nCnt].CylinderIdx = 0;	// ƒVƒŠƒ“ƒ_[‚ÌƒCƒ“ƒfƒbƒNƒX
+		g_Territory[nCnt].nNumber = -1;		// ƒeƒŠƒgƒŠ[‚ª‰½”Ô–Ú‚©
+		g_Territory[nCnt].nNumEnemy = 0;	// ƒeƒŠƒgƒŠ[‚Ì“G‚Ì”
+		g_Territory[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // ˆÊ’u
+		g_Territory[nCnt].bBoss = false;    // ƒ{ƒX‚ªo‚Ä‚¢‚é‚©o‚Ä‚È‚¢‚©
+	}
 
 	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
 	{
@@ -247,6 +270,8 @@ void UpdateEnemy(void)
 				g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;
 			}
 			break;
+		case ENEMYSTATE_DEATH:
+			break;
 		default:
 			break;
 		}
@@ -314,6 +339,9 @@ void UpdateEnemy(void)
 		// Œ•‚Æ“G‚Ì“–‚½‚è”»’è
 		HitSowrd(&g_Enemy[nCntEnemy], nCntEnemy);
 
+		// “G‚ğƒVƒŠƒ“ƒ_[‚Ì’†‚É‚Æ‚Ç‚ß‚éˆ—
+		KeepInTerritory(nCntEnemy);
+
 		// ƒz[ƒ~ƒ“ƒO‚ÌXVˆ—
 		UpdateHomingEnemy(nCntEnemy);
 
@@ -322,12 +350,13 @@ void UpdateEnemy(void)
 
 		// “G‚Æ“G‚Ì“–‚½‚è”»’è
 		CollisionToEnemy(nCntEnemy);
-
+		
 		// UŒ‚”ÍˆÍ‚É“ü‚Á‚½
 		if (sphererange(&pPlayer->pos, &g_Enemy[nCntEnemy].pos, 20.0f, 20.0f) && g_Enemy[nCntEnemy].Motion.motionType != MOTIONTYPE_ACTION)
 		{
 			g_Enemy[nCntEnemy].AttackState = ENEMYATTACK_ATTACK;
 			SetMotion(&g_Enemy[nCntEnemy].Motion,MOTIONTYPE_ACTION, true, 20); // ƒ‚[ƒVƒ‡ƒ“‚ğƒjƒ…[ƒgƒ‰ƒ‹‚É‚·‚é
+
 			SetParticle(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + g_Enemy[nCntEnemy].Size.y / 1.5f, g_Enemy[nCntEnemy].pos.z),
 				D3DXVECTOR3(1.57f, g_Enemy[nCntEnemy].rot.y, 1.57f),
 				D3DXVECTOR3(0.2f, 3.14f, 0.2f),
@@ -369,11 +398,11 @@ void UpdateEnemy(void)
 		g_Enemy[nCntEnemy].rot.y += (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y) * 0.1f;
 	}
 
-	if (KeyboardTrigger(DIK_J))
-	{
-		UpdateEnemySpawn();
-	}
+	// ƒeƒŠƒgƒŠ[‚ÌÁ‹
+	DeletTerritory();
 
+	// ƒeƒŠƒgƒŠ[‚Ìİ’è
+	SetSpawnCount();
 }
 //===============================================================================================================
 //“G‚Ì•`‰æˆ—
@@ -538,10 +567,15 @@ void HitEnemy(int nCnt,int nDamage)
 	if (g_Enemy[nCnt].nLife <= 0)
 	{// ‘Ì—Í‚ª0ˆÈ‰º‚È‚ç
 
-		int nSpawner = rand() % 4;
+		// ƒLƒ‹ƒJƒEƒ“ƒg‚ğ‚Å‚«‚é
+		if (g_Enemy[nCnt].isKillCount == true)
+		{
+			// ƒeƒŠƒgƒŠ[‚Ì“G‚ÌŒ¸­ˆ—
+			DecreaseTerritoryEnemy(nCnt);
 
-		// “G‚ğƒXƒ|[ƒ“‚³‚¹‚é
-		SpawnEnemy(nSpawner);
+			// ƒJƒEƒ“ƒg‚ğ~‚ß‚é
+			g_Enemy[nCnt].isKillCount = false;
+		}
 
 		if (g_Enemy[nCnt].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 		{
@@ -600,8 +634,6 @@ void HitEnemy(int nCnt,int nDamage)
 		//KillShadow(g_Enemy[nCnt].nIdxShadow);   // “G‚Ì‰e‚ğÁ‚·
 		//EnableMap(g_Enemy[nCnt].nIdxMap);		// ƒ}ƒbƒv‚©‚çÁ‚·
 
-		g_nNumEnemy--; // ƒfƒNƒŠƒƒ“ƒg
-
 		if (g_bSound == false) // ‚à‚µ‚»‚ÌƒtƒŒ[ƒ€’†ˆê“x‚à‰¹‚ª–Â‚ç‚³‚ê‚Ä‚È‚¢‚È‚ç–Â‚ç‚·
 		{
 			// ‡¬‚¶‚á‚È‚¢•Ší‚ÌƒTƒEƒ“ƒh‚ğİ’è‚·‚é
@@ -628,7 +660,10 @@ void HitEnemy(int nCnt,int nDamage)
 			g_bSound = true;
 		}
 
-		g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE; // “G‚Ìó‘Ô‚ğƒ_ƒ[ƒW‚É‚·‚é
+		if (g_Enemy[nCnt].nLife > 0)
+		{
+			g_Enemy[nCnt].state = ENEMYSTATE_DAMAGE; // “G‚Ìó‘Ô‚ğƒ_ƒ[ƒW‚É‚·‚é
+		}
 
 		g_Enemy[nCnt].g_bDamage = false;		 // ƒ_ƒ[ƒW‚ğ’Ê‚ç‚È‚­‚·‚é
 
@@ -646,7 +681,7 @@ void HitEnemy(int nCnt,int nDamage)
 //=========================================================================================================
 //“G‚Ìİ’èˆ—
 //=========================================================================================================
-void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed)
+void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed,int TerritoryNumber)
 {
 	// Œ»İ‚Ìƒ‚[ƒh‚Ìæ“¾
 	MODE mode = GetMode();
@@ -657,13 +692,17 @@ void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed)
 		{
 			g_Enemy[nCntEnemy].Motion = g_LoadEnemy[nType]; // î•ñ‚ğ‘ã“ü
 
-			g_Enemy[nCntEnemy].pos = pos;	  // À•W
-			g_Enemy[nCntEnemy].nType = nType; // í—Ş
-			g_Enemy[nCntEnemy].nLife = nLife; // ‘Ì—Í
-			g_Enemy[nCntEnemy].nMaxLife = nLife; // Å‘å‘Ì—Í
-			g_Enemy[nCntEnemy].Speed = Speed; // ‘«‚Ì‘¬‚³
-			g_Enemy[nCntEnemy].nCountAction = 0;
-			g_Enemy[nCntEnemy].bUse = true;   // g—pó‘Ô
+			g_Enemy[nCntEnemy].pos = pos;					// À•W
+			g_Enemy[nCntEnemy].nType = nType;				// í—Ş
+			g_Enemy[nCntEnemy].nLife = nLife;				// ‘Ì—Í
+			g_Enemy[nCntEnemy].nMaxLife = nLife;			// Å‘å‘Ì—Í
+			g_Enemy[nCntEnemy].Speed = Speed;				// ‘«‚Ì‘¬‚³
+			g_Enemy[nCntEnemy].nCountAction = 0;			// ƒJƒEƒ“ƒ^[ƒAƒNƒVƒ‡ƒ“‚ğ‰Šú‰»
+			g_Enemy[nCntEnemy].TerritoryNumber = TerritoryNumber;	// ƒeƒŠƒgƒŠ[‚Ì”Ô†
+			g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;			// “G‚Ìó‘Ô‚ğƒŠƒZƒbƒg
+			g_Enemy[nCntEnemy].nCounterState = 0;					// “G‚Ìó‘ÔƒJƒEƒ“ƒ^[‚ğƒŠƒZƒbƒg
+			g_Enemy[nCntEnemy].bUse = true;							// g—pó‘Ô
+			g_Enemy[nCntEnemy].isKillCount = true;					// ƒLƒ‹ƒJƒEƒ“ƒg‚ğƒŠƒZƒbƒg
 
 			g_Enemy[nCntEnemy].rotDest.y = (float)(rand()% 628 - 314) * 0.01f;	  // Šp“x
 
@@ -685,36 +724,71 @@ void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed)
 //=========================================================================================================
 //“G‚ÌoŒ»
 //=========================================================================================================
-void SpawnEnemy(int nSpawner)
+void SpawnEnemy(int nSpawner,int TerritoryIdx)
 {
-	if (g_nNumEnemy < MAX_ENEMY * 0.75f)
+	for (int nCnt = 0; nCnt < NUMSPAWN_ENEMY; nCnt++)
 	{
 		// ƒXƒ|ƒi[0
 		if (nSpawner == 0)
 		{
-			SetEnemy(TERRITTORYPOS_ONE, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(TERRITTORYPOS_ONE, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			// ˆÊ’uX‚ğ‹‚ß‚é
+			float fPosX = TERRITTORYPOS_ONE.x + (float)(rand() % 10);
+
+			// ˆÊ’uZ‚ğ‹‚ß‚é
+			float fPosZ = TERRITTORYPOS_ONE.z + (float)(rand() % 10);
+
+			// ˆÊ’u‚ğ‘ã“ü
+			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
+
+			// “G‚ğƒZƒbƒg
+			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
 		}
 		// ƒXƒ|ƒi[1
 		else if (nSpawner == 1)
 		{
-			SetEnemy(D3DXVECTOR3(1065.0f, 0.0f, 188.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			// ˆÊ’uX‚ğ‹‚ß‚é
+			float fPosX = TERRITTORYPOS_TWO.x + (float)(rand() % 10);
+
+			// ˆÊ’uZ‚ğ‹‚ß‚é
+			float fPosZ = TERRITTORYPOS_TWO.z + (float)(rand() % 10);
+
+			// ˆÊ’u‚ğ‘ã“ü
+			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
+
+			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
 		}
 		// ƒXƒ|ƒi[2
 		else if (nSpawner == 2)
 		{
-			SetEnemy(D3DXVECTOR3(-592.0f, 0.0f, -747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3(-899.0f, 0.0f, 182.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			// ˆÊ’uX‚ğ‹‚ß‚é
+			float fPosX = TERRITTORYPOS_THREE.x + (float)(rand() % 10);
+
+			// ˆÊ’uZ‚ğ‹‚ß‚é
+			float fPosZ = TERRITTORYPOS_THREE.z + (float)(rand() % 10);
+
+			// ˆÊ’u‚ğ‘ã“ü
+			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
+
+			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
 		}
 		else if (nSpawner == 3)
 		{
-			SetEnemy(D3DXVECTOR3(-899.0f, 0.0f, 182.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3(-592.0f, 0.0f, -747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			//// ˆÊ’uX‚ğ‹‚ß‚é
+			//float fPosX = TERRITTORYPOS_ONE.x + (float)(rand() % 10);
+
+			//// ˆÊ’uZ‚ğ‹‚ß‚é
+			//float fPosZ = TERRITTORYPOS_ONE.z + (float)(rand() % 10);
+
+			//// ˆÊ’u‚ğ‘ã“ü
+			//D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
+
+			//SetEnemy(D3DXVECTOR3(-899.0f, 0.0f, 182.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			//SetEnemy(D3DXVECTOR3(-592.0f, 0.0f, -747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			//SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
 		}
+		// ƒeƒŠƒgƒŠ[‚Ì“G‚Ì”‚ğ‰ÁZ
+		g_Territory[TerritoryIdx].nNumEnemy++;
 	}
-	
 }
 //=========================================================================================================
 //“G‚Ì‘”æ“¾ˆ—
@@ -1249,9 +1323,9 @@ void AgentEnemy(int nCntEnemy)
 
 	fRotDiff = fRotDest - g_Enemy[nCntEnemy].rot.y;//–Ú•W‚ÌˆÚ“®•ûŒü(Šp“x)
 
-	g_Enemy[nCntEnemy].move.x += sinf(g_Enemy[nCntEnemy].rot.y) * -g_Enemy[nCntEnemy].Speed * MAX_ENEMYMOVE;
+	g_Enemy[nCntEnemy].move.x += sinf(g_Enemy[nCntEnemy].rot.y) * -g_Enemy[nCntEnemy].Speed;
 
-	g_Enemy[nCntEnemy].move.z += cosf(g_Enemy[nCntEnemy].rot.y) * -g_Enemy[nCntEnemy].Speed * MAX_ENEMYMOVE;
+	g_Enemy[nCntEnemy].move.z += cosf(g_Enemy[nCntEnemy].rot.y) * -g_Enemy[nCntEnemy].Speed;
 }
 //===============================================================================================================
 // “G‚Æ“G‚Ì“–‚½‚è”»’è
@@ -1562,7 +1636,7 @@ void UpdateDeathParam(int nCntEnemy)
 		KillShadow(g_Enemy[nCntEnemy].nIdxShadow);
 
 		// ƒ}ƒbƒv‚©‚çÁ‚·
-		EnableMap(g_Enemy[nCntEnemy].nIdxMap);		
+		EnableMap(g_Enemy[nCntEnemy].nIdxMap);
 	}
 }
 //===============================================================================================================
@@ -1570,20 +1644,81 @@ void UpdateDeathParam(int nCntEnemy)
 //===============================================================================================================
 void UpdateEnemySpawn(void)
 {
-	//int SpawnPos = rand() % NUM_SPAWNPOSITION;
+	// ‘O‚É”­¶‚µ‚½ˆÊ’u‚ğ•Û‘¶‚·‚é•Ï”
+	int OldPos = -1;
 
-	int SpawnPos = 0;
+	// ƒ{ƒX‚ğoŒ»‚³‚¹‚é‚©
+	bool EnableSetBoss = false;
 
-	switch (SpawnPos)
+	// ƒ{ƒX‚ª‰½‘Ìo‚Ä‚é‚©
+	static int nNumBoss = 0;
+
+	// ”­¶‚³‚¹‚éƒeƒŠƒgƒŠ[•ª
+	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
 	{
-	case 0:
-		SetMeshCylinder(TERRITTORYPOS_ONE, CYLINDERTYPE_TERRITORY,0,500.0f,COLOR_AQUA,16,1,0.0f,3000.0f);
-		SpawnEnemy(SpawnPos);
-		break;
-	default:
-		assert(false && "UpdateEnemySpawn");
-		break;
+		// “G‚ÌƒeƒŠƒgƒŠ[‚ÌˆÊ’u‚ğŒˆ‚ß‚é
+		int SpawnPos = rand() % 3;
+
+		// ƒeƒŠƒgƒŠ[‚ÌˆÊ’u‚ª‘O‚ÌˆÊ’u‚Æ“¯‚¶‚¾‚Á‚½‚ç
+		if (SpawnPos == OldPos)
+		{
+			// “¯‚¶‚¶‚á‚È‚­‚È‚é‚Ü‚Åƒ‹[ƒv
+			while (SpawnPos == OldPos)
+			{
+				// •Ê‚ÌƒeƒŠƒgƒŠ[‚É‚È‚é‚Ü‚Å’Š‘I
+				SpawnPos = rand() % 3;
+			}
+		}
+
+		// ƒ{ƒX‚ªo‚éŠm—¦
+		int BossSpawnChance = rand() % 101;
+
+		// ƒ{ƒX‚ª‘Ì‚È‚ç && 20%‚ÌŠm—¦‚ÅoŒ»
+		if (BossSpawnChance <= 100 && nNumBoss == 0)
+		{
+			// ƒ{ƒX‚ğoŒ»‚³‚¹‚é
+			EnableSetBoss = true;
+
+			// ƒ{ƒX‚Ì”‚ÌƒJƒEƒ“ƒg‚ğ1‘Ì‚É‚·‚é
+			nNumBoss = 1;
+		}
+		else
+		{
+			// ‚à‚Æ‚É–ß‚·
+			EnableSetBoss = false;
+		}
+		// “G‚ÌƒeƒŠƒgƒŠ[‚ğİ’è
+		switch (SpawnPos)
+		{
+		case 0:
+			// ƒeƒŠƒgƒŠ[‚Ìİ’è
+			SetTerritoryparam(nCnt, TERRITTORYPOS_ONE, SpawnPos, EnableSetBoss);
+			break;
+		case 1:
+			// ƒeƒŠƒgƒŠ[‚Ìİ’è
+			SetTerritoryparam(nCnt, TERRITTORYPOS_TWO, SpawnPos, EnableSetBoss);
+			break;
+		case 2:
+			// ƒeƒŠƒgƒŠ[‚Ìİ’è
+			SetTerritoryparam(nCnt, TERRITTORYPOS_THREE, SpawnPos, EnableSetBoss);
+			break;
+		default:
+			break;
+		}
+
+		// ‘O‰ñ‚ÌƒeƒŠƒgƒŠ[‚ğ‘ã“ü
+		OldPos = SpawnPos;
 	}
+
+	// ‚à‚Æ‚É–ß‚·
+	nNumBoss = 0;
+}
+//==============================================================================================================
+// ƒ{ƒX‚ª‚Ç‚±‚É”­¶‚µ‚½‚©
+//==============================================================================================================
+int GetTerritoryBossPos(void)
+{
+	return g_nBossPos;
 }
 //===============================================================================================================
 // ü‚Æ‹…‚Ì“–‚½‚è”»’è
@@ -1684,13 +1819,6 @@ bool CollisionLine(D3DXVECTOR3* pFirstPos, D3DXVECTOR3* pEndPos,float fRadius)
 		}
 	}
 	return false;
-}
-//===============================================================================================================
-// ƒLƒ‹”‚Ìæ“¾ˆ—
-//===============================================================================================================
-int GetNumKill(void)
-{
-	return g_nNumKill;
 }
 //===============================================================================================================
 // –Â‚ç‚·‰¹‚Ìİ’è
@@ -1870,4 +1998,158 @@ void SetCreateWeponSound(int nType)
 		break;
 	}
 
+}
+//===============================================================================================================
+// ƒeƒŠƒgƒŠ[‚ÌÁ‹
+//===============================================================================================================
+void DeletTerritory(void)
+{
+	// ƒeƒŠƒgƒŠ[‚Ì”‰ñ‚·
+	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
+	{
+		if (g_Territory[nCnt].nNumEnemy <= 0 && g_Territory[nCnt].bBoss == false)
+		{
+			assert(g_Territory[nCnt].CylinderIdx >= 0 && "ƒeƒŠƒgƒŠ[IdxƒI[ƒo[ƒ‰ƒ“");
+			DeleteCylinder(g_Territory[nCnt].CylinderIdx);
+		}
+	}
+}
+//===============================================================================================================
+// ƒeƒŠƒgƒŠ[‚Ì“G‚ÌŒ¸­ˆ—
+//===============================================================================================================
+void DecreaseTerritoryEnemy(int nCntEnemy)
+{
+	// ƒeƒŠƒgƒŠ[‚Ì”‚Ô‚ñ‰ñ‚·
+	for (int nCntTerritory = 0; nCntTerritory < SETNUM_TERRITORY; nCntTerritory++)
+	{
+		if (g_Enemy[nCntEnemy].TerritoryNumber == g_Territory[nCntTerritory].nNumber && g_Enemy[nCntEnemy].isKillCount == true)
+		{
+			g_Territory[nCntTerritory].nNumEnemy--;
+		}
+	}
+}
+//===============================================================================================================
+// “G‚Ì”‚Ì³‹K‰»
+//===============================================================================================================
+void NormalizeNumEnemy(void)
+{
+	// ƒeƒŠƒgƒŠ[‚Ì”‚Ô‚ñ‰ñ‚·
+	for (int nCntTerritory = 0; nCntTerritory < SETNUM_TERRITORY; nCntTerritory++)
+	{
+		if (g_Territory[nCntTerritory].nNumEnemy <= 0)
+		{
+			g_Territory[nCntTerritory].nNumEnemy = 0;
+		}
+	}
+}
+//===============================================================================================================
+// ƒeƒŠƒgƒŠ[‚Ì’†‚©‚ço‚³‚È‚¢ˆ—
+//===============================================================================================================
+bool KeepInTerritory(int nCntEnemy)
+{
+	// ƒeƒŠƒgƒŠ[‚Ì”‚Ô‚ñ‰ñ‚·
+	for (int nCntTerritory = 0; nCntTerritory < SETNUM_TERRITORY; nCntTerritory++)
+	{
+		// ©•ª‚ÌƒeƒŠƒgƒŠ[‚ğŠm”F
+		if (g_Enemy[nCntEnemy].TerritoryNumber != g_Territory[nCntTerritory].nNumber)
+		{
+			continue;
+		}
+
+		// ƒVƒŠƒ“ƒ_[‚Ì“–‚½‚è”»’è
+		if (CollisionCylinder(g_Territory[nCntTerritory].CylinderIdx, &g_Enemy[nCntEnemy].pos))
+		{
+			// “G‚ğ‰Ÿ‚µ–ß‚·
+			g_Enemy[nCntEnemy].pos = g_Enemy[nCntEnemy].posOld;
+		}
+	}
+
+	return false;
+}
+//==============================================================================================================
+// ƒXƒ|[ƒ“ƒJƒEƒ“ƒg‚Ìİ’è
+//==============================================================================================================
+void SetSpawnCount(void)
+{
+	// ƒXƒ|[ƒ“‚ÌƒJƒEƒ“ƒ^[
+	static int SpawnCnt = 0;
+
+	// ‚·‚×‚Ä‚Ì“G‚ğ“|‚µ‚½
+	if (g_Territory[0].nNumEnemy <= 0 && g_Territory[1].nNumEnemy <= 0 && g_Territory[0].bBoss == false && g_Territory[1].bBoss == false)
+	{
+		if (SpawnCnt == 0)
+		{
+			// ƒ^ƒCƒ}[‚ğİ’u
+			SetCounter(D3DXVECTOR3(1080.0f, 200.0f, 0.0f), COUNTER_COUNTDOWN, 10, 20.0f, 20.0f, COUNTERTYPE_TERRITORY);
+		}
+
+		// ƒXƒ|[ƒ“ƒJƒEƒ“ƒg‚ğ‰ÁZ
+		SpawnCnt++;
+
+		// 10•b‚½‚Á‚½‚ç
+		if (SpawnCnt >= FRAME * 10)
+		{
+			// “G‚ÌoŒ»‚ÌXVˆ—
+			UpdateEnemySpawn();
+		}
+	}
+	else
+	{
+		// ƒXƒ|[ƒ“ƒJƒEƒ“ƒ^[‚ğƒŠƒZƒbƒg
+		SpawnCnt = 0;
+	}
+}
+//==============================================================================================================
+// ƒeƒŠƒgƒŠ[‚Ìİ’è
+//==============================================================================================================
+void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool bSetBoss)
+{
+	// ƒ{ƒX‚ğo‚¹‚é
+	if (bSetBoss == true)
+	{
+		// ƒ{ƒX‚ÌoŒ»‚ªoŒ»‚µ‚Ä‚¢‚éó‘Ô‚É‚·‚é
+		g_Territory[nTerritoryIdx].bBoss = bSetBoss;
+
+		// ƒ{ƒX‚ÌoŒ»‚Ìİ’è
+		SetEventParam(pos);
+		
+		// ƒ{ƒX‚ª”­¶‚µ‚½ˆÊ’u‚ğ‘ã“ü
+		g_nBossPos = SpawnerPos;
+
+		// ƒVƒŠƒ“ƒ_[‚ÌƒCƒ“ƒfƒbƒNƒX
+		g_Territory[nTerritoryIdx].CylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_TERRITORY, 0, TERRITORYRADIUS, COLOR_CRIMSON, 16, 1, 0.0f, 3000.0f);
+	}
+	else
+	{
+		// ƒ{ƒX‚ª‚¢‚È‚¢ó‘Ô‚É‚·‚é
+		g_Territory[nTerritoryIdx].bBoss = bSetBoss;
+
+		// ƒVƒŠƒ“ƒ_[‚ÌƒCƒ“ƒfƒbƒNƒX
+		g_Territory[nTerritoryIdx].CylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_TERRITORY, 0, TERRITORYRADIUS, COLOR_AQUA, 16, 1, 0.0f, 3000.0f);
+	}
+
+	// “G‚ğƒXƒ|[ƒ“‚³‚¹‚é
+	SpawnEnemy(SpawnerPos, nTerritoryIdx);
+
+	// ƒVƒŠƒ“ƒ_[‚Ì”Ô†‚ğ‚à‚ç‚¤
+	g_Territory[nTerritoryIdx].nNumber = nTerritoryIdx;
+
+	// ƒeƒŠƒgƒŠ[‚Ì’†S‚ÌˆÊ’u
+	g_Territory[nTerritoryIdx].pos = pos;
+}
+//==============================================================================================================
+// ƒ{ƒX‚ª‚¢‚éƒeƒŠƒgƒŠ[‚ÌÁ‹
+//==============================================================================================================
+void SetEnableBossTerritory(bool bEnable)
+{
+	// ‚·‚×‚Ä‚ÌƒeƒŠƒgƒŠ[‚ğ’²‚×‚é
+	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
+	{
+		// ƒeƒŠƒgƒŠ[‚Éƒ{ƒX‚ª‚¢‚½‚ç
+		if (g_Territory[nCnt].bBoss == true)
+		{
+			// ó‘Ô‚ğ•ÏX
+			g_Territory[nCnt].bBoss = bEnable;
+		}
+	}
 }
