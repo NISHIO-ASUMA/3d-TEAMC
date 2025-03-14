@@ -180,6 +180,13 @@ void DrawMeshCylinder(void)
 			pDevice->SetRenderState(D3DRS_CULLMODE, TRUE);
 		}
 
+		if (nType == CYLINDERTYPE_TERRITORY)
+		{
+			//ゼットテスト
+			pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+			pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+		}
+
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_MeshCylinder[nCnt].mtxWorld);
 
@@ -209,6 +216,10 @@ void DrawMeshCylinder(void)
 		//ポリゴンの描画
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, g_MeshCylinder[nCnt].Vertex, 0, g_MeshCylinder[nCnt].polygon);
 	}
+
+	//ゼットテスト
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
