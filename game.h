@@ -38,5 +38,4 @@ bool GetEditState(void);			// エディットモードの取得
 bool EnableCraft(bool bCraft);      // クラフトの状態の設定
 void EnableMovie(bool bMovie);      // ムービーの有効無効処理
 void SetMovie(int nTime);           // ムービーの設定処理
-
 #endif
