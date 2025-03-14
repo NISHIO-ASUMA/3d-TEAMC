@@ -146,8 +146,8 @@ void InitPlayer(void)
 	g_player.WeponMotion = MOTION_KATANA;							// 武器ごとのモーション
 	g_player.AttackSp = false;										// スペシャル攻撃中かどうか
 	g_player.bLandingOBB = false;									// OBBに乗ってるか
-	nCntMotion = 0;												// モーションのカウント
-	nKey = 0;													// キーのカウント
+	nCntMotion = 0;													// モーションのカウント
+	nKey = 0;														// キーのカウント
 	g_player.bCraft = false;										// クラフト中かどうか
 	g_player.nElement = WEPONELEMENT_STANDARD;						// 属性の種類
 	g_EaseCount = 0;												// イージングのカウント
@@ -158,12 +158,14 @@ void InitPlayer(void)
 	g_player.AttackState = PLAYERATTACKSTATE_NO;                    // 攻撃の状態
 	g_player.nCounterAttack = 0;                                    // 攻撃状態のカウンター
 	g_player.avoidMove = D3DXVECTOR3(0.0f, 0.0f, 0.0f);             // 回避の移動量
-	g_player.ItemIdx = 0;										// アイテムのインデックスの初期化
-	g_player.BlowCounter = 0;									// 吹っ飛ぶまでのカウンター
-	g_player.AttackerIdx = 0;									// 攻撃してきた敵のインデックス
+	g_player.ItemIdx = 0;											// アイテムのインデックスの初期化
+	g_player.BlowCounter = 0;										// 吹っ飛ぶまでのカウンター
+	g_player.AttackerIdx = 0;										// 攻撃してきた敵のインデックス
 	g_player.bstiffness = false;									// ダメージの硬直
 	g_player.StockItemType = ITEMTYPE_NONEXISTENT;                  // ストックしているアイテムの種類
 	g_player.HoldItemType = ITEMTYPE_KATANA;						// 持っているアイテムの種類
+	g_player.bAvoid = false;										// 無敵時間
+	g_player.HitStopCount = 0;										// ヒットストップ
 
 	// アイテム分回す
 	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -275,6 +277,16 @@ void UpdatePlayer(void)
 	{
 		g_player.nLife = g_player.nMaxLife;
 	}
+
+	g_player.HitStopCount--;
+
+	if (g_player.HitStopCount > 0)
+	{
+		g_player.pos.x += (float)(rand() % 3 - 1.5f);
+		g_player.pos.z += (float)(rand() % 3 - 1.5f);
+	}
+	// ヒットストップのカウントが0以上有ったら
+	if (g_player.HitStopCount >= 0) return;
 
 	// ムービーじゃなかったら
 	if (gameState != GAMESTATE_MOVIE)
@@ -686,17 +698,11 @@ void SetMtxPos(void)
 //===============================================================================================================
 void HitPlayer(int nDamage,bool SetDamageMotion, int AttackerIdx, int AttackerType)
 {
-	// プレイヤーの状態がスペシャルじゃなかったら
-	if (g_player.AttackSp == true)
-	{
-		return;
-	}
+	// プレイヤーの状態がスペシャルだったら
+	if (g_player.AttackSp == true) return;
 
 	// 無敵時間だったら
-	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID && g_player.Motion.nKey <= KEY_TWO)
-	{
-		return;
-	}
+	if (g_player.bAvoid == true) return;
 
 	// プレイヤーの体力を減らす
 	g_player.nLife -= nDamage;
@@ -2403,10 +2409,17 @@ void SetMotionContller(void)
 		g_player.move.z = cosf(pBoss[g_player.AttackerIdx].rot.y + D3DX_PI) * 15.0f;
 	}
 
-	if(g_player.Motion.motiontypeBlend == MOTIONTYPE_DAMAGE && nKey >= 0 && nCounter >= 34)
-	{
-		g_player.bstiffness = false;
-	}
+	// ダメージモーションだったら
+	const bool isDamage = g_player.Motion.motiontypeBlend == MOTIONTYPE_DAMAGE && nKey <= 2;
+
+	// ダメージだったら硬直する
+	g_player.bstiffness = isDamage ? true : false;
+	
+	// ダメージモーションだったら
+	const bool isAvoid = g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID && nKey <= 3;
+
+	// 無敵時間だったら無敵にする
+	g_player.bAvoid = isAvoid ? true : false;
 
 	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_LANDING && CheckMotionBounds(nKey,nCounter,0,0,1,1) == true)
 	{
@@ -3313,14 +3326,17 @@ void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
 	// 槍武器武器のジャンプモーションか
 	const bool isSpear = g_player.WeponMotion == MOTION_PIERCING && isJumpMotion;
 
-	if (isSpear && nKey == 0 && nCounter <= 5)
+	if (isSpear && nKey >= 0)
 	{
-		g_player.move.y = -MAX_GLABITY * 0.2f;
+		g_player.move.y = -MAX_GLABITY * 0.5f;
 	}
-	else if (isSpear && nKey >= 1)
+	if (isSpear && nKey == 1)
 	{
-		//g_player.move.x = sinf(g_player.rot.y);
+		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 20.0f;
+		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 20.0f;
 	}
+
+
 }
 //===============================================================================================================
 // プレイヤーが攻撃状態か

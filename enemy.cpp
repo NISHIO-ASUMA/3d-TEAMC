@@ -89,7 +89,8 @@ void SetTerritoryparam(int nTerritoryIdx,D3DXVECTOR3 pos, int SpawnerPos,bool bS
 void OutTerritorySpawner(int nSpawner);																		 // テリトリーの外のスポナー
 void UpdateTargetPosition(int nCntEnemy);																	 // ターゲットの位置の更新
 void UpdateTerritoryMark(void);																				 // テリトリーにマークする
-void UpdateScoreAndGage(int nCntEnemy);																				 // 敵を倒したときのスコアとゲージの更新処理
+void UpdateScoreAndGage(int nCntEnemy);																		 // 敵を倒したときのスコアとゲージの更新処理
+void SetUpHitStop(int nCntEnemy);																			 // ヒットストップの設定処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -240,10 +241,16 @@ void UpdateEnemy(void)
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		//// ヒットストップのカウントを減らす
-		//g_Enemy[nCntEnemy].HitStopCount--;
+		// ヒットストップのカウントを減らす
+		g_Enemy[nCntEnemy].HitStopCount--;
 
-		if (g_Enemy[nCntEnemy].bUse == false)
+		// ヒットストップしている
+		if (g_Enemy[nCntEnemy].HitStopCount > 0)
+		{
+			g_Enemy[nCntEnemy].pos.x += (float)(rand() % 30 - 15.0f);
+			g_Enemy[nCntEnemy].pos.z += (float)(rand() % 30 - 15.0f);
+		}
+		if (g_Enemy[nCntEnemy].bUse == false || g_Enemy[nCntEnemy].HitStopCount >= 0)
 		{// 未使用状態だったら
 			// とばしてカウントを進める
 			continue;
@@ -601,10 +608,10 @@ void HitEnemy(int nCnt,int nDamage)
 
 			// カウントを止める
 			g_Enemy[nCnt].isKillCount = false;
-
-			// 敵を倒したときのスコアとゲージの更新処理
-			UpdateScoreAndGage(nCnt);
 		}
+
+		// 敵を倒したときのスコアとゲージの更新処理
+		UpdateScoreAndGage(nCnt);
 
 		// モーションの種類が死亡じゃなかったら
 		if (g_Enemy[nCnt].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
@@ -614,7 +621,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 		if (pPlayer->nElement == WEPONELEMENT_DARK)
 		{
-			LoadEffect(1,D3DXVECTOR3(g_Enemy[nCnt].pos.x,g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y,g_Enemy[nCnt].pos.z));
+			LoadEffect(1,D3DXVECTOR3(g_Enemy[nCnt].pos.x,g_Enemy[nCnt].pos.y + 50.0f,g_Enemy[nCnt].pos.z));
 		}
 		else
 		{
@@ -640,13 +647,18 @@ void HitEnemy(int nCnt,int nDamage)
 			// 合成武器のサウンドを設定する
 			SetCreateWeponSound(pItem[pPlayer->ItemIdx].nType);
 
-			g_bSound = true;
+			// ヒットストップの設定
+			SetUpHitStop(nCnt);
 
+			g_bSound = true;
 		}
 		return;
 	}
 	else
 	{
+		// ヒットストップの設定
+		SetUpHitStop(nCnt);
+
 		if (g_bSound == false) // もしそのフレーム中一度も音が鳴らされてないなら鳴らす
 		{
 			// サウンドを設定する
@@ -664,13 +676,13 @@ void HitEnemy(int nCnt,int nDamage)
 		}
 
 		g_Enemy[nCnt].nCounterState = 20;		 // ダメージ状態からノーマルに戻るまでの時間
-		g_Enemy[nCnt].HitStopCount = 10;         // ヒットストップの時間
 
 		// スコアを加算
 		if (gamestate != GAMESTATE_END)
 		{
 			AddScore(4300);
 		}
+
 		return;
 	}
 }
@@ -2360,6 +2372,77 @@ void UpdateScoreAndGage(int nCntEnemy)
 		AddSpgauge(spgage);
 	}
 
+
+}
+//==============================================================================================================
+// ヒットストップの設定処理
+//==============================================================================================================
+void SetUpHitStop(int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	// 攻撃してなかったら
+	if (isPlayerAttaking() == false) return;
+
+	// 片手のSPモーション
+	const bool isOneHandSP = pPlayer->WeponMotion == MOTION_ONEHANDBLOW;
+
+	// 敵のヒットストップ
+	g_Enemy[nCntEnemy].HitStopCount = isOneHandSP ? 25 : 0;
+
+	// プレイヤーのヒットストップ
+	pPlayer->HitStopCount = isOneHandSP ? 25 : 0;
+	
+	// 設定が完了した
+	if (isOneHandSP == true) return;
+
+	// 両手のSPモーション
+	const bool isDoubleSP = pPlayer->WeponMotion == MOTION_SPDOUBLE && pPlayer->Motion.nKey >= 5;
+
+	// 敵のヒットストップ
+	g_Enemy[nCntEnemy].HitStopCount = isDoubleSP ? 15 : 0;
+
+	// プレイヤーのヒットストップ
+	pPlayer->HitStopCount = isDoubleSP ? 15 : 0;
+
+	// 設定が完了した
+	if (isDoubleSP == true) return;
+
+	// ハンマーのSPモーション
+	const bool isHunmerSP = pPlayer->WeponMotion == MOTION_SPHAMMER;
+
+	// 敵のヒットストップ
+	g_Enemy[nCntEnemy].HitStopCount = isHunmerSP ? 5 : 0;
+
+	// プレイヤーのヒットストップ
+	pPlayer->HitStopCount = isHunmerSP ? 10 : 0;
+
+	// 設定が完了した
+	if (isHunmerSP == true) return;
+
+	// 刀のSPモーション
+	const bool isKatanaSP = pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.nKey >= 4;
+
+	// 敵のヒットストップ
+	g_Enemy[nCntEnemy].HitStopCount = isKatanaSP ? 15 : 0;
+
+	// プレイヤーのヒットストップ
+	pPlayer->HitStopCount = isKatanaSP ? 15 : 0;
+
+	// 設定が完了した
+	if (isKatanaSP == true) return;
+
+	// 槍のSPモーション
+	const bool isSpearSP = pPlayer->WeponMotion == MOTION_SPPIERCING;
+
+	// 敵のヒットストップ
+	g_Enemy[nCntEnemy].HitStopCount = isSpearSP ? 15 : 0;
+
+	// プレイヤーのヒットストップ
+	pPlayer->HitStopCount = isSpearSP ? 15 : 0;
+	
+	// 設定が完了した
+	if (isSpearSP == true) return;
 
 }
 //==============================================================================================================

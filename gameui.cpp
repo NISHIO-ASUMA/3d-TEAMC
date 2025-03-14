@@ -28,6 +28,9 @@
 
 #define MAX_UI (120)
 
+#define UITYPE_SPWIDTH (55.0f)		 // スペシャルUIの横幅
+#define UITYPE_SPHEIGHT (50.0f)		 // スペシャルUIの高さ
+
 //**************************************************************************************************************
 //プロトタイプ宣言
 //**************************************************************************************************************
@@ -326,7 +329,14 @@ void UpdateGameUI(void)
 
 				break;
 			case UITYPE_SP:
+				// テクスチャアニメーションの設定処理
 				SetTextureAnimation(2, 1, 10, &g_GameUI[nCnt].nCounterAnim, &g_GameUI[nCnt].nPatternAnim, pVtx, g_pVtxBuffGameUI, nCnt);
+
+				// spがたまっていなかったら大きさを0にして見えなくする
+				g_GameUI[nCnt].fWidth = pPlayer->SpMode ? UITYPE_SPWIDTH : 0.0f;
+
+				// spがたまっていなかったら大きさを0にして見えなくする
+				g_GameUI[nCnt].fHeight = pPlayer->SpMode ? UITYPE_SPHEIGHT : 0.0f;
 				break;
 			}
 

@@ -234,11 +234,27 @@ void DrawBillboard(void)
 
 		if (g_Billboard[nCnt].state == BILLBOARDSTATE_SET)
 		{
-			//ƒeƒNƒXƒ`ƒƒ‚ÌÝ’è
-			pDevice->SetTexture(0, g_apTextureBillboard[g_Billboard[nCnt].nType]);
+			// Ží—Þ
+			int nType = g_Billboard[nCnt].nType;
 
-			// ƒ|ƒŠƒSƒ“‚Ì•`‰æ
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+			// E‚¤‚ÌUi‚¾‚Á‚½‚ç
+			if (nType == BILLBOARDTYPE_SECOND && isPlayerAttaking() == false)
+			{
+				//ƒeƒNƒXƒ`ƒƒ‚ÌÝ’è
+				pDevice->SetTexture(0, g_apTextureBillboard[g_Billboard[nCnt].nType]);
+
+				// ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+				pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+			}
+			// E‚¤‚ÌUiˆÈŠO‚¾‚Á‚½‚ç
+			if(nType != BILLBOARDTYPE_SECOND)
+			{
+				//ƒeƒNƒXƒ`ƒƒ‚ÌÝ’è
+				pDevice->SetTexture(0, g_apTextureBillboard[g_Billboard[nCnt].nType]);
+
+				// ƒ|ƒŠƒSƒ“‚Ì•`‰æ
+				pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+			}
 		}
 
 	}

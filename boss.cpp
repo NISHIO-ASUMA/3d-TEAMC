@@ -636,6 +636,8 @@ void HitBoss(int nCntBoss,int nDamage)
 			// ボスの数を減らす
 			g_nNumBoss--;
 
+			pPlayer->HitStopCount = 20;
+
 			// キルカウントを無効
 			g_Boss[nCntBoss].isKillCount = false;
 		}
