@@ -368,38 +368,31 @@ void DrawBlock(void)
 
 		// ワールドマトリックスの設定
 		pDevice->SetTransform(D3DTS_WORLD, &g_Block[nCntBlock].mtxWorldBlock);
-		
+
 		// 現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
-		for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
+		if ((sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, g_Block[nCntBlock].Size.y) == false) || mode == MODE_TITLE)
 		{
-			// マテリアルのデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatModel->GetBufferPointer();
 
-			if ((sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, g_Block[nCntBlock].Size.y) == true) && mode != MODE_TITLE)
+			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
 			{
-				D3DXMATERIAL mat = pMat[nCntMat];
+				// マテリアルのデータへのポインタを取得
+				pMat = (D3DXMATERIAL*)g_Block[nCntBlock].BlockTex[nType].g_pBuffMatModel->GetBufferPointer();
 
-				mat.MatD3D.Diffuse.a = 0.5f;
-
-				// マテリアルの設定
-				pDevice->SetMaterial(&mat.MatD3D);
-			}
-			else
-			{
 				// マテリアルの設定
 				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
-			}
-			// テクスチャの設定
-			pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureModel[nCntMat]);
 
-			// ブロック(パーツ)の描画
-			g_Block[nCntBlock].BlockTex[nType].g_pMeshModel->DrawSubset(nCntMat);
+				// テクスチャの設定
+				pDevice->SetTexture(0, g_Block[nCntBlock].BlockTex[nType].g_apTextureModel[nCntMat]);
+
+				// ブロック(パーツ)の描画
+				g_Block[nCntBlock].BlockTex[nType].g_pMeshModel->DrawSubset(nCntMat);
+			}
 		}
-		
 		SetMtx(nCntBlock);
 	}
+		
 	//マテリアルの設定
 	pDevice->SetMaterial(&matDef);
 

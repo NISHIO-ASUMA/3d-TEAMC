@@ -259,7 +259,7 @@ bool CollisionField(D3DXVECTOR3 *pPos, D3DXVECTOR3* pPosOld)
 		if (Cross.x < 0)
 		{
 			bLanding = true;
-			pPos->y = pPosOld->y;
+			pPos->y = 0.0f;
 		}
 	//}
 	return bLanding;//”»’è‚ð•Ô‚·
