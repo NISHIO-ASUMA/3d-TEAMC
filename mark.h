@@ -41,4 +41,5 @@ void UninitMark(void);
 void UpdateMark(void);
 void DrawMark(void);
 void SetMark(D3DXVECTOR3 pos,D3DXVECTOR3 rot);
+Mark* GetMark(void);
 #endif

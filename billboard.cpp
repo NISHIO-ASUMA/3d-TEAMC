@@ -160,13 +160,13 @@ void UpdateBillboard(void)
 			break;
 		}
 
-		// 頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(-g_Billboard[nCnt].fWidth, g_Billboard[nCnt].fHeight, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_Billboard[nCnt].fWidth, g_Billboard[nCnt].fHeight, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(-g_Billboard[nCnt].fWidth, -g_Billboard[nCnt].fHeight, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_Billboard[nCnt].fWidth, -g_Billboard[nCnt].fHeight, 0.0f);
+		//// 頂点座標の設定
+		//pVtx[0].pos = D3DXVECTOR3(-g_Billboard[nCnt].fWidth, g_Billboard[nCnt].fHeight, 0.0f);
+		//pVtx[1].pos = D3DXVECTOR3(g_Billboard[nCnt].fWidth, g_Billboard[nCnt].fHeight, 0.0f);
+		//pVtx[2].pos = D3DXVECTOR3(-g_Billboard[nCnt].fWidth, -g_Billboard[nCnt].fHeight, 0.0f);
+		//pVtx[3].pos = D3DXVECTOR3(g_Billboard[nCnt].fWidth, -g_Billboard[nCnt].fHeight, 0.0f);
 
-		pVtx += 4;
+		//pVtx += 4;
 	}
 
 	// アンロック

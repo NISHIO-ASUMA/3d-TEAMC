@@ -194,8 +194,8 @@ void InitPlayer(void)
 		g_player.Motion = g_LoadPlayer[0];
 	}
 
-	//// 矢印を設定
-	//SetMark(g_player.pos, g_player.rot);
+	// 矢印を設定
+	SetMark(g_player.pos, g_player.rot);
 }
 //===============================================================================================================
 //プレイヤーの終了処理

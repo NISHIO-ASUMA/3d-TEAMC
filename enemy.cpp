@@ -40,6 +40,7 @@
 #include "count.h"
 #include "event.h"
 #include "billboard.h"
+#include "mark.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -87,6 +88,7 @@ void SetSpawnCount(void);																					 // スポーンカウントの設定
 void SetTerritoryparam(int nTerritoryIdx,D3DXVECTOR3 pos, int SpawnerPos,bool bSetBoss);					 // テリトリーの設定
 void OutTerritorySpawner(int nSpawner);																		 // テリトリーの外のスポナー
 void UpdateTargetPosition(int nCntEnemy);																	 // ターゲットの位置の更新
+void UpdateTerritoryMark(void);																	 // テリトリーにマークする
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -146,6 +148,7 @@ void InitEnemy(void)
 		g_Territory[nCnt].nNumEnemy = 0;	// テリトリーの敵の数
 		g_Territory[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); // 位置
 		g_Territory[nCnt].bBoss = false;    // ボスが出ているか出てないか
+		g_Territory[nCnt].bUse = false;     // 使われているか
 	}
 
 	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
@@ -404,6 +407,9 @@ void UpdateEnemy(void)
 		// 目的の角度に近づける
 		g_Enemy[nCntEnemy].rot.y += (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y) * 0.1f;
 	}
+
+	// テリトリーに向ける矢印
+	UpdateTerritoryMark();
 
 	// テリトリーの消去
 	DeletTerritory();
@@ -1643,11 +1649,20 @@ void UpdateDeathParam(int nCntEnemy)
 		g_Enemy[nCntEnemy].move.y = 5.0f;
 	}
 
-	// キーが3いないだったら
-	if (nKey <= 3)
+	// 吹き飛びモーション
+	if (nKey == 0 && nCountMotion == 1 && g_Enemy[nCntEnemy].Motion.bFirstMotion == false)
 	{
-		g_Enemy[nCntEnemy].move.x = sinf(g_Enemy[nCntEnemy].rot.y) * 10.0f;
-		g_Enemy[nCntEnemy].move.z = cosf(g_Enemy[nCntEnemy].rot.y) * 10.0f;
+		g_Enemy[nCntEnemy].move.y = 5.0f;
+	}
+
+	// キーが3いないだったら
+	if (nKey <= 5)
+	{
+		float fMoveX = sinf(g_Enemy[nCntEnemy].rot.y) * 10.0f;
+		float fMoveZ = cosf(g_Enemy[nCntEnemy].rot.y) * 10.0f;
+
+		g_Enemy[nCntEnemy].move.x = fMoveX;
+		g_Enemy[nCntEnemy].move.z = fMoveZ;
 	}
 	// 最後のキーまで行ったら
 	if (nKey >= nLastKey)
@@ -2035,6 +2050,9 @@ void DeletTerritory(void)
 		{
 			assert(g_Territory[nCnt].CylinderIdx >= 0 && "テリトリーIdxオーバーラン");
 			DeleteCylinder(g_Territory[nCnt].CylinderIdx);
+
+			// 使用状態にする
+			g_Territory[nCnt].bUse = false;
 		}
 	}
 }
@@ -2152,6 +2170,9 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 		g_Territory[nTerritoryIdx].CylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_TERRITORY, 0, TERRITORYRADIUS, COLOR_AQUA, 16, 1, 0.0f, 3000.0f);
 	}
 
+	// 使用状態にする
+	g_Territory[nTerritoryIdx].bUse = true;
+
 	// 敵をスポーンさせる
 	SpawnEnemy(SpawnerPos, nTerritoryIdx);
 
@@ -2218,6 +2239,83 @@ void UpdateTargetPosition(int nCntEnemy)
 	{
 		// ターゲットの位置設定処理
 		SetPositiontarget(g_Enemy[nCntEnemy].nIdxtarget, D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + 70.0f, g_Enemy[nCntEnemy].pos.z));
+	}
+}
+//==============================================================================================================
+// テリトリーにマークする
+//==============================================================================================================
+void UpdateTerritoryMark(void)
+{
+	// 矢印の取得
+	Mark* pMark = GetMark();
+
+	// 保存用の距離
+	float StockDistance = 0.0f;
+
+	// 今の距離
+	float fDistance = 0.0f;
+
+	// 最初だけ通す
+	bool bFirst = true;
+
+	// インデックス
+	int nIdx = 0;
+
+	// 矢印のワールドマトリックスを変換
+	D3DXVECTOR3 MarkPos = SetMtxConversion(pMark->mtxWorld);
+
+	// テリトリー分回す
+	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
+	{
+		// 距離を取得
+		fDistance = GetDistance(g_Territory[nCnt].pos, MarkPos);
+
+		// 最初に距離を持っておく
+		if (bFirst == true)
+		{
+			// 距離を保存
+			StockDistance = fDistance;
+
+			// もう通さない
+			bFirst = false;
+
+			// インデックスを保存
+			nIdx = nCnt;
+		}
+		else
+		{
+			// 今の距離が保存していた距離よりも小さかったら
+			if (fDistance < StockDistance)
+			{
+				// 距離を上書き
+				StockDistance = fDistance;
+
+				// インデックスを上書き
+				nIdx = nCnt;
+			}
+		}
+	}
+
+	// 差分を求める
+	D3DXVECTOR3 DiffPos = MarkPos - g_Territory[nIdx].pos;
+
+	// 角度を求める
+	float fAngle = atan2f(DiffPos.x, DiffPos.z);
+
+	// 目的の角度に代入
+	pMark->rotDest.y = fAngle;
+
+	if (g_Territory[nIdx].bUse == false)
+	{
+		pMark->bUse = false;
+	}
+	if (StockDistance <= TERRITORYRADIUS)
+	{
+		pMark->bUse = false;
+	}
+	else
+	{
+		pMark->bUse = true;
 	}
 }
 //==============================================================================================================
