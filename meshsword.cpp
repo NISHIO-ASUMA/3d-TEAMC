@@ -251,7 +251,8 @@ void UpdateMeshSword(void)
 	if (pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION||
 		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION2||
 		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION3||
-		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION4)
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION4||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_JUMPACTION)
 	{
 		g_MeshSword.oldvtx[0] = pVtx[0].pos;
 		g_MeshSword.oldvtx[1] = pVtx[1].pos;
@@ -306,7 +307,8 @@ void DrawMeshSword(void)
 	if ((pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION ||
 		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION2 ||
 		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION3 ||
-		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION4) &&
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION4 ||
+		pPlayer->Motion.motiontypeBlend == MOTIONTYPE_JUMPACTION) &&
 		pPlayer->Motion.nNumModel != 15 &&
 		pPlayer->HandState != PLAYERHOLD_HOLD)
 	{

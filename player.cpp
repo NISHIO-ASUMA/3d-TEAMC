@@ -91,6 +91,8 @@ void ChangeItemParam(int nHaveIdx, int nType);													 // ƒAƒCƒeƒ€‚Ì•ÏX‚
 void MotionTransition(void);																	 // ƒ‚[ƒVƒ‡ƒ“ƒ^ƒCƒv‚Ì‘JˆÚ
 void StateTransition(void);																		 // ó‘Ô‚Ì‘JˆÚ
 void ComboTransition(void);																		 // ƒRƒ“ƒ{ó‘Ô‚Ì‘JˆÚ
+void SetUpPlayerAttack(void);																	 // ƒvƒŒƒCƒ„[‚ÌUŒ‚‚Ìİ’èˆ—
+void SetUpJumpAction(int nKey, int nCounter, int nLastKey, int EndFrame);																		 // ƒWƒƒƒ“ƒvƒAƒNƒVƒ‡ƒ“‚Ìİ’è
 
 //**************************************************************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -389,6 +391,7 @@ void UpdatePlayer(void)
 		if (g_player.Motion.motiontypeBlend == MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_LANDING)
 		{
 			SetMotion(&g_player.Motion,MOTIONTYPE_LANDING, true, 10); // ƒ‚[ƒVƒ‡ƒ“‚ğ’…’n‚É‚·‚é
+			SetImpact(g_player.pos, COLOR_GOLD, 32, 10.0f, 0.0f, 3.0f, 60, IMPACTTYPE_NORMAL, 0);
 		}
 		g_player.bJump = true; // ƒWƒƒƒ“ƒv‚ğ‰Â”\‚É‚·‚é
 	}
@@ -420,57 +423,12 @@ void UpdatePlayer(void)
 			g_player.bJump = false;						 // ƒWƒƒƒ“ƒv‚ğ‚Å‚«‚È‚­‚·‚é
 			SetMotion(&g_player.Motion, MOTIONTYPE_JUMP, true, 10);
 			g_player.move.y = 18.0f;					 // ƒWƒƒƒ“ƒv—Ê		
+			g_player.Combostate = COMBO_NO;
 		}
 	}
 
-	// ƒ‚[ƒVƒ‡ƒ“‚ÌƒL[
-	int nKey = g_player.Motion.nKey;
-
-	// ƒ‚[ƒVƒ‡ƒ“‚ÌƒJƒEƒ“ƒ^[
-	int nCounter = g_player.Motion.nCountMotion;
-
-	// ƒ‚[ƒVƒ‡ƒ“‚ÌÅŒã‚ÌƒL[
-	int EndKey = g_player.Motion.aMotionInfo[g_player.Motion.motionType].nNumkey - 1;
-
-	// ƒ‚[ƒVƒ‡ƒ“‚ÌÅŒã‚ÌƒtƒŒ[ƒ€
-	int EndFrame = g_player.Motion.aMotionInfo[g_player.Motion.motionType].aKeyInfo[EndKey].nFrame;
-
-	//const bool NoHand = bNohand == false;
-	//const bool NoSpAction = g_player.AttackSp == false;
-
-	// ƒvƒŒƒCƒ„[‚Ìó‘Ô‚ªUŒ‚‚¶‚á‚È‚¢‚©‚Â’n–Ê‚É‚¢‚é
-	if (bNohand == false && g_player.AttackSp == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false && gameState != GAMESTATE_MOVIE && g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID)
-	{
-		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Combostate == COMBO_NO)
-		{
-			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // ƒRƒ“ƒ{1
-			ResetMeshSword();
-		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION &&
-			CheckMotionBounds(nKey, nCounter, 0, EndKey, 0, EndFrame) == true)
-		{
-			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // ƒRƒ“ƒ{2
-		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION2 &&
-			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
-		{
-			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // ƒRƒ“ƒ{3
-		}
-		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION3 &&
-			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
-		{
-			PlayerComb(MOTIONTYPE_ACTION4, 70, 40, COMBO_ATTACK4); // ƒRƒ“ƒ{4
-		}
-	}
-
-	// [UŒ‚‚µ‚Ä‚È‚¢] ‚©‚Â [è‚É‰½‚à‚Á‚Ä‚¢‚È‚¢] ‚©‚Â [ƒvƒŒƒCƒ„[‚ªƒXƒyƒVƒƒƒ‹ƒ‚[ƒVƒ‡ƒ“‚ğ”­“®‚µ‚Ä‚¢‚È‚¢]
-	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE && g_player.bstiffness == false && g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID;
-
-	// “Š‚°•¨‚ğ‚Á‚Ä‚¢‚é‚Æ‚«‚ÌUŒ‚
-	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && canAction == true && g_player.Motion.nNumModel == 16)
-	{
-		PlayerComb(MOTIONTYPE_ACTION, 40, 20, COMBO_ATTACK1); // ƒRƒ“ƒ{1
-	}
+	// ƒvƒŒƒCƒ„[‚ÌUŒ‚‚Ìİ’èˆ—
+	SetUpPlayerAttack();
 
 	// ƒvƒŒƒCƒ„[‚ÌŠp“x‚Ì³‹K‰»
 	if (g_player.rotDestPlayer.y - g_player.rot.y >= D3DX_PI)
@@ -1526,6 +1484,7 @@ void MotionChange(int itemtype,int LoadPlayer)
 		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION2] = g_LoadMotion[itemtype].aMotionInfo[1];    // UŒ‚2‚Ìî•ñ‚ğ‘ã“ü
 		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION3] = g_LoadMotion[itemtype].aMotionInfo[2];	// UŒ‚3‚Ìî•ñ‚ğ‘ã“ü
 		g_player.Motion.aMotionInfo[MOTIONTYPE_ACTION4] = g_LoadMotion[itemtype].aMotionInfo[3];	// UŒ‚4‚Ìî•ñ‚ğ‘ã“ü
+		g_player.Motion.aMotionInfo[MOTIONTYPE_JUMPACTION] = g_LoadMotion[itemtype].aMotionInfo[4];	// UŒ‚4‚Ìî•ñ‚ğ‘ã“ü
 		g_player.Motion.aModel[15].offpos = g_LoadMotion[itemtype].aModel[15].offpos;				// ƒIƒtƒZƒbƒg‚Ìî•ñ‚ğ‘ã“ü
 		g_player.Motion.aModel[15].offrot = g_LoadMotion[itemtype].aModel[15].offrot;				// ƒIƒtƒZƒbƒg‚Ì‚Ìî•ñ‚ğ‘ã“ü
 		g_player.HandState = PLAYERHOLD_NO;
@@ -3244,6 +3203,126 @@ void ComboTransition(void)
 
 }
 //===============================================================================================================
+// ƒvƒŒƒCƒ„[‚ÌUŒ‚‚Ìİ’èˆ—
+//===============================================================================================================
+void SetUpPlayerAttack(void)
+{
+	GAMESTATE gamestate = GetGameState();
+
+	// ƒQ[ƒ€‚Ìó‘Ô‚ªƒ€[ƒr[‚¾‚Á‚½‚ç
+	if (gamestate == GAMESTATE_MOVIE) return;
+
+	// ƒ‚[ƒVƒ‡ƒ“‚ª‰ñ”ğ‚¾‚Á‚½‚ç
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_AVOID) return;
+
+	// ƒXƒyƒVƒƒƒ‹UŒ‚’†‚¾‚Á‚½‚ç
+	if (g_player.AttackSp == true) return;
+
+	// ƒ‚[ƒVƒ‡ƒ“‚ª€–S‚¾‚Á‚½‚ç
+	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_DEATH) return;
+
+	// ƒ‚[ƒVƒ‡ƒ“‚ÌƒL[
+	int nKey = g_player.Motion.nKey;
+
+	// ƒ‚[ƒVƒ‡ƒ“‚ÌƒJƒEƒ“ƒ^[
+	int nCounter = g_player.Motion.nCountMotion;
+
+	// ƒ‚[ƒVƒ‡ƒ“‚ÌÅŒã‚ÌƒL[
+	int EndKey = g_player.Motion.aMotionInfo[g_player.Motion.motionType].nNumkey - 1;
+
+	// ƒ‚[ƒVƒ‡ƒ“‚ÌÅŒã‚ÌƒtƒŒ[ƒ€
+	int EndFrame = g_player.Motion.aMotionInfo[g_player.Motion.motionType].aKeyInfo[EndKey].nFrame;
+
+	// UŒ‚‚Å‚«‚é‚©”»’è
+	const bool isAttack = bNohand == false && g_player.bJump == true;
+
+	// ƒvƒŒƒCƒ„[‚Ìó‘Ô‚ªUŒ‚‚¶‚á‚È‚¢‚©‚Â’n–Ê‚É‚¢‚é
+	if (isAttack == true)
+	{
+		if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && (g_player.Combostate == COMBO_NO || g_player.Motion.motiontypeBlend == MOTIONTYPE_JUMPACTION))
+		{
+			PlayerComb(MOTIONTYPE_ACTION, 40, 40, COMBO_ATTACK1); // ƒRƒ“ƒ{1
+			ResetMeshSword();
+		}
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION &&
+			CheckMotionBounds(nKey, nCounter, 0, EndKey, 0, EndFrame) == true)
+		{
+			PlayerComb(MOTIONTYPE_ACTION2, 40, 40, COMBO_ATTACK2); // ƒRƒ“ƒ{2
+		}
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION2 &&
+			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
+		{
+			PlayerComb(MOTIONTYPE_ACTION3, 40, 40, COMBO_ATTACK3); // ƒRƒ“ƒ{3
+		}
+		else if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && g_player.Motion.motiontypeBlend == MOTIONTYPE_ACTION3 &&
+			CheckMotionBounds(nKey, nCounter, 1, EndKey, 0, EndFrame) == true)
+		{
+			PlayerComb(MOTIONTYPE_ACTION4, 70, 40, COMBO_ATTACK4); // ƒRƒ“ƒ{4
+		}
+	}
+
+	// ƒWƒƒƒ“ƒvUŒ‚‚Å‚«‚é‚©”»’è
+	const bool isJumpAttack = bNohand == false && g_player.bJump == false && g_player.Combostate == COMBO_NO;
+
+	if (isJumpAttack == true && (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)))
+	{
+		ResetMeshSword();
+		PlayerComb(MOTIONTYPE_JUMPACTION, 70, 70, COMBO_ATTACK4);
+	}
+
+	// UŒ‚‚µ‚Ä‚¢‚È‚¢‚©‚Âè‚É“Š“I•Ší‚ğ‚Á‚Ä‚¢‚é
+	const bool canAction = g_player.Combostate == COMBO_NO && bNohand == true && g_player.Motion.nNumModel == MAX_MODEL;
+
+	// “Š‚°•¨‚ğ‚Á‚Ä‚¢‚é‚Æ‚«‚ÌUŒ‚
+	if ((OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)) && canAction == true)
+	{
+		PlayerComb(MOTIONTYPE_ACTION, 40, 20, COMBO_ATTACK1); // ƒRƒ“ƒ{1
+	}
+
+	// ƒWƒƒƒ“ƒvƒAƒNƒVƒ‡ƒ“‚Ìİ’è
+	SetUpJumpAction(nKey, nCounter, EndKey, EndFrame);
+}
+//===============================================================================================================
+// ƒWƒƒƒ“ƒvƒAƒNƒVƒ‡ƒ“‚Ìİ’è
+//===============================================================================================================
+void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
+{
+	// ƒWƒƒƒ“ƒvƒ‚[ƒVƒ‡ƒ“‚©
+	const bool isJumpMotion = g_player.Motion.motiontypeBlend == MOTIONTYPE_JUMPACTION && g_player.Motion.bFirstMotion == false;
+
+	// “‚ÌƒWƒƒƒ“ƒvƒ‚[ƒVƒ‡ƒ“‚©
+	const bool isKatanaMotion = g_player.WeponMotion == MOTION_KATANA && isJumpMotion;
+
+	if (isKatanaMotion && nKey == 0 && nCounter <= 5)
+	{
+		g_player.move.y = 5.0f;
+	}
+
+	// —¼è•Ší‚ÌƒWƒƒƒ“ƒvƒ‚[ƒVƒ‡ƒ“‚©
+	const bool isDouble = g_player.WeponMotion == MOTION_DBHAND && isJumpMotion;
+
+	if (isDouble && nKey == 0 && nCounter <= 5)
+	{
+		g_player.move.y = 5.0f;
+	}
+	else if (isDouble && nKey >= 1 && nKey <= 4)
+	{
+		g_player.move.y = -MAX_GLABITY * 0.2f;
+	}
+
+	// ‘„•Ší•Ší‚ÌƒWƒƒƒ“ƒvƒ‚[ƒVƒ‡ƒ“‚©
+	const bool isSpear = g_player.WeponMotion == MOTION_PIERCING && isJumpMotion;
+
+	if (isSpear && nKey == 0 && nCounter <= 5)
+	{
+		g_player.move.y = -MAX_GLABITY * 0.2f;
+	}
+	else if (isSpear && nKey >= 1)
+	{
+		//g_player.move.x = sinf(g_player.rot.y);
+	}
+}
+//===============================================================================================================
 // ƒvƒŒƒCƒ„[‚ªUŒ‚ó‘Ô‚©
 //===============================================================================================================
 bool isPlayerAttaking(void)
@@ -3266,8 +3345,11 @@ bool isPlayerAttaking(void)
 	// ƒ‚[ƒVƒ‡ƒ“ƒ^ƒCƒv4‚ªƒAƒNƒVƒ‡ƒ“‚¾‚Á‚½‚ç
 	const bool isAttack4 = g_player.Motion.motionType == MOTIONTYPE_ACTION4;
 
+	// ƒ‚[ƒVƒ‡ƒ“‚ªƒWƒƒƒ“ƒvƒAƒNƒVƒ‡ƒ“‚¾‚Á‚½‚ç
+	const bool isJumpAttack = g_player.Motion.motionType == MOTIONTYPE_JUMPACTION;
+
 	// UŒ‚ó‘Ô‚©‚ğ”»’è
-	const bool isAttacking = NotFinishMotion && (isAttack1 || isAttack2 || isAttack3 || isAttack4);
+	const bool isAttacking = NotFinishMotion && (isAttack1 || isAttack2 || isAttack3 || isAttack4 || isJumpAttack);
 
 	// ”»’è‚ğ•Ô‚·
 	return isAttacking;

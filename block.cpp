@@ -372,9 +372,9 @@ void DrawBlock(void)
 		// 現在のマテリアルを取得
 		pDevice->GetMaterial(&matDef);
 
+		// カメラがブロックの近くに無かったら
 		if ((sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, g_Block[nCntBlock].Size.y) == false) || mode == MODE_TITLE)
 		{
-
 			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
 			{
 				// マテリアルのデータへのポインタを取得

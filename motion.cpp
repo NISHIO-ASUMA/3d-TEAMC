@@ -242,7 +242,8 @@ bool CheckActionMotion(MOTION *pMotion)
 	if (pMotion->motiontypeBlend != MOTIONTYPE_ACTION &&
 		pMotion->motiontypeBlend != MOTIONTYPE_ACTION2 &&
 		pMotion->motiontypeBlend != MOTIONTYPE_ACTION3 &&
-		pMotion->motiontypeBlend != MOTIONTYPE_ACTION4)
+		pMotion->motiontypeBlend != MOTIONTYPE_ACTION4 && 
+		pMotion->motiontypeBlend != MOTIONTYPE_JUMPACTION)
 	{
 		bFrag = true;
 	}

@@ -2327,6 +2327,12 @@ void UpdateScoreAndGage(int nCntEnemy)
 		// スペシャルゲージを求める
 		float spgage = isTypeSeven ? 8.0f : 4.0f;
 
+		// フィーバーゲージ
+		float fever = isFeverMode ? 0.0f : 8.0f;
+
+		// フィーバーゲージを加算
+		AddFever(fever);
+
 		// スコアを加算
 		AddScore(score);
 
@@ -2340,6 +2346,12 @@ void UpdateScoreAndGage(int nCntEnemy)
 
 		// スペシャルゲージを求める
 		float spgage = isTypeSeven ? 5.0f : 2.5f;
+
+		// フィーバーゲージ
+		float fever = isFeverMode ? 0.0f : 4.0f;
+
+		// フィーバーゲージを加算
+		AddFever(fever);
 
 		// スコアを加算
 		AddScore(score);

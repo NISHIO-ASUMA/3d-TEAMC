@@ -914,18 +914,22 @@ void DrawPlayerInfo(void)
 	char aStrBlend[256] = {};
 	char aStrmotiontype[256] = {};
 
+	int motiontype = pPlayer->Motion.motionType;
+	int nNumKey = pPlayer->Motion.aMotionInfo[motiontype].nNumkey;
+	int nKey = pPlayer->Motion.nKey;
+
 	snprintf(&aStrPos[0],sizeof(aStrPos), "プレイヤーの位置X:[ %3.2f ] Y:[ %3.2f ] Z:[ %3.2f ]\n", pPlayer->pos.x,pPlayer->pos.y,pPlayer->pos.z);
 
 	snprintf(&aStrState[0], sizeof(aStrState), "プレイヤーの状態[%d]", pPlayer->state);
-	snprintf(&aStrMotion[0], sizeof(aStrMotion), "モーションのキー[ %d ]:モーションのフレーム:[ %d ]", pPlayer->Motion.nKey, pPlayer->Motion.nCountMotion);
+	snprintf(&aStrMotion[0], sizeof(aStrMotion), "モーションのキー[ %d / %d ]:モーションのフレーム:[ %d / %d ]", nKey, nNumKey, pPlayer->Motion.nCountMotion,pPlayer->Motion.aMotionInfo[motiontype].aKeyInfo[nKey].nFrame);
 	snprintf(&aStrBlend[0], sizeof(aStrBlend), "モーションブレンドのキー[ %d ]:モーションブレンドのフレーム:[ %d ]", pPlayer->Motion.nKeyBlend, pPlayer->Motion.nCounterBlend);
 	snprintf(&aStrmotiontype[0], sizeof(aStrmotiontype), "現在のモーション:[ %d ] / ブレンドモーション:[ %d ]", pPlayer->Motion.motionType, pPlayer->Motion.motiontypeBlend);
 
-	g_pFont->DrawText(NULL, &aStrPos[0], -1, &rectPos, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
-	g_pFont->DrawText(NULL, &aStrState[0], -1, &rectState, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
-	g_pFont->DrawText(NULL, &aStrMotion[0], -1, &rectMotion, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
-	g_pFont->DrawText(NULL, &aStrBlend[0], -1, &rectBlend, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
-	g_pFont->DrawText(NULL, &aStrmotiontype[0], -1, &rectmotiontype, DT_LEFT, D3DCOLOR_RGBA(255, 255, 0, 255));
+	g_pFont->DrawText(NULL, &aStrPos[0], -1, &rectPos, DT_LEFT, COLOR_PINK);
+	g_pFont->DrawText(NULL, &aStrState[0], -1, &rectState, DT_LEFT, COLOR_PINK);
+	g_pFont->DrawText(NULL, &aStrMotion[0], -1, &rectMotion, DT_LEFT, COLOR_PINK);
+	g_pFont->DrawText(NULL, &aStrBlend[0], -1, &rectBlend, DT_LEFT, COLOR_PINK);
+	g_pFont->DrawText(NULL, &aStrmotiontype[0], -1, &rectmotiontype, DT_LEFT, COLOR_PINK);
 
 }
 //==============================================================================================================
