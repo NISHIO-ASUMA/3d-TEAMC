@@ -15,6 +15,7 @@
 #include "easing.h"
 #include "event.h"
 #include "game.h"
+#include "boss.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -637,13 +638,16 @@ void SetEventUIAnimation(int nCnt)
 		g_GameUI[nCnt].fWidth += SetSmoothAprroach(100.0f, g_GameUI[nCnt].fWidth, 0.1f);
 		g_GameUI[nCnt].fHeight += SetSmoothAprroach(30.0f, g_GameUI[nCnt].fHeight, 0.1f);
 
-		g_GameUI[nCnt].pos.x += SetSmoothAprroach(950.0f, g_GameUI[nCnt].pos.x, 0.1f);
+		g_GameUI[nCnt].pos.x += SetSmoothAprroach(1150.0f, g_GameUI[nCnt].pos.x, 0.1f);
 
-		g_GameUI[nCnt].pos.y += SetSmoothAprroach(670.0f, g_GameUI[nCnt].pos.y, 0.1f);
+		g_GameUI[nCnt].pos.y += SetSmoothAprroach(230.0f, g_GameUI[nCnt].pos.y, 0.1f);
 	}
 
-	// イベントが終わった
-	if (EnableEvent() == false)
+	// ボスの数の取得
+	int NumBoss = GetNumBoss();
+
+	// ボスがいなかったら
+	if (NumBoss <= 0)
 	{
 		g_GameUI[nCnt].bUse = false;
 	}

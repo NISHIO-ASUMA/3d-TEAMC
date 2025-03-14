@@ -311,3 +311,10 @@ Billboard* GetBillBoard()
 {
 	return &g_Billboard[0];
 }
+//=============================================
+// ターゲットの位置設定処理
+//=============================================
+void SetPositiontarget(int nIdx, D3DXVECTOR3 pos)
+{
+	g_Billboard[nIdx].pos = pos;
+}

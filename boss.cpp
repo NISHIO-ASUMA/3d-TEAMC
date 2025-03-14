@@ -76,6 +76,7 @@ void SpawnItem(D3DXVECTOR3 pos);
 Boss g_Boss[MAX_BOSS]; // ボスの情報
 MOTION g_LoadBoss;
 int nKeyBoss, nCntMotionBoss;
+int g_nNumBoss = 0;
 
 //===============================================================================================================
 // ボスの初期化処理
@@ -101,6 +102,7 @@ void InitBoss(void)
 		g_Boss[nCnt].nHitStopCount = 0;                    // ヒットストップのカウント
 		g_Boss[nCnt].BossMat = {};						   // ボスのマテリアル
 		g_Boss[nCnt].bTransparent = false;                 // ボスを透明にするフラグ
+		g_Boss[nCnt].isKillCount = true;                   // キルのカウント
 
 		for (int nCnt2 = 0; nCnt2 < MAX_ELEMENT; nCnt2++)
 		{
@@ -108,6 +110,9 @@ void InitBoss(void)
 			g_Boss[nCnt].nStateCount[nCnt2] = 0;
 		}
 	}
+
+	// ボスが何体いるか
+	g_nNumBoss = 0;
 
 	LoadBoss(); // ボスのロード
 }
@@ -526,6 +531,7 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].nMaxLife = nLife;            // 最大のHP
 			SetMotion(&g_Boss[nCnt].Motion, MOTIONTYPE_NEUTRAL, true, 10);
 			g_Boss[nCnt].move = NULLVECTOR3;
+			g_Boss[nCnt].isKillCount = true;
 
 			// 状態異常関係
 			for (int nCnt2 = 0; nCnt2 < 5; nCnt2++)
@@ -554,6 +560,7 @@ void SetBoss(D3DXVECTOR3 pos, float speed, int nLife)
 			g_Boss[nCnt].nLifeBarIdx = SetBossLife(pos,BOSSTEX_LIFE);
 			g_Boss[nCnt].nLifeFrame = SetBossLife(pos, BOSSTEX_FRAME);
 
+			g_nNumBoss++;
 			break;
 		}
 	}
@@ -595,7 +602,7 @@ void HitBoss(int nCntBoss,int nDamage)
 	GAMESTATE gamestate = GetGameState();
 
 	// ボスが死んだ
-	if (g_Boss[nCntBoss].nLife <= 0 && g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
+	if (g_Boss[nCntBoss].nLife <= 0)
 	{
 		// ゲージを消す
 		DeleateLifeBar(g_Boss[nCntBoss].nLifeBarIdx, g_Boss[nCntBoss].nLifeFrame, g_Boss[nCntBoss].nLifeDelayIdx);
@@ -609,6 +616,30 @@ void HitBoss(int nCntBoss,int nDamage)
 			7.0f, 40, 60, 20, 7.0f, 20.0f,
 			false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
+		if (g_Boss[nCntBoss].isKillCount == true)
+		{
+			if (gamestate != GAMESTATE_END)
+			{
+				if (pPlayer->FeverMode)
+				{
+					AddScore(30000);		// スコアを取得
+					AddSpgauge(10.5f);   // SPゲージを取得
+				}
+				else if (!pPlayer->FeverMode)
+				{
+					AddFever(10.0f);		// フィーバーポイントを取得
+					AddScore(15000);		// スコアを取得
+					AddSpgauge(2.0f);       // SPゲージを取得
+				}
+			}
+
+			// ボスの数を減らす
+			g_nNumBoss--;
+
+			// キルカウントを無効
+			g_Boss[nCntBoss].isKillCount = false;
+		}
+
 		// モーションがDeathじゃなかったら
 		if (g_Boss[nCntBoss].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 		{
@@ -616,22 +647,6 @@ void HitBoss(int nCntBoss,int nDamage)
 		}
 
 		g_Boss[nCntBoss].nLife = -1;
-
-		if (gamestate != GAMESTATE_END)
-		{
-			if (pPlayer->FeverMode)
-			{
-				AddScore(30000);		// スコアを取得
-				AddSpgauge(10.5f);   // SPゲージを取得
-			}
-			else if (!pPlayer->FeverMode)
-			{
-				AddFever(10.0f);		// フィーバーポイントを取得
-				AddScore(15000);		// スコアを取得
-				AddSpgauge(2.0f);       // SPゲージを取得
-			}
-		}
-
 
 		// 通常武器が当たった時のサウンド
 		SetSoundWepon(pItem[pPlayer->ItemIdx].nType);
@@ -1728,4 +1743,11 @@ void SpawnItem(D3DXVECTOR3 pos)
 Boss* Getboss(void)
 {
 	return &g_Boss[0];
+}
+//==============================================================================================================
+// ボスの数の取得
+//==============================================================================================================
+int GetNumBoss(void)
+{
+	return g_nNumBoss;
 }

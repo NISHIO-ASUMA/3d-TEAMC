@@ -16,7 +16,7 @@
 //***************************
 // マクロ定義
 //***************************
-#define MAX_BILLBOARD (256)    // 最大数
+#define MAX_BILLBOARD (356)    // 最大数
 
 //*****************************
 // ビルボードの種類の列挙型宣言
@@ -35,6 +35,7 @@ typedef enum
 {
 	BILLBOARDTYPE_FIRST = 0,
 	BILLBOARDTYPE_SECOND,
+	BILLBOARDTYPE_TARGET,
 	BILLBOARDTYPE_MAX
 }BILLBOARDTYPE;
 
@@ -45,6 +46,7 @@ static const char* BILLBOARD_TEXTURE[BILLBOARDTYPE_MAX] =
 {
 	"data\\TEXTURE\\billboard_wepon.png",
 	"data\\TEXTURE\\billboard_Key_get.png",
+	"data\\TEXTURE\\target.png",
 };
 
 //***************************
@@ -74,6 +76,6 @@ void DrawBillboard(void);		// ビルボード描画処理
 int SetBillboard(D3DXVECTOR3 pos,int nType, float fWidth, float fHeight, int state); // ビルボードの設定処理
 void DeletIdxBillboard(int nIdx);
 Billboard* GetBillBoard(); // ビルボードの情報取得
-
+void SetPositiontarget(int nIdx,D3DXVECTOR3 pos); // ターゲットの位置設定処理
 #endif 
 

@@ -21,9 +21,10 @@
 #define ENEMYFILE001 ("data\\enemy.txt")
 #define ENEMYFILE002 ("data\\enemy2.txt")
 #define ENEMYFILE003 ("data\\enemy3.txt")
-#define TERRITTORYPOS_ONE (D3DXVECTOR3(-15.0f,0.0f,890.0f)) // テリトリー1
+#define TERRITTORYPOS_ONE (D3DXVECTOR3(-611.0f,0.0f,-679.0f)) // テリトリー1
 #define TERRITTORYPOS_TWO (D3DXVECTOR3(-873.0f,0.0f,671.0f)) // テリトリー2
 #define TERRITTORYPOS_THREE (D3DXVECTOR3(730.0f,0.0f,1157.0f)) // テリトリー3
+#define TERRITTORYPOS_FOUR (D3DXVECTOR3(783.0f,0.0f,-810.0f)) // テリトリー4
 
 //**************************************************************************************************************
 //敵の攻撃状態
@@ -113,6 +114,7 @@ typedef struct
 	int HitStopCount;    // ヒットストップ
 	int TerritoryNumber; // テリトリーの番号
 	bool isKillCount;    // キルカウントをできるか判断
+	int nIdxtarget;		 // ターゲットのインデックス
 }ENEMY;
 
 //**************************************************************************************************************

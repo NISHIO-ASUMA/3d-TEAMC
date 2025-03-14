@@ -1096,7 +1096,7 @@ void UpdateEventCamera(void)
 		break;
 	case 3:
 		// ƒJƒƒ‰‚ğŒü‚¯‚éêŠ
-		EventCameraAngle(TERRITTORYPOS_ONE);
+		EventCameraAngle(TERRITTORYPOS_FOUR);
 		break;
 	default:
 		break;

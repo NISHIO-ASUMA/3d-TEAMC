@@ -75,6 +75,7 @@ typedef struct
 	D3DXMATERIAL BossMat; // ボスのマテリアル
 	bool bTransparent;    // 透明にしていくフラグ
 	int nIdxCylinder;     // シリンダーのインデックス
+	bool isKillCount;     // キルのカウント
 }Boss;
 
 //**************************************************************************************************************
@@ -87,4 +88,5 @@ void DrawBoss(void);									// ボスの描画処理
 void SetBoss(D3DXVECTOR3 pos, float speed,int nLife);	// ボスの設定処理
 void HitBoss(int nCnt,int nDamage);						// ボスのヒット処理
 Boss* Getboss(void);									// ボスの取得処理
+int GetNumBoss(void);									// ボスの数の取得
 #endif

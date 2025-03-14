@@ -39,6 +39,7 @@
 #include <cassert>
 #include "count.h"
 #include "event.h"
+#include "billboard.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -84,6 +85,8 @@ void NormalizeNumEnemy(void);																				 // 敵の数の正規化
 bool KeepInTerritory(int nCntEnemy);																		 // テリトリーの中から出さない処理
 void SetSpawnCount(void);																					 // スポーンカウントの設定
 void SetTerritoryparam(int nTerritoryIdx,D3DXVECTOR3 pos, int SpawnerPos,bool bSetBoss);					 // テリトリーの設定
+void OutTerritorySpawner(int nSpawner);																		 // テリトリーの外のスポナー
+void UpdateTargetPosition(int nCntEnemy);																	 // ターゲットの位置の更新
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -128,6 +131,7 @@ void InitEnemy(void)
 		g_Enemy[nCntEnemy].nIdxShadow = -1;
 		g_Enemy[nCntEnemy].TerritoryNumber = -1;                  // テリトリーの番号
 		g_Enemy[nCntEnemy].isKillCount = true;                    // キルカウントをできるかできないか
+		g_Enemy[nCntEnemy].nIdxtarget = 0;						  // ターゲットのインデックス
 	}
 
 	//グローバル変数の初期化
@@ -384,6 +388,9 @@ void UpdateEnemy(void)
 			UpdateKickAttack(nCntEnemy);
 		}
 
+		// ターゲットの位置の更新
+		UpdateTargetPosition(nCntEnemy);
+
 		// 敵の角度の正規化
 		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
 		{
@@ -544,12 +551,6 @@ void HitEnemy(int nCnt,int nDamage)
 
 	GAMESTATE gamestate = GetGameState();
 
-	// ダメージを設定
-	SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), // 位置
-		nDamage,	// ダメージ																								
-		20,			// 寿命
-		false);		
-
 	g_Enemy[nCnt].nLife -= nDamage;
 
 	// パーティクルをセット
@@ -570,11 +571,29 @@ void HitEnemy(int nCnt,int nDamage)
 		// キルカウントをできる
 		if (g_Enemy[nCnt].isKillCount == true)
 		{
+			// ビルボードの消去
+			DeletIdxBillboard(g_Enemy[nCnt].nIdxtarget);
+			
+			// ランダム
+			int randum_spawner = rand() % 4;
+
+			// スポナーから敵を出す
+			OutTerritorySpawner(randum_spawner);
+
+			// ダメージを設定
+			SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), // 位置
+				nDamage,	// ダメージ																								
+				20,			// 寿命
+				false);
+
 			// テリトリーの敵の減少処理
 			DecreaseTerritoryEnemy(nCnt);
 
 			// カウントを止める
 			g_Enemy[nCnt].isKillCount = false;
+
+			// 敵の数を減らす
+			g_nNumEnemy--;
 		}
 
 		if (g_Enemy[nCnt].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
@@ -683,9 +702,6 @@ void HitEnemy(int nCnt,int nDamage)
 //=========================================================================================================
 void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed,int TerritoryNumber)
 {
-	// 現在のモードの取得
-	MODE mode = GetMode();
-
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		if (g_Enemy[nCntEnemy].bUse == false)
@@ -705,6 +721,13 @@ void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed,int TerritoryNumbe
 			g_Enemy[nCntEnemy].isKillCount = true;					// キルカウントをリセット
 
 			g_Enemy[nCntEnemy].rotDest.y = (float)(rand()% 628 - 314) * 0.01f;	  // 角度
+
+			// テリトリーの敵だったら
+			if (TerritoryNumber != -1)
+			{
+				// ビルボードをセット
+				g_Enemy[nCntEnemy].nIdxtarget = SetBillboard(g_Enemy[nCntEnemy].pos,BILLBOARDTYPE_TARGET,5.0f,5.0f,BILLBOARDSTATE_SET);
+			}
 
 			if (nType == ENEMYTYPE_SIX)
 			{
@@ -773,19 +796,18 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 		}
 		else if (nSpawner == 3)
 		{
-			//// 位置Xを求める
-			//float fPosX = TERRITTORYPOS_ONE.x + (float)(rand() % 10);
+			// 位置Xを求める
+			float fPosX = TERRITTORYPOS_FOUR.x + (float)(rand() % 10);
 
-			//// 位置Zを求める
-			//float fPosZ = TERRITTORYPOS_ONE.z + (float)(rand() % 10);
+			// 位置Zを求める
+			float fPosZ = TERRITTORYPOS_FOUR.z + (float)(rand() % 10);
 
-			//// 位置を代入
-			//D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
+			// 位置を代入
+			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
 
-			//SetEnemy(D3DXVECTOR3(-899.0f, 0.0f, 182.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			//SetEnemy(D3DXVECTOR3(-592.0f, 0.0f, -747.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
-			//SetEnemy(D3DXVECTOR3(329.0f, 0.0f, 1283.0f), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f));
+			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
 		}
+
 		// テリトリーの敵の数を加算
 		g_Territory[TerritoryIdx].nNumEnemy++;
 	}
@@ -1657,7 +1679,7 @@ void UpdateEnemySpawn(void)
 	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
 	{
 		// 敵のテリトリーの位置を決める
-		int SpawnPos = rand() % 3;
+		int SpawnPos = rand() % NUM_SPAWNPOSITION;
 
 		// テリトリーの位置が前の位置と同じだったら
 		if (SpawnPos == OldPos)
@@ -1666,7 +1688,7 @@ void UpdateEnemySpawn(void)
 			while (SpawnPos == OldPos)
 			{
 				// 別のテリトリーになるまで抽選
-				SpawnPos = rand() % 3;
+				SpawnPos = rand() % NUM_SPAWNPOSITION;
 			}
 		}
 
@@ -1701,6 +1723,10 @@ void UpdateEnemySpawn(void)
 		case 2:
 			// テリトリーの設定
 			SetTerritoryparam(nCnt, TERRITTORYPOS_THREE, SpawnPos, EnableSetBoss);
+			break;
+		case 3:
+			// テリトリーの設定
+			SetTerritoryparam(nCnt, TERRITTORYPOS_FOUR, SpawnPos, EnableSetBoss);
 			break;
 		default:
 			break;
@@ -1963,12 +1989,10 @@ void SetCreateWeponSound(int nType)
 		// 音楽再生
 		PlaySound(SOUND_LABEL_HAMMER_SE);
 		break;
-
 	case ITEMTYPE_BONESPEAR: // 骨の槍
 		// 音楽再生
 		PlaySound(SOUND_LABEL_SPEARWEPON);
 		break;
-
 	case ITEMTYPE_HEXMANDOLIN: // 呪物とマンドリンの合成
 		// 音楽再生
 		PlaySound(SOUND_LABEL_MUSICWEPON);
@@ -2136,6 +2160,65 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 
 	// テリトリーの中心の位置
 	g_Territory[nTerritoryIdx].pos = pos;
+}
+//==============================================================================================================
+// テリトリーの外のスポナー
+//==============================================================================================================
+void OutTerritorySpawner(int nSpawner)
+{
+	float randum_valueX = (float)(rand() % 10);
+	float randum_valueZ = (float)(rand() % 10);
+
+	if (g_nNumEnemy <= MAX_ENEMY / 2)
+	{
+		// スポナーの設定
+		switch (nSpawner)
+		{
+		case 0:
+			// 敵をセット
+			SetEnemy(D3DXVECTOR3(1094.0f + randum_valueX, 0.0f, 288.0f + randum_valueZ), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
+			break;
+		case 1:
+			// 敵をセット
+			SetEnemy(D3DXVECTOR3(-243.0f + randum_valueX, 0.0f, 169.0f + randum_valueZ), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
+			break;
+		case 2:
+			// 敵をセット
+			SetEnemy(D3DXVECTOR3(135.0f + randum_valueX, 0.0f, -936.0f + randum_valueZ), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
+			break;
+		case 3:
+			// 敵をセット
+			SetEnemy(D3DXVECTOR3(-118.0f + randum_valueX, 0.0f, 890.0f + randum_valueZ), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
+			break;
+		default:
+			break;
+		}
+	}
+}
+//==============================================================================================================
+// ターゲットの位置の更新
+//==============================================================================================================
+void UpdateTargetPosition(int nCntEnemy)
+{
+	// テリトリー内の敵じゃ勝ったら
+	if (g_Enemy[nCntEnemy].TerritoryNumber == -1)
+	{
+		// 関数を抜ける
+		return;
+	}
+
+	// ドローンの敵
+	if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
+	{
+		// ターゲットの位置設定処理
+		SetPositiontarget(g_Enemy[nCntEnemy].nIdxtarget, D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + 40.0f, g_Enemy[nCntEnemy].pos.z));
+	}
+	// それ以外
+	else
+	{
+		// ターゲットの位置設定処理
+		SetPositiontarget(g_Enemy[nCntEnemy].nIdxtarget, D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, g_Enemy[nCntEnemy].pos.y + 70.0f, g_Enemy[nCntEnemy].pos.z));
+	}
 }
 //==============================================================================================================
 // ボスがいるテリトリーの消去
