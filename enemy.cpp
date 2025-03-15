@@ -90,7 +90,6 @@ void OutTerritorySpawner(int nSpawner);																		 // ƒeƒŠƒgƒŠ[‚ÌŠO‚ÌƒXƒ
 void UpdateTargetPosition(int nCntEnemy);																	 // ƒ^[ƒQƒbƒg‚ÌˆÊ’u‚ÌXV
 void UpdateTerritoryMark(void);																				 // ƒeƒŠƒgƒŠ[‚Éƒ}[ƒN‚·‚é
 void UpdateScoreAndGage(int nCntEnemy);																		 // “G‚ğ“|‚µ‚½‚Æ‚«‚ÌƒXƒRƒA‚ÆƒQ[ƒW‚ÌXVˆ—
-void SetUpHitStop(int nCntEnemy);																			 // ƒqƒbƒgƒXƒgƒbƒv‚Ìİ’èˆ—
 
 //**************************************************************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -565,6 +564,8 @@ void HitEnemy(int nCnt,int nDamage)
 
 	GAMESTATE gamestate = GetGameState();
 
+	if (g_Enemy[nCnt].state == ENEMYSTATE_DAMAGE) return;
+
 	g_Enemy[nCnt].nLife -= nDamage;
 
 	// ƒp[ƒeƒBƒNƒ‹‚ğƒZƒbƒg
@@ -608,32 +609,45 @@ void HitEnemy(int nCnt,int nDamage)
 
 			// ƒJƒEƒ“ƒg‚ğ~‚ß‚é
 			g_Enemy[nCnt].isKillCount = false;
-		}
 
-		// “G‚ğ“|‚µ‚½‚Æ‚«‚ÌƒXƒRƒA‚ÆƒQ[ƒW‚ÌXVˆ—
-		UpdateScoreAndGage(nCnt);
+			// €–Sƒ‚[ƒVƒ‡ƒ“‚ª–³‚¢“G
+			if (g_Enemy[nCnt].nType == ENEMYTYPE_SIX || g_Enemy[nCnt].nType == ENEMYTYPE_SEVEN)
+			{
+				g_Enemy[nCnt].bUse = false;
+
+				// “G‚Ì‰e‚ğÁ‚·
+				KillShadow(g_Enemy[nCnt].nIdxShadow);
+
+				// ƒ}ƒbƒv‚©‚çÁ‚·
+				EnableMap(g_Enemy[nCnt].nIdxMap);
+			}
+
+			// ˆÅ‘®«‚¾‚Á‚½‚ç
+			if (pPlayer->nElement == WEPONELEMENT_DARK)
+			{
+				LoadEffect(1, D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + 50.0f, g_Enemy[nCnt].pos.z));
+			}
+			else
+			{
+				SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z),
+					g_Enemy[nCnt].rot,
+					D3DXVECTOR3(3.14f, 3.14f, 3.14f),
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+					4.0f, 8, 15, 20, 5.0f, 0.0f,
+					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			}
+
+			// “G‚ğ“|‚µ‚½‚Æ‚«‚ÌƒXƒRƒA‚ÆƒQ[ƒW‚ÌXVˆ—
+			UpdateScoreAndGage(nCnt);
+
+		}
 
 		// ƒ‚[ƒVƒ‡ƒ“‚Ìí—Ş‚ª€–S‚¶‚á‚È‚©‚Á‚½‚ç
 		if (g_Enemy[nCnt].Motion.motiontypeBlend != MOTIONTYPE_DEATH)
 		{
 			SetMotion(&g_Enemy[nCnt].Motion, MOTIONTYPE_DEATH, true, 10);
 		}
-
-		if (pPlayer->nElement == WEPONELEMENT_DARK)
-		{
-			LoadEffect(1,D3DXVECTOR3(g_Enemy[nCnt].pos.x,g_Enemy[nCnt].pos.y + 50.0f,g_Enemy[nCnt].pos.z));
-		}
-		else
-		{
-			SetParticle(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z),
-				g_Enemy[nCnt].rot,
-				D3DXVECTOR3(3.14f, 3.14f, 3.14f),
-				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-				4.0f, 8, 15, 20, 5.0f, 0.0f,
-				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-		}
-
 
 		g_Enemy[nCnt].state = ENEMYSTATE_DEATH; // “G‚Ìó‘Ô‚ğ€–Só‘Ô‚É‚·‚é
 		//KillShadow(g_Enemy[nCnt].nIdxShadow);   // “G‚Ì‰e‚ğÁ‚·
@@ -648,7 +662,7 @@ void HitEnemy(int nCnt,int nDamage)
 			SetCreateWeponSound(pItem[pPlayer->ItemIdx].nType);
 
 			// ƒqƒbƒgƒXƒgƒbƒv‚Ìİ’è
-			SetUpHitStop(nCnt);
+			SetUpHitStop(&g_Enemy[nCnt].HitStopCount);
 
 			g_bSound = true;
 		}
@@ -656,8 +670,11 @@ void HitEnemy(int nCnt,int nDamage)
 	}
 	else
 	{
-		// ƒqƒbƒgƒXƒgƒbƒv‚Ìİ’è
-		SetUpHitStop(nCnt);
+		if (g_Enemy[nCnt].state != ENEMYSTATE_DAMAGE)
+		{
+			// ƒqƒbƒgƒXƒgƒbƒv‚Ìİ’è
+			SetUpHitStop(&g_Enemy[nCnt].HitStopCount);
+		}
 
 		if (g_bSound == false) // ‚à‚µ‚»‚ÌƒtƒŒ[ƒ€’†ˆê“x‚à‰¹‚ª–Â‚ç‚³‚ê‚Ä‚È‚¢‚È‚ç–Â‚ç‚·
 		{
@@ -2024,10 +2041,13 @@ void DeletTerritory(void)
 	// ƒeƒŠƒgƒŠ[‚Ì”‰ñ‚·
 	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
 	{
-		if (g_Territory[nCnt].nNumEnemy <= 0 && g_Territory[nCnt].bBoss == false)
+		if (g_Territory[nCnt].nNumEnemy <= 0 && g_Territory[nCnt].bBoss == false && g_Territory[nCnt].bUse == true)
 		{
 			assert(g_Territory[nCnt].CylinderIdx >= 0 && "ƒeƒŠƒgƒŠ[IdxƒI[ƒo[ƒ‰ƒ“");
 			DeleteCylinder(g_Territory[nCnt].CylinderIdx);
+
+			// ƒXƒRƒA‚ğ‰ÁZ
+			AddScore(100000);
 
 			// g—pó‘Ô‚É‚·‚é
 			g_Territory[nCnt].bUse = false;
@@ -2285,7 +2305,6 @@ void UpdateTerritoryMark(void)
 	// –Ú“I‚ÌŠp“x‚É‘ã“ü
 	pMark->rotDest.y = fAngle;
 
-
 	// ƒeƒŠƒgƒŠ[‚ª–¢g—pó‘Ô‚¾‚Á‚½‚ç
 	if (g_Territory[0].bUse == false && g_Territory[1].bUse == false)
 	{
@@ -2305,6 +2324,10 @@ void UpdateTerritoryMark(void)
 			// ƒeƒŠƒgƒŠ[‚ÌŠO‚¾‚Á‚½‚çg—pó‘Ô
 			pMark->bUse = true;
 		}
+	}
+	if (isPlayerAttaking() == true)
+	{
+		pMark->bUse = false;
 	}
 }
 //==============================================================================================================
@@ -2377,7 +2400,7 @@ void UpdateScoreAndGage(int nCntEnemy)
 //==============================================================================================================
 // ƒqƒbƒgƒXƒgƒbƒv‚Ìİ’èˆ—
 //==============================================================================================================
-void SetUpHitStop(int nCntEnemy)
+void SetUpHitStop(int* pHitStopCount)
 {
 	Player* pPlayer = GetPlayer();
 
@@ -2388,7 +2411,7 @@ void SetUpHitStop(int nCntEnemy)
 	const bool isOneHandSP = pPlayer->WeponMotion == MOTION_ONEHANDBLOW;
 
 	// “G‚ÌƒqƒbƒgƒXƒgƒbƒv
-	g_Enemy[nCntEnemy].HitStopCount = isOneHandSP ? 25 : 0;
+	*pHitStopCount = isOneHandSP ? 25 : 0;
 
 	// ƒvƒŒƒCƒ„[‚ÌƒqƒbƒgƒXƒgƒbƒv
 	pPlayer->HitStopCount = isOneHandSP ? 25 : 0;
@@ -2400,7 +2423,7 @@ void SetUpHitStop(int nCntEnemy)
 	const bool isDoubleSP = pPlayer->WeponMotion == MOTION_SPDOUBLE && pPlayer->Motion.nKey >= 5;
 
 	// “G‚ÌƒqƒbƒgƒXƒgƒbƒv
-	g_Enemy[nCntEnemy].HitStopCount = isDoubleSP ? 15 : 0;
+	*pHitStopCount = isDoubleSP ? 15 : 0;
 
 	// ƒvƒŒƒCƒ„[‚ÌƒqƒbƒgƒXƒgƒbƒv
 	pPlayer->HitStopCount = isDoubleSP ? 15 : 0;
@@ -2412,7 +2435,7 @@ void SetUpHitStop(int nCntEnemy)
 	const bool isHunmerSP = pPlayer->WeponMotion == MOTION_SPHAMMER;
 
 	// “G‚ÌƒqƒbƒgƒXƒgƒbƒv
-	g_Enemy[nCntEnemy].HitStopCount = isHunmerSP ? 5 : 0;
+	*pHitStopCount = isHunmerSP ? 5 : 0;
 
 	// ƒvƒŒƒCƒ„[‚ÌƒqƒbƒgƒXƒgƒbƒv
 	pPlayer->HitStopCount = isHunmerSP ? 10 : 0;
@@ -2424,7 +2447,7 @@ void SetUpHitStop(int nCntEnemy)
 	const bool isKatanaSP = pPlayer->WeponMotion == MOTION_SP && pPlayer->Motion.nKey >= 4;
 
 	// “G‚ÌƒqƒbƒgƒXƒgƒbƒv
-	g_Enemy[nCntEnemy].HitStopCount = isKatanaSP ? 15 : 0;
+	*pHitStopCount = isKatanaSP ? 15 : 0;
 
 	// ƒvƒŒƒCƒ„[‚ÌƒqƒbƒgƒXƒgƒbƒv
 	pPlayer->HitStopCount = isKatanaSP ? 15 : 0;
@@ -2436,13 +2459,37 @@ void SetUpHitStop(int nCntEnemy)
 	const bool isSpearSP = pPlayer->WeponMotion == MOTION_SPPIERCING;
 
 	// “G‚ÌƒqƒbƒgƒXƒgƒbƒv
-	g_Enemy[nCntEnemy].HitStopCount = isSpearSP ? 15 : 0;
+	*pHitStopCount = isSpearSP ? 15 : 0;
 
 	// ƒvƒŒƒCƒ„[‚ÌƒqƒbƒgƒXƒgƒbƒv
 	pPlayer->HitStopCount = isSpearSP ? 15 : 0;
 	
 	// İ’è‚ªŠ®—¹‚µ‚½
 	if (isSpearSP == true) return;
+
+	// UŒ‚ƒ‚[ƒVƒ‡ƒ“1
+	const bool isAttack1 = pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION;
+
+	// “G‚ÌƒqƒbƒgƒXƒgƒbƒv
+	*pHitStopCount = isAttack1 ? 4 : 0;
+
+	// ƒvƒŒƒCƒ„[‚ÌƒqƒbƒgƒXƒgƒbƒv
+	pPlayer->HitStopCount = isAttack1 ? 4 : 0;
+
+	// İ’è‚ªŠ®—¹‚µ‚½
+	if (isAttack1 == true) return;
+
+	// UŒ‚ƒ‚[ƒVƒ‡ƒ“4
+	const bool isAttack4 = pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION4;
+
+	// “G‚ÌƒqƒbƒgƒXƒgƒbƒv
+	*pHitStopCount = isAttack4 ? 4 : 0;
+
+	// ƒvƒŒƒCƒ„[‚ÌƒqƒbƒgƒXƒgƒbƒv
+	pPlayer->HitStopCount = isAttack4 ? 4 : 0;
+
+	// İ’è‚ªŠ®—¹‚µ‚½
+	if (isAttack4 == true) return;
 
 }
 //==============================================================================================================

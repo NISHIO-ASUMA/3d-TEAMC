@@ -34,10 +34,11 @@
 //**************************************************************************************************************
 //プロトタイプ宣言
 //**************************************************************************************************************
-void UIFlash(int nType);	// 点滅処理
-void UpdateDestroyUI(int nCnt); // 武器が壊れた時のUI
-void SetEventUIAnimation(int nCnt);   // イベントのUIの設定
-void SetTutoUIAnimation(int nCnt); // チュートリアルUIのアニメーション
+void UIFlash(int nType);				// 点滅処理
+void UpdateDestroyUI(int nCnt);			// 武器が壊れた時のUI
+void SetEventUIAnimation(int nCnt);		// イベントのUIの設定
+void SetTutoUIAnimation(int nCnt);		// チュートリアルUIのアニメーション
+void SetDamageUIAnimation(int nCnt);	// ダメージUIの設定
 float fcolorA;
 
 //**************************************************************************************************************
@@ -338,6 +339,11 @@ void UpdateGameUI(void)
 				// spがたまっていなかったら大きさを0にして見えなくする
 				g_GameUI[nCnt].fHeight = pPlayer->SpMode ? UITYPE_SPHEIGHT : 0.0f;
 				break;
+
+			case UITYPE_DAMAGE:
+				// ダメージUIの設定
+				SetDamageUIAnimation(nCnt);
+				break;
 			}
 
 			// 寿命がある
@@ -395,11 +401,23 @@ void DrawGameUI(void)
 		// 種類
 		int nType = g_GameUI[nCnt].nType;
 
-		// テクスチャの設定
-		pDevice->SetTexture(0, g_pTextureGameUI[nType]);
+		// ダメージUIじゃなかったら
+		if (nType != UITYPE_DAMAGE)
+		{
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureGameUI[nType]);
 
-		// ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
+		}
+		// ダメージUIだったら
+		else
+		{
+			pDevice->SetTexture(0, g_pTextureGameUI[nType]);
+
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCnt, 2); // プリミティブの種類
+		}
 	}
 }
 //==============================================================================================================
@@ -716,4 +734,44 @@ void SetTutoUIAnimation(int nCnt)
 
 	//頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
+}
+//==============================================================================================================
+// ダメージUIの設定
+//==============================================================================================================
+void SetDamageUIAnimation(int nCnt)
+{
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
+
+	VERTEX_2D* pVtx;
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 目的のアルファ値
+	static float fDestAlv = 0.0f;
+
+	// 現在のアルファ値
+	static float fAlv = 0.0f;
+
+	// 状態がダメージだったら
+	const bool isDamage = pPlayer->state == PLAYERSTATE_DAMAGE;
+
+	// ダメージ状態だったら
+	fDestAlv = isDamage ? 0.5f : 0.0f;
+
+	// 目的の値に知被ける
+	fAlv += SetSmoothAprroach(fDestAlv, fAlv, 0.1f);
+
+	pVtx += 4 * nCnt;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
+
 }

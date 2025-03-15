@@ -145,7 +145,7 @@ void DrawMark(void)
 	D3DXMatrixMultiply(&g_Mark.mtxWorld, &g_Mark.mtxWorld, &mtxRot);
 
 	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, pPlayer->pos.x, pPlayer->pos.y + 100.0f, pPlayer->pos.z);
+	D3DXMatrixTranslation(&mtxTrans, pPlayer->pos.x, pPlayer->pos.y + 150.0f, pPlayer->pos.z);
 	D3DXMatrixMultiply(&g_Mark.mtxWorld, &g_Mark.mtxWorld, &mtxTrans);
 
 	//ワールドマトリックスの設定

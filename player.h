@@ -15,7 +15,7 @@
 #include"model.h"
 #include"motion.h"
 #include "enemy.h"
-#include"item.h"
+#include "item.h"
 
 //**************************
 //マクロ定義
@@ -24,11 +24,11 @@
 #define WIDTH (100.0f) //壁の横幅
 #define HEIGHT (100.0f) //壁の高さ
 #define MAX_MODEL (16)
-#define MAX_ITEM (256)
 #define ATTACKER_ENEMY (0)      // 攻撃してきたのが敵
 #define ATTACKER_BOSS (1)       // 攻撃してきたのがボス
 #define MAX_GLABITY (1.0f)      // 重力
 #define ITEMTYPE_NONEXISTENT (4096) // 存在しないアイテムの種類
+#define ITEM_MAX (456)
 
 //**************************************************************************************************************
 //ライフの種類
@@ -200,7 +200,7 @@ typedef struct
 	int WeponMotion; // 武器ごとのモーション
 	int nStockDamage;
 	float fStockSpeed;
-	bool Itembreak[MAX_ITEM];
+	bool Itembreak[ITEM_MAX];
 	bool FeverMode;
 	bool SpMode;
 	bool AttackSp;

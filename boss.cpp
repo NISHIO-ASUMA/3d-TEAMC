@@ -576,6 +576,8 @@ void HitBoss(int nCntBoss,int nDamage)
 	// アイテムの取得
 	Item* pItem = GetItem();
 
+	if (g_Boss[nCntBoss].state == BOSSSTATE_DAMAGE) return;
+
 	if (g_Boss[nCntBoss].nStateCount[4] > 0)
 	{
 		// HPを減らす
@@ -660,6 +662,9 @@ void HitBoss(int nCntBoss,int nDamage)
 	}
 	else
 	{
+		// ヒットストップのカウントの設定
+		SetUpHitStop(&g_Boss[nCntBoss].nHitStopCount);
+
 		HitBossAbnormalCondition(nCntBoss);
 
 		// 通常武器が当たった時のサウンド
@@ -675,8 +680,9 @@ void HitBoss(int nCntBoss,int nDamage)
 
 		g_Boss[nCntBoss].state = ENEMYSTATE_DAMAGE;
 		g_Boss[nCntBoss].nCounterState = 20;
-		g_Boss[nCntBoss].nHitStopCount = 8;
 		AddSpgauge(1.0f);   // SPゲージを取得
+
+		return;
 	}
 }
 //===============================================================================================================

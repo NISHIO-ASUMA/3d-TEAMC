@@ -200,6 +200,8 @@ void InitPlayer(void)
 
 	// 矢印を設定
 	SetMark(g_player.pos, g_player.rot);
+	SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_DAMAGE, 740.0f, 460.0f, false, 0);
+
 }
 //===============================================================================================================
 //プレイヤーの終了処理
@@ -734,6 +736,9 @@ void HitPlayer(int nDamage,bool SetDamageMotion, int AttackerIdx, int AttackerTy
 
 		// プレイヤーの状態をダメージにする
 		g_player.state = PLAYERSTATE_DAMAGE;
+
+		// カメラを揺らす
+		WaveCamera(15);
 
 		// 吹っ飛べるなら
 		if (SetDamageMotion == true)
@@ -2886,11 +2891,11 @@ void UpdatePlayerAvoid(void)
 	// ニュートラルモーションかを判定
 	const bool NotNeutral = g_player.Motion.motionType != MOTIONTYPE_NEUTRAL;
 
-	// モーションが終わったかどうかを判定
-	const bool NotFinish = g_player.Motion.bFinishMotion == false;
+	//// モーションが終わったかどうかを判定
+	//const bool NotFinish = g_player.Motion.bFinishMotion == false;
 
 	// 回避モーションを発動できるかを判定
-	const bool CanAvoid = NotAvoid == true && NotNeutral == true && NotFinish == true && g_player.AttackSp == false && g_player.nLife > 0;
+	const bool CanAvoid = NotAvoid == true && NotNeutral == true  && g_player.AttackSp == false && g_player.nLife > 0;
 
 	// モーションが回避じゃない
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)
@@ -2898,6 +2903,8 @@ void UpdatePlayerAvoid(void)
 		// 音楽再生
 		PlaySound(SOUND_LABEL_AVOIDSE);
 
+		// 無敵
+		g_player.bAvoid = true;
 		g_player.bstiffness = false;
 		g_player.avoidMove = SetMotionMoveAngle();
 
@@ -3336,7 +3343,25 @@ void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
 		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 20.0f;
 	}
 
+	// 大型武器のジャンプモーションか
+	const bool isBigWepon = g_player.WeponMotion == MOTION_BIGWEPON && isJumpMotion;
 
+	if (isBigWepon && nKey == 0 && nCounter == 1)
+	{
+		g_player.move.y = 10.0f;
+	}
+	else if (isBigWepon && nKey == 1 && nCounter == 5)
+	{
+		g_player.move.y = 10.0f;
+	}
+
+	// 大型武器のジャンプモーションか
+	const bool isoneHand = g_player.WeponMotion == MOTION_ONE_HAND && isJumpMotion;
+
+	if (isoneHand && nKey <= nLastKey)
+	{
+		g_player.move.y = -MAX_GLABITY * 0.5f;
+	}
 }
 //===============================================================================================================
 // プレイヤーが攻撃状態か

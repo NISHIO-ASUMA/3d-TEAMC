@@ -33,6 +33,7 @@ typedef enum
 	UITYPE_DESTORY,
 	UITYPE_EVENT,
 	UITYPE_SP,
+	UITYPE_DAMAGE,
 	UITYPE_MAX
 }UITYPE;
 
@@ -55,6 +56,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\ui_weponbreak.png",
 	"data\\TEXTURE\\ui_event_1.png",
 	"data\\TEXTURE\\SP_Key_1.png",
+	"data\\TEXTURE\\damage.png",
 };
 
 //**************************************************************************************************************

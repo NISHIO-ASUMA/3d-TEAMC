@@ -19,7 +19,7 @@
 //É}ÉNÉçíËã`
 //***************************
 //#define MAX_TEX (32)
-#define MAX_ITEM (256)
+#define MAX_ITEM (456)
 #define PARENT (5)
 
 //***************************

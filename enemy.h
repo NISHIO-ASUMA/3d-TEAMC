@@ -137,4 +137,5 @@ void SetCreateWeponSound(int nType);							  // 合成武器が当たった時のサウンド設
 void UpdateEnemySpawn(void);									  // 敵のスポナーの処理
 int GetTerritoryBossPos(void);                                    // ボスがどこに発生したか
 void SetEnableBossTerritory(bool bEnable);						  // ボスがいるテリトリーの消去
+void SetUpHitStop(int *pHitStopCount);								  // ヒットストップの設定処理
 #endif
