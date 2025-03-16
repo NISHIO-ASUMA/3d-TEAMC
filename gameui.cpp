@@ -39,6 +39,8 @@ void UpdateDestroyUI(int nCnt);			// 武器が壊れた時のUI
 void SetEventUIAnimation(int nCnt);		// イベントのUIの設定
 void SetTutoUIAnimation(int nCnt);		// チュートリアルUIのアニメーション
 void SetDamageUIAnimation(int nCnt);	// ダメージUIの設定
+void SetTerritoryTimeUI(int nCnt);		// テリトリーが出るまでの時間
+
 float fcolorA;
 
 //**************************************************************************************************************
@@ -343,6 +345,10 @@ void UpdateGameUI(void)
 			case UITYPE_DAMAGE:
 				// ダメージUIの設定
 				SetDamageUIAnimation(nCnt);
+				break;
+			case UITYPE_SETENEMYTIME:
+				// テリトリー出るまでの情報のUI
+				SetTerritoryTimeUI(nCnt);
 				break;
 			}
 
@@ -774,4 +780,19 @@ void SetDamageUIAnimation(int nCnt)
 	//頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
 
+}
+//==============================================================================================================
+// テリトリーが出るまでの時間
+//==============================================================================================================
+void SetTerritoryTimeUI(int nCnt)
+{
+	// テリトリーの数の取得
+	int NumTerritory = GetNumTeriitory();
+
+	// テリトリーの数が0胃かだったら
+	const bool isSetUI = NumTerritory <= 0;
+
+	// 大きさを設定
+	g_GameUI[nCnt].fWidth = isSetUI ? 40.0f : 0.0f;
+	g_GameUI[nCnt].fHeight = isSetUI ? 25.0f : 0.0f;
 }

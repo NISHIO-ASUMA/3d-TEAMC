@@ -101,6 +101,8 @@ bool g_bSound;
 int nCntMotionEnemy, nKeyEnemy;
 Territory g_Territory[SETNUM_TERRITORY];
 int g_nBossPos = 0;
+bool noFirstSetBoss = true;
+int g_nNumTerritory = 0;
 
 //===============================================================================================================
 // 敵の初期化処理
@@ -140,7 +142,9 @@ void InitEnemy(void)
 	//グローバル変数の初期化
 	g_nNumEnemy = 0; // 敵の数
 	g_nBossPos = 0;  // ボスがどのテリトリーにいるか
-
+	noFirstSetBoss = true; // 最初にボスを出さない処理
+	g_nNumTerritory = 0; // テリトリーのかず
+	
 	// テリトリーの数
 	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
 	{
@@ -345,7 +349,7 @@ void UpdateEnemy(void)
 		}
 
 		// アイテムが当たったか
-		if (HitThrowItem(&g_Enemy[nCntEnemy].pos,10.0f,40.0f)&& g_Enemy[nCntEnemy].state!=ENEMYSTATE_DAMAGE)
+		if (HitThrowItem(&g_Enemy[nCntEnemy].pos, 10.0f, 40.0f) && g_Enemy[nCntEnemy].state != ENEMYSTATE_DAMAGE)
 		{
 			HitEnemy(nCntEnemy, pPlayer->nDamage * (int)1.5f);
 		}
@@ -564,7 +568,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 	GAMESTATE gamestate = GetGameState();
 
-	if (g_Enemy[nCnt].state == ENEMYSTATE_DAMAGE) return;
+	if (g_Enemy[nCnt].state == ENEMYSTATE_DAMAGE || g_Enemy[nCnt].Motion.motiontypeBlend == MOTIONTYPE_DEATH) return;
 
 	g_Enemy[nCnt].nLife -= nDamage;
 
@@ -601,14 +605,8 @@ void HitEnemy(int nCnt,int nDamage)
 				20,			// 寿命
 				false);
 
-			// テリトリーの敵の減少処理
-			DecreaseTerritoryEnemy(nCnt);
-
 			// 敵の数を減らす
 			g_nNumEnemy--;
-
-			// カウントを止める
-			g_Enemy[nCnt].isKillCount = false;
 
 			// 死亡モーションが無い敵
 			if (g_Enemy[nCnt].nType == ENEMYTYPE_SIX || g_Enemy[nCnt].nType == ENEMYTYPE_SEVEN)
@@ -620,6 +618,9 @@ void HitEnemy(int nCnt,int nDamage)
 
 				// マップから消す
 				EnableMap(g_Enemy[nCnt].nIdxMap);
+
+				// テリトリーの敵の減少処理
+				DecreaseTerritoryEnemy(nCnt);
 			}
 
 			// 闇属性だったら
@@ -640,7 +641,6 @@ void HitEnemy(int nCnt,int nDamage)
 
 			// 敵を倒したときのスコアとゲージの更新処理
 			UpdateScoreAndGage(nCnt);
-
 		}
 
 		// モーションの種類が死亡じゃなかったら
@@ -666,6 +666,9 @@ void HitEnemy(int nCnt,int nDamage)
 
 			g_bSound = true;
 		}
+
+		// カウントを止める
+		g_Enemy[nCnt].isKillCount = false;
 		return;
 	}
 	else
@@ -771,6 +774,9 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 
 			// 敵をセット
 			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
+
+			// テリトリーの敵の数を加算
+			g_Territory[TerritoryIdx].nNumEnemy++;
 		}
 		// スポナー1
 		else if (nSpawner == 1)
@@ -785,6 +791,9 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
 
 			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
+
+			// テリトリーの敵の数を加算
+			g_Territory[TerritoryIdx].nNumEnemy++;
 		}
 		// スポナー2
 		else if (nSpawner == 2)
@@ -799,6 +808,9 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
 
 			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
+
+			// テリトリーの敵の数を加算
+			g_Territory[TerritoryIdx].nNumEnemy++;
 		}
 		else if (nSpawner == 3)
 		{
@@ -812,10 +824,10 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
 
 			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
-		}
 
-		// テリトリーの敵の数を加算
-		g_Territory[TerritoryIdx].nNumEnemy++;
+			// テリトリーの敵の数を加算
+			g_Territory[TerritoryIdx].nNumEnemy++;
+		}
 	}
 }
 //=========================================================================================================
@@ -1650,11 +1662,15 @@ void UpdateDeathParam(int nCntEnemy)
 		g_Enemy[nCntEnemy].move.y = 5.0f;
 	}
 
+	// 吹っ飛びの量
+	float BlowMoveX = pPlayer->AttackSp ? 4.0f : 1.0f;
+	float BlowMoveZ = pPlayer->AttackSp ? 4.0f : 1.0f;
+
 	// キーが3いないだったら
 	if (nKey <= 5)
 	{
-		float fMoveX = sinf(g_Enemy[nCntEnemy].rot.y) * 4.0f;
-		float fMoveZ = cosf(g_Enemy[nCntEnemy].rot.y) * 4.0f;
+		float fMoveX = sinf(g_Enemy[nCntEnemy].rot.y) * 4.0f + (4.0f / (float)pPlayer->nDamage) * BlowMoveX;
+		float fMoveZ = cosf(g_Enemy[nCntEnemy].rot.y) * 4.0f + (4.0f / (float)pPlayer->nDamage) * BlowMoveZ;
 
 		g_Enemy[nCntEnemy].move.x = fMoveX;
 		g_Enemy[nCntEnemy].move.z = fMoveZ;
@@ -1669,6 +1685,9 @@ void UpdateDeathParam(int nCntEnemy)
 
 		// マップから消す
 		EnableMap(g_Enemy[nCntEnemy].nIdxMap);
+
+		// テリトリーの敵の減少処理
+		DecreaseTerritoryEnemy(nCntEnemy);
 	}
 }
 //===============================================================================================================
@@ -1706,7 +1725,7 @@ void UpdateEnemySpawn(void)
 		int BossSpawnChance = rand() % 101;
 
 		// ボスが体なら && 40%の確率で出現
-		if (BossSpawnChance <= 40 && nNumBoss == 0)
+		if (BossSpawnChance <= 40 && nNumBoss == 0 && noFirstSetBoss == false)
 		{
 			// ボスを出現させる
 			EnableSetBoss = true;
@@ -1719,6 +1738,7 @@ void UpdateEnemySpawn(void)
 			// もとに戻す
 			EnableSetBoss = false;
 		}
+
 		// 敵のテリトリーを設定
 		switch (SpawnPos)
 		{
@@ -1745,6 +1765,9 @@ void UpdateEnemySpawn(void)
 		// 前回のテリトリーを代入
 		OldPos = SpawnPos;
 	}
+	
+	// 最初だけボスを出さない処理
+	noFirstSetBoss = false;
 
 	// もとに戻す
 	nNumBoss = 0;
@@ -2051,6 +2074,7 @@ void DeletTerritory(void)
 
 			// 使用状態にする
 			g_Territory[nCnt].bUse = false;
+			g_nNumTerritory--;
 		}
 	}
 }
@@ -2062,7 +2086,7 @@ void DecreaseTerritoryEnemy(int nCntEnemy)
 	// テリトリーの数ぶん回す
 	for (int nCntTerritory = 0; nCntTerritory < SETNUM_TERRITORY; nCntTerritory++)
 	{
-		if (g_Enemy[nCntEnemy].TerritoryNumber == g_Territory[nCntTerritory].nNumber && g_Enemy[nCntEnemy].isKillCount == true)
+		if (g_Enemy[nCntEnemy].TerritoryNumber == g_Territory[nCntTerritory].nNumber)
 		{
 			g_Territory[nCntTerritory].nNumEnemy--;
 		}
@@ -2114,13 +2138,20 @@ void SetSpawnCount(void)
 	// スポーンのカウンター
 	static int SpawnCnt = 0;
 
+	// 時間の取得
+	int nSecond = GetTimeSecond();
+	int nMinute = GetTimeMinute();
+
+	// 時間が残り15秒だったら出さない
+	if (nMinute <= 0 && nSecond <= 15) return;
+
 	// すべての敵を倒した
 	if (g_Territory[0].nNumEnemy <= 0 && g_Territory[1].nNumEnemy <= 0 && g_Territory[0].bBoss == false && g_Territory[1].bBoss == false)
 	{
 		if (SpawnCnt == 0)
 		{
 			// タイマーを設置
-			SetCounter(D3DXVECTOR3(1080.0f, 200.0f, 0.0f), COUNTER_COUNTDOWN, 10, 20.0f, 20.0f, COUNTERTYPE_TERRITORY);
+			SetCounter(D3DXVECTOR3(1155.0f, 205.0f, 0.0f), COUNTER_COUNTDOWN, 10, 10.0f, 15.0f, COUNTERTYPE_TERRITORY);
 		}
 
 		// スポーンカウントを加算
@@ -2167,6 +2198,8 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 		// シリンダーのインデックス
 		g_Territory[nTerritoryIdx].CylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_TERRITORY, 0, TERRITORYRADIUS, COLOR_AQUA, 16, 1, 0.0f, 3000.0f);
 	}
+
+	g_nNumTerritory++;
 
 	// 使用状態にする
 	g_Territory[nTerritoryIdx].bUse = true;
@@ -2357,7 +2390,7 @@ void UpdateScoreAndGage(int nCntEnemy)
 	if (isTerritory == true)
 	{
 		// スコアを求める
-		float score = isFeverMode ? (isTypeSeven ? 62000 : 26000) : (isTypeSeven ? 36200 : 18100);
+		float score = isFeverMode ? (isTypeSeven ? 62000.0f : 26000.0f) : (isTypeSeven ? 36200.0f : 18100.0f);
 
 		// スペシャルゲージを求める
 		float spgage = isTypeSeven ? 8.0f : 4.0f;
@@ -2377,7 +2410,7 @@ void UpdateScoreAndGage(int nCntEnemy)
 	else
 	{
 		// スコアを求める
-		float score = isFeverMode ? (isTypeSeven ? 32000 : 16000) : (isTypeSeven ? 16200 : 8100);
+		float score = isFeverMode ? (isTypeSeven ? 32000.0f : 16000.0f) : (isTypeSeven ? 16200.0f : 8100.0f);
 
 		// スペシャルゲージを求める
 		float spgage = isTypeSeven ? 5.0f : 2.5f;
@@ -2491,6 +2524,13 @@ void SetUpHitStop(int* pHitStopCount)
 	// 設定が完了した
 	if (isAttack4 == true) return;
 
+}
+//==============================================================================================================
+// テリトリーが何個あるか
+//==============================================================================================================
+int GetNumTeriitory(void)
+{
+	return g_nNumTerritory;
 }
 //==============================================================================================================
 // ボスがいるテリトリーの消去

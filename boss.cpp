@@ -1653,8 +1653,6 @@ void DeathMotionContlloer(int nCntBoss)
 
 		// テリトリーを消す
 		SetEnableBossTerritory(false);
-
-		SpawnItem(g_Boss[nCntBoss].pos);
 	}
 }
 //========================================================================================================
@@ -1748,7 +1746,7 @@ void HitBossAbnormalConditionParam(int nCntBoss,int nElement,int ChargeValue,int
 void SpawnItem(D3DXVECTOR3 pos)
 {
 	// アイテムを設定
-	//SetItem(pos, rand() % ITEMTYPE_MAX);
+	SetItem(pos, rand() % ITEMTYPE_MAX);
 }
 //========================================================================================================
 // ボスの取得処理

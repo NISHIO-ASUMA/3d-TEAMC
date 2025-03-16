@@ -1047,8 +1047,26 @@ void EnableCraftIcon(int Item1, int Item2)
 			// 手に持っているアイテムとストックしているアイテムがレシピと一致していたら
 			if ((nCraftmat0 == Item1 && nCraftmat1 == Item2) || (nCraftmat1 == Item1 && nCraftmat0 == Item2))
 			{
+				// 合成先アイテムを表示
+				SetMixUI(UIPOTISION, nMixWepon, 80.0f, 80.0f, 0);
+
+				// ファイルを閉じる
+				fclose(pFile);
+
 				// while文を抜ける
-				break;
+				return;
+			}
+
+			if (strcmp(&aString[0], "END_CRAFTSET") == 0)
+			{
+				// 確認し終わったら初期化
+				nMixWepon = -1;
+
+				// 確認し終わったら初期化
+				nCraftmat0 = -2;
+
+				// 確認し終わったら初期化
+				nCraftmat1 = -3;
 			}
 
 			// EOFを読み取ったら
@@ -1068,12 +1086,6 @@ void EnableCraftIcon(int Item1, int Item2)
 		MessageBox(NULL, "ファイルが開けません", "クラフトレシピ", MB_OK);
 		return;
 	}
-
-	// ファイルを閉じる
-	fclose(pFile);
-
-	// 合成先アイテムを表示
-	SetMixUI(UIPOTISION, nMixWepon, 80.0f, 80.0f, 0);
 }
 //==============================================================================================================
 // アイテムの耐久力のロード処理
@@ -1318,6 +1330,18 @@ bool CheckMixItemMat(int pCraftMat, int pStockMat, int HoldIdx, int StockIdx)
 
 				// while文を抜ける
 				return true;
+			}
+
+			if (strcmp(&aString[0], "END_CRAFTSET") == 0)
+			{
+				// 確認し終わったら初期化
+				nMixWepon = -1;
+
+				// 確認し終わったら初期化
+				nCraftmat0 = -2;
+
+				// 確認し終わったら初期化
+				nCraftmat1 = -3;
 			}
 
 			// EOFを読み取ったら

@@ -2837,8 +2837,13 @@ void UpdateItemStock(void)
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
 
+		if (pItem[g_player.StockItemIdx].state == ITEMSTATE_STOCK)
+		{
+			ChangeItemParam(g_player.StockItemIdx, pItem[g_player.StockItemIdx].nType);
+		}
+
 		// もともとストックしていたアイテムをノーマルに戻す
-		pItem[g_player.StockItemIdx].state = ITEMSTATE_NORMAL;
+		pItem[g_player.StockItemIdx].state = ITEMSTATE_RELEASE;
 
 		// 持っているアイテムの状態をストックにする
 		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
@@ -2851,7 +2856,6 @@ void UpdateItemStock(void)
 
 		// モーションを歩きにする(第2引数に1を入れる)
 		MotionChange(MOTION_DBHAND, 1);
-
 		//// 素手の時のモーション情報を代入
 		//for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
 		//{

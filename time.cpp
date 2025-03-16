@@ -47,6 +47,7 @@ int g_nTimerMinute;    // 分
 int g_nTimerSecond;    // 秒
 
 TIME g_aTime[MAX_NUM_TIME]; // 最大数分
+int g_StopTimeCnt = 0; // 最初だけ時間を止める
 
 //=======================================================================================================
 //スコアの初期化処理
@@ -108,6 +109,9 @@ void InitTime(void)
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffContDown, // コロン
 		NULL);
+
+	// 最初だけ時間を止める
+	g_StopTimeCnt = 600;
 
 	// 分のロック
 	g_pVtxBuffTimeMinute->Lock(0, 0, (void**)&pVtx, 0);
@@ -333,8 +337,11 @@ void UpdateTime(void)
 
 	GAMESTATE gamestate = GetGameState(); // ゲームの状態を取得
 
+	// 最初だけ時間を止める
+	g_StopTimeCnt--;
+
 	// ゲームが続いているなら
-	if (gamestate != GAMESTATE_END && gamestate != GAMESTATE_MOVIE)
+	if (gamestate != GAMESTATE_END && gamestate != GAMESTATE_MOVIE && g_StopTimeCnt <= 0)
 	{
 		g_nCountTime++; // タイマーカウントを加算
 
