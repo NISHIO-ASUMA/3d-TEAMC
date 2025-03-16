@@ -36,6 +36,7 @@
 #include "mark.h"
 #include "event.h"
 #include "effectEdit.h"
+#include "manual.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -681,6 +682,9 @@ void HitBoss(int nCntBoss,int nDamage)
 		g_Boss[nCntBoss].state = ENEMYSTATE_DAMAGE;
 		g_Boss[nCntBoss].nCounterState = 20;
 		AddSpgauge(1.0f);   // SPゲージを取得
+
+		// マニュアルを表示
+		EnableManual(true,MANUALTYPE_ONE);
 
 		return;
 	}

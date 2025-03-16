@@ -184,6 +184,9 @@
     <ClCompile Include="player.cpp">
       <Filter>ソースファイル\cahrctor</Filter>
     </ClCompile>
+    <ClCompile Include="manual.cpp">
+      <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -367,6 +370,9 @@
       <Filter>ヘッダーファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="craftrecipe.h">
+      <Filter>ヘッダーファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="manual.h">
       <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>

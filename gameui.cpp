@@ -16,6 +16,7 @@
 #include "event.h"
 #include "game.h"
 #include "boss.h"
+#include "manual.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -40,7 +41,7 @@ void SetEventUIAnimation(int nCnt);		// イベントのUIの設定
 void SetTutoUIAnimation(int nCnt);		// チュートリアルUIのアニメーション
 void SetDamageUIAnimation(int nCnt);	// ダメージUIの設定
 void SetTerritoryTimeUI(int nCnt);		// テリトリーが出るまでの時間
-
+void SetBossManual(int nCnt);           // ボスのマニュアルの設定
 float fcolorA;
 
 //**************************************************************************************************************
@@ -349,6 +350,10 @@ void UpdateGameUI(void)
 			case UITYPE_SETENEMYTIME:
 				// テリトリー出るまでの情報のUI
 				SetTerritoryTimeUI(nCnt);
+				break;
+			case UITYPE_BOSSMANUALEXIT:
+				SetBossManual(nCnt);
+				if (GetManualState() == false) g_GameUI[nCnt].bUse = false;
 				break;
 			}
 
@@ -795,4 +800,50 @@ void SetTerritoryTimeUI(int nCnt)
 	// 大きさを設定
 	g_GameUI[nCnt].fWidth = isSetUI ? 40.0f : 0.0f;
 	g_GameUI[nCnt].fHeight = isSetUI ? 25.0f : 0.0f;
+}
+//==============================================================================================================
+// ボスのマニュアルの設定
+//==============================================================================================================
+void SetBossManual(int nCnt)
+{
+	VERTEX_2D* pVtx;
+	 
+	// アルファ値
+	static float fAlv = 1.0f;
+
+	// アルファ値の減少フラグ
+	static bool isDecAlv = true;
+
+	// 減少できる
+	if (isDecAlv == true)
+	{
+		fAlv -= 1.0f / 120.0f;
+	}
+	else
+	{
+		fAlv += 1.0f / 120.0f;
+	}
+
+	if (fAlv >= 1.0f)
+	{
+		isDecAlv = true;
+	}
+	else if (fAlv <= 0.0f)
+	{
+		isDecAlv = false;
+	}
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
 }

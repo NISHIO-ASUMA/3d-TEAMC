@@ -55,6 +55,7 @@
 #include "event.h"
 #include "count.h"
 #include "craftrecipe.h"
+#include "manual.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -198,6 +199,9 @@ void InitGame(void)
 
 	// カウンターの初期化処理
 	InitCounter();
+
+	// マニュアルの初期化処理
+	InitManual();
 
 #ifdef _DEBUG
 
@@ -390,12 +394,22 @@ void UninitGame(void)
 
 	// カウンターの終了処理
 	UninitCounter();
+
+	// マニュアルの終了処理
+	UninitManual();
 }
 //=========================================================================================================
 //ゲーム画面の更新処理
 //=========================================================================================================
 void UpdateGame(void)
 {
+	// マニュアルモードだったら関数を抜ける
+	if (UpdateManual() == true)
+	{
+		UpdateGameUI();
+		return;
+	}
+
 	if (g_bMovie == true && g_bPause == false)
 	{// ムービー状態じゃない かつ ポーズ中じゃない
 		g_gameState = GAMESTATE_MOVIE; // ムービー状態にする
@@ -746,6 +760,9 @@ void DrawGame(void)
 
 	// アイコンの描画処理
 	DrawIcon();
+
+	// マニュアルの描画処理
+	DrawManual();
 
 	if (g_bPause == true)
 	{// ポーズ中

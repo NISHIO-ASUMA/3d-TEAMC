@@ -568,8 +568,6 @@ void HitEnemy(int nCnt,int nDamage)
 
 	GAMESTATE gamestate = GetGameState();
 
-	if (g_Enemy[nCnt].state == ENEMYSTATE_DAMAGE || g_Enemy[nCnt].Motion.motiontypeBlend == MOTIONTYPE_DEATH) return;
-
 	g_Enemy[nCnt].nLife -= nDamage;
 
 	// パーティクルをセット
@@ -1676,8 +1674,11 @@ void UpdateDeathParam(int nCntEnemy)
 		g_Enemy[nCntEnemy].move.z = fMoveZ;
 	}
 	// 最後のキーまで行ったら
-	if (nKey >= nLastKey)
+	if (nKey >= nLastKey - 1)
 	{
+		// テリトリーの敵の減少処理
+		DecreaseTerritoryEnemy(nCntEnemy);
+
 		g_Enemy[nCntEnemy].bUse = false;
 
 		// 敵の影を消す
@@ -1685,9 +1686,6 @@ void UpdateDeathParam(int nCntEnemy)
 
 		// マップから消す
 		EnableMap(g_Enemy[nCntEnemy].nIdxMap);
-
-		// テリトリーの敵の減少処理
-		DecreaseTerritoryEnemy(nCntEnemy);
 	}
 }
 //===============================================================================================================
@@ -1725,7 +1723,7 @@ void UpdateEnemySpawn(void)
 		int BossSpawnChance = rand() % 101;
 
 		// ボスが体なら && 40%の確率で出現
-		if (BossSpawnChance <= 40 && nNumBoss == 0 && noFirstSetBoss == false)
+		if (BossSpawnChance <= 100 && nNumBoss == 0 && noFirstSetBoss == false)
 		{
 			// ボスを出現させる
 			EnableSetBoss = true;

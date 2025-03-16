@@ -35,6 +35,7 @@ typedef enum
 	UITYPE_SP,
 	UITYPE_DAMAGE,
 	UITYPE_SETENEMYTIME,
+	UITYPE_BOSSMANUALEXIT,
 	UITYPE_MAX
 }UITYPE;
 
@@ -59,6 +60,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\SP_Key_1.png",
 	"data\\TEXTURE\\damage.png",
 	"data\\TEXTURE\\settime.png",
+	"data\\TEXTURE\\bossmanualexit.png",
 };
 
 //**************************************************************************************************************
