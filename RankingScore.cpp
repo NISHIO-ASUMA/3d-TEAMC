@@ -229,7 +229,7 @@ void UpdateRankingScore(void)
 	}
 
 	// スキップ
-	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true) && bFlash == false)
+	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true || OnMouseTriggerDown(LEFT_MOUSE) == true) && bFlash == false)
 	{
 		VERTEX_2D* pVtx{};       // 頂点情報のポインタ
 
