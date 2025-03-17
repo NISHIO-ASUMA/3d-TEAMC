@@ -48,6 +48,7 @@ typedef enum
 	SOUND_LABEL_ICEWEPONSE,     // 氷武器
 	SOUND_LABEL_LIFERECOVERY,   // 回復音
 	SOUND_LABEL_ITEMTHROW,      // 投げアイテム音
+	SOUND_LABEL_ENEMYPOP_SE,    // 雑魚敵出現音
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 
