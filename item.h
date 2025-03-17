@@ -139,6 +139,7 @@ typedef struct
 	char Itemtag[TAGWORD];
 	ITEM_INFO aItemInfo[ITEMTYPE_MAX];
 	int Power;							// 攻撃力
+	int nMinimapIdx;					// ミニマップのインデックス
 }Item;
 
 //***************************

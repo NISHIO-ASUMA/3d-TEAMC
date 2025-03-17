@@ -128,6 +128,9 @@ void InitGame(void)
 	// 矢印の初期化処理
 	InitMark();
 
+	//アイテムの初期化処理
+	InitItem();
+
 	//プレイヤーの初期化処理
 	InitPlayer();
 
@@ -160,9 +163,6 @@ void InitGame(void)
 
 	//ブロックの初期化処理
 	InitBlock();
-
-	//アイテムの初期化処理
-	InitItem();
 
 	//壁の初期化処理
 	InitWall();

@@ -26,7 +26,8 @@ typedef enum
 {
 	MINIMAPTEX_PLAYER = 0, // プレイヤー
 	MINIMAPTEX_ENEMY,	   // 敵
-	MINIMAPTEX_BOSS,
+	MINIMAPTEX_BOSS,	   // ボス
+	MINIMAPTEX_ITEM,	   // アイテムのアイコン
 	MINIMAPTEX_MAX
 }MINIMAPTEX;
 
@@ -37,7 +38,8 @@ static const char* CAMERA_TEX[MINIMAPTEX_MAX] =
 {
 	"data\\TEXTURE\\player_position.png", // プレイヤー
 	"data\\TEXTURE\\enemy_icon.png",  // 敵
-	"data\\TEXTURE\\boss_icon.png",
+	"data\\TEXTURE\\boss_icon.png",	  // ボス
+	"data\\TEXTURE\\ui_Item_IconMap.png",  // アイテム
 };
 
 //***************************************************************************************************************
@@ -65,4 +67,5 @@ void DarwMinimap();									 // 描画処理
 void SetMiniMapPotision(int nIdx,D3DXVECTOR3 *pPos); // 設定処理
 int SetMiniMap(D3DXVECTOR3 pos, int nType);          // ミニマップの位置設定処理
 void EnableMap(int nIdx);							 // ミニマップに描画されてるポリゴンの消去
+void ResetItemMinimap(void);					 // ミニマップのアイテムの消去
 #endif // !_MINIMAP_H_

@@ -95,6 +95,7 @@ void SetUpPlayerAttack(void);																	 // プレイヤーの攻撃の設定処理
 void SetUpJumpAction(int nKey, int nCounter, int nLastKey, int EndFrame);						 // ジャンプアクションの設定
 void SetUpPlayerFirstWepon(void);																 // プレイヤーの初期武器の設定
 void SetFeverTime(void);																		 // プレイヤーのフィーバータイムの設定
+void LoadMinimapMatItem(int nHaveIdx,int nStockIdx);											 // ミニマップの合成のアイテムの材料の表示
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -1304,6 +1305,9 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 				return false;
 			}
 
+			// ミニマップのアイテムのアイコンのリセット
+			ResetItemMinimap();
+
 			// モーションをニュートラルに戻す
 			SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 10);
 
@@ -1336,6 +1340,8 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			LoadItemChange(pItem[nIdx].nType,pItem[nIdx].Size.y);
 
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
+
+			LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
 		}
 	}
 
@@ -2808,6 +2814,12 @@ void UpdateItemStock(void)
 	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && is_StockItem == true && CheckActionMotion(&g_player.Motion) == true)
 	{// Fキー or RBボタン
 
+		// ミニマップのアイテムのリセット
+		ResetItemMinimap();
+
+		// ミニマップのアイテムのロード
+		LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
+
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
 
@@ -3343,6 +3355,21 @@ void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
 //===============================================================================================================
 void SetUpPlayerFirstWepon(void)
 {
+	Item* pItem = GetItem();
+	ITEM_INFO* pItem_Info = GetItemInfo();
+
+	//// アイテムの種類
+	//int nType = pItem[g_player.ItemIdx].nType;
+
+	//// 最大の耐久力を代入
+	//pItem[g_player.ItemIdx].Maxdurability = pItem_Info[nType].Maxdurability;
+
+	//// 耐久力を代入
+	//pItem[g_player.ItemIdx].durability = pItem_Info[nType].durability;
+
+	//// アイテムの属性情報を代入 
+	//g_player.nElement = pItem_Info[nType].nElement; 
+
 	// モーションを歩きにする(第2引数に1を入れる)
 	MotionChange(MOTION_DBHAND, 1);
 
@@ -3402,6 +3429,110 @@ void SetFeverTime(void)
 		FiverCnt = 0; // 制限回数をリセット
 	}
 
+}
+//===============================================================================================================
+// ミニマップの合成のアイテムの材料の表示
+//==============================================================================================================
+void LoadMinimapMatItem(int nHaveIdx, int nStockIdx)
+{
+	// アイテムの取得
+	Item* pItem = GetItem();
+
+	FILE* pFile; // ファイルのポインタ
+
+	// ファイルを開く
+	pFile = fopen("data\\ITEM\\SetminimapItem.txt", "r");
+
+	int playeritem = -1;
+	int minimapItem = -2;
+
+	// ファイルが開けたら
+	if (pFile != NULL)
+	{
+		char aString[MAX_WORD] = {};
+		char skip[10] = {};
+
+		while (1)
+		{
+			// 文字を読み取る
+			int nData = fscanf(pFile, "%s", &aString[0]);
+
+			// PLAYER_ITEMを読み取ったら
+			if (strcmp(&aString[0], "PLAYER_ITEM") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// プレイヤーのアイテムを読み取る
+				nData = fscanf(pFile, "%d", &playeritem);
+			}
+
+			// MINIMAP_ITEMを読み取ったら
+			if (strcmp(&aString[0], "MINIMAP_ITEM") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 表示するアイテムを読み取る
+				nData = fscanf(pFile, "%d", &minimapItem);
+
+				// 持っているアイテムが一致していたら
+				if (playeritem == pItem[nHaveIdx].nType || playeritem == pItem[nStockIdx].nType)
+				{
+					playeritem = -1;
+					break;
+				}
+			}
+
+			// EOFを読み取ったら
+			if (nData == EOF)
+			{
+				playeritem = -1;
+				minimapItem = -2;
+
+				// ファイルを閉じる
+				fclose(pFile);
+
+				// while文を抜ける
+				return;
+			}
+		}
+
+	}
+	else
+	{
+		// メッセージボックスを表示
+		MessageBox(NULL, "ファイルが開けません", "LoadMinimapItem", MB_OK);
+		return;
+	}
+
+	// ファイルを閉じる
+	fclose(pFile);
+
+	// アイテム分回す
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+	{
+		// 未使用だったら
+		if (pItem[nCntItem].bUse == false) continue;
+
+		// 持っているアイテムと同じだったら
+		if (nCntItem == nHaveIdx) continue;
+
+		// ストックしているアイテムと同じだったら
+		if (nCntItem == nStockIdx) continue;
+
+		// 表示したいアイテムじゃなかったら
+		if (pItem[nCntItem].nType != minimapItem) continue;
+
+		// ミニマップに位置を設定
+		pItem[nCntItem].nMinimapIdx = SetMiniMap(pItem[nCntItem].pos, MINIMAPTEX_ITEM);
+
+		// ミニマップに位置を設定
+		SetMiniMapPotision(pItem[nCntItem].nMinimapIdx, &pItem[nCntItem].pos);
+	}
+
+	// 初期化
+	minimapItem = -2;
 }
 //===============================================================================================================
 // プレイヤーが攻撃状態か
