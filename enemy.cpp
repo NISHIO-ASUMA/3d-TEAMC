@@ -1764,6 +1764,7 @@ void UpdateEnemySpawn(void)
 		case 0:
 			// テリトリーの設定
 			SetTerritoryparam(nCnt, TERRITTORYPOS_ONE, SpawnPos, EnableSetBoss);
+
 			break;
 		case 1:
 			// テリトリーの設定
@@ -2213,8 +2214,13 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 	}
 	else
 	{
+<<<<<<< HEAD
 		// 敵が出たUIを設定
 		SetGameUI(D3DXVECTOR3(640.0f, 130.0f, 0.0f), UITYPE_POPENEMY, 150.0f, 50.0f, true, 180.0f);
+=======
+		// サウンド再生
+		PlaySound(SOUND_LABEL_ENEMYPOP_SE);
+>>>>>>> 0a6aff180a1c0a2d86166c99c5fe07d6321606a4
 
 		// ボスがいない状態にする
 		g_Territory[nTerritoryIdx].bBoss = bSetBoss;

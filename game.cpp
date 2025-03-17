@@ -421,6 +421,7 @@ void UpdateGame(void)
 		{
 			// サウンドを止める
 			StopSound(SOUND_LABEL_EVENTSE);
+			StopSound(SOUND_LABEL_ENEMYPOP_SE);
 
 			g_gameState = GAMESTATE_NORMAL; // 通常のゲーム状態に
 			g_bMovie = false;               // ムービーフラグをfalseにする
