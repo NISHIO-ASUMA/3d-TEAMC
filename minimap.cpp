@@ -168,7 +168,7 @@ void DarwMinimap()
 		// 種類を保存
 		int nType = g_MiniMap[nCnt].nType;
 
-		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == 1)
+		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == MINIMAPTEX_ENEMY)
 		{// 使用判定のものだけ
 
 			// テクスチャの設定
@@ -179,13 +179,14 @@ void DarwMinimap()
 		}
 	}
 
-	// ボスのマーカー探知
+	// 雑魚敵のマーカー探知
 	for (int nCnt = 0; nCnt < MAX_TREXMINIMAP; nCnt++)
 	{
 		// 種類を保存
 		int nType = g_MiniMap[nCnt].nType;
 
-		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == 2)
+
+		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == MINIMAPTEX_BOSS)
 		{// 使用判定のものだけ
 
 			// テクスチャの設定
@@ -196,13 +197,14 @@ void DarwMinimap()
 		}
 	}
 
-	// プレイヤーのマーカー探知
+	// 雑魚敵のマーカー探知
 	for (int nCnt = 0; nCnt < MAX_TREXMINIMAP; nCnt++)
 	{
 		// 種類を保存
 		int nType = g_MiniMap[nCnt].nType;
 
-		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == 0)
+
+		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == MINIMAPTEX_PLAYER)
 		{// 使用判定のものだけ
 
 			// テクスチャの設定
@@ -212,6 +214,24 @@ void DarwMinimap()
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
 		}
 	}
+
+	// 雑魚敵のマーカー探知
+	for (int nCnt = 0; nCnt < MAX_TREXMINIMAP; nCnt++)
+	{
+		// 種類を保存
+		int nType = g_MiniMap[nCnt].nType;
+
+		if (g_MiniMap[nCnt].bUse && g_MiniMap[nCnt].nType == MINIMAPTEX_ITEM)
+		{// 使用判定のものだけ
+
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureMiniMap[nType]);
+
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
+		}
+	}
+
 }
 //==============================================================================================================
 // ミニマップの位置設定処理
@@ -243,7 +263,7 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 		float cosA = cosf(fAngle);
 		float sinA = sinf(fAngle);
 
-		if (g_MiniMap[nIdx].nType == 0)
+		if (g_MiniMap[nIdx].nType == MINIMAPTEX_PLAYER)
 		{// 種類がプレイヤーの時
 			// 回転を考慮した座標更新
 			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + (-5.0f * cosA - (-5.0f) * sinA),
@@ -259,7 +279,7 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 									  MapFiledPos.y + g_MiniMap[nIdx].pos.y + (5.0f * sinA + (5.0f) * cosA),
 									  0.0f);
 		}
-		else if (g_MiniMap[nIdx].nType == 1)
+		else if (g_MiniMap[nIdx].nType == MINIMAPTEX_ENEMY)
 		{// 種類が敵の時
 			// 頂点座標の更新
 			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
@@ -268,7 +288,7 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 			pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
 
 		}
-		else if (g_MiniMap[nIdx].nType == 2)
+		else if (g_MiniMap[nIdx].nType == MINIMAPTEX_BOSS)
 		{// 種類がボスの時
 			// 頂点座標の更新
 			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 8.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 8.0f, 0.0f);
@@ -276,6 +296,14 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 			pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 8.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 8.0f, 0.0f);
 			pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 8.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 8.0f, 0.0f);
 
+		}
+		else if (g_MiniMap[nIdx].nType == MINIMAPTEX_ITEM)
+		{// 種類がボスの時
+			// 頂点座標の更新
+			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
 		}
 	}
 	// 頂点バッファのアンロック
@@ -326,6 +354,20 @@ int SetMiniMap(D3DXVECTOR3 pos, int nType)
 void EnableMap(int nIdx)
 {
 	g_MiniMap[nIdx].bUse = false;
+}
+//==============================================================================================================
+// ミニマップのアイテムの消去
+//==============================================================================================================
+void ResetItemMinimap(void)
+{
+	for (int nCnt = 0; nCnt < MAX_TREXMINIMAP; nCnt++)
+	{
+		// アイテムのアイコンじゃなかったら
+		if (g_MiniMap[nCnt].nType != MINIMAPTEX_ITEM) continue;
+
+		// 未使用にする
+		g_MiniMap[nCnt].bUse = false;
+	}
 }
 //==============================================================================================================
 // ミニマップのフィールド初期化処理

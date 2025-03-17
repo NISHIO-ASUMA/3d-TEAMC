@@ -27,6 +27,7 @@
 #include "easing.h"
 #include "meshimpact.h"
 #include <cassert>
+#include "minimap.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -80,12 +81,12 @@ void InitItem(void)
 		g_Item[nCntItem].grabity = 0.0f;					   // クラフトできるか否か
 		g_Item[nCntItem].nEasingCnt = 0;					   // イージングのカウント
 		g_Item[nCntItem].nImpactCount = 110;				   // 衝撃波のカウント
-		g_Item[nCntItem].Maxdurability = 0;					   // 最大の耐久力
 		g_Item[nCntItem].Itemtag[0] = {};					   // タグ
 		g_Item[nCntItem].Power = 0;							   // 攻撃力
 	}
 
 	LoadItemInfo();  // アイテムの情報
+
 	LoadItemModel(); // アイテムのロード処理
 
 	bCraftAnim = false;
@@ -94,7 +95,6 @@ void InitItem(void)
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
 		g_aItemInfo[nCntNum].nType = nCntNum;			            // 番号
-		g_aItemInfo[nCntNum].Maxdurability = 0;     // 初期化
 		g_aItemInfo[nCntNum].Maxdurability = g_aItemInfo[nCntNum].durability;
 
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
@@ -626,6 +626,10 @@ void SetItem(D3DXVECTOR3 pos, int nType)
 
 			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType]; // 必要な情報を代入
 			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;
+			g_Item[nCntItem].Maxdurability = g_aItemInfo[nType].Maxdurability;
+			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;
+			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
+
 			g_Item[nCntItem].pos = pos;			 // 座標
 			g_Item[nCntItem].nType = nType;		 // 種類
 			g_Item[nCntItem].bUse = true;		 // 使用判定
@@ -1361,6 +1365,9 @@ void UpdateCraftItemParam(int nCnt)
 		// クラフトの素材が揃っていたら
 		if (CheckMatItem == true)
 		{
+			// ミニマップのアイテムのアイコンのリセット
+			ResetItemMinimap();
+
 			// クラフトアイコンのアニメーション処理
 			EnableCraftIconAnim(true);
 		}
@@ -1374,7 +1381,11 @@ void SetUpFirstWepon(int nCnt)
 	MODE mode = GetMode();
 	Player* pPlayer = GetPlayer();
 
+	// チュートリアルじゃなかったら
 	if (mode != MODE_TUTORIAL) return;
+
+	// もう変えた
+	if (bFIrstCraftItem == true) return;
 
 	// プレイヤーのアイテムを刀にする
 	if (bFIrstCraftItem == false && g_Item[nCnt].nType == ITEMTYPE_KATANA)

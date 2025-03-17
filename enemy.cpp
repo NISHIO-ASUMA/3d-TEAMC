@@ -678,6 +678,7 @@ void HitEnemy(int nCnt,int nDamage)
 		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
 
 		SetVibration(leftmotor, rightmotor, 500);
+
 		return;
 	}
 	else
