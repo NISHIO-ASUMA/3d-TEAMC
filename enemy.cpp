@@ -103,6 +103,7 @@ Territory g_Territory[SETNUM_TERRITORY];
 int g_nBossPos = 0;
 bool noFirstSetBoss = true;
 int g_nNumTerritory = 0;
+int g_TerritorySetTime = 0;
 
 //===============================================================================================================
 // 敵の初期化処理
@@ -144,7 +145,8 @@ void InitEnemy(void)
 	g_nBossPos = 0;  // ボスがどのテリトリーにいるか
 	noFirstSetBoss = true; // 最初にボスを出さない処理
 	g_nNumTerritory = 0; // テリトリーのかず
-	
+	g_TerritorySetTime = 0; // テリトリーのカウント
+
 	// テリトリーの数
 	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
 	{
@@ -2136,27 +2138,29 @@ void SetSpawnCount(void)
 	// スポーンのカウンター
 	static int SpawnCnt = 0;
 
+	GAMESTATE gamestate = GetGameState();
+
 	// 時間の取得
 	int nSecond = GetTimeSecond();
 	int nMinute = GetTimeMinute();
 
-	// 時間が残り15秒だったら出さない
-	if (nMinute <= 0 && nSecond <= 15) return;
+	//// 時間が残り15秒だったら出さない
+	//if (nMinute <= 0 && nSecond <= 15) return;
 
 	// すべての敵を倒した
 	if (g_Territory[0].nNumEnemy <= 0 && g_Territory[1].nNumEnemy <= 0 && g_Territory[0].bBoss == false && g_Territory[1].bBoss == false)
 	{
-		if (SpawnCnt == 0)
+		if (g_TerritorySetTime == 0)
 		{
 			// タイマーを設置
 			SetCounter(D3DXVECTOR3(1155.0f, 205.0f, 0.0f), COUNTER_COUNTDOWN, 10, 10.0f, 15.0f, COUNTERTYPE_TERRITORY);
 		}
 
 		// スポーンカウントを加算
-		SpawnCnt++;
+		g_TerritorySetTime++;
 
 		// 10秒たったら
-		if (SpawnCnt >= FRAME * 10)
+		if (g_TerritorySetTime >= FRAME * 10)
 		{
 			// 敵の出現の更新処理
 			UpdateEnemySpawn();
@@ -2165,7 +2169,7 @@ void SetSpawnCount(void)
 	else
 	{
 		// スポーンカウンターをリセット
-		SpawnCnt = 0;
+		g_TerritorySetTime = 0;
 	}
 }
 //==============================================================================================================

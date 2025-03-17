@@ -81,6 +81,7 @@ typedef struct
 	D3DXCOLOR col;      // 色
 	int nEaseCnt;       // イージングのカウント
 	int nCounterAnim, nPatternAnim; // テクスチャアニメーション
+	float fAlv;						// 透明度
 }Gameui;
 
 //**************************************************************************************************************

@@ -94,6 +94,7 @@ void ComboTransition(void);																		 // コンボ状態の遷移
 void SetUpPlayerAttack(void);																	 // プレイヤーの攻撃の設定処理
 void SetUpJumpAction(int nKey, int nCounter, int nLastKey, int EndFrame);						 // ジャンプアクションの設定
 void SetUpPlayerFirstWepon(void);																 // プレイヤーの初期武器の設定
+void SetFeverTime(void);																		 // プレイヤーのフィーバータイムの設定
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -292,6 +293,7 @@ void UpdatePlayer(void)
 		g_player.pos.x += (float)(rand() % 3 - 1.5f);
 		g_player.pos.z += (float)(rand() % 3 - 1.5f);
 	}
+
 	// ヒットストップのカウントが0以上有ったら
 	if (g_player.HitStopCount >= 0) return;
 
@@ -410,7 +412,7 @@ void UpdatePlayer(void)
 		if (g_player.Motion.motiontypeBlend == MOTIONTYPE_JUMP && g_player.Motion.motiontypeBlend != MOTIONTYPE_LANDING)
 		{
 			SetMotion(&g_player.Motion,MOTIONTYPE_LANDING, true, 10); // モーションを着地にする
-			SetImpact(g_player.pos, COLOR_GOLD, 32, 10.0f, 0.0f, 3.0f, 60, IMPACTTYPE_NORMAL, 0);
+			//SetImpact(g_player.pos, COLOR_GOLD, 32, 10.0f, 0.0f, 3.0f, 60, IMPACTTYPE_NORMAL, 0);
 		}
 		g_player.bJump = true; // ジャンプを可能にする
 	}
@@ -486,42 +488,8 @@ void UpdatePlayer(void)
 
 #endif // DEBUG
 
-	// フォーバーモード
-	if (g_player.FeverMode == true)
-	{
-		g_player.speed = g_player.fStockSpeed * 1.8f;
-		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
-		{
-			g_player.Motion.nCountMotion++;
-		}
-		g_player.nDamage = g_player.nStockDamage * 1.5f;
-	}
-	else
-	{
-		// ステータスをもとに戻す
-		g_player.speed = g_player.fStockSpeed;
-		g_player.nDamage = g_player.nStockDamage;
-	}
-
-	// 大型武器モーションの時
-	if (g_player.WeponMotion == MOTION_BIGWEPON && g_player.Motion.motionType == MOTIONTYPE_ACTION4 && g_player.Motion.nKey == 0 && GetKeyboardPress(DIK_W))
-	{
-		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 30.0f;
-		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 30.0f;
-	}
-
-	static int FiverCnt = 0; // 回数制限
-
-	if (g_player.FeverMode == true && FiverCnt == 0 && g_player.AttackSp == false)
-	{
-		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, false,0);
-		SetGameUI(D3DXVECTOR3(640.0f, 600.0f, 0.0f), UITYPE_FIVER, 100.0f, 40.0f, false,0);
-		FiverCnt = 1; // 制限回数を超えた
-	}
-	if (g_player.FeverMode == false)
-	{
-		FiverCnt = 0; // 制限回数をリセット
-	}
+	// フォーバータイムの設定
+	SetFeverTime();
 
 	// 死亡モーションだったら
 	if (g_player.Motion.motiontypeBlend == MOTIONTYPE_DEATH && g_player.Motion.nKey <= 0)
@@ -2436,6 +2404,14 @@ void SetMotionContller(void)
 		// 煙
 		LoadEffect(0, SetMtxConversion(g_player.Motion.aModel[11].mtxWorld));
 	}
+
+	// 大型武器モーションの時
+	if (g_player.WeponMotion == MOTION_BIGWEPON && g_player.Motion.motionType == MOTIONTYPE_ACTION4 && g_player.Motion.nKey == 0 && GetKeyboardPress(DIK_W))
+	{
+		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 30.0f;
+		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 30.0f;
+	}
+
 	// 振動の更新処理
 	UpdateVibration(&vibrationState);
 }
@@ -3400,6 +3376,42 @@ void SetUpPlayerFirstWepon(void)
 
 	// モーションをニュートラルにする
 	SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 10); // モーションをニュートラルにする
+}
+//===============================================================================================================
+// プレイヤーのフィーバータイムの設定
+//===============================================================================================================
+void SetFeverTime(void)
+{
+	// フォーバーモード
+	if (g_player.FeverMode == true)
+	{
+		g_player.speed = g_player.fStockSpeed * 1.8f;
+		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
+		{
+			g_player.Motion.nCountMotion++;
+		}
+		g_player.nDamage = g_player.nStockDamage * 1.5f;
+	}
+	else
+	{
+		// ステータスをもとに戻す
+		g_player.speed = g_player.fStockSpeed;
+		g_player.nDamage = g_player.nStockDamage;
+	}
+
+	static int FiverCnt = 0; // 回数制限
+
+	if (g_player.FeverMode == true && FiverCnt == 0 && g_player.AttackSp == false)
+	{
+		SetGameUI(D3DXVECTOR3(620.0f, 360.0f, 0.0f), UITYPE_SYUTYUSEN, 660.0f, 380.0f, false, 0);
+		SetGameUI(D3DXVECTOR3(640.0f, 600.0f, 0.0f), UITYPE_FIVER, 100.0f, 40.0f, false, 0);
+		FiverCnt = 1; // 制限回数を超えた
+	}
+	if (g_player.FeverMode == false)
+	{
+		FiverCnt = 0; // 制限回数をリセット
+	}
+
 }
 //===============================================================================================================
 // プレイヤーが攻撃状態か

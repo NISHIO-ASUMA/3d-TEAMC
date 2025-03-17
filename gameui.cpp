@@ -42,6 +42,7 @@ void SetTutoUIAnimation(int nCnt);		// チュートリアルUIのアニメーション
 void SetDamageUIAnimation(int nCnt);	// ダメージUIの設定
 void SetTerritoryTimeUI(int nCnt);		// テリトリーが出るまでの時間
 void SetBossManual(int nCnt);           // ボスのマニュアルの設定
+void UpdateUIFlash(int nCnt, float* pAlv,float Maxtime);	// UIの点滅処理(使いまわせるやつ)
 float fcolorA;
 
 //**************************************************************************************************************
@@ -101,6 +102,7 @@ void InitGameUI(void)
 		g_GameUI[nCnt].bLife = false;
 		g_GameUI[nCnt].nCounterAnim = 0;
 		g_GameUI[nCnt].nPatternAnim = 0;
+		g_GameUI[nCnt].fAlv = 0.0f;
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -174,6 +176,9 @@ void UpdateGameUI(void)
 	// 拡大する
 	static bool bExpansion = true;
 
+	// 
+	float a = (float)(1 % 10) * 0.1f;
+	
 	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -846,4 +851,26 @@ void SetBossManual(int nCnt)
 
 	//頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
+}
+//==============================================================================================================
+// UIの点滅処理(使いまわせるやつ)
+//==============================================================================================================
+void UpdateUIFlash(int nCnt,float *pAlv,float Maxtime)
+{
+	VERTEX_2D* pVtx;
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, (*pAlv));
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, (*pAlv));
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, (*pAlv));
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, (*pAlv));
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
+
 }
