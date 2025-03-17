@@ -161,9 +161,6 @@ void UninitCounter(void)
 //==============================================================================================================
 void UpdateCounter(void)
 {
-	// 頂点情報のポインタ
-	VERTEX_2D* pVtx;
-
 	GAMESTATE gamestate = GetGameState();
 
 	for (int nCnt = 0; nCnt < MAX_COUNTER; nCnt++)
