@@ -41,6 +41,7 @@
 #include "event.h"
 #include "billboard.h"
 #include "mark.h"
+#include "gameui.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -60,24 +61,25 @@
 #define SETNUM_TERRITORY (2)		// テリトリーを配置する数
 #define TERRITORYRADIUS (500.0f)	// テリトリーの半径
 #define FRAME (60)				    // フレーム
+#define OUTTERRITORY_ENEMY (40)		// テリトリーの外の敵
 
 //**************************************************************************************************************
 //プロトタイプ宣言
 //**************************************************************************************************************
-void LoadEnemy(int nType);																	// 読み込み処理
+void LoadEnemy(int nType);																					 // 読み込み処理
+																											 
+int LoadEnemyFilename(FILE* pFile, int nNumModel, char* aString, int nType);								 // 敵のモデルのロード処理
+void LoadEnemyCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);							 // 敵のパーツの設定処理
+void LoadEnemyMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);								 // 敵のモーションのロード処理
+void LoadEnemyKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);								 // 敵のモーションのキーの読み込み処理
 
-int LoadEnemyFilename(FILE* pFile, int nNumModel, char* aString, int nType);				// 敵のモデルのロード処理
-void LoadEnemyCharacterSet(FILE* pFile, char* aString, int nNumparts, int nType);			// 敵のパーツの設定処理
-void LoadEnemyMotionSet(FILE* pFile, char* aString, int nNumModel, int nType);				// 敵のモーションのロード処理
-void LoadEnemyKeySet(FILE* pFile, char* aString, int nType, int nCntMotion);				// 敵のモーションのキーの読み込み処理
-
-//bool AgentRange(float plrange, float playerrange, int nCntEnemy); // ホーミングの範囲にいるかどうか
-void AgentEnemy(int nCntEnemy);									    // 敵のホーミング処理
-void CollisionToEnemy(int nCntEnemy);							    // 敵と敵の当たり判定
-void UpdateHomingEnemy(int nCntEnemy);                              // 敵のホーミング処理
-void UpdateRunAwayEnemy(int nCntEnemy);                             // 逃げる敵の更新処理
-void UpdateKickAttack(int nCntEnemy);                               // 敵の攻撃の更新処理
-void UpdateDroneEnemy(int nCntEnemy);                               // 飛んでる敵の更新処理
+//bool AgentRange(float plrange, float playerrange, int nCntEnemy);											 // ホーミングの範囲にいるかどうか
+void AgentEnemy(int nCntEnemy);																				 // 敵のホーミング処理
+void CollisionToEnemy(int nCntEnemy);																		 // 敵と敵の当たり判定
+void UpdateHomingEnemy(int nCntEnemy);																		 // 敵のホーミング処理
+void UpdateRunAwayEnemy(int nCntEnemy);																		 // 逃げる敵の更新処理
+void UpdateKickAttack(int nCntEnemy);																		 // 敵の攻撃の更新処理
+void UpdateDroneEnemy(int nCntEnemy);																		 // 飛んでる敵の更新処理
 void KickActionSet(int nCntEnemy,int nKey, int nCounter, int EndFrame, int LastKey, Player* pPlayer);        // けり攻撃の処理
 void UpdateDeathParam(int nCntEnemy);																		 // 敵の死亡モーションの処理
 void DeletTerritory(void);																					 // テリトリーの消去
@@ -2087,7 +2089,7 @@ void DeletTerritory(void)
 			DeleteCylinder(g_Territory[nCnt].CylinderIdx);
 
 			// スコアを加算
-			AddScore(100000);
+			AddScore(300000);
 
 			// 使用状態にする
 			g_Territory[nCnt].bUse = false;
@@ -2170,14 +2172,14 @@ void SetSpawnCount(void)
 		if (g_TerritorySetTime == 0)
 		{
 			// タイマーを設置
-			SetCounter(D3DXVECTOR3(1155.0f, 205.0f, 0.0f), COUNTER_COUNTDOWN, 10, 10.0f, 15.0f, COUNTERTYPE_TERRITORY);
+			SetCounter(D3DXVECTOR3(1155.0f, 205.0f, 0.0f), COUNTER_COUNTDOWN, 5, 10.0f, 15.0f, COUNTERTYPE_TERRITORY);
 		}
 		
 		// スポーンカウントを加算
 		g_TerritorySetTime++;
 
 		// 10秒たったら
-		if (g_TerritorySetTime >= FRAME * 10)
+		if (g_TerritorySetTime >= FRAME * 5)
 		{
 			// 敵の出現の更新処理
 			UpdateEnemySpawn();
@@ -2211,6 +2213,9 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 	}
 	else
 	{
+		// 敵が出たUIを設定
+		SetGameUI(D3DXVECTOR3(640.0f, 130.0f, 0.0f), UITYPE_POPENEMY, 150.0f, 50.0f, true, 180.0f);
+
 		// ボスがいない状態にする
 		g_Territory[nTerritoryIdx].bBoss = bSetBoss;
 
@@ -2241,7 +2246,7 @@ void OutTerritorySpawner(int nSpawner)
 	float randum_valueX = (float)(rand() % 10);
 	float randum_valueZ = (float)(rand() % 10);
 
-	if (g_nNumEnemy <= MAX_ENEMY / 2)
+	if (g_nNumEnemy <= OUTTERRITORY_ENEMY)
 	{
 		// スポナーの設定
 		switch (nSpawner)

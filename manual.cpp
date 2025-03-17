@@ -256,11 +256,11 @@ void EnableManual(bool bManual,int nType)
 	switch (nType)
 	{
 	case MANUALTYPE_ONE:
-		SetGameUI(D3DXVECTOR3(1000.0f,670.0f,0.0f),UITYPE_BOSSMANUALEXIT,120.0f,60.0f,false,0);
+		SetGameUI(D3DXVECTOR3(1000.0f, 670.0f, 0.0f), UITYPE_BOSSMANUALEXIT, 120.0f, 60.0f, false, 0);
 		break;
 	default:
 		break;
-	}
+	}	
 }
 //==============================================================================================================
 // ボスのマニュアルの設定

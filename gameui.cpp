@@ -43,6 +43,8 @@ void SetDamageUIAnimation(int nCnt);	// ダメージUIの設定
 void SetTerritoryTimeUI(int nCnt);		// テリトリーが出るまでの時間
 void SetBossManual(int nCnt);           // ボスのマニュアルの設定
 void UpdateUIFlash(int nCnt, float* pAlv,float Maxtime);	// UIの点滅処理(使いまわせるやつ)
+void SetTerritoryEnemyUI(int nCnt);		// テリトリーに敵が出た時のUIの設定
+void UIScalAnimation(int nCnt,float widthEx,float widthdec,float heightEx,float heigthDec, float MaxtimeWidth,float MaxtimeHeight); // 拡大縮小のアニメーション
 float fcolorA;
 
 //**************************************************************************************************************
@@ -359,6 +361,9 @@ void UpdateGameUI(void)
 			case UITYPE_BOSSMANUALEXIT:
 				SetBossManual(nCnt);
 				if (GetManualState() == false) g_GameUI[nCnt].bUse = false;
+				break;
+			case UITYPE_POPENEMY:
+				SetTerritoryEnemyUI(nCnt);
 				break;
 			}
 
@@ -849,6 +854,11 @@ void SetBossManual(int nCnt)
 	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
 	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
 
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
 	//頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
 }
@@ -873,4 +883,63 @@ void UpdateUIFlash(int nCnt,float *pAlv,float Maxtime)
 	//頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
 
+}
+//==============================================================================================================
+// テリトリーに敵が出た時のUIの設定
+//=============================================================================================================
+void SetTerritoryEnemyUI(int nCnt)
+{
+	// 大きくなったり小さくなったりするアニメーション
+	UIScalAnimation(nCnt, 200.0f, 150.0f, 80.0f, 40.0f,40.0f,40.0f);
+}
+//==============================================================================================================
+// 拡大縮小のアニメーション
+//==============================================================================================================
+void UIScalAnimation(int nCnt, float widthEx, float widthdec, float heightEx, float heigthDec,float MaxtimeWidth, float MaxtimeHeight)
+{
+	// 横幅の拡大
+	static bool isWidthEasing = true;
+
+	// 高さの拡大
+	static bool isHeightEasing = true;
+
+	// 横幅の拡大率
+	static float Widthscal = widthEx / MaxtimeWidth;
+
+	// 高さの拡大率
+	static float Heightscal = heightEx / MaxtimeHeight;
+
+	// 大きさが目的の大きさになったら
+	if (g_GameUI[nCnt].fWidth >= widthEx)
+	{
+		// 縮小
+		isWidthEasing = false;
+		isHeightEasing = false;
+	}
+	// 小ささが目的の小ささになったら
+	else if (g_GameUI[nCnt].fWidth <= widthdec)
+	{
+		// 拡大
+		isWidthEasing = true;
+		isHeightEasing = true;
+
+	}
+
+	//if (g_GameUI[nCnt].fHeight >= heightEx)
+	//{
+	//	
+	//}
+	//else if (g_GameUI[nCnt].fHeight <= heigthDec)
+	//{
+	//}
+
+	// 横幅の拡大率
+	Widthscal = isWidthEasing ? (widthEx / MaxtimeWidth) : (-widthdec / MaxtimeWidth);
+	Heightscal = isHeightEasing ? (heightEx / MaxtimeHeight) : (-heigthDec / MaxtimeHeight);
+
+	// 目的の値に近づける
+	g_GameUI[nCnt].fWidth += Widthscal;
+
+	// 目的の値に近づける
+	g_GameUI[nCnt].fHeight += Heightscal;
 }

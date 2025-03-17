@@ -78,6 +78,7 @@ Boss g_Boss[MAX_BOSS]; // ボスの情報
 MOTION g_LoadBoss;
 int nKeyBoss, nCntMotionBoss;
 int g_nNumBoss = 0;
+bool g_bManual = false;
 
 //===============================================================================================================
 // ボスの初期化処理
@@ -115,7 +116,11 @@ void InitBoss(void)
 	// ボスが何体いるか
 	g_nNumBoss = 0;
 
-	LoadBoss(); // ボスのロード
+	// マニュアル表示できるか
+	g_bManual = false;
+
+	// ボスのロード
+	LoadBoss(); 
 }
 //===============================================================================================================
 // ボスの終了処理
@@ -395,6 +400,23 @@ void UpdateBoss(void)
 		}
 		CollisionToBoss(nCnt); // ボスとボスの当たり判定
 	}
+
+	// マニュアルを表示できる
+	if (g_bManual == true)
+	{
+		// マニュアルを表示するまでのカウンター
+		static int nCounter = 0;
+
+		nCounter++;
+
+		// 3秒たったら
+		if (nCounter >= 180)
+		{
+			// マニュアルを表示
+			EnableManual(true, MANUALTYPE_ONE);
+			nCounter = 0;
+		}
+	}
 }
 //===============================================================================================================
 // ボスの描画処理
@@ -621,21 +643,6 @@ void HitBoss(int nCntBoss,int nDamage)
 
 		if (g_Boss[nCntBoss].isKillCount == true)
 		{
-			if (gamestate != GAMESTATE_END)
-			{
-				if (pPlayer->FeverMode)
-				{
-					AddScore(30000);		// スコアを取得
-					AddSpgauge(10.5f);   // SPゲージを取得
-				}
-				else if (!pPlayer->FeverMode)
-				{
-					AddFever(10.0f);		// フィーバーポイントを取得
-					AddScore(15000);		// スコアを取得
-					AddSpgauge(2.0f);       // SPゲージを取得
-				}
-			}
-
 			// ボスの数を減らす
 			g_nNumBoss--;
 
@@ -699,8 +706,7 @@ void HitBoss(int nCntBoss,int nDamage)
 		g_Boss[nCntBoss].nCounterState = 20;
 		AddSpgauge(1.0f);   // SPゲージを取得
 
-		// マニュアルを表示
-		EnableManual(true,MANUALTYPE_ONE);
+		g_bManual = true;
 
 		return;
 	}
@@ -1641,9 +1647,10 @@ void UpdateAgentBoss(int nCntBoss)
 void DeathMotionContlloer(int nCntBoss)
 {
 	Player* pPlayer = GetPlayer();
+	GAMESTATE gamestate = GetGameState();
 
 	// キーが最後まで行ったかを判定
-	const bool LastKey = g_Boss[nCntBoss].Motion.nKey >= g_Boss[nCntBoss].Motion.aMotionInfo[MOTIONTYPE_DEATH].nNumkey - 1;
+	const bool LastKey = g_Boss[nCntBoss].Motion.nKey >= g_Boss[nCntBoss].Motion.aMotionInfo[g_Boss[nCntBoss].Motion.motionType].nNumkey - 1;
 
 	// 死亡モーションだったら
 	if (g_Boss[nCntBoss].Motion.nKey <= 0)
@@ -1655,6 +1662,27 @@ void DeathMotionContlloer(int nCntBoss)
 	// 最後にキーになったら
 	if (LastKey == true)
 	{
+		if (gamestate != GAMESTATE_END)
+		{
+			// スコアを代入
+			float score = pPlayer->FeverMode ? 200000 : 100000;
+
+			// フィーバーゲージを代入
+			float fever = pPlayer->FeverMode ? 20 : 10;
+
+			// spゲージを代入
+			float Spgage = pPlayer->FeverMode ? 20 : 10;
+
+			// スコアを加算
+			AddScore(score);
+
+			// フィーバーを加算
+			AddFever(fever);
+
+			// spゲージを代入
+			AddSpgauge(Spgage);
+		}
+
 		// 消す
 		g_Boss[nCntBoss].bUse = false;
 
