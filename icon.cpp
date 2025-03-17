@@ -569,9 +569,6 @@ void SetUpDownIcon(int nCnt, int* EaseCnt)
 //=================================================================================================================
 void ShowCraftingAnim(int nCnt)
 {
-	// 頂点情報のポインタ
-	VERTEX_2D* pVtx;
-
 	Player* pPlayer = GetPlayer();
 	Item* pItem = GetItem();
 
