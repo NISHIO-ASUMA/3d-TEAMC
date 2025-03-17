@@ -92,7 +92,8 @@ void MotionTransition(void);																	 // モーションタイプの遷移
 void StateTransition(void);																		 // 状態の遷移
 void ComboTransition(void);																		 // コンボ状態の遷移
 void SetUpPlayerAttack(void);																	 // プレイヤーの攻撃の設定処理
-void SetUpJumpAction(int nKey, int nCounter, int nLastKey, int EndFrame);																		 // ジャンプアクションの設定
+void SetUpJumpAction(int nKey, int nCounter, int nLastKey, int EndFrame);						 // ジャンプアクションの設定
+void SetUpPlayerFirstWepon(void);																 // プレイヤーの初期武器の設定
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -200,8 +201,12 @@ void InitPlayer(void)
 
 	// 矢印を設定
 	SetMark(g_player.pos, g_player.rot);
+
+	// ダメージのUIを設定
 	SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_DAMAGE, 740.0f, 460.0f, false, 0);
 
+	// プレイヤーの初期武器の設定
+	SetUpPlayerFirstWepon();
 }
 //===============================================================================================================
 //プレイヤーの終了処理
@@ -3366,6 +3371,35 @@ void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
 	{
 		g_player.move.y = -MAX_GLABITY * 0.5f;
 	}
+}
+//===============================================================================================================
+// プレイヤーの初期武器の設定
+//===============================================================================================================
+void SetUpPlayerFirstWepon(void)
+{
+	// モーションを歩きにする(第2引数に1を入れる)
+	MotionChange(MOTION_DBHAND, 1);
+
+	// 素手の時のモーション情報を代入
+	for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
+	{
+		g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].aModel[nCntModel]; // モデルの情報を代入
+	}
+	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
+	{
+		g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].aMotionInfo[nCntMotion];
+	}
+
+	StatusChange(4.0f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+
+	// 投げた後に武器を消す
+	g_player.Motion.nNumModel -= 1;
+
+	// プレイヤーの状態を何も持っていない状態にする
+	g_player.HandState = PLAYERHOLD_NO;
+
+	// モーションをニュートラルにする
+	SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, true, 10); // モーションをニュートラルにする
 }
 //===============================================================================================================
 // プレイヤーが攻撃状態か

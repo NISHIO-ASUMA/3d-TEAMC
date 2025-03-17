@@ -1674,7 +1674,7 @@ void UpdateDeathParam(int nCntEnemy)
 		g_Enemy[nCntEnemy].move.z = fMoveZ;
 	}
 	// 最後のキーまで行ったら
-	if (nKey >= nLastKey - 1)
+	if (nKey >= nLastKey)
 	{
 		// テリトリーの敵の減少処理
 		DecreaseTerritoryEnemy(nCntEnemy);

@@ -51,7 +51,6 @@ Item g_Item[MAX_ITEM];					// 構造体変数
 int g_ItemTypeMax;						// 種類数
 MODEL_INFO g_TexItem[ITEMTYPE_MAX];		// テクスチャ関係
 ITEM_INFO g_aItemInfo[ITEMTYPE_MAX];	// アイテムの情報
-bool bFIrstCraftItem = false;
 bool bCraftAnim = false;
 
 //===============================================================================================================
@@ -88,7 +87,6 @@ void InitItem(void)
 	LoadItemModel(); // アイテムのロード処理
 
 	bCraftAnim = false;
-	bFIrstCraftItem = false;
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
@@ -346,7 +344,8 @@ void UpdateItem(void)
 		{
 			ThrowItem();
 		}
-		if (!g_Item[nCntItem].bUse)
+
+		if (g_Item[nCntItem].bUse == false)
 		{//使用中じゃなかったら
 			// 処理を読み飛ばす
 			continue;
@@ -372,27 +371,6 @@ void UpdateItem(void)
 			break;
 		default:
 			break;
-		}
-		// プレイヤーのアイテムを刀にする
-		if (bFIrstCraftItem == false && g_Item[nCntItem].nType == ITEMTYPE_KATANA)
-		{
-			// アイテム変更
-			Itemchange(nCntItem,g_Item[nCntItem].nType);
-
-			// モーションの変更
-			MotionChange(MOTION_KATANA, 0);
-
-			// アイテムのインデックスを保存
-			pPlayer->ItemIdx = nCntItem;
-			pPlayer->StockItemIdx = nCntItem;
-
-			g_Item[nCntItem].state = ITEMSTATE_HOLD;
-
-			// ステータス変更
-			StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCntItem].Size.y, 0.0f), 100);
-
-			// 最初に切り替えた
-			bFIrstCraftItem = true;
 		}
 
 		// 投げられたアイテムにエフェクト

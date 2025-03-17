@@ -55,14 +55,14 @@ PLAYERSET
 	ITEMTYPE = 7		# アイテムの種類  		   << 光の剣 >>
 	CHANGEMOTION = 0    # アイテムごとのモーション << 刃物武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.9			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 8		# アイテムの種類  		   << ハリせん >>
 	CHANGEMOTION = 3    # アイテムごとのモーション << 片手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.9			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
@@ -76,62 +76,62 @@ PLAYERSET
 	ITEMTYPE = 10		# アイテムの種類  		   << 氷の剣 >>
 	CHANGEMOTION = 0    # アイテムごとのモーション << 刃物武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.4			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 11		# アイテムの種類  		   << 鉄パイプ >>
 	CHANGEMOTION = 1    # アイテムごとのモーション << 片手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.3			# プレイヤーの歩くスピード 
+	SPEED = 3.5			# プレイヤーの歩くスピード 
 END_PLAYERSET
 PLAYERSET
 	ITEMTYPE = 12		# アイテムの種類  		   << 鉄パイプバット >>
 	CHANGEMOTION = 2    # アイテムごとのモーション << 両手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.5			# プレイヤーの歩くスピード 
+	SPEED = 3.7			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 13		# アイテムの種類  		   << サーフボード >>
 	CHANGEMOTION = 2    # アイテムごとのモーション << 大型武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.3			# プレイヤーの歩くスピード 
+	SPEED = 3.5			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 14		# アイテムの種類  		   << 松明 >>
 	CHANGEMOTION = 3    # アイテムごとのモーション << 片手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.5			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 15		# アイテムの種類  		   << 炎の剣 >>
 	CHANGEMOTION = 0    # アイテムごとのモーション << 刃物武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.4			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 16		# アイテムの種類  		   << バール >>
 	CHANGEMOTION = 2    # アイテムごとのモーション << 大型武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.6			# プレイヤーの歩くスピード 
+	SPEED = 3.7			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 17		# アイテムの種類  		   << 頭蓋骨 >>
 	CHANGEMOTION = 1    # アイテムごとのモーション << なし >>
 	PLAYERTYPE = 1      # プレイヤーの種類         << 歩き >>
-	SPEED = 3.6			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 18		# アイテムの種類  		   << 首付きマネキン >>
 	CHANGEMOTION = 1    # アイテムごとのモーション << 大型武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.4			# プレイヤーの歩くスピード 
+	SPEED = 3.5			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
@@ -145,7 +145,7 @@ PLAYERSET
 	ITEMTYPE = 20		# アイテムの種類  		   << スッポン >>
 	CHANGEMOTION = 4    # アイテムごとのモーション << 槍武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.5			# プレイヤーの歩くスピード 
+	SPEED = 3.7			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
@@ -159,14 +159,14 @@ PLAYERSET
 	ITEMTYPE = 22		# アイテムの種類  		   << マネキン >>
 	CHANGEMOTION = 2    # アイテムごとのモーション << 両手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.5			# プレイヤーの歩くスピード 
+	SPEED = 3.6			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 23		# アイテムの種類  		   << メガホン×拡声器×蛍光灯 >>
 	CHANGEMOTION = 2    # アイテムごとのモーション << 両手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.5			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
@@ -180,7 +180,7 @@ PLAYERSET
 	ITEMTYPE = 25		# アイテムの種類  		   << 魚 >>
 	CHANGEMOTION = 3    # アイテムごとのモーション << 片手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.3			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
@@ -194,7 +194,7 @@ PLAYERSET
 	ITEMTYPE = 27		# アイテムの種類  		   << 呪いの楽器 >>
 	CHANGEMOTION = 3    # アイテムごとのモーション << 片手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.0			# プレイヤーの歩くスピード 
+	SPEED = 3.5			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
@@ -215,7 +215,7 @@ PLAYERSET
 	ITEMTYPE = 30		# アイテムの種類  		   << 刀 >>
 	CHANGEMOTION = 0    # アイテムごとのモーション << 刃物武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.5			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 +---------------------+
@@ -226,27 +226,27 @@ PLAYERSET
 	ITEMTYPE = 32		# アイテムの種類  		   << 槍 >>
 	CHANGEMOTION = 4    # アイテムごとのモーション << 槍武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.5			# プレイヤーの歩くスピード 
+	SPEED = 3.7			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 33		# アイテムの種類  		   << 楽器 >>
 	CHANGEMOTION = 3    # アイテムごとのモーション << 片手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.3			# プレイヤーの歩くスピード 
+	SPEED = 3.5			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 34		# アイテムの種類  		   << 骨 >>
 	CHANGEMOTION = 3    # アイテムごとのモーション << 片手武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 3.5			# プレイヤーの歩くスピード 
+	SPEED = 4.0			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
 PLAYERSET
 	ITEMTYPE = 35		# アイテムの種類  		   << ゴルフハンマー >>
 	CHANGEMOTION = 1    # アイテムごとのモーション << 大型武器 >>
 	PLAYERTYPE = 0      # プレイヤーの種類         << 武器持ち >>
-	SPEED = 2.5			# プレイヤーの歩くスピード 
+	SPEED = 2.8			# プレイヤーの歩くスピード 
 END_PLAYERSET
 
