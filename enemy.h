@@ -139,4 +139,6 @@ int GetTerritoryBossPos(void);                                    // ƒ{ƒX‚ª‚Ç‚±‚
 void SetEnableBossTerritory(bool bEnable);						  // ƒ{ƒX‚ª‚¢‚éƒeƒŠƒgƒŠ[‚ÌÁ‹
 void SetUpHitStop(int *pHitStopCount);							  // ƒqƒbƒgƒXƒgƒbƒv‚Ìİ’èˆ—
 int GetNumTeriitory(void);										  // ƒeƒŠƒgƒŠ[‚ª‰½ŒÂ‚ ‚é‚©
+bool GetFirstCraftTIme(void);									  // Å‰‹­§ƒNƒ‰ƒtƒgó‘Ô‚©
+void EnableFirstCraftTime(bool bEnable);						  // Å‰‹­§‚ÌƒNƒ‰ƒtƒgó‘Ô‚Ìó‘Ôİ’èˆ—
 #endif

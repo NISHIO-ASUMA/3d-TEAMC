@@ -34,6 +34,7 @@
 //**************************************************************************************************************
 #define MAX_WORD (256)
 #define MAX_DURABILITY (100) // 耐久力
+#define DESTANCE (25.0f) // 距離
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -45,6 +46,7 @@ void PickUpItemAnimation(int nCntItem); // アイテムを拾える時の演出
 bool CheckMixItemMat(int pCraftMat, int pStockMat,int HoldIdx,int StockIdx);			// アイテムがクラフトできるかどうか
 void UpdateCraftItemParam(int nCnt);                                                // クラフトアイテムのパラメータ設定
 void SetUpFirstWepon(int nCnt);														// 最初のアイテムの設定
+void UpdateTrackingItem(int nCnt);													// 追従するアイテムの更新処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -83,6 +85,7 @@ void InitItem(void)
 		g_Item[nCntItem].nImpactCount = 110;				   // 衝撃波のカウント
 		g_Item[nCntItem].Itemtag[0] = {};					   // タグ
 		g_Item[nCntItem].Power = 0;							   // 攻撃力
+		g_Item[nCntItem].bTracking = false;					   // プレイヤーに追従するかどうか
 	}
 
 	LoadItemInfo();  // アイテムの情報
@@ -509,6 +512,9 @@ void UpdateItem(void)
 				g_Item[nCntItem].rot.y += SetSmoothAprroach(0.0f, g_Item[nCntItem].rot.y, 0.1f);;
 			}
 		}
+
+		// 追従するアイテムの更新処理
+		UpdateTrackingItem(nCntItem);
 
 		//// 角度の正規化X
 		//if (g_Item[nCntItem].rot.x > D3DX_PI)
@@ -973,6 +979,60 @@ void CraftMixItem(int HoldIdx,int StockIdx)
 	LoadItemChange(nMixWepon, g_Item[HoldIdx].Size.y);
 }
 //==============================================================================================================
+// アイテムの出現
+//==============================================================================================================
+void SpawonItem(D3DXVECTOR3 pos, int nType)
+{
+	Player* pPlayer = GetPlayer();
+
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+	{
+		if (g_Item[nCntItem].bUse == false && pPlayer->ItemIdx != nCntItem && pPlayer->StockItemIdx != nCntItem)
+		{// 未使用状態なら
+
+			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType]; // 必要な情報を代入
+			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;
+			g_Item[nCntItem].Maxdurability = g_aItemInfo[nType].Maxdurability;
+			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;
+			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
+
+			g_Item[nCntItem].pos = pos;			 // 座標
+			g_Item[nCntItem].nType = nType;		 // 種類
+			g_Item[nCntItem].bUse = true;		 // 使用判定
+
+			g_Item[nCntItem].nIdxBillboardCount = SetBillboard(D3DXVECTOR3(pos.x, pos.y + 100.0f, pos.z), BILLBOARDTYPE_SECOND, 40.0f, 20.0f, BILLBOARDSTATE_NOSET);
+			break;
+		}
+	}
+}
+//==============================================================================================================
+// 最初にクラフトさせるアイテムの設定処理
+//==============================================================================================================
+void SetFirstCraftItem(D3DXVECTOR3 pos, int nType)
+{
+	Player* pPlayer = GetPlayer();
+
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+	{
+		if (g_Item[nCntItem].bUse == false && pPlayer->ItemIdx != nCntItem && pPlayer->StockItemIdx != nCntItem)
+		{// 未使用状態なら
+
+			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType]; // 必要な情報を代入
+			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;
+			g_Item[nCntItem].Maxdurability = g_aItemInfo[nType].Maxdurability;
+			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;
+			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
+			g_Item[nCntItem].bTracking = true;
+
+			g_Item[nCntItem].pos = pos;			 // 座標
+			g_Item[nCntItem].nType = nType;		 // 種類
+			g_Item[nCntItem].bUse = true;		 // 使用判定
+
+			break;
+		}
+	}
+}
+//==============================================================================================================
 // クラフト先のアイテムのアイコンの表示
 //==============================================================================================================
 void EnableCraftIcon(int Item1, int Item2)
@@ -1181,6 +1241,9 @@ void LoadItemInfo(void)
 //==============================================================================================================
 void PickUpItemAnimation(int nCntItem)
 {
+	// プレイヤー追従してたら
+	if (g_Item[nCntItem].bTracking == true) return;
+
 	// インクリメント
 	g_Item[nCntItem].nEasingCnt++;
 	
@@ -1370,6 +1433,16 @@ void UpdateCraftItemParam(int nCnt)
 
 			// クラフトアイコンのアニメーション処理
 			EnableCraftIconAnim(true);
+
+			// プレイヤーが最初のクラフトタイムでクラフトを実行したら
+			if (pPlayer->bFirstCraft == false && GetFirstCraftTIme() == true)
+			{
+				// クラフトした
+				pPlayer->bFirstCraft = true;
+
+				// クラフトモードを解除
+				EnableFirstCraftTime(false);
+			}
 		}
 	}
 }
@@ -1407,5 +1480,49 @@ void SetUpFirstWepon(int nCnt)
 
 		// 最初に切り替えた
 		bFIrstCraftItem = true;
+	}
+}
+//==============================================================================================================
+// 追従するアイテムの更新処理
+//==============================================================================================================
+void UpdateTrackingItem(int nCnt)
+{
+	// 追従しないなら関数を抜ける
+	if (g_Item[nCnt].bTracking == false) return;
+
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
+
+	// 角度
+	static float fAngle = 0.0f;
+
+	// 角度を加算
+	fAngle += 0.05f;
+
+	// 角度を正規化
+	if (fAngle < -D3DX_PI)
+	{
+		fAngle += D3DX_PI * 2.0f;
+	}
+	else if (fAngle > D3DX_PI)
+	{
+		fAngle += -D3DX_PI * 2.0f;
+	}
+
+	// アイテムの種類がバットだったら
+	if (g_Item[nCnt].nType == ITEMTYPE_TORCH)
+	{
+		// 位置を設定
+		g_Item[nCnt].pos.x = pPlayer->pos.x + sinf(fAngle) * DESTANCE;
+		g_Item[nCnt].pos.y = pPlayer->pos.y + DESTANCE;
+		g_Item[nCnt].pos.z = pPlayer->pos.z + cosf(fAngle) * DESTANCE;
+	}
+	// アイテムの種類が石だったら
+	else if (g_Item[nCnt].nType == ITEMTYPE_KATANA)
+	{
+		// 位置を設定
+		g_Item[nCnt].pos.x = pPlayer->pos.x - sinf(fAngle) * DESTANCE;
+		g_Item[nCnt].pos.y = pPlayer->pos.y + DESTANCE;
+		g_Item[nCnt].pos.z = pPlayer->pos.z - cosf(fAngle) * DESTANCE;
 	}
 }

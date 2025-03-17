@@ -106,6 +106,7 @@ int g_nBossPos = 0;
 bool noFirstSetBoss = true;
 int g_nNumTerritory = 0;
 int g_TerritorySetTime = 0;
+bool bFirstCraftTime = false;
 
 //===============================================================================================================
 // 敵の初期化処理
@@ -148,6 +149,7 @@ void InitEnemy(void)
 	noFirstSetBoss = true; // 最初にボスを出さない処理
 	g_nNumTerritory = 0; // テリトリーのかず
 	g_TerritorySetTime = 0; // テリトリーのカウント
+	bFirstCraftTime = false; // クラフトタイムを行ったか
 
 	// テリトリーの数
 	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
@@ -258,11 +260,15 @@ void UpdateEnemy(void)
 			g_Enemy[nCntEnemy].pos.x += (float)(rand() % 30 - 15.0f);
 			g_Enemy[nCntEnemy].pos.z += (float)(rand() % 30 - 15.0f);
 		}
-		if (g_Enemy[nCntEnemy].bUse == false || g_Enemy[nCntEnemy].HitStopCount >= 0)
-		{// 未使用状態だったら
-			// とばしてカウントを進める
-			continue;
-		}
+
+		// 未使用だったら処理を読み飛ばす
+		if (g_Enemy[nCntEnemy].bUse == false) continue;
+
+		// ヒットストップしていたら処理を読み飛ばす
+		if (g_Enemy[nCntEnemy].HitStopCount > 0) continue;
+
+		// 最初のクラフトの時間だったら処理を読み飛ばす
+		if (bFirstCraftTime == true) continue;
 		
 		// 最大体力を超えてたら調整
 		if (g_Enemy[nCntEnemy].nMaxLife < g_Enemy[nCntEnemy].nLife)
@@ -539,6 +545,19 @@ void DrawEnemy(void)
 					color.MatD3D.Diffuse.g = 0.0f;
 					color.MatD3D.Diffuse.b = 0.0f;
 					color.MatD3D.Diffuse.a = 1.0f;
+
+					// マテリアルの設定
+					pDevice->SetMaterial(&color.MatD3D);
+				}
+
+				// 最初のクラフトの時間だったら
+				if (bFirstCraftTime == true)
+				{
+					// 代入
+					color = pMat[nCntMat];
+
+					// 透明にする
+					color.MatD3D.Diffuse.a = 0.3f;
 
 					// マテリアルの設定
 					pDevice->SetMaterial(&color.MatD3D);
@@ -1744,7 +1763,7 @@ void UpdateEnemySpawn(void)
 		int BossSpawnChance = rand() % 101;
 
 		// ボスが体なら && 40%の確率で出現
-		if (BossSpawnChance <= 100 && nNumBoss == 0 && noFirstSetBoss == false)
+		if (BossSpawnChance <= 30 && nNumBoss == 0 && noFirstSetBoss == false)
 		{
 			// ボスを出現させる
 			EnableSetBoss = true;
@@ -2081,6 +2100,9 @@ void SetCreateWeponSound(int nType)
 //===============================================================================================================
 void DeletTerritory(void)
 {
+	// プレイヤーの取得処理
+	Player* pPlayer = GetPlayer();
+
 	// テリトリーの数回す
 	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
 	{
@@ -2095,6 +2117,22 @@ void DeletTerritory(void)
 			// 使用状態にする
 			g_Territory[nCnt].bUse = false;
 			g_nNumTerritory--;
+
+			// 最初のクラフト時間を取っていなかったら
+			if (bFirstCraftTime == false && g_nNumTerritory == 0 && pPlayer->bFirstCraft == false)
+			{
+				// クラフト時間のUIの設定
+				SetGameUI(D3DXVECTOR3(1520.0f, 250.0f, 0.0f), UITYPE_CRAFTTIME, 120.0f, 60.0f, false, 0);
+
+				// 最初にクラフトするためのアイテムの設定
+				SetFirstCraftItem(D3DXVECTOR3(pPlayer->pos.x, pPlayer->pos.y + 50.0f, pPlayer->pos.z), ITEMTYPE_TORCH);
+
+				// 最初にクラフトするためのアイテムの設定
+				SetFirstCraftItem(D3DXVECTOR3(pPlayer->pos.x, pPlayer->pos.y + 50.0f, pPlayer->pos.z), ITEMTYPE_KATANA);
+
+				// クラフトタイムをオン
+				bFirstCraftTime = true;
+			}
 		}
 	}
 }
@@ -2155,6 +2193,9 @@ bool KeepInTerritory(int nCntEnemy)
 //==============================================================================================================
 void SetSpawnCount(void)
 {
+	// プレイヤーの取得処理
+	Player* pPlayer = GetPlayer();
+
 	// スポーンのカウンター
 	static int SpawnCnt = 0;
 
@@ -2166,6 +2207,9 @@ void SetSpawnCount(void)
 
 	// 時間が残り15秒だったら出さない
 	if (nMinute <= 0 && nSecond <= 15) return;
+
+	// 最初のクラフト時間だったら
+	if (bFirstCraftTime == true) return;
 
 	// すべての敵を倒した
 	if (g_Territory[0].nNumEnemy <= 0 && g_Territory[1].nNumEnemy <= 0 && g_Territory[0].bBoss == false && g_Territory[1].bBoss == false)
@@ -2214,13 +2258,14 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 	}
 	else
 	{
-<<<<<<< HEAD
-		// 敵が出たUIを設定
-		SetGameUI(D3DXVECTOR3(640.0f, 130.0f, 0.0f), UITYPE_POPENEMY, 150.0f, 50.0f, true, 180.0f);
-=======
+		if (g_nNumTerritory == 1)
+		{
+			// 敵が出たUIを設定
+			SetGameUI(D3DXVECTOR3(1120.0f, 260.0f, 0.0f), UITYPE_POPENEMY, 150.0f, 50.0f, true, 180.0f);
+		}
+
 		// サウンド再生
 		PlaySound(SOUND_LABEL_ENEMYPOP_SE);
->>>>>>> 0a6aff180a1c0a2d86166c99c5fe07d6321606a4
 
 		// ボスがいない状態にする
 		g_Territory[nTerritoryIdx].bBoss = bSetBoss;
@@ -2259,19 +2304,19 @@ void OutTerritorySpawner(int nSpawner)
 		{
 		case 0:
 			// 敵をセット
-			SetEnemy(D3DXVECTOR3(1094.0f + randum_valueX, 0.0f, 288.0f + randum_valueZ), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
+			SetEnemy(D3DXVECTOR3(1094.0f + randum_valueX, 0.0f, 288.0f + randum_valueZ), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
 			break;
 		case 1:
 			// 敵をセット
-			SetEnemy(D3DXVECTOR3(-243.0f + randum_valueX, 0.0f, 169.0f + randum_valueZ), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
+			SetEnemy(D3DXVECTOR3(-243.0f + randum_valueX, 0.0f, 169.0f + randum_valueZ), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
 			break;
 		case 2:
 			// 敵をセット
-			SetEnemy(D3DXVECTOR3(135.0f + randum_valueX, 0.0f, -936.0f + randum_valueZ), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
+			SetEnemy(D3DXVECTOR3(135.0f + randum_valueX, 0.0f, -936.0f + randum_valueZ), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
 			break;
 		case 3:
 			// 敵をセット
-			SetEnemy(D3DXVECTOR3(-118.0f + randum_valueX, 0.0f, 890.0f + randum_valueZ), rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
+			SetEnemy(D3DXVECTOR3(-118.0f + randum_valueX, 0.0f, 890.0f + randum_valueZ), rand() % ENEMYTYPE_MAX, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), -1);
 			break;
 		default:
 			break;
@@ -2562,6 +2607,20 @@ void SetUpHitStop(int* pHitStopCount)
 int GetNumTeriitory(void)
 {
 	return g_nNumTerritory;
+}
+//==============================================================================================================
+// 最初強制クラフト状態か
+//==============================================================================================================
+bool GetFirstCraftTIme(void)
+{
+	return bFirstCraftTime;
+}
+//==============================================================================================================
+// 最初強制のクラフト状態の状態設定処理
+//==============================================================================================================
+void EnableFirstCraftTime(bool bEnable)
+{
+	bFirstCraftTime = bEnable;
 }
 //==============================================================================================================
 // ボスがいるテリトリーの消去

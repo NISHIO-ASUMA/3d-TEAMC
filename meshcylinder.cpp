@@ -147,6 +147,8 @@ void UpdateMeshCylinder(void)
 			// テリトリーのシリンダーの更新
 			UpdateTrritoryCylinder(nCntCylinder);
 			break;
+		case CYLINDERTYPE_ITEM:
+			break;
 		default:
 			break;
 		}

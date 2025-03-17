@@ -140,21 +140,24 @@ typedef struct
 	ITEM_INFO aItemInfo[ITEMTYPE_MAX];
 	int Power;							// 攻撃力
 	int nMinimapIdx;					// ミニマップのインデックス
+	bool bTracking;						// プレイヤーについていくか
 }Item;
 
 //***************************
 //プロトタイプ宣言
 //***************************
-void InitItem(void);
-void UninitItem(void);
-void UpdateItem(void);
-void DrawItem(void);
-void SetItem(D3DXVECTOR3 pos, int nType);
-bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius);
-void Itemchange(int nIdx,int nType);
-Item* GetItem(void);
-MODEL_INFO* GetItemOrigin(void);
-ITEM_INFO* GetItemInfo(void);
-void EnableCraftIcon(int Item1, int Item2);
-void CraftMixItem(int HoldIdx, int StockIdx);
+void InitItem(void);							// アイテムの初期化処理
+void UninitItem(void);							// アイテムの終了処理
+void UpdateItem(void);							// アイテムの更新処理
+void DrawItem(void);							// アイテムの描画処理
+void SetItem(D3DXVECTOR3 pos, int nType);		// アイテムの設定処理
+bool HitThrowItem(D3DXVECTOR3* pPos, float ItemRadius, float EnemyRadius); // 投げたアイテムとの当たり判定
+void Itemchange(int nIdx,int nType);			// アイテムの変更処理
+Item* GetItem(void);							// アイテムの取得処理
+MODEL_INFO* GetItemOrigin(void);				// アイテムのモデルの取得処理
+ITEM_INFO* GetItemInfo(void);					// アイテムの情報取得処理
+void EnableCraftIcon(int Item1, int Item2);		// アイテムのアイコン表示処理
+void CraftMixItem(int HoldIdx, int StockIdx);   // アイテムのクラフト処理
+void SpawonItem(D3DXVECTOR3 pos, int nType);    // アイテムのスポーン処理
+void SetFirstCraftItem(D3DXVECTOR3 pos, int nType);  // 最初にクラフトさせるアイテムの設定処理
 #endif

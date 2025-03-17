@@ -66,7 +66,6 @@ void SetRasuAttack(int nCntBoss);															// ボスの突進攻撃の設定
 void SetDoubleRasuAttack(int nCntBoss);														// ボスの二回突進してくる攻撃処理
 void UpdateAgentBoss(int nCntBoss);															// ボスの追跡の更新処理
 void DeathMotionContlloer(int nCntBoss);													// ボスの死亡モーションの処理
-void EndEventBossState(int nCntBoss);														// イベントが終わった後にボスを消す処理
 void HitBossAbnormalCondition(int nCntBoss);												// ボスに当たった時のエフェクト
 void HitBossAbnormalConditionParam(int nCntBoss, int nElement, int ChargeValue, int MaxCharge, int stateCnt);  // ボスに当たった時のエフェクトのパラメータ
 void SpawnItem(D3DXVECTOR3 pos);
@@ -393,30 +392,25 @@ void UpdateBoss(void)
 			}
 		}
 
-
-		if (EnableEvent() == false)
-		{
-			EndEventBossState(nCnt);
-		}
 		CollisionToBoss(nCnt); // ボスとボスの当たり判定
 	}
 
-	// マニュアルを表示できる
-	if (g_bManual == true)
-	{
-		// マニュアルを表示するまでのカウンター
-		static int nCounter = 0;
+	//// マニュアルを表示できる
+	//if (g_bManual == true)
+	//{
+	//	// マニュアルを表示するまでのカウンター
+	//	static int nCounter = 0;
 
-		nCounter++;
+	//	nCounter++;
 
-		// 3秒たったら
-		if (nCounter >= 180)
-		{
-			// マニュアルを表示
-			EnableManual(true, MANUALTYPE_ONE);
-			nCounter = 0;
-		}
-	}
+	//	// 3秒たったら
+	//	if (nCounter >= 180)
+	//	{
+	//		// マニュアルを表示
+	//		EnableManual(true, MANUALTYPE_ONE);
+	//		nCounter = 0;
+	//	}
+	//}
 }
 //===============================================================================================================
 // ボスの描画処理
@@ -1701,13 +1695,10 @@ void DeathMotionContlloer(int nCntBoss)
 
 		// テリトリーを消す
 		SetEnableBossTerritory(false);
+
+		// ボスを倒したらアイテムを出現させる
+		SpawonItem(g_Boss[nCntBoss].pos, rand() % ITEMTYPE_MAX);
 	}
-}
-//========================================================================================================
-// イベントが終わった後にボスを消す処理
-//========================================================================================================
-void EndEventBossState(int nCntBoss)
-{
 }
 //========================================================================================================
 // ボスに当たった時の状態異常

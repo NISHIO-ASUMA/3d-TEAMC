@@ -37,6 +37,7 @@ typedef enum
 	UITYPE_SETENEMYTIME,
 	UITYPE_BOSSMANUALEXIT,
 	UITYPE_POPENEMY, // ìGèoåª
+	UITYPE_CRAFTTIME, 
 	UITYPE_MAX
 }UITYPE;
 
@@ -63,6 +64,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\settime.png",
 	"data\\TEXTURE\\bossmanualexit.png",
 	"data\\TEXTURE\\ui_popenemy.png",
+	"data\\TEXTURE\\ui_crafttime.png",
 };
 
 //**************************************************************************************************************

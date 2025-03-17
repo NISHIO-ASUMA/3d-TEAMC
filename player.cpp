@@ -169,6 +169,7 @@ void InitPlayer(void)
 	g_player.HoldItemType = ITEMTYPE_KATANA;						// 持っているアイテムの種類
 	g_player.bAvoid = false;										// 無敵時間
 	g_player.HitStopCount = 0;										// ヒットストップ
+	g_player.bFirstCraft = false;									// 初めてクラフト下かどうか
 
 	// アイテム分回す
 	for (int nCnt = 0; nCnt < MAX_ITEM; nCnt++)
@@ -486,6 +487,12 @@ void UpdatePlayer(void)
 		SetImpact(g_player.pos, D3DCOLOR_RGBA(100, 100, 100, 255), 32, 30.0f, 20.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 0);
 
 		AddSpgauge(100.0f);
+
+		//// 最初にクラフトする溜めのアイテムの設定
+		//SetFirstCraftItem(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 50.0f, g_player.pos.z), ITEMTYPE_BAT);
+
+		//// 最初にクラフトする溜めのアイテムの設定
+		//SetFirstCraftItem(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 50.0f, g_player.pos.z), ITEMTYPE_STONE);
 	}
 
 #endif // DEBUG

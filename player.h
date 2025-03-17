@@ -219,6 +219,7 @@ typedef struct
 	int HoldItemType;       // 持っているアイテムの種類
 	bool bAvoid;			// 無敵時間
 	int HitStopCount;       // ヒットストップのカウント
+	bool bFirstCraft;		// 最初にクラフトしたか
 }Player;
 
 //**************************

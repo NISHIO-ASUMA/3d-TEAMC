@@ -12,6 +12,7 @@
 #include "boss.h"
 #include "game.h"
 #include "sound.h"
+#include "enemy.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -111,7 +112,7 @@ void InitTime(void)
 		NULL);
 
 	// 最初だけ時間を止める
-	g_StopTimeCnt = 600;
+	g_StopTimeCnt = 300;
 
 	// 分のロック
 	g_pVtxBuffTimeMinute->Lock(0, 0, (void**)&pVtx, 0);
@@ -341,7 +342,7 @@ void UpdateTime(void)
 	g_StopTimeCnt--;
 
 	// ゲームが続いているなら
-	if (gamestate != GAMESTATE_END && gamestate != GAMESTATE_MOVIE && g_StopTimeCnt <= 0)
+	if (gamestate != GAMESTATE_END && gamestate != GAMESTATE_MOVIE && g_StopTimeCnt <= 0 && GetFirstCraftTIme() == false)
 	{
 		g_nCountTime++; // タイマーカウントを加算
 

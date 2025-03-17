@@ -45,6 +45,7 @@ void SetBossManual(int nCnt);           // ボスのマニュアルの設定
 void UpdateUIFlash(int nCnt, float* pAlv,float Maxtime);	// UIの点滅処理(使いまわせるやつ)
 void SetTerritoryEnemyUI(int nCnt);		// テリトリーに敵が出た時のUIの設定
 void UIScalAnimation(int nCnt,float widthEx,float widthdec,float heightEx,float heigthDec, float MaxtimeWidth,float MaxtimeHeight); // 拡大縮小のアニメーション
+void UpdateCraftTimeUI(int nCnt);		// クラフトの時間中のUI
 float fcolorA;
 
 //**************************************************************************************************************
@@ -130,13 +131,6 @@ void InitGameUI(void)
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-		if (g_GameUI[nCnt].nType == UITYPE_SYUTYUSEN)
-		{
-			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(0.5f, 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(0.0f, 0.5f);
-			pVtx[3].tex = D3DXVECTOR2(0.5f, 0.5f);
-		}
 		pVtx += 4;
 	}
 	//頂点ロック解除
@@ -365,6 +359,12 @@ void UpdateGameUI(void)
 			case UITYPE_POPENEMY:
 				SetTerritoryEnemyUI(nCnt);
 				break;
+			case UITYPE_CRAFTTIME:
+				UpdateCraftTimeUI(nCnt);
+				// クラフトの時間が終わったら
+				if (GetFirstCraftTIme() == false) g_GameUI[nCnt].bUse = false;
+				break;
+
 			}
 
 			// 寿命がある
@@ -807,9 +807,12 @@ void SetTerritoryTimeUI(int nCnt)
 	// テリトリーの数が0胃かだったら
 	const bool isSetUI = NumTerritory <= 0;
 
+	// 最初のクラフトモードだったら
+	const bool NotCraftTime = GetFirstCraftTIme() == true;
+
 	// 大きさを設定
-	g_GameUI[nCnt].fWidth = isSetUI ? 40.0f : 0.0f;
-	g_GameUI[nCnt].fHeight = isSetUI ? 25.0f : 0.0f;
+	g_GameUI[nCnt].fWidth = NotCraftTime ?  0.0f : (isSetUI ? 40.0f : 0.0f);
+	g_GameUI[nCnt].fHeight = NotCraftTime ?  0.0f : (isSetUI ? 25.0f : 0.0f);
 }
 //==============================================================================================================
 // ボスのマニュアルの設定
@@ -889,8 +892,29 @@ void UpdateUIFlash(int nCnt,float *pAlv,float Maxtime)
 //=============================================================================================================
 void SetTerritoryEnemyUI(int nCnt)
 {
+	VERTEX_2D* pVtx;
+
 	// 大きくなったり小さくなったりするアニメーション
-	UIScalAnimation(nCnt, 200.0f, 150.0f, 80.0f, 40.0f,40.0f,40.0f);
+	UIScalAnimation(nCnt, 200.0f, 150.0f, 80.0f, 40.0f, 40.0f, 40.0f);
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
 }
 //==============================================================================================================
 // 拡大縮小のアニメーション
@@ -942,4 +966,34 @@ void UIScalAnimation(int nCnt, float widthEx, float widthdec, float heightEx, fl
 
 	// 目的の値に近づける
 	g_GameUI[nCnt].fHeight += Heightscal;
+}
+//==============================================================================================================
+// クラフトの時間中のUI
+//==============================================================================================================
+void UpdateCraftTimeUI(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	// 目的の値に近づける
+	g_GameUI[nCnt].pos.x += SetSmoothAprroach(1120.0f, g_GameUI[nCnt].pos.x, 0.1f);
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
+
 }
