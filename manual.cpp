@@ -273,7 +273,7 @@ void SetUpManualBoss(int nCnt)
 	ExitTime++;
 
 	// スペースを押したら && 一度もセットしてなければ
-	if (OnMouseTriggerDown(LEFT_MOUSE) == true && ExitTime >= 180)
+	if ((OnMouseTriggerDown(LEFT_MOUSE) == true || JoypadTrigger(JOYKEY_A) == true) && ExitTime >= 180)
 	{
 		g_bmanual = false;
 		g_Manual[nCnt].bUse = false;

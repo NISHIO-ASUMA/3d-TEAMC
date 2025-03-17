@@ -43,6 +43,7 @@ void LoadItemInfo(void); // アイテムの情報のロード処理
 void PickUpItemAnimation(int nCntItem); // アイテムを拾える時の演出
 bool CheckMixItemMat(int pCraftMat, int pStockMat,int HoldIdx,int StockIdx);			// アイテムがクラフトできるかどうか
 void UpdateCraftItemParam(int nCnt);                                                // クラフトアイテムのパラメータ設定
+void SetUpFirstWepon(int nCnt);														// 最初のアイテムの設定
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -51,6 +52,7 @@ Item g_Item[MAX_ITEM];					// 構造体変数
 int g_ItemTypeMax;						// 種類数
 MODEL_INFO g_TexItem[ITEMTYPE_MAX];		// テクスチャ関係
 ITEM_INFO g_aItemInfo[ITEMTYPE_MAX];	// アイテムの情報
+bool bFIrstCraftItem = false;
 bool bCraftAnim = false;
 
 //===============================================================================================================
@@ -87,6 +89,7 @@ void InitItem(void)
 	LoadItemModel(); // アイテムのロード処理
 
 	bCraftAnim = false;
+	bFIrstCraftItem = false;
 
 	for (int nCntNum = 0; nCntNum < g_ItemTypeMax; nCntNum++)
 	{
@@ -350,6 +353,8 @@ void UpdateItem(void)
 			// 処理を読み飛ばす
 			continue;
 		}
+		// 最初のアイテムの設定
+		SetUpFirstWepon(nCntItem);
 
 		// 状態の遷移
 		switch (g_Item[nCntItem].state)
@@ -1359,5 +1364,37 @@ void UpdateCraftItemParam(int nCnt)
 			// クラフトアイコンのアニメーション処理
 			EnableCraftIconAnim(true);
 		}
+	}
+}
+//==============================================================================================================
+// 最初のアイテムの設定
+//==============================================================================================================
+void SetUpFirstWepon(int nCnt)
+{
+	MODE mode = GetMode();
+	Player* pPlayer = GetPlayer();
+
+	if (mode != MODE_TUTORIAL) return;
+
+	// プレイヤーのアイテムを刀にする
+	if (bFIrstCraftItem == false && g_Item[nCnt].nType == ITEMTYPE_KATANA)
+	{
+		// アイテム変更
+		Itemchange(nCnt, g_Item[nCnt].nType);
+
+		// モーションの変更
+		MotionChange(MOTION_KATANA, 0);
+
+		// アイテムのインデックスを保存
+		pPlayer->ItemIdx = nCnt;
+		pPlayer->StockItemIdx = nCnt;
+
+		g_Item[nCnt].state = ITEMSTATE_HOLD;
+
+		// ステータス変更
+		StatusChange(3.1f, D3DXVECTOR3(0.0f, g_Item[nCnt].Size.y, 0.0f), 100);
+
+		// 最初に切り替えた
+		bFIrstCraftItem = true;
 	}
 }

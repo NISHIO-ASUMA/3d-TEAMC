@@ -158,6 +158,7 @@ void InitEnemy(void)
 		g_Territory[nCnt].bUse = false;     // 使われているか
 	}
 
+	// 敵の種類分
 	for (int nCntEnemyType = 0; nCntEnemyType < ENEMYTYPE_MAX; nCntEnemyType++)
 	{
 		// 敵の読み込み
@@ -669,10 +670,25 @@ void HitEnemy(int nCnt,int nDamage)
 
 		// カウントを止める
 		g_Enemy[nCnt].isKillCount = false;
+
+		// 左の振動の強さ
+		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
+
+		// 右の振動の強さ
+		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
+
+		SetVibration(leftmotor, rightmotor, 500);
 		return;
 	}
 	else
 	{
+		// 左の振動の強さ
+		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
+
+		// 右の振動の強さ
+		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
+
+		SetVibration(leftmotor, rightmotor, 1000);
 		if (g_Enemy[nCnt].state != ENEMYSTATE_DAMAGE)
 		{
 			// ヒットストップの設定
@@ -2144,8 +2160,8 @@ void SetSpawnCount(void)
 	int nSecond = GetTimeSecond();
 	int nMinute = GetTimeMinute();
 
-	//// 時間が残り15秒だったら出さない
-	//if (nMinute <= 0 && nSecond <= 15) return;
+	// 時間が残り15秒だったら出さない
+	if (nMinute <= 0 && nSecond <= 15) return;
 
 	// すべての敵を倒した
 	if (g_Territory[0].nNumEnemy <= 0 && g_Territory[1].nNumEnemy <= 0 && g_Territory[0].bBoss == false && g_Territory[1].bBoss == false)
@@ -2155,7 +2171,7 @@ void SetSpawnCount(void)
 			// タイマーを設置
 			SetCounter(D3DXVECTOR3(1155.0f, 205.0f, 0.0f), COUNTER_COUNTDOWN, 10, 10.0f, 15.0f, COUNTERTYPE_TERRITORY);
 		}
-
+		
 		// スポーンカウントを加算
 		g_TerritorySetTime++;
 
@@ -2220,6 +2236,7 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 //==============================================================================================================
 void OutTerritorySpawner(int nSpawner)
 {
+	// ランダムな値
 	float randum_valueX = (float)(rand() % 10);
 	float randum_valueZ = (float)(rand() % 10);
 

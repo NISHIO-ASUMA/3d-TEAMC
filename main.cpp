@@ -467,6 +467,9 @@ void Update(void)
 	//マウスの更新
 	UpdateMouse();
 
+	// コントローラーの振動の更新
+	UpdateVibration();
+
 	switch (g_mode)
 	{
 	case MODE_TITLE: // タイトル画面

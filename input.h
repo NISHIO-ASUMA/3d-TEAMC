@@ -90,7 +90,7 @@ bool GetJoyStickRrepeat(void);						//ジョイパッドのスティック情報(R)
 void UpdateStick(void);								//Rスティック
 
 XINPUT_STATE* GetJoyStickAngle(void);				//スティックの角度情報
-void VibrateController(int ControllerID, WORD leftMotor, WORD rightMotor); // コントローラーの振動関数
-void UpdateVibration(VibrationState* vibrationState);
-void StartVibration(VibrationState* vibrationState, int VibrateTime);
+
+void SetVibration(int leftMotor, int rightMotor, int durationMs); // 振動の設定
+void UpdateVibration(void);										  // 振動の更新処理
 #endif

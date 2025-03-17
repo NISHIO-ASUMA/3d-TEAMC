@@ -651,6 +651,14 @@ void HitBoss(int nCntBoss,int nDamage)
 			SetMotion(&g_Boss[nCntBoss].Motion, MOTIONTYPE_DEATH, true, 10);
 		}
 
+		// 左の振動の強さ
+		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
+
+		// 右の振動の強さ
+		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
+
+		SetVibration(leftmotor, rightmotor, 500);
+
 		g_Boss[nCntBoss].nLife = -1;
 
 		// 通常武器が当たった時のサウンド
@@ -663,6 +671,14 @@ void HitBoss(int nCntBoss,int nDamage)
 	}
 	else
 	{
+		// 左の振動の強さ
+		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
+
+		// 右の振動の強さ
+		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
+
+		SetVibration(leftmotor, rightmotor, 500);
+
 		// ヒットストップのカウントの設定
 		SetUpHitStop(&g_Boss[nCntBoss].nHitStopCount);
 

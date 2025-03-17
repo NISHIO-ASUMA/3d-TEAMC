@@ -208,6 +208,7 @@ void InitPlayer(void)
 
 	// プレイヤーの初期武器の設定
 	SetUpPlayerFirstWepon();
+	
 }
 //===============================================================================================================
 //プレイヤーの終了処理
@@ -1165,8 +1166,8 @@ void ThrowItem(void)
 	// 状態を投げられてる状態にする
 	pItem[nIdx].state = ITEMSTATE_THROW;
 
-	g_player.speed = 3.0f; // プレイヤーの移動速度をリセット
-	g_player.fStockSpeed = 3.0f; // プレイヤーの移動速度を保存
+	g_player.speed = 4.0f; // プレイヤーの移動速度をリセット
+	g_player.fStockSpeed = 4.0f; // プレイヤーの移動速度を保存
 }
 //===============================================================================================================
 // プレイヤーと敵の当たり判定
@@ -2244,8 +2245,6 @@ void SetElementEffect(void)
 //===============================================================================================================
 void SetMotionContller(void)
 {
-	static VibrationState vibrationState = { 0, 0, 0, 0, 0 };  // 初期化
-
 	// キー
 	int nKey = g_player.Motion.nKey;
 
@@ -2255,7 +2254,8 @@ void SetMotionContller(void)
 	// 両手のスペシャル攻撃の時
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPDOUBLE && g_player.Motion.motionType == MOTIONTYPE_ACTION && CheckMotionBounds(nKey, nCounter, 2, 2, 5, 5) == true)
 	{
-		StartVibration(&vibrationState,200);
+		// コントローラーの振動(1000で一秒)
+		SetVibration(35000, 35000, 500);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, COLOR_ORANGERED, 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER,20);
@@ -2267,7 +2267,8 @@ void SetMotionContller(void)
 	// 両手のスペシャル攻撃の時
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, 4, 4, 5, 5) == true)
 	{
-		StartVibration(&vibrationState, 200);
+		// コントローラーの振動(1000で一秒)
+		SetVibration(45000, 45000,300);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 10.0f, 60, IMPACTTYPE_PLAYER, g_player.nDamage * 50);
@@ -2276,10 +2277,11 @@ void SetMotionContller(void)
 		WaveCamera(25);
 	}
 
-	// 両手のスペシャル攻撃の時
+	// 槍のスペシャル攻撃の時
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, 21, 21, 5, 5) == true)
 	{
-		StartVibration(&vibrationState, 200);
+		// コントローラーの振動(1000で一秒)
+		SetVibration(45000, 45000, 300);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 20);
@@ -2307,12 +2309,6 @@ void SetMotionContller(void)
 		}
 	}
 
-	// 大型武器のスペシャル
-	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPHAMMER)
-	{
-		StartVibration(&vibrationState, 200);
-	}
-
 	// 刀のスペシャル
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, 0, 0, 0, 0) == true)
 	{
@@ -2323,6 +2319,9 @@ void SetMotionContller(void)
 	// 刀のスペシャル
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, 4, 4, 1, 1) == true)
 	{
+		// コントローラーの振動(1000で一秒)
+		SetVibration(45000, 45000, 300);
+
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 40.0f, 20.0f, 35.0f, 60, IMPACTTYPE_NORMAL, 1);
 	}
@@ -2344,11 +2343,8 @@ void SetMotionContller(void)
 		}
 	}
 
-	D3DXVECTOR3 SwordPos(
-		g_player.SwordMtx._41, // X方向
-		g_player.SwordMtx._42, // Y方向
-		g_player.SwordMtx._43  // Z方向
-	);
+	// ワールドマトリックスを変換
+	D3DXVECTOR3 SwordPos = SetMtxConversion(g_player.SwordMtx);
 
 	// ハンマーのスペシャルモーションの設定
 	if (g_player.WeponMotion == MOTION_SPHAMMER && g_player.AttackSp && g_player.Motion.nKey <= 15)
@@ -2411,9 +2407,6 @@ void SetMotionContller(void)
 		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 30.0f;
 		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 30.0f;
 	}
-
-	// 振動の更新処理
-	UpdateVibration(&vibrationState);
 }
 //===============================================================================================================
 // プレイヤーの移動処理
@@ -2873,14 +2866,11 @@ void UpdatePlayerAvoid(void)
 	// 回避モーションかを判定
 	const bool NotAvoid = g_player.Motion.motiontypeBlend != MOTIONTYPE_AVOID;
 
-	// ニュートラルモーションかを判定
-	const bool NotNeutral = g_player.Motion.motionType != MOTIONTYPE_NEUTRAL;
-
 	//// モーションが終わったかどうかを判定
 	//const bool NotFinish = g_player.Motion.bFinishMotion == false;
 
 	// 回避モーションを発動できるかを判定
-	const bool CanAvoid = NotAvoid == true && NotNeutral == true  && g_player.AttackSp == false && g_player.nLife > 0;
+	const bool CanAvoid = NotAvoid == true && g_player.AttackSp == false && g_player.nLife > 0;
 
 	// モーションが回避じゃない
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)

@@ -52,6 +52,11 @@ Stick g_stick[STICK_TYPE_MAX];					// スティック構造体の情報
 												   
 bool g_Rstickrepeat;							// スティックのリピート
 
+int g_leftMotor = 0; // 左モーターの強さ(0～65535)
+int g_rightMotor = 0; // 右モーターの強さ(0～65535)
+DWORD g_VibrationEndTime = 0; // 振動終了時刻
+bool g_isVibration = false;   // 振動ちゅうかどうか
+
 //=========================================================================================================
 // キーボードの初期化処理
 //=========================================================================================================
@@ -411,4 +416,32 @@ void StartVibration(VibrationState* vibrationState,int VibrateTime)
 	vibrationState->rightMotor = 32767; // 半分の振動
 	vibrationState->startTime = GetTickCount();  // 開始時刻
 	vibrationState->duration = VibrateTime;  // 200ミリ秒（振動時間）
+}
+//==========================================================================================================
+// 振動の設定
+//=========================================================================================================
+void SetVibration(int leftMotor, int rightMotor, int durationMs)
+{
+	g_leftMotor = leftMotor; // 左のモーターの強さ
+	g_rightMotor = rightMotor; // 右モーターの強さ
+	g_VibrationEndTime = GetTickCount64() + durationMs;
+	g_isVibration = true;
+
+	// XInputを設定
+	XINPUT_VIBRATION vibration = {};
+	vibration.wLeftMotorSpeed = leftMotor;
+	vibration.wRightMotorSpeed = rightMotor;
+	XInputSetState(0, &vibration); // コントローラー1 (ID: 0)に適応
+}
+//==========================================================================================================
+// 振動の更新処理
+//==========================================================================================================
+void UpdateVibration(void)
+{
+	if (g_isVibration == true && GetTickCount64() >= g_VibrationEndTime)
+	{// 振動時間が経過したら停止
+		XINPUT_VIBRATION vibration = {};
+		XInputSetState(0, &vibration);
+		g_isVibration = false;
+	}
 }
