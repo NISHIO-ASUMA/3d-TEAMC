@@ -773,6 +773,8 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 {
 	// スピードの加算量
 	float AddSpeed = (g_nNumWave * 1.0f) * 0.1f;
+
+	// HPの加算量
 	int AddLife = g_nNumWave * 300;
 
 	for (int nCnt = 0; nCnt < NUMSPAWN_ENEMY; nCnt++)

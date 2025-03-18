@@ -2361,9 +2361,12 @@ void SetMotionContller(void)
 	// ハンマーのスペシャルモーションの設定
 	if (g_player.WeponMotion == MOTION_SPHAMMER && g_player.AttackSp && g_player.Motion.nKey <= 15)
 	{
-		g_player.speed = 7.0f; // スピードを設定
-		g_player.move.x += sinf(g_player.rot.y + D3DX_PI) * g_player.speed; // 移動量を加算
-		g_player.move.z += cosf(g_player.rot.y + D3DX_PI) * g_player.speed; // 移動量を加算
+		// 移動量
+		D3DXVECTOR3 move = SetMotionMoveAngle();
+
+		g_player.move.x = move.x;
+		g_player.move.z = move.z;
+
 		SetParticle(SwordPos,
 			g_player.rot,
 			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
