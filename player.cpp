@@ -350,7 +350,7 @@ void UpdatePlayer(void)
 		PlayerMove(); // プレイヤーの移動処理
 	}
 
-	const bool is_MovePad = !NotUsePad && NotAction && NotSp && NotDamage && gameState != GAMESTATE_MOVIE;
+	const bool is_MovePad = !NotUsePad && NotAction && NotSp && NotDamage && gameState != GAMESTATE_MOVIE && NotDeth;
 
 	if (is_MovePad == true)
 	{
@@ -3315,11 +3315,11 @@ void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
 	// 両手武器のジャンプモーションか
 	const bool isDouble = g_player.WeponMotion == MOTION_DBHAND && isJumpMotion;
 
-	if (isDouble && nKey == 0 && nCounter <= 5)
+	if (isDouble && nKey <= 2 && nCounter <= 5)
 	{
 		g_player.move.y = 5.0f;
 	}
-	else if (isDouble && nKey >= 1 && nKey <= 4)
+	else if (isDouble && nKey >= 3 && nKey <= 6)
 	{
 		g_player.move.y = -MAX_GLABITY * 0.2f;
 	}
@@ -3331,10 +3331,10 @@ void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
 	{
 		g_player.move.y = -MAX_GLABITY * 0.5f;
 	}
-	if (isSpear && nKey == 1)
+	if (isSpear && nKey == 4 && nCounter >= 1)
 	{
-		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 20.0f;
-		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 20.0f;
+		g_player.move.x = sinf(g_player.rot.y + D3DX_PI) * 100.0f / nCounter;
+		g_player.move.z = cosf(g_player.rot.y + D3DX_PI) * 100.0f / nCounter;
 	}
 
 	// 大型武器のジャンプモーションか
@@ -3348,8 +3348,12 @@ void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
 	{
 		g_player.move.y = 10.0f;
 	}
+	else if (isBigWepon && nKey >= 4)
+	{
+		g_player.move.y += -MAX_GLABITY * 0.5f;
+	}
 
-	// 大型武器のジャンプモーションか
+	// 軽量武器のジャンプモーションか
 	const bool isoneHand = g_player.WeponMotion == MOTION_ONE_HAND && isJumpMotion;
 
 	if (isoneHand && nKey <= nLastKey)

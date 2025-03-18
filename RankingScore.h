@@ -36,13 +36,8 @@ typedef struct
 	D3DXVECTOR3 pos; // 位置
 	int nScore;      // スコア
 	int State;       // 状態
-	GAMEEND GameState; // ゲーム状態
+	int nEasingCnt;	 // イージングのカウント
 }RankScore;
-
-typedef struct
-{
-	GAMEEND GameState;
-}END;
 
 //**************************************************************************************************************
 // プロトタイプ宣言
