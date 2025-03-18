@@ -2267,7 +2267,7 @@ void SetMotionContller(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPDOUBLE && g_player.Motion.motionType == MOTIONTYPE_ACTION && CheckMotionBounds(nKey, nCounter, 2, 2, 5, 5) == true)
 	{
 		// コントローラーの振動(1000で一秒)
-		SetVibration(35000, 35000, 500);
+		SetVibration(15000, 35000, 500);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, COLOR_ORANGERED, 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER,20);
@@ -2280,7 +2280,7 @@ void SetMotionContller(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, 4, 4, 5, 5) == true)
 	{
 		// コントローラーの振動(1000で一秒)
-		SetVibration(45000, 45000,300);
+		SetVibration(15000, 45000,300);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 10.0f, 60, IMPACTTYPE_PLAYER, g_player.nDamage * 50);
@@ -2293,7 +2293,7 @@ void SetMotionContller(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, 21, 21, 5, 5) == true)
 	{
 		// コントローラーの振動(1000で一秒)
-		SetVibration(45000, 45000, 300);
+		SetVibration(15000, 45000, 300);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 20);
@@ -2332,7 +2332,7 @@ void SetMotionContller(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, 4, 4, 1, 1) == true)
 	{
 		// コントローラーの振動(1000で一秒)
-		SetVibration(45000, 45000, 300);
+		SetVibration(15000, 45000, 300);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 40.0f, 20.0f, 35.0f, 60, IMPACTTYPE_NORMAL, 1);

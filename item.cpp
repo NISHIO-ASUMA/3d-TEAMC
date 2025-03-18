@@ -57,6 +57,7 @@ void ThrowItemEffect(int nCntItem);													// ƒAƒCƒeƒ€‚ğ“Š‚°‚½‚ÌƒGƒtƒFƒNƒ
 void UpdateHitBlockItem(int nCntItem);												// ƒAƒCƒeƒ€‚ªƒuƒƒbƒN‚É“–‚½‚Á‚½ˆ—
 void UpdateNearItem(int nCntItem);													// ‹ß‚­‚ÌƒAƒCƒeƒ€‚Ìˆ—
 void UpdateThrowItemLife(int nCntItem);												// “Š‚°‚½ƒAƒCƒeƒ€‚Ìõ–½ŠÇ—ˆ—
+void DeletTrackingItem(int nCntItem);												// ’Ç]‚·‚éƒAƒCƒeƒ€‚ğÁ‚·ˆ—
 
 //**************************************************************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -345,6 +346,9 @@ void UpdateItem(void)
 
 		// “Š‚°‚½ƒAƒCƒeƒ€‚Ìõ–½ŠÇ—ˆ—
 		UpdateThrowItemLife(nCntItem);
+
+		// ’Ç]‚·‚éƒAƒCƒeƒ€‚Ìíœˆ—
+		DeletTrackingItem(nCntItem);
 	}
 
 }
@@ -1606,4 +1610,19 @@ void UpdateThrowItemLife(int nCntItem)
 
 	// ƒAƒCƒeƒ€‚Ìõ–½‚ªs‚«‚½‚çÁ‚·
 	if (g_Item[nCntItem].nLife <= 0) g_Item[nCntItem].bUse = false;
+}
+//==============================================================================================================
+// ’Ç]‚·‚éƒAƒCƒeƒ€‚ğÁ‚·ˆ—
+//==============================================================================================================
+void DeletTrackingItem(int nCntItem)
+{
+	// ’Ç]‚µ‚È‚¢ƒAƒCƒeƒ€‚¾‚Á‚½‚ç
+	if (g_Item[nCntItem].bTracking == false) return;
+
+	// Å‰‚ÌƒNƒ‰ƒtƒg‚ÌŠÔ‚ªI‚í‚Á‚½‚ç
+	if (GetFirstCraftTIme() == false) 
+	{
+		g_Item[nCntItem].bTracking = false;
+		g_Item[nCntItem].bUse = false;
+	}
 }

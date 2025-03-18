@@ -47,6 +47,8 @@ void UpdateUIFlash(int nCnt, float* pAlv,float Maxtime);	// UI‚Ì“_–Åˆ—(g‚¢‚Ü‚
 void SetTerritoryEnemyUI(int nCnt);		// ƒeƒŠƒgƒŠ[‚É“G‚ªo‚½‚ÌUI‚Ìİ’è
 void UIScalAnimation(int nCnt,float widthEx,float widthdec,float heightEx,float heigthDec, float MaxtimeWidth,float MaxtimeHeight); // Šg‘åk¬‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
 void UpdateCraftTimeUI(int nCnt);		// ƒNƒ‰ƒtƒg‚ÌŠÔ’†‚ÌUI
+void UpdateCraftTimeMenuUI(int nCnt);	// ƒNƒ‰ƒtƒgƒƒjƒ…[‚ÌUI‚Ìİ’è
+
 float fcolorA;
 
 //**************************************************************************************************************
@@ -363,7 +365,9 @@ void UpdateGameUI(void)
 			case UITYPE_CRAFTTIME:
 				UpdateCraftTimeUI(nCnt);
 				break;
-
+			case UITYPE_CRAFTTIMEMENU:
+				UpdateCraftTimeMenuUI(nCnt);
+				break;
 			}
 
 			// õ–½‚ª‚ ‚é
@@ -1003,4 +1007,68 @@ void UpdateCraftTimeUI(int nCnt)
 	//’¸“_ƒƒbƒN‰ğœ
 	g_pVtxBuffGameUI->Unlock();
 
+}
+//==============================================================================================================
+// ƒNƒ‰ƒtƒgƒƒjƒ…[‚ÌUI‚Ìİ’è
+//==============================================================================================================
+void UpdateCraftTimeMenuUI(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	static float fAlv = 0.0f;
+
+	//’¸“_ƒƒbƒN
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	// O•b
+	fAlv += 1.0f / 120.0f;
+
+	// ƒJƒEƒ“ƒ^[—p•Ï”
+	static int nCounter = 0;
+
+	// 1.0f‚É§ŒÀ‚·‚é
+	if (fAlv >= 1.0f)
+	{
+		fAlv = 1.0f;
+
+		// 2•b‚½‚Á‚½‚ç
+		if (nCounter >= 120)
+		{
+			// –Ú“I‚ÌˆÊ’u‚É‹ß‚Ã‚¯‚é
+			g_GameUI[nCnt].pos.x += SetSmoothAprroach(1050.0f, g_GameUI[nCnt].pos.x, 0.1f);
+			g_GameUI[nCnt].pos.y += SetSmoothAprroach(500.0f, g_GameUI[nCnt].pos.y, 0.1f);
+		}
+		else
+		{
+			// ƒCƒ“ƒNƒŠƒƒ“ƒg
+			nCounter++;
+		}
+	}
+
+	//’¸“_ƒJƒ‰[‚Ìİ’è
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//’¸“_ƒƒbƒN‰ğœ
+	g_pVtxBuffGameUI->Unlock();
+
+	// Å‰‚ÌƒNƒ‰ƒtƒg‚ÌŠÔ‚ªI‚í‚Á‚½‚ç
+	if (GetFirstCraftTIme() == false)
+	{
+		// ƒŠƒZƒbƒg‚·‚é
+		fAlv = 0.0f;
+		nCounter = 0;
+
+		// –¢g—p‚É‚·‚é
+		g_GameUI[nCnt].bUse = false;
+	}
 }

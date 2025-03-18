@@ -61,7 +61,7 @@
 #define SETNUM_TERRITORY (2)		// テリトリーを配置する数
 #define TERRITORYRADIUS (500.0f)	// テリトリーの半径
 #define FRAME (60)				    // フレーム
-#define OUTTERRITORY_ENEMY (30)		// テリトリーの外の敵
+#define OUTTERRITORY_ENEMY (25)		// テリトリーの外の敵
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -115,6 +115,7 @@ bool noFirstSetBoss = true;
 int g_nNumTerritory = 0;
 int g_TerritorySetTime = 0;
 bool bFirstCraftTime = false;
+int g_nNumWave = 0;
 
 //===============================================================================================================
 // 敵の初期化処理
@@ -152,12 +153,13 @@ void InitEnemy(void)
 	}
 
 	//グローバル変数の初期化
-	g_nNumEnemy = 0; // 敵の数
-	g_nBossPos = 0;  // ボスがどのテリトリーにいるか
-	noFirstSetBoss = true; // 最初にボスを出さない処理
-	g_nNumTerritory = 0; // テリトリーのかず
-	g_TerritorySetTime = 0; // テリトリーのカウント
+	g_nNumEnemy = 0;		 // 敵の数
+	g_nBossPos = 0;			 // ボスがどのテリトリーにいるか
+	noFirstSetBoss = true;	 // 最初にボスを出さない処理
+	g_nNumTerritory = 0;	 // テリトリーのかず
+	g_TerritorySetTime = 0;  // テリトリーのカウント
 	bFirstCraftTime = false; // クラフトタイムを行ったか
+	g_nNumWave = 0;			 // ウェーブ
 
 	// テリトリーの数
 	for (int nCnt = 0; nCnt < SETNUM_TERRITORY; nCnt++)
@@ -612,6 +614,9 @@ void HitEnemy(int nCnt,int nDamage)
 			if (pPlayer->nElement == WEPONELEMENT_DARK)
 			{
 				LoadEffect(1, D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + 50.0f, g_Enemy[nCnt].pos.z));
+				
+				// HPを吸収
+				pPlayer->nLife += 5;
 			}
 			else
 			{
@@ -667,6 +672,12 @@ void HitEnemy(int nCnt,int nDamage)
 	}
 	else
 	{
+		// ダメージを設定
+		SetDamege(D3DXVECTOR3(g_Enemy[nCnt].pos.x, g_Enemy[nCnt].pos.y + g_Enemy[nCnt].Size.y / 1.5f, g_Enemy[nCnt].pos.z), // 位置
+			nDamage,	// ダメージ																								
+			20,			// 寿命
+			false);
+
 		// 左の振動の強さ
 		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
 
@@ -760,6 +771,10 @@ void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed,int TerritoryNumbe
 //=========================================================================================================
 void SpawnEnemy(int nSpawner,int TerritoryIdx)
 {
+	// スピードの加算量
+	float AddSpeed = (g_nNumWave * 1.0f) * 0.1f;
+	int AddLife = g_nNumWave * 300;
+
 	for (int nCnt = 0; nCnt < NUMSPAWN_ENEMY; nCnt++)
 	{
 		// スポナー0
@@ -775,7 +790,7 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
 
 			// 敵をセット
-			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
+			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, (rand() % 400 + 200) + AddLife, (float)(rand() % 1 + 1.5f) + AddSpeed, TerritoryIdx);
 
 			// テリトリーの敵の数を加算
 			g_Territory[TerritoryIdx].nNumEnemy++;
@@ -792,7 +807,7 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 			// 位置を代入
 			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
 
-			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
+			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, (rand() % 400 + 200)+ AddLife, (float)(rand() % 1 + 1.5f) + AddSpeed, TerritoryIdx);
 
 			// テリトリーの敵の数を加算
 			g_Territory[TerritoryIdx].nNumEnemy++;
@@ -809,7 +824,7 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 			// 位置を代入
 			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
 
-			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
+			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, (rand() % 400 + 200) + AddLife, (float)(rand() % 1 + 1.5f) + AddSpeed, TerritoryIdx);
 
 			// テリトリーの敵の数を加算
 			g_Territory[TerritoryIdx].nNumEnemy++;
@@ -825,7 +840,7 @@ void SpawnEnemy(int nSpawner,int TerritoryIdx)
 			// 位置を代入
 			D3DXVECTOR3 pos(fPosX, 0.0f, fPosZ);
 
-			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, rand() % 400 + 200, (float)(rand() % 1 + 1.5f), TerritoryIdx);
+			SetEnemy(pos, rand() % ENEMYTYPE_SEVEN, (rand() % 400 + 200) + AddLife, (float)(rand() % 1 + 1.5f) + AddSpeed, TerritoryIdx);
 
 			// テリトリーの敵の数を加算
 			g_Territory[TerritoryIdx].nNumEnemy++;
@@ -2108,6 +2123,9 @@ void DeletTerritory(void)
 				// クラフト時間のUIの設定
 				SetGameUI(D3DXVECTOR3(1520.0f, 150.0f, 0.0f), UITYPE_CRAFTTIME, 200.0f, 50.0f, false, 0);
 
+				// クラフトのサポートUI
+				SetGameUI(D3DXVECTOR3(640.0f, 360.0f, 0.0f), UITYPE_CRAFTTIMEMENU, 250.0f, 150.0f, false, 0);
+
 				// 最初にクラフトするためのアイテムの設定
 				SetFirstCraftItem(D3DXVECTOR3(pPlayer->pos.x, pPlayer->pos.y + 50.0f, pPlayer->pos.z), ITEMTYPE_TORCH);
 
@@ -2256,6 +2274,9 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 		g_Territory[nTerritoryIdx].CylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_TERRITORY, 0, TERRITORYRADIUS, COLOR_AQUA, 16, 1, 0.0f, 3000.0f);
 	}
 
+	// ウェーブを増やす
+	if (g_nNumTerritory == 1) g_nNumWave++;
+
 	g_nNumTerritory++;
 
 	// 使用状態にする
@@ -2279,7 +2300,7 @@ void OutTerritorySpawner(int nSpawner)
 	float randum_valueX = (float)(rand() % 10);
 	float randum_valueZ = (float)(rand() % 10);
 
-	if (g_nNumEnemy <= OUTTERRITORY_ENEMY /2)
+	if (g_nNumEnemy <= OUTTERRITORY_ENEMY)
 	{
 		// スポナーの設定
 		switch (nSpawner)
@@ -2468,7 +2489,7 @@ void UpdateScoreAndGage(int nCntEnemy)
 	else
 	{
 		// スコアを求める
-		float score = isFeverMode ? (isTypeSeven ? 32000.0f : 16000.0f) : (isTypeSeven ? 16200.0f : 8100.0f);
+		float score = isFeverMode ? (isTypeSeven ? 32329.0f : 16000.0f) : (isTypeSeven ? 16200.0f : 8100.0f);
 
 		// スペシャルゲージを求める
 		float spgage = isTypeSeven ? 5.0f : 2.5f;
@@ -2767,6 +2788,13 @@ bool GetFirstCraftTIme(void)
 void EnableFirstCraftTime(bool bEnable)
 {
 	bFirstCraftTime = bEnable;
+}
+//==============================================================================================================
+// ウェーブの取得処理
+//==============================================================================================================
+int GetNumWave(void)
+{
+	return g_nNumWave;
 }
 //==============================================================================================================
 // ボスがいるテリトリーの消去
