@@ -43,10 +43,19 @@ void LoadItemModel(void); // アイテムのロード処理
 void CraftItem(int nCnt);
 void LoadItemInfo(void); // アイテムの情報のロード処理
 void PickUpItemAnimation(int nCntItem); // アイテムを拾える時の演出
-bool CheckMixItemMat(int pCraftMat, int pStockMat,int HoldIdx,int StockIdx);			// アイテムがクラフトできるかどうか
+bool CheckMixItemMat(int pCraftMat, int pStockMat,int HoldIdx,int StockIdx);		// アイテムがクラフトできるかどうか
 void UpdateCraftItemParam(int nCnt);                                                // クラフトアイテムのパラメータ設定
 void SetUpFirstWepon(int nCnt);														// 最初のアイテムの設定
 void UpdateTrackingItem(int nCnt);													// 追従するアイテムの更新処理
+void CheckPlayerItem(int nCntItem, Player* pPlayer);								// プレイヤーが持っているアイテムを調べる
+void DestroyItem(int nCntItem, Player* pPlayer);									// 耐久力がなくなったアイテムの破壊処理
+void UpdateThrowItem(int nCntItem, Player* pPlayer);								// プレイヤーがアイテムを投げる処理
+bool isThrowItem(int nCntItem, Player* pPlayer);									// アイテムを投げられるかどうか
+void ItemUpdateState(int nCntItem);													// アイテムの状態遷移
+void ThrowItemEffect(int nCntItem);													// アイテムを投げた時のエフェクト
+void UpdateHitBlockItem(int nCntItem);												// アイテムがブロックに当たった処理
+void UpdateNearItem(int nCntItem);													// 近くのアイテムの処理
+void UpdateThrowItemLife(int nCntItem);												// 投げたアイテムの寿命管理処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -297,192 +306,28 @@ void UpdateItem(void)
 	// プレイヤーの取得
 	Player* pPlayer = GetPlayer();
 
-	// 持っているアイテムの情報を書き換えるか判定
-	bool bTypeChange = false;
-
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		// ホールドのアイテムがあったら
-		if (g_Item[nCntItem].state == ITEMSTATE_HOLD)
-		{
-			// 持っているアイテムの種類を代入
-			pPlayer->HoldItemType = g_Item[nCntItem].nType;
+		// プレイヤーの持っているアイテムを調べる
+		CheckPlayerItem(nCntItem, pPlayer);
 
-			// 変更した
-			bTypeChange = true;
-		}
+		// アイテムの破壊処理
+		DestroyItem(nCntItem, pPlayer);
+		
+		// アイテムを投げる処理
+		UpdateThrowItem(nCntItem, pPlayer);
 
-		// ストックのアイテムがあったら
-		if (g_Item[nCntItem].state == ITEMSTATE_STOCK)
-		{
-			// ストックしているアイテムの種類を代入
-			pPlayer->StockItemType = g_Item[nCntItem].nType;
+		//使用中じゃなかったら処理を読み飛ばす
+		if (g_Item[nCntItem].bUse == false) continue;
 
-			// 変更した
-			bTypeChange = true;
-		}
-
-		// 変更ないなら
-		if (bTypeChange == false)
-		{
-			// 存在しない種類を代入
-			pPlayer->StockItemType = ITEMTYPE_NONEXISTENT;
-
-			// 存在しない種類を代入
-			pPlayer->HoldItemType = ITEMTYPE_NONEXISTENT;
-		}
-
-		// 耐久力が0になったら
-		if (g_Item[nCntItem].durability <= 0 && g_Item[nCntItem].state == ITEMSTATE_HOLD)
-		{
-			int nType = g_Item[nCntItem].nType;
-
-			// 音楽再生
-			PlaySound(SPUND_LABEL_WEPONBREAK);
-
-			// アイテムを壊す
-			pPlayer->Itembreak[nCntItem] = true;
-			g_Item[nCntItem].bUse = false; // 消す
-		}
-
-		// プレイヤーがものを持っているかつ攻撃モーションのキーが3になったら
-		if (!pPlayer->AttackSp&&pPlayer->HandState == PLAYERHOLD_HOLD && pPlayer->Motion.nKey == 3 && pPlayer->Motion.motionType == MOTIONTYPE_ACTION)
-		{
-			ThrowItem();
-		}
-
-		if (g_Item[nCntItem].bUse == false)
-		{//使用中じゃなかったら
-			// 処理を読み飛ばす
-			continue;
-		}
 		// 最初のアイテムの設定
 		SetUpFirstWepon(nCntItem);
 
-		// 状態の遷移
-		switch (g_Item[nCntItem].state)
-		{
-		case ITEMSTATE_NORMAL:
-			break;
-		case ITEMSTATE_HOLD:
-			break;
-		case ITEMSTATE_THROW:
-			break;
-		case ITEMSTATE_STOCK:
-			break;
-		case ITEMSTATE_RELEASE:
-			g_Item[nCntItem].nCounterState--;
-			if (g_Item[nCntItem].nCounterState <= 0)
-			{
-				g_Item[nCntItem].state = ITEMSTATE_NORMAL;
-			}
-			break;
-		default:
-			break;
-		}
+		// アイテムの状態遷移処理
+		ItemUpdateState(nCntItem);
 
-		// 投げられたアイテムにエフェクト
-		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
-		{
-			// アイテムの属性を反映し
-			int nType = g_Item[nCntItem].nType;
-			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
-			if (g_Item[nCntItem].nElement == ITEMELEMENT_STANDARD)// 無属性なら
-			{
-				// エフェクトを出す
-				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
-
-				// パーティクルを出す、以下全て同じ
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
-					2.0f, 2, 20, 7, 3.0f, 10.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-			else if(g_Item[nCntItem].nElement == ITEMELEMENT_BLOOD)// 出血属性
-			{
-				// エフェクトを出す
-				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-					3.0f, 2, 20, 7, 3.0f, 10.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_FIRE)// 炎属性
-			{
-				// エフェクトを出す
-				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
-
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
-					4.0f, 2, 20, 7, 3.0f, 20.0f,
-					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-					4.0f, 2, 20, 7, 3.0f, 20.0f,
-					true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
-			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_FREEZE)// 氷属性
-			{
-				// エフェクトを出す
-				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-					2.0f, 2, 50, 7, 0.5f, 10.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_SPARK)// 雷撃属性
-			{
-				// エフェクトを出す
-				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(2.0f, 2.0f, 2.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-					1.0f, 2, 10, 20, 9.0f, 10.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_AQUA)// 水属性
-			{
-				// エフェクトを出す
-				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f),
-					5.0f, 2, 20, 7, 3.0f, 20.0f,
-					true, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
-			}
-			else if (g_Item[nCntItem].nElement == ITEMELEMENT_DARK)// 闇属性
-			{
-				// エフェクトを出す
-				SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
-				SetParticle(g_Item[nCntItem].pos,
-					g_Item[nCntItem].rot,
-					D3DXVECTOR3(1.0f, 1.0f, 1.0f),
-					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
-					D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
-					5.0f, 2, 35, 7, 3.0f, 7.0f,
-					false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
-		}
+		// 投げアイテムのエフェクト処理
+		ThrowItemEffect(nCntItem);
 
 		// 前回の位置を代入
 		g_Item[nCntItem].posOld = g_Item[nCntItem].pos;
@@ -490,68 +335,18 @@ void UpdateItem(void)
 		// 位置の更新
 		g_Item[nCntItem].pos += g_Item[nCntItem].move;
 
-		if (CollisionBlockItem(&g_Item[nCntItem].pos, &g_Item[nCntItem].posOld, &g_Item[nCntItem].move, &g_Item[nCntItem].Size))
-		{
-			g_Item[nCntItem].bUse = false;
-			SetExplosion(g_Item[nCntItem].pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), 60, 30.0f, 30.0f, EXPLOSION_HIT);
-		}
+		// アイテムがブロックに当たった処理
+		UpdateHitBlockItem(nCntItem);
 
-		if (g_Item[nCntItem].state == ITEMSTATE_NORMAL || g_Item[nCntItem].state == ITEMSTATE_RELEASE)
-		{
-			// アイテムを拾える範囲に入った
-			if (CollisionItem(nCntItem, 30.0f, 30.0f) == true)
-			{
-				// 拾えるアイテムの更新
-				PickUpItemAnimation(nCntItem);
-			}
-			else
-			{
-				g_Item[nCntItem].nEasingCnt = 0;
-				g_Item[nCntItem].pos.y += SetSmoothAprroach(0.0f, g_Item[nCntItem].pos.y, 0.1f);
-				g_Item[nCntItem].rot.x += SetSmoothAprroach(0.0f, g_Item[nCntItem].rot.x, 0.1f);;
-				g_Item[nCntItem].rot.y += SetSmoothAprroach(0.0f, g_Item[nCntItem].rot.y, 0.1f);;
-			}
-		}
 
 		// 追従するアイテムの更新処理
 		UpdateTrackingItem(nCntItem);
 
-		//// 角度の正規化X
-		//if (g_Item[nCntItem].rot.x > D3DX_PI)
-		//{
-		//	g_Item[nCntItem].rot.x += -D3DX_PI * 2.0f;
-		//}
-		//else if (g_Item[nCntItem].rot.x < D3DX_PI)
-		//{
-		//	g_Item[nCntItem].rot.x += D3DX_PI * 2.0f;
-		//}
-
-		//// 角度の正規化Y
-		//if (g_Item[nCntItem].rot.y > D3DX_PI)
-		//{
-		//	g_Item[nCntItem].rot.y += -D3DX_PI * 2.0f;
-		//}
-		//else if (g_Item[nCntItem].rot.y < D3DX_PI)
-		//{
-		//	g_Item[nCntItem].rot.y += D3DX_PI * 2.0f;
-		//}
-
 		// プレイヤーがクラフト状態だったら
-		if (pPlayer->bCraft == true)
-		{
-			CraftItem(nCntItem);
-		}
+		if (pPlayer->bCraft == true) CraftItem(nCntItem);
 
-		// 状態を投げるにする
-		if (g_Item[nCntItem].state == ITEMSTATE_THROW)
-		{
-			g_Item[nCntItem].nLife--; // デクリメント
-
-			if (g_Item[nCntItem].nLife <= 0)
-			{
-				g_Item[nCntItem].bUse = false; // 消す
-			}
-		}
+		// 投げたアイテムの寿命管理処理
+		UpdateThrowItemLife(nCntItem);
 	}
 
 }
@@ -631,7 +426,7 @@ void SetItem(D3DXVECTOR3 pos, int nType)
 		{// 未使用状態なら
 
 			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType]; // 必要な情報を代入
-			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;
+			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;  // 攻撃力
 			g_Item[nCntItem].Maxdurability = g_aItemInfo[nType].Maxdurability;
 			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;
 			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
@@ -714,7 +509,6 @@ void Itemchange(int nIdx, int nType)
 
 		strcpy(&g_Item[nIdx].Itemtag[0], &g_aItemInfo[nType].Itemtag[0]);
 	}
-
 
 	// 大きさを代入
 	g_Item[nIdx].Size = g_TexItem[nType].Size;
@@ -1525,4 +1319,277 @@ void UpdateTrackingItem(int nCnt)
 		g_Item[nCnt].pos.y = pPlayer->pos.y + DESTANCE;
 		g_Item[nCnt].pos.z = pPlayer->pos.z - cosf(fAngle) * DESTANCE;
 	}
+}
+//==============================================================================================================
+// プレイヤーが持っているアイテムを調べる
+//==============================================================================================================
+void CheckPlayerItem(int nCntItem, Player* pPlayer)
+{
+	// 最初の変更
+	static bool bFIrstChenge = true;
+
+	// 最初のアイテムだったら
+	const int nfirstItem = 0;
+
+	if (nCntItem == nfirstItem)
+	{
+		bFIrstChenge = true;
+	}
+
+	// ホールドのアイテムがあったら
+	if (g_Item[nCntItem].state == ITEMSTATE_HOLD)
+	{
+		// 持っているアイテムの種類を代入
+		pPlayer->HoldItemType = g_Item[nCntItem].nType;
+		bFIrstChenge = false;
+	}
+	// ストックのアイテムがあったら
+	else if (g_Item[nCntItem].state == ITEMSTATE_STOCK)
+	{
+		// ストックしているアイテムの種類を代入
+		pPlayer->StockItemType = g_Item[nCntItem].nType;
+		bFIrstChenge = false;
+	}
+
+	// 最初の変更が終わってない
+	if (bFIrstChenge == true)
+	{
+		// 存在しない種類を代入
+		pPlayer->StockItemType = ITEMTYPE_NONEXISTENT;
+
+		// 存在しない種類を代入
+		pPlayer->HoldItemType = ITEMTYPE_NONEXISTENT;
+	}
+}
+//==============================================================================================================
+// 耐久力がなくなったアイテムの破壊処理
+//==============================================================================================================
+void DestroyItem(int nCntItem, Player* pPlayer)
+{
+	// 耐久力が0になったら
+	if (g_Item[nCntItem].durability <= 0 && g_Item[nCntItem].state == ITEMSTATE_HOLD)
+	{
+		int nType = g_Item[nCntItem].nType;
+
+		// 音楽再生
+		PlaySound(SPUND_LABEL_WEPONBREAK);
+
+		// アイテムを壊す
+		pPlayer->Itembreak[nCntItem] = true;
+		g_Item[nCntItem].bUse = false; // 消す
+	}
+}
+//==============================================================================================================
+// プレイヤーがアイテムを投げる処理
+//==============================================================================================================
+void UpdateThrowItem(int nCntItem, Player* pPlayer)
+{
+	// アイテムが投げられるなら
+	if (isThrowItem(nCntItem,pPlayer))
+	{
+		ThrowItem();
+	}
+}
+//==============================================================================================================
+// アイテムを投げられるかどうか
+//==============================================================================================================
+bool isThrowItem(int nCntItem, Player* pPlayer)
+{
+	// プレイヤーがスペシャル攻撃をしていたら
+	if (pPlayer->AttackSp == true) return false;
+
+	// プレイヤーがアイテムを持っていなかったら
+	if (pPlayer->HandState != PLAYERHOLD_HOLD) return false;
+
+	// モーションのキーが3じゃなかったら
+	if (pPlayer->Motion.nKey != 3) return false;
+
+	// モーションの種類が攻撃じゃなかったら
+	if (pPlayer->Motion.motionType != MOTIONTYPE_ACTION) return false;
+
+	// アイテムを投げられる
+	return true;
+}
+//==============================================================================================================
+// アイテムの状態遷移
+//==============================================================================================================
+void ItemUpdateState(int nCntItem)
+{
+	// 状態の遷移
+	switch (g_Item[nCntItem].state)
+	{
+	case ITEMSTATE_NORMAL:
+		break;
+	case ITEMSTATE_HOLD:
+		break;
+	case ITEMSTATE_THROW:
+		break;
+	case ITEMSTATE_STOCK:
+		break;
+	case ITEMSTATE_RELEASE:
+		g_Item[nCntItem].nCounterState--;
+		if (g_Item[nCntItem].nCounterState <= 0)
+		{
+			g_Item[nCntItem].state = ITEMSTATE_NORMAL;
+		}
+		break;
+	default:
+		break;
+	}
+}
+//==============================================================================================================
+// アイテムを投げた時のエフェクト
+//==============================================================================================================
+void ThrowItemEffect(int nCntItem)
+{
+	// 投げられたアイテムにエフェクト
+	if (g_Item[nCntItem].state == ITEMSTATE_THROW)
+	{
+		// アイテムの属性を反映し
+		int nType = g_Item[nCntItem].nType;
+		g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
+		if (g_Item[nCntItem].nElement == ITEMELEMENT_STANDARD)// 無属性なら
+		{
+			// エフェクトを出す
+			SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+
+			// パーティクルを出す、以下全て同じ
+			SetParticle(g_Item[nCntItem].pos,
+				g_Item[nCntItem].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
+				2.0f, 2, 20, 7, 3.0f, 10.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+		else if (g_Item[nCntItem].nElement == ITEMELEMENT_BLOOD)// 出血属性
+		{
+			// エフェクトを出す
+			SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+			SetParticle(g_Item[nCntItem].pos,
+				g_Item[nCntItem].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
+				3.0f, 2, 20, 7, 3.0f, 10.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+		else if (g_Item[nCntItem].nElement == ITEMELEMENT_FIRE)// 炎属性
+		{
+			// エフェクトを出す
+			SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+
+			SetParticle(g_Item[nCntItem].pos,
+				g_Item[nCntItem].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f),
+				4.0f, 2, 20, 7, 3.0f, 20.0f,
+				true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+
+			SetParticle(g_Item[nCntItem].pos,
+				g_Item[nCntItem].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+				4.0f, 2, 20, 7, 3.0f, 20.0f,
+				true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
+		}
+		else if (g_Item[nCntItem].nElement == ITEMELEMENT_FREEZE)// 氷属性
+		{
+			// エフェクトを出す
+			SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+			SetParticle(g_Item[nCntItem].pos,
+				g_Item[nCntItem].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+				2.0f, 2, 50, 7, 0.5f, 10.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+		else if (g_Item[nCntItem].nElement == ITEMELEMENT_SPARK)// 雷撃属性
+		{
+			// エフェクトを出す
+			SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+			SetParticle(g_Item[nCntItem].pos,
+				g_Item[nCntItem].rot,
+				D3DXVECTOR3(2.0f, 2.0f, 2.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+				1.0f, 2, 10, 20, 9.0f, 10.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+		else if (g_Item[nCntItem].nElement == ITEMELEMENT_AQUA)// 水属性
+		{
+			// エフェクトを出す
+			SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+			SetParticle(g_Item[nCntItem].pos,
+				g_Item[nCntItem].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f),
+				5.0f, 2, 20, 7, 3.0f, 20.0f,
+				true, D3DXVECTOR3(0.0f, -4.0f, 0.0f));
+		}
+		else if (g_Item[nCntItem].nElement == ITEMELEMENT_DARK)// 闇属性
+		{
+			// エフェクトを出す
+			SetEffect(g_Item[nCntItem].pos, g_Item[nCntItem].rot, 20, D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f), 0.0f, g_Item[nCntItem].Size.y);
+			SetParticle(g_Item[nCntItem].pos,
+				g_Item[nCntItem].rot,
+				D3DXVECTOR3(1.0f, 1.0f, 1.0f),
+				D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+				D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f),
+				5.0f, 2, 35, 7, 3.0f, 7.0f,
+				false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		}
+	}
+}
+//==============================================================================================================
+// アイテムがブロックに当たった処理
+//==============================================================================================================
+void UpdateHitBlockItem(int nCntItem)
+{
+	if (CollisionBlockItem(&g_Item[nCntItem].pos, &g_Item[nCntItem].posOld, &g_Item[nCntItem].move, &g_Item[nCntItem].Size))
+	{
+		g_Item[nCntItem].bUse = false;
+		SetExplosion(g_Item[nCntItem].pos, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), 60, 30.0f, 30.0f, EXPLOSION_HIT);
+	}
+}
+//==============================================================================================================
+// 近くのアイテムの処理
+//==============================================================================================================
+void UpdateNearItem(int nCntItem)
+{
+	// アイテムの状態がノーマルとリリース以外だったら
+	if (g_Item[nCntItem].state != ITEMSTATE_NORMAL && g_Item[nCntItem].state != ITEMSTATE_RELEASE) return;
+
+	// アイテムを拾える範囲に入った
+	if (CollisionItem(nCntItem, 30.0f, 30.0f) == true)
+	{
+		// 拾えるアイテムの更新
+		PickUpItemAnimation(nCntItem);
+	}
+	else
+	{
+		// イージングのカウントをリセット
+		g_Item[nCntItem].nEasingCnt = 0;
+		g_Item[nCntItem].pos.y += SetSmoothAprroach(0.0f, g_Item[nCntItem].pos.y, 0.1f);
+		g_Item[nCntItem].rot.x += SetSmoothAprroach(0.0f, g_Item[nCntItem].rot.x, 0.1f);;
+		g_Item[nCntItem].rot.y += SetSmoothAprroach(0.0f, g_Item[nCntItem].rot.y, 0.1f);;
+	}
+}
+//==============================================================================================================
+// 投げたアイテムの寿命管理処理
+//==============================================================================================================
+void UpdateThrowItemLife(int nCntItem)
+{
+	// アイテムの状態が投げられた状態じゃなかったら関数を抜ける
+	if (g_Item[nCntItem].state != ITEMSTATE_THROW) return;
+
+	// 寿命を減らす
+	g_Item[nCntItem].nLife--; // デクリメント
+
+	// アイテムの寿命が尽きたら消す
+	if (g_Item[nCntItem].nLife <= 0) g_Item[nCntItem].bUse = false;
 }
