@@ -352,6 +352,7 @@ void UpdatePlayer(void)
 
 	const bool is_MovePad = !NotUsePad && NotAction && NotSp && NotDamage && gameState != GAMESTATE_MOVIE && NotDeth;
 
+	// うごける
 	if (is_MovePad == true)
 	{
 		StickPad(); // パッドの移動処理
@@ -2602,7 +2603,7 @@ void DestroyWepon(void)
 	// 武器を持っているかつプレイヤーの持っているアイテムが壊れた
 	if (g_player.Motion.nNumModel == MAX_MODEL && g_player.Itembreak[g_player.ItemIdx] == true)
 	{
-		SetGameUI(D3DXVECTOR3(125.0f, 500.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f,true, 240);
+		SetGameUI(D3DXVECTOR3(120.0f, 450.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f,true, 240);
 
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);

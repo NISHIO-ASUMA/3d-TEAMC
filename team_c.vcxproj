@@ -159,6 +159,7 @@
     <ClCompile Include="edit2d.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="effect2.cpp" />
+    <ClCompile Include="effect2d.cpp" />
     <ClCompile Include="effectEdit.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="event.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="meshimpact.cpp" />
     <ClCompile Include="minimap.cpp" />
     <ClCompile Include="particle2.cpp" />
+    <ClCompile Include="particle2d.cpp" />
     <ClCompile Include="polygon.cpp" />
     <ClCompile Include="spgauge.cpp" />
     <ClCompile Include="HPGauge.cpp" />
@@ -223,6 +225,7 @@
     <ClInclude Include="edit2d.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="effect2.h" />
+    <ClInclude Include="effect2d.h" />
     <ClInclude Include="effectEdit.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="event.h" />
@@ -241,6 +244,7 @@
     <ClInclude Include="meshimpact.h" />
     <ClInclude Include="minimap.h" />
     <ClInclude Include="particle2.h" />
+    <ClInclude Include="particle2d.h" />
     <ClInclude Include="polygon.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="spgauge.h" />
