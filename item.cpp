@@ -111,11 +111,8 @@ void InitItem(void)
 
 		D3DXMATERIAL* pMat; // マテリアルへのポインタ
 
-		if (g_TexItem[nCntNum].g_pBuffMatModel == NULL)
-		{
-			continue;
-		}
-
+		if (g_TexItem[nCntNum].g_pBuffMatModel == NULL) continue;
+			
 		// マテリアルのデータへのポインタを取得
 		pMat = (D3DXMATERIAL*)g_TexItem[nCntNum].g_pBuffMatModel->GetBufferPointer();
 
@@ -191,8 +188,6 @@ void InitItem(void)
 		// 頂点バッファのアンロック
 		g_TexItem[nCntNum].g_pMeshModel->UnlockVertexBuffer();
 	}
-
-	Player* pPlayer = GetPlayer();
 }
 //===============================================================================================================
 //ブロックの終了処理
@@ -338,6 +333,8 @@ void UpdateItem(void)
 		// アイテムがブロックに当たった処理
 		UpdateHitBlockItem(nCntItem);
 
+		// アイテムが近くにある処理
+		UpdateNearItem(nCntItem);
 
 		// 追従するアイテムの更新処理
 		UpdateTrackingItem(nCntItem);
