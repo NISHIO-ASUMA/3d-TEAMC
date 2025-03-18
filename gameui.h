@@ -38,7 +38,7 @@ typedef enum
 	UITYPE_POPENEMY, // 敵出現
 	UITYPE_CRAFTTIME, // クラフトの時間に出るUI
 	UITYPE_STOCKKEY,	// アイテムをストックするキー
-	UITYPE_CRAFTTIME,	// クラフトタイムになったら出すUI
+	UITYPE_CRAFTTIMEMENU,	// クラフトタイムになったら出すUI
 	UITYPE_MAX
 }UITYPE;
 
