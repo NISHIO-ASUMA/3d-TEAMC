@@ -2122,7 +2122,7 @@ void DeletTerritory(void)
 			if (bFirstCraftTime == false && g_nNumTerritory == 0 && pPlayer->bFirstCraft == false)
 			{
 				// クラフト時間のUIの設定
-				SetGameUI(D3DXVECTOR3(1520.0f, 250.0f, 0.0f), UITYPE_CRAFTTIME, 120.0f, 60.0f, false, 0);
+				SetGameUI(D3DXVECTOR3(1520.0f, 150.0f, 0.0f), UITYPE_CRAFTTIME, 200.0f, 50.0f, false, 0);
 
 				// 最初にクラフトするためのアイテムの設定
 				SetFirstCraftItem(D3DXVECTOR3(pPlayer->pos.x, pPlayer->pos.y + 50.0f, pPlayer->pos.z), ITEMTYPE_TORCH);
