@@ -1300,6 +1300,21 @@ void UpdateTrackingItem(int nCnt)
 		fAngle += -D3DX_PI * 2.0f;
 	}
 
+	// 虹の素
+	float fColor[3];
+	fColor[0] = ((float)(rand() % 100) / 100.0f);
+	fColor[1] = ((float)(rand() % 100) / 100.0f);
+	fColor[2] = ((float)(rand() % 100) / 100.0f);
+
+	//パーティクル出現
+	SetParticle(D3DXVECTOR3(g_Item[nCnt].pos.x, g_Item[nCnt].pos.y, g_Item[nCnt].pos.z),
+		D3DXVECTOR3(1.57f, g_Item[nCnt].rot.y, 1.57f),
+		D3DXVECTOR3(0.2f, 3.14f, 0.2f),
+		D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+		D3DXCOLOR(fColor[0], fColor[1], fColor[2], 1.0f),
+		2.0f, 2, 40, 1, 0.5f, 7.0f,
+		false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 	// アイテムの種類がバットだったら
 	if (g_Item[nCnt].nType == ITEMTYPE_TORCH)
 	{
