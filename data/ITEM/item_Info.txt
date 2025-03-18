@@ -44,7 +44,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 5	    # アイテムの種類<< 石バット >>
-	DURABILITY = 150    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 1			# アイテムの属性
 	POWER = 90          # アイテムの攻撃力
@@ -60,7 +60,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 7	    # アイテムの種類<< 蛍光灯木 >>
-	DURABILITY = 130    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 4			# アイテムの属性
 	POWER = 60          # アイテムの攻撃力
@@ -84,7 +84,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 10	    # アイテムの種類<< 氷の剣 >>
-	DURABILITY = 200    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 3			# アイテムの属性
 	POWER = 100          # アイテムの攻撃力
@@ -100,7 +100,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 12	    # アイテムの種類<< 鉄バット >>
-	DURABILITY = 150    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 1			# アイテムの属性
 	POWER = 110          # アイテムの攻撃力
@@ -124,7 +124,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 15	    # アイテムの種類<< 炎の剣 >>
-	DURABILITY = 200    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 2			# アイテムの属性
 	POWER = 110          # アイテムの攻撃力
@@ -148,7 +148,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 18	    # アイテムの種類<< 首付きマネキン >>
-	DURABILITY = 150    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 0			# アイテムの属性
 	POWER = 100          # アイテムの攻撃力
@@ -188,7 +188,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 23	    # アイテムの種類<< メガホン×拡声器×蛍光灯 >>
-	DURABILITY = 100    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 4			# アイテムの属性
 	POWER = 100          # アイテムの攻撃力
@@ -196,7 +196,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 24	    # アイテムの種類<< 骨の槍 >>
-	DURABILITY = 180    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 6			# アイテムの属性
 	POWER = 120         # アイテムの攻撃力
@@ -220,7 +220,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 27	    # アイテムの種類<< 呪物×ハープ >>
-	DURABILITY = 150    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 6			# アイテムの属性
 	POWER = 100          # アイテムの攻撃力
@@ -228,7 +228,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 28	    # アイテムの種類<< サーフボード×魚 >>
-	DURABILITY = 120    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 5			# アイテムの属性
 	POWER = 100          # アイテムの攻撃力
@@ -267,7 +267,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 33	    # アイテムの種類<< マンドリン >>
-	DURABILITY = 80    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = NORMAL		# アイテムのタグ
 	ELEMENT = 0			# アイテムの属性
 	POWER = 80          # アイテムの攻撃力
@@ -283,7 +283,7 @@ END_ITEMSET
 
 ITEMSET		
 	ITEMTYPE = 35	    # アイテムの種類<< ゴルフハンマー >>
-	DURABILITY = 150    # アイテムの耐久力
+	DURABILITY = 50    # アイテムの耐久力
 	TAG = CRAFT			# アイテムのタグ
 	ELEMENT = 1			# アイテムの属性
 	POWER = 180          # アイテムの攻撃力
