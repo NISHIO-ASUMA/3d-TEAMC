@@ -19,25 +19,26 @@
 //**************************************************************************************************************
 typedef enum
 {
-	UITYPE_TITLE = 0,
-	UITYPE_TITLE2,
-	UITYPE_FIVER,
-	UITYPE_SYUTYUSEN,
-	UITYPE_TUTORIAL,
-	UITYPE_BLACK,
-	UITYPE_KATANA,
-	UITYPE_RED,
-	UITYPE_ICONFRAME,
-	UITYPE_ICONFRAMESTOCK,
-	UITYPE_KEY,
-	UITYPE_DESTORY,
-	UITYPE_EVENT,
-	UITYPE_SP,
-	UITYPE_DAMAGE,
-	UITYPE_SETENEMYTIME,
-	UITYPE_BOSSMANUALEXIT,
+	UITYPE_TITLE = 0,	// タイトルのUI
+	UITYPE_TITLE2,		// タイトルのUI
+	UITYPE_FIVER,		// FeverのUI
+	UITYPE_SYUTYUSEN,	// 集中線
+	UITYPE_TUTORIAL,	// チュートリアル
+	UITYPE_BLACK,		// sp刀の時の画面の暗転
+	UITYPE_KATANA,		// タイトルの刀
+	UITYPE_RED,			
+	UITYPE_ICONFRAME,	// 持っているアイテムアイコンのフレーム
+	UITYPE_ICONFRAMESTOCK,	// ストックアイコンのフレーム
+	UITYPE_KEY,				// 必殺技のキー
+	UITYPE_DESTORY,			// 武器が壊れた時のUI
+	UITYPE_EVENT,			// イベント発生
+	UITYPE_SP,				// スペシャル発動のキー
+	UITYPE_DAMAGE,			// ダメージ受けた時の画面
+	UITYPE_SETENEMYTIME,	// 敵が出た時のUI
+	UITYPE_BOSSMANUALEXIT,	// ボスのマニュアルのUI
 	UITYPE_POPENEMY, // 敵出現
-	UITYPE_CRAFTTIME, 
+	UITYPE_CRAFTTIME, // クラフトの時間に出るUI
+	UITYPE_STOCKKEY,	// アイテムをストックするキー
 	UITYPE_MAX
 }UITYPE;
 
@@ -65,6 +66,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\bossmanualexit.png",
 	"data\\TEXTURE\\ui_popenemy.png",
 	"data\\TEXTURE\\ui_crafttime.png",
+	"data\\TEXTURE\\ui_stock_key.png",
 };
 
 //**************************************************************************************************************

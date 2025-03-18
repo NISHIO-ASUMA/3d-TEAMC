@@ -187,6 +187,12 @@
     <ClCompile Include="manual.cpp">
       <Filter>ソースファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="effect2d.cpp">
+      <Filter>ソースファイル\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="particle2d.cpp">
+      <Filter>ソースファイル\2d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -375,6 +381,12 @@
     <ClInclude Include="manual.h">
       <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
+    <ClInclude Include="effect2d.h">
+      <Filter>ヘッダーファイル\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="particle2d.h">
+      <Filter>ヘッダーファイル\2d</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ソースファイル">
@@ -448,6 +460,12 @@
     </Filter>
     <Filter Include="ヘッダーファイル\polygon">
       <UniqueIdentifier>{6b04064f-3fdc-4714-ab67-ea531430f881}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\2d">
+      <UniqueIdentifier>{fc8823ed-3b3e-42f2-9a43-9be5ced7957f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダーファイル\2d">
+      <UniqueIdentifier>{951def77-d495-44e3-9a64-7566e1598c8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

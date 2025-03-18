@@ -980,7 +980,7 @@ void UpdateCraftTimeUI(int nCnt)
 	pVtx += 4 * nCnt;
 
 	// 目的の値に近づける
-	g_GameUI[nCnt].pos.x += SetSmoothAprroach(1120.0f, g_GameUI[nCnt].pos.x, 0.1f);
+	g_GameUI[nCnt].pos.x += SetSmoothAprroach(640.0f, g_GameUI[nCnt].pos.x, 0.1f);
 
 	//頂点カラーの設定
 	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
