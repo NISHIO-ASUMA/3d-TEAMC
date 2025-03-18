@@ -11,12 +11,13 @@
 #include "gameui.h"
 #include "HPGauge.h"
 #include "player.h"
-#include"math.h"
+#include "math.h"
 #include "easing.h"
 #include "event.h"
 #include "game.h"
 #include "boss.h"
 #include "manual.h"
+#include "title.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -27,7 +28,7 @@
 #define DEST_HEIGHTEXPANSION (45.0f) // 目標の拡大率(縦幅)
 #define DEST_HEIGHTREDUCTION (25.0f) // 目標の縮小率(縦幅)
 
-#define MAX_UI (120)
+#define MAX_UI (120)				 // 最大UI数
 
 #define UITYPE_SPWIDTH (55.0f)		 // スペシャルUIの横幅
 #define UITYPE_SPHEIGHT (50.0f)		 // スペシャルUIの高さ
@@ -41,7 +42,7 @@ void SetEventUIAnimation(int nCnt);		// イベントのUIの設定
 void SetTutoUIAnimation(int nCnt);		// チュートリアルUIのアニメーション
 void SetDamageUIAnimation(int nCnt);	// ダメージUIの設定
 void SetTerritoryTimeUI(int nCnt);		// テリトリーが出るまでの時間
-void SetBossManual(int nCnt);           // ボスのマニュアルの設定
+void SetBossManual(int nCnt);			// ボスのマニュアルの設定
 void UpdateUIFlash(int nCnt, float* pAlv,float Maxtime);	// UIの点滅処理(使いまわせるやつ)
 void SetTerritoryEnemyUI(int nCnt);		// テリトリーに敵が出た時のUIの設定
 void UIScalAnimation(int nCnt,float widthEx,float widthdec,float heightEx,float heigthDec, float MaxtimeWidth,float MaxtimeHeight); // 拡大縮小のアニメーション
@@ -52,7 +53,7 @@ float fcolorA;
 //グローバル変数
 //**************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureGameUI[UITYPE_MAX] = {}; // テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGameUI = NULL;      // 頂点バッファへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGameUI = NULL;	  // 頂点バッファへのポインタ
 Gameui g_GameUI[MAX_UI];
 int g_nPatternAnim, g_nCounterAnim;
 
