@@ -497,7 +497,6 @@ void UpdatePlayer(void)
 		//// 最初にクラフトする溜めのアイテムの設定
 		//SetFirstCraftItem(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 50.0f, g_player.pos.z), ITEMTYPE_STONE);
 	}
-	SetParticle2D(D3DXVECTOR3(640.0f, 360.0f, 0.0f), 600, COLOR_RED, 10.0f, 0, 5, D3DXVECTOR3(2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 3.0f, 0.0f));
 
 #endif // DEBUG
 
@@ -2606,6 +2605,12 @@ void DestroyWepon(void)
 	// 武器を持っているかつプレイヤーの持っているアイテムが壊れた
 	if (g_player.Motion.nNumModel == MAX_MODEL && g_player.Itembreak[g_player.ItemIdx] == true)
 	{
+		// ミニマップのアイテムのリセット
+		ResetItemMinimap();
+
+		// ミニマップのアイテムのロード
+		LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
+
 		// 武器が壊れたUI
 		SetGameUI(D3DXVECTOR3(120.0f, 450.0f, 0.0f), UITYPE_DESTORY, 100.0f, 25.0f,true, 240);
 
@@ -2826,12 +2831,6 @@ void UpdateItemStock(void)
 	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && is_StockItem == true && CheckActionMotion(&g_player.Motion) == true)
 	{// Fキー or RBボタン
 
-		// ミニマップのアイテムのリセット
-		ResetItemMinimap();
-
-		// ミニマップのアイテムのロード
-		LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
-
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
 
@@ -2869,6 +2868,12 @@ void UpdateItemStock(void)
 
 		// プレイヤーの状態を何も持っていない状態にする
 		g_player.HandState = PLAYERHOLD_NO;
+
+		// ミニマップのアイテムのリセット
+		ResetItemMinimap();
+
+		// ミニマップのアイテムのロード
+		LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
 	}
 }
 //===============================================================================================================
