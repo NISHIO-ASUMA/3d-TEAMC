@@ -56,6 +56,8 @@
 #include "count.h"
 #include "craftrecipe.h"
 #include "manual.h"
+#include "particle2d.h"
+#include "effect2d.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -202,6 +204,12 @@ void InitGame(void)
 
 	// マニュアルの初期化処理
 	InitManual();
+
+	// エフェクト2dの初期化処理
+	InitEffect2D();
+
+	// パーティクル2dの初期化処理
+	InitParticle2D();
 
 #ifdef _DEBUG
 
@@ -381,6 +389,9 @@ void UninitGame(void)
 
 	// ミニマップの終了処理
 	UninitMinMap();
+
+	// エフェクト2dの終了処理
+	UninitEffect2D();
 
 #ifdef _DEBUG
 
@@ -611,6 +622,12 @@ void UpdateGame(void)
 			//アイテムの更新処理
 			UpdateItem();
 
+			// エフェクト2dの更新処理
+			UpdateEffect2D();
+
+			// パーティクル2dの更新処理
+			UpdateParticle2D();
+
 		}
 		else if (g_bEditMode == true || pCamera->bEditMode == true)
 		{
@@ -764,6 +781,9 @@ void DrawGame(void)
 
 	// アイコンの描画処理
 	DrawIcon();
+
+	// エフェクト2dの更新処理
+	DrawEffect2D();
 
 	// マニュアルの描画処理
 	DrawManual();
