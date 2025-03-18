@@ -350,7 +350,7 @@ void UpdatePlayer(void)
 		PlayerMove(); // ƒvƒŒƒCƒ„[‚ÌˆÚ“®ˆ—
 	}
 
-	const bool is_MovePad = !NotUsePad && NotAction && NotSp && NotDamage && gameState != GAMESTATE_MOVIE;
+	const bool is_MovePad = !NotUsePad && NotAction && NotSp && NotDamage && gameState != GAMESTATE_MOVIE && NotDeth;
 
 	if (is_MovePad == true)
 	{

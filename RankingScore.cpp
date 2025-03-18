@@ -16,6 +16,8 @@
 #include "Score.h"
 #include "game.h"
 #include "mouse.h"
+#include "math.h"
+#include "easing.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -28,12 +30,17 @@
 #define NUM_DIGITS_7 (1000000) // 割る桁数(7桁)
 
 //**************************************************************************************************************
+// プロトタイプ宣言
+//**************************************************************************************************************
+void UpdateRankScoreAnim(void);		// ランキングスコアのアニメーション処理
+void SkipRankScoreAnim(void);		// ランキングスコアのアニメーションのスキップ
+
+//**************************************************************************************************************
 // グローバル変数宣言
 //**************************************************************************************************************
 LPDIRECT3DTEXTURE9 g_pTextureRankScore = NULL;		// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffRankScore = NULL; // 頂点バッファへのポインタ
 RankScore g_RankScore[MAX_RANK];					// ランキングスコア情報
-END g_End;				// 終了判定
 int g_nRankUpdate = -1; // 更新ランクNo,
 int g_nTimerRanking;	// ランキング画面表示タイマー
 int Avalue;
@@ -79,8 +86,9 @@ void InitRankingScore(void)
 	for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
 	{
 		// 構造体変数の初期化
-		g_RankScore[nCntRank].pos = D3DXVECTOR3(400.0f, 165.0f + (MAX_HEIGHT * nCntRank) + (20.0f * nCntRank), 0.0f);
+		g_RankScore[nCntRank].pos = D3DXVECTOR3(1400.0f + (nCntRank * 150.0f), 165.0f + (MAX_HEIGHT * nCntRank) + (20.0f * nCntRank), 0.0f);
 		g_RankScore[nCntRank].nScore = 0;
+		g_RankScore[nCntRank].nEasingCnt = 0;
 
 		// 桁数分回す(8)
 		for (int nCntScore = 0; nCntScore < MAX_DIGIT; nCntScore++)
@@ -109,10 +117,10 @@ void InitRankingScore(void)
 			pVtx[3].rhw = 1.0f;
 
 			// 頂点カラーの設定
-			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
-			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
-			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
-			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 			// テクスチャの設定
 			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -162,71 +170,11 @@ void UpdateRankingScore(void)
 		SetFade(MODE_TITLE);
 	}
 
-	// フラッシュできない
-	if (bFlash == false)
-	{
-		VERTEX_2D* pVtx{};       // 頂点情報のポインタ
+	// ランキングスコアのアニメーション
+	UpdateRankScoreAnim();
 
-		// 頂点バッファをロックし,頂点情報へのポインタを取得
-		g_pVtxBuffRankScore->Lock(0, 0, (void**)&pVtx, 0);
-
-		// A値が255になったら
-		if (Avalue >= 255)
-		{
-			// 順位が0より大きかったら
-			if (Rank > 0)
-			{
-				Rank--;	    // 順位を減らす
-				Avalue = 0; // A値をリセット
-			}
-		}
-		else
-		{
-			Avalue += 5; // 加算量
-		}
-
-		// 順位0番目の透明度を設定し終わったら
-		if (Rank <= 0 && Avalue >= 255)
-		{
-			// 順位分回す
-			for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
-			{
-				// 桁数分回す
-				for (int nCnt1 = 0; nCnt1 < MAX_DIGIT; nCnt1++)
-				{
-					// 色をもとに戻しておく
-					pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-					pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-					pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-					pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-
-					pVtx += 4;
-				}
-			}
-			bFlash = true; // フラッシュできる
-		}
-		
-		// フラッシュできなかったら(上でtrueにしているので通る可能性があるから)
-		if (bFlash == false)
-		{
-			pVtx += 32 * Rank;
-
-			// 桁数分回す
-			for (int nCnt1 = 0; nCnt1 < MAX_DIGIT; nCnt1++)
-			{
-				// A値を更新
-				pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, Avalue);
-				pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, Avalue);
-				pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, Avalue);
-				pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, Avalue);
-
-				pVtx += 4;
-			}
-		}
-
-		// 頂点バッファをアンロック
-		g_pVtxBuffRankScore->Unlock();
-	}
+	// ランキングスコアのアニメーションスキップ処理
+	SkipRankScoreAnim();
 
 	// スキップ
 	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true || OnMouseTriggerDown(LEFT_MOUSE) == true) && bFlash == false)
@@ -502,10 +450,116 @@ void RankingTexture(void)
 	// 頂点バッファをアンロック
 	g_pVtxBuffRankScore->Unlock();
 }
-//=============================================================================================================
-// 終了判定の取得
-//=============================================================================================================
-END* GetStageEnd(void)
+//=========================================================================================================================
+// ランキングスコアのアニメーション処理
+//=========================================================================================================================
+void UpdateRankScoreAnim(void)
 {
-	return &g_End;
+	if (bFlash == true) return;
+
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	// 頂点バッファをロック
+	g_pVtxBuffRankScore->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 順位分回す
+	for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
+	{
+		// イージングのカウント
+		g_RankScore[nCntRank].nEasingCnt++;
+
+		//イージングの時間
+		float time[MAX_RANK] = {};
+
+		// 時間を設定
+		time[nCntRank] = SetEase(g_RankScore[nCntRank].nEasingCnt,180.0f + (nCntRank * 35.0f));
+
+		// 目的の値に近づける
+		g_RankScore[nCntRank].pos.x += SetSmoothAprroach(400.0f, g_RankScore[nCntRank].pos.x, EaseInOutQuad(time[nCntRank]));
+
+		// 桁数分回す
+		for (int nCntScore = 0; nCntScore < MAX_DIGIT; nCntScore++)
+		{
+			// 頂点情報の設定
+			pVtx[0].pos.x = g_RankScore[nCntRank].pos.x - MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+			pVtx[0].pos.y = g_RankScore[nCntRank].pos.y - MAX_WIDTH * 0.5f;
+			pVtx[0].pos.z = 0.0f;
+
+			pVtx[1].pos.x = g_RankScore[nCntRank].pos.x + MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+			pVtx[1].pos.y = g_RankScore[nCntRank].pos.y - MAX_WIDTH * 0.5f;
+			pVtx[1].pos.z = 0.0f;
+
+			pVtx[2].pos.x = g_RankScore[nCntRank].pos.x - MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+			pVtx[2].pos.y = g_RankScore[nCntRank].pos.y + MAX_WIDTH * 0.5f;
+			pVtx[2].pos.z = 0.0f;
+
+			pVtx[3].pos.x = g_RankScore[nCntRank].pos.x + MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+			pVtx[3].pos.y = g_RankScore[nCntRank].pos.y + MAX_WIDTH * 0.5f;
+			pVtx[3].pos.z = 0.0f;
+
+			pVtx += 4;
+		}
+
+		// ランキングの移動が終わったら
+		if (g_RankScore[nCntRank].pos.x <= 410.0f && nCntRank == MAX_RANK - 1)
+		{
+			bFlash = true;
+		}
+	}
+
+	// 頂点バッファをアンロック
+	g_pVtxBuffRankScore->Unlock();
+}
+//=========================================================================================================================
+// ランキングスコアのアニメーションのスキップ
+//=========================================================================================================================
+void SkipRankScoreAnim(void)
+{
+	if (bFlash == true) return;
+
+	// スキップしたら
+	if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A)))
+	{
+		bFlash = true;
+
+		// 頂点情報のポインタ
+		VERTEX_2D* pVtx;
+
+		// 頂点バッファをロック
+		g_pVtxBuffRankScore->Lock(0, 0, (void**)&pVtx, 0);
+
+		// 順位分回す
+		for (int nCntRank = 0; nCntRank < MAX_RANK; nCntRank++)
+		{
+			// ランクスコアの位置を目的の位置にする
+			g_RankScore[nCntRank].pos.x = 400.0f;
+
+			// 桁数分回す
+			for (int nCntScore = 0; nCntScore < MAX_DIGIT; nCntScore++)
+			{
+				// 頂点情報の設定
+				pVtx[0].pos.x = g_RankScore[nCntRank].pos.x - MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+				pVtx[0].pos.y = g_RankScore[nCntRank].pos.y - MAX_WIDTH * 0.5f;
+				pVtx[0].pos.z = 0.0f;
+
+				pVtx[1].pos.x = g_RankScore[nCntRank].pos.x + MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+				pVtx[1].pos.y = g_RankScore[nCntRank].pos.y - MAX_WIDTH * 0.5f;
+				pVtx[1].pos.z = 0.0f;
+
+				pVtx[2].pos.x = g_RankScore[nCntRank].pos.x - MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+				pVtx[2].pos.y = g_RankScore[nCntRank].pos.y + MAX_WIDTH * 0.5f;
+				pVtx[2].pos.z = 0.0f;
+
+				pVtx[3].pos.x = g_RankScore[nCntRank].pos.x + MAX_WIDTH * 0.5f + (MAX_WIDTH * nCntScore);
+				pVtx[3].pos.y = g_RankScore[nCntRank].pos.y + MAX_WIDTH * 0.5f;
+				pVtx[3].pos.z = 0.0f;
+
+				pVtx += 4;
+			}
+		}
+
+		// 頂点バッファをアンロック
+		g_pVtxBuffRankScore->Unlock();
+	}
 }

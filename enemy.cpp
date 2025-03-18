@@ -61,7 +61,7 @@
 #define SETNUM_TERRITORY (2)		// テリトリーを配置する数
 #define TERRITORYRADIUS (500.0f)	// テリトリーの半径
 #define FRAME (60)				    // フレーム
-#define OUTTERRITORY_ENEMY (40)		// テリトリーの外の敵
+#define OUTTERRITORY_ENEMY (30)		// テリトリーの外の敵
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -1762,8 +1762,8 @@ void UpdateEnemySpawn(void)
 		// ボスが出る確率
 		int BossSpawnChance = rand() % 101;
 
-		// ボスが体なら && 40%の確率で出現
-		if (BossSpawnChance <= 30 && nNumBoss == 0 && noFirstSetBoss == false)
+		// ボスが体なら && 60%の確率で出現
+		if (BossSpawnChance <= 60 && nNumBoss == 0 && noFirstSetBoss == false)
 		{
 			// ボスを出現させる
 			EnableSetBoss = true;
