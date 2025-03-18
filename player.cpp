@@ -441,11 +441,11 @@ void UpdatePlayer(void)
 	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false)
 	{//aボタン or Enterキーが押された
 
-		// 音楽再生
-		PlaySound(SOUND_LABEL_JUMP_SE);
-
 		if (g_player.bJump == true && g_player.Motion.motionType != MOTIONTYPE_LANDING && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE)
 		{
+			// 音楽再生
+			PlaySound(SOUND_LABEL_JUMP_SE);
+
 			g_player.bJump = false;						 // ジャンプをできなくする
 			SetMotion(&g_player.Motion, MOTIONTYPE_JUMP, true, 10);
 			g_player.move.y = 18.0f;					 // ジャンプ量		
