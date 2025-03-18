@@ -68,8 +68,8 @@ void InitCraftRecipe(void)
 	{
 		g_aRecipe[nCnt].pos = D3DXVECTOR3(600.0f,300.0,0.0f); // à íu
 		g_aRecipe[nCnt].nType = nCnt;						  // éÌóﬁ
-		g_aRecipe[nCnt].fWidth = 150.0f;					  // â°ïù
-		g_aRecipe[nCnt].fHeight = 100.0f;					  // çÇÇ≥
+		g_aRecipe[nCnt].fWidth = 200.0f;					  // â°ïù
+		g_aRecipe[nCnt].fHeight = 150.0f;					  // çÇÇ≥
 		g_aRecipe[nCnt].bUse = false;						  // égópèÛë‘
 		g_aRecipe[nCnt].state = RECIPEUISTATE_NONE;           // UIÇÃèÛë‘
 

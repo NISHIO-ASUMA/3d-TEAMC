@@ -335,6 +335,9 @@ void UpdateEnemy(void)
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
 		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
+		// ターゲットの位置の更新
+		UpdateTargetPosition(nCntEnemy);
+
 		// モーションの種類が死亡
 		if (g_Enemy[nCntEnemy].Motion.motiontypeBlend == MOTIONTYPE_DEATH)
 		{
@@ -412,9 +415,6 @@ void UpdateEnemy(void)
 			// 敵の攻撃の更新処理
 			UpdateKickAttack(nCntEnemy);
 		}
-
-		// ターゲットの位置の更新
-		UpdateTargetPosition(nCntEnemy);
 
 		// 敵の角度の正規化
 		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
@@ -611,10 +611,7 @@ void HitEnemy(int nCnt,int nDamage)
 
 		// キルカウントをできる
 		if (g_Enemy[nCnt].isKillCount == true)
-		{
-			// ビルボードの消去
-			DeletIdxBillboard(g_Enemy[nCnt].nIdxtarget);
-			
+		{			
 			// ランダム
 			int randum_spawner = rand() % 4;
 
@@ -643,6 +640,9 @@ void HitEnemy(int nCnt,int nDamage)
 
 				// テリトリーの敵の減少処理
 				DecreaseTerritoryEnemy(nCnt);
+
+				// ビルボードの消去
+				DeletIdxBillboard(g_Enemy[nCnt].nIdxtarget);
 			}
 
 			// 闇属性だったら
@@ -755,17 +755,18 @@ void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed,int TerritoryNumbe
 		{
 			g_Enemy[nCntEnemy].Motion = g_LoadEnemy[nType]; // 情報を代入
 
-			g_Enemy[nCntEnemy].pos = pos;					// 座標
-			g_Enemy[nCntEnemy].nType = nType;				// 種類
-			g_Enemy[nCntEnemy].nLife = nLife;				// 体力
-			g_Enemy[nCntEnemy].nMaxLife = nLife;			// 最大体力
-			g_Enemy[nCntEnemy].Speed = Speed;				// 足の速さ
-			g_Enemy[nCntEnemy].nCountAction = 0;			// カウンターアクションを初期化
+			g_Enemy[nCntEnemy].pos = pos;							// 座標
+			g_Enemy[nCntEnemy].nType = nType;						// 種類
+			g_Enemy[nCntEnemy].nLife = nLife;						// 体力
+			g_Enemy[nCntEnemy].nMaxLife = nLife;					// 最大体力
+			g_Enemy[nCntEnemy].Speed = Speed;						// 足の速さ
+			g_Enemy[nCntEnemy].nCountAction = 0;					// カウンターアクションを初期化
 			g_Enemy[nCntEnemy].TerritoryNumber = TerritoryNumber;	// テリトリーの番号
 			g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;			// 敵の状態をリセット
 			g_Enemy[nCntEnemy].nCounterState = 0;					// 敵の状態カウンターをリセット
 			g_Enemy[nCntEnemy].bUse = true;							// 使用状態
 			g_Enemy[nCntEnemy].isKillCount = true;					// キルカウントをリセット
+			g_Enemy[nCntEnemy].HitStopCount = 0;					// ヒットストップのカウント
 
 			g_Enemy[nCntEnemy].rotDest.y = (float)(rand()% 628 - 314) * 0.01f;	  // 角度
 
@@ -1716,6 +1717,9 @@ void UpdateDeathParam(int nCntEnemy)
 	// 最後のキーまで行ったら
 	if (nKey >= nLastKey)
 	{
+		// ビルボードの消去
+		DeletIdxBillboard(g_Enemy[nCntEnemy].nIdxtarget);
+
 		// テリトリーの敵の減少処理
 		DecreaseTerritoryEnemy(nCntEnemy);
 
@@ -2297,7 +2301,7 @@ void OutTerritorySpawner(int nSpawner)
 	float randum_valueX = (float)(rand() % 10);
 	float randum_valueZ = (float)(rand() % 10);
 
-	if (g_nNumEnemy <= OUTTERRITORY_ENEMY)
+	if (g_nNumEnemy <= OUTTERRITORY_ENEMY /2)
 	{
 		// スポナーの設定
 		switch (nSpawner)
