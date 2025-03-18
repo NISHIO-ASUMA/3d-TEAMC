@@ -362,8 +362,6 @@ void UpdateGameUI(void)
 				break;
 			case UITYPE_CRAFTTIME:
 				UpdateCraftTimeUI(nCnt);
-				// クラフトの時間が終わったら
-				if (GetFirstCraftTIme() == false) g_GameUI[nCnt].bUse = false;
 				break;
 
 			}
@@ -975,13 +973,21 @@ void UpdateCraftTimeUI(int nCnt)
 {
 	VERTEX_2D* pVtx;
 
+	Player* pPlayer = GetPlayer();
+
+	// クラフトの時間が終わったら
+	if (GetFirstCraftTIme() == false)
+	{
+		g_GameUI[nCnt].bUse = false;
+	}
+
 	//頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
 
 	pVtx += 4 * nCnt;
 
 	// 目的の値に近づける
-	g_GameUI[nCnt].pos.x += SetSmoothAprroach(640.0f, g_GameUI[nCnt].pos.x, 0.1f);
+	g_GameUI[nCnt].pos.x += SetSmoothAprroach(640.0f, g_GameUI[nCnt].pos.x, 0.1f);	
 
 	//頂点カラーの設定
 	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);

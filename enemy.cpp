@@ -1755,13 +1755,19 @@ void UpdateEnemySpawn(void)
 			EnableSetBoss = false;
 		}
 
+		// ボスが出なかったら
+		if (g_nNumTerritory == 1 && nNumBoss == 0)
+		{
+			// 敵が出たUIを設定
+			SetGameUI(D3DXVECTOR3(1120.0f, 260.0f, 0.0f), UITYPE_POPENEMY, 150.0f, 50.0f, true, 180.0f);
+		}
+
 		// 敵のテリトリーを設定
 		switch (SpawnPos)
 		{
 		case 0:
 			// テリトリーの設定
 			SetTerritoryparam(nCnt, TERRITTORYPOS_ONE, SpawnPos, EnableSetBoss);
-
 			break;
 		case 1:
 			// テリトリーの設定
@@ -2232,15 +2238,13 @@ void SetTerritoryparam(int nTerritoryIdx, D3DXVECTOR3 pos,int SpawnerPos, bool b
 		g_nBossPos = SpawnerPos;
 
 		// シリンダーのインデックス
-		g_Territory[nTerritoryIdx].CylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_TERRITORY, 0, TERRITORYRADIUS, COLOR_CRIMSON, 16, 1, 0.0f, 3000.0f);
+		g_Territory[nTerritoryIdx].CylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_TERRITORY, 0, TERRITORYRADIUS, COLOR_GOLD, 16, 1, 0.0f, 3000.0f);
+
+		// ボスにシリンダーのインデックスを渡す
+		BossPresentCylinderIdx(g_Territory[nTerritoryIdx].CylinderIdx);
 	}
 	else
-	{
-		if (g_nNumTerritory == 1)
-		{
-			// 敵が出たUIを設定
-			SetGameUI(D3DXVECTOR3(1120.0f, 260.0f, 0.0f), UITYPE_POPENEMY, 150.0f, 50.0f, true, 180.0f);
-		}
+	{		
 
 		// サウンド再生
 		PlaySound(SOUND_LABEL_ENEMYPOP_SE);

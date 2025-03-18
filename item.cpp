@@ -815,6 +815,7 @@ void SetFirstCraftItem(D3DXVECTOR3 pos, int nType)
 			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;
 			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
 			g_Item[nCntItem].bTracking = true;
+			g_Item[nCntItem].state = ITEMSTATE_NORMAL;
 
 			g_Item[nCntItem].pos = pos;			 // ç¿ïW
 			g_Item[nCntItem].nType = nType;		 // éÌóﬁ

@@ -604,6 +604,7 @@ void UpdateTrritoryCylinder(int CylinderIdx)
 				(nCntV * (fHeight / vtxZ)),
 				cosf(fAngel) * fRadius);
 
+			g_MeshCylinder[CylinderIdx].col.a = 0.3f;
 			pVtx[nCnt].col = g_MeshCylinder[CylinderIdx].col;
 
 			nCnt++;//‰ÁŽZ
