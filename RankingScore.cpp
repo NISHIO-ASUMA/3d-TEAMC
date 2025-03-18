@@ -519,7 +519,7 @@ void SkipRankScoreAnim(void)
 	if (bFlash == true) return;
 
 	// スキップしたら
-	if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A)))
+	if ((KeyboardTrigger(DIK_RETURN) || JoypadTrigger(JOYKEY_A) || OnMouseTriggerDown(LEFT_MOUSE)))
 	{
 		bFlash = true;
 
