@@ -78,7 +78,8 @@ void AgentEnemy(int nCntEnemy);																				 // “G‚Ìƒz[ƒ~ƒ“ƒOˆ—
 void CollisionToEnemy(int nCntEnemy);																		 // “G‚Æ“G‚Ì“–‚½‚è”»’è
 void UpdateHomingEnemy(int nCntEnemy);																		 // “G‚Ìƒz[ƒ~ƒ“ƒOˆ—
 void UpdateRunAwayEnemy(int nCntEnemy);																		 // “¦‚°‚é“G‚ÌXVˆ—
-void UpdateKickAttack(int nCntEnemy);																		 // “G‚ÌUŒ‚‚ÌXVˆ—
+void UpdateKickAttack(int nCntEnemy);																		 // “G‚ÌR‚èUŒ‚‚ÌXVˆ—
+void UpdatePunchAttack(int nCntEnemy);																		 // “G‚Ì‰£‚èUŒ‚‚ÌXVˆ—
 void UpdateDroneEnemy(int nCntEnemy);																		 // ”ò‚ñ‚Å‚é“G‚ÌXVˆ—
 void KickActionSet(int nCntEnemy,int nKey, int nCounter, int EndFrame, int LastKey, Player* pPlayer);        // ‚¯‚èUŒ‚‚Ìˆ—
 void UpdateDeathParam(int nCntEnemy);																		 // “G‚Ì€–Sƒ‚[ƒVƒ‡ƒ“‚Ìˆ—
@@ -92,6 +93,13 @@ void OutTerritorySpawner(int nSpawner);																		 // ƒeƒŠƒgƒŠ[‚ÌŠO‚ÌƒXƒ
 void UpdateTargetPosition(int nCntEnemy);																	 // ƒ^[ƒQƒbƒg‚ÌˆÊ’u‚ÌXV
 void UpdateTerritoryMark(void);																				 // ƒeƒŠƒgƒŠ[‚Éƒ}[ƒN‚·‚é
 void UpdateScoreAndGage(int nCntEnemy);																		 // “G‚ğ“|‚µ‚½‚Æ‚«‚ÌƒXƒRƒA‚ÆƒQ[ƒW‚ÌXVˆ—
+bool isKickAttack(int nCntEnemy,Player* pPlayer);															 // ƒLƒbƒNUŒ‚‚ª‚Å‚«‚é‚©
+bool isPunchAttack(int nCntEnemy, Player* pPlayer);															 // ƒpƒ“ƒ`UŒ‚‚Å‚«‚é‚©
+void SetHitStopVibration(int nCntEnemy);																	 // ƒqƒbƒgƒXƒgƒbƒv‚µ‚½‚Æ‚«‚Ék‚¦‚éˆ—
+void LimitToMaxHP(int nCntEnemy);																			 // HP‚Ì§ŒÀˆ—
+void UpdateEnemyState(int nCntEnemy);																		 // “G‚Ìó‘Ô‚Ì‘JˆÚ
+void UpdatePositionEnemy(int nCntEnemy);																	 // “G‚ÌˆÊ’u‚ÌXVˆ—
+void SetUpdateMotion(int nCntEnemy);																		 // ƒ‚[ƒVƒ‡ƒ“‚ÌXVˆ—‚Ìİ’è
 
 //**************************************************************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -254,12 +262,8 @@ void UpdateEnemy(void)
 		// ƒqƒbƒgƒXƒgƒbƒv‚ÌƒJƒEƒ“ƒg‚ğŒ¸‚ç‚·
 		g_Enemy[nCntEnemy].HitStopCount--;
 
-		// ƒqƒbƒgƒXƒgƒbƒv‚µ‚Ä‚¢‚é
-		if (g_Enemy[nCntEnemy].HitStopCount > 0)
-		{
-			g_Enemy[nCntEnemy].pos.x += (float)(rand() % 30 - 15.0f);
-			g_Enemy[nCntEnemy].pos.z += (float)(rand() % 30 - 15.0f);
-		}
+		// ƒqƒbƒgƒXƒgƒbƒv‚Ì‚Ék‚¦‚éˆ—
+		SetHitStopVibration(nCntEnemy);
 
 		// –¢g—p‚¾‚Á‚½‚çˆ—‚ğ“Ç‚İ”ò‚Î‚·
 		if (g_Enemy[nCntEnemy].bUse == false) continue;
@@ -270,69 +274,27 @@ void UpdateEnemy(void)
 		// Å‰‚ÌƒNƒ‰ƒtƒg‚ÌŠÔ‚¾‚Á‚½‚çˆ—‚ğ“Ç‚İ”ò‚Î‚·
 		if (bFirstCraftTime == true) continue;
 		
-		// Å‘å‘Ì—Í‚ğ’´‚¦‚Ä‚½‚ç’²®
-		if (g_Enemy[nCntEnemy].nMaxLife < g_Enemy[nCntEnemy].nLife)
-		{
-			g_Enemy[nCntEnemy].nLife = g_Enemy[nCntEnemy].nMaxLife;
-		}
+		// HP‚ªMAXHP‚ğ’´‚¦‚È‚¢‚æ‚¤‚É‚·‚éˆ—
+		LimitToMaxHP(nCntEnemy);
 
-		// “G‚Ìó‘Ô
-		switch (g_Enemy[nCntEnemy].state)
-		{
-		case ENEMYSTATE_NORMAL:
-			break;
-		case ENEMYSTATE_AGENT:
-			break;
-		case ENEMYSTATE_ATTACK:
-			g_Enemy[nCntEnemy].nCounterState--;
+		// “G‚Ìó‘Ô‘JˆÚ
+		UpdateEnemyState(nCntEnemy);
 
-			if (g_Enemy[nCntEnemy].nCounterState <= 0)
-			{
-				g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;
-			}
-			break;
-		case ENEMYSTATE_DAMAGE:
-			g_Enemy[nCntEnemy].nCounterState--;
+		// ˆÊ’u‚ÌXVˆ—
+		UpdatePositionEnemy(nCntEnemy);
 
-			if (g_Enemy[nCntEnemy].nCounterState <= 0)
-			{
-				g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;
-			}
-			break;
-		case ENEMYSTATE_DEATH:
-			break;
-		default:
-			break;
-		}
-
-		// ˆÚ“®—Ê‚ÌŒ¸Š
-		g_Enemy[nCntEnemy].move.x += (0.0f - g_Enemy[nCntEnemy].move.x) * 0.5f;
-		g_Enemy[nCntEnemy].move.z += (0.0f - g_Enemy[nCntEnemy].move.z) * 0.5f;
-
-		// ‘O‰ñ‚ÌˆÊ’u‚ğ•Û‘¶
-		g_Enemy[nCntEnemy].posOld = g_Enemy[nCntEnemy].pos;
-
-		// ˆÊ’u‚ÌXV
-		g_Enemy[nCntEnemy].pos += g_Enemy[nCntEnemy].move;
-
-		if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
-		{
-			g_Enemy[nCntEnemy].pos.y = 170.0f;
-		}
-
+		// ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒh‚Ì“–‚½‚è”»’è
 		CollisionField(&g_Enemy[nCntEnemy].pos,&g_Enemy[nCntEnemy].posOld);
 
 		g_Enemy[nCntEnemy].move.y -= MAX_GLABITY;
 
-		// 6”Ô–Ú‚Ì“GˆÈŠO && 7”Ô–Ú‚Ì“GˆÈŠO
-		if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
-		{
-			//ƒ‚[ƒVƒ‡ƒ“‚ÌXV
-			UpdateMotion(&g_Enemy[nCntEnemy].Motion);
-		}
+		// ƒ‚[ƒVƒ‡ƒ“‚ÌXVˆ—
+		SetUpdateMotion(nCntEnemy);
 
 		// ‰e‚ÌŒvZ
 		SetPositionShadow(g_Enemy[nCntEnemy].nIdxShadow, g_Enemy[nCntEnemy].pos, SHADOWSIZEOFFSET + SHADOWSIZEOFFSET * g_Enemy[nCntEnemy].pos.y / 200.0f, SHADOW_A / (SHADOW_A + g_Enemy[nCntEnemy].pos.y / 30.0f));
+
+		// ƒ~ƒjƒ}ƒbƒv‚ÌˆÊ’u‚Ìİ’èˆ—
 		SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
 
 		// ƒ^[ƒQƒbƒg‚ÌˆÊ’u‚ÌXV
@@ -349,10 +311,7 @@ void UpdateEnemy(void)
 		}
 
 		// ƒQ[ƒ€‚Ìó‘Ô‚ªƒ€[ƒr[‚¾‚Á‚½‚ç
-		if (gameState == GAMESTATE_MOVIE)
-		{
-			continue;
-		}
+		if (gameState == GAMESTATE_MOVIE) continue;
 
 		// •Ç‚Æ‚Ì“–‚½‚è”»’è
 		CollisionWall(&g_Enemy[nCntEnemy].pos, &g_Enemy[nCntEnemy].posOld, &g_Enemy[nCntEnemy].move, g_Enemy[nCntEnemy].Speed);
@@ -415,7 +374,11 @@ void UpdateEnemy(void)
 			// “G‚ÌUŒ‚‚ÌXVˆ—
 			UpdateKickAttack(nCntEnemy);
 		}
-
+		else if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_FOUR || g_Enemy[nCntEnemy].nType == ENEMYTYPE_FIVE)
+		{
+			// “G‚Ìƒpƒ“ƒ`UŒ‚‚Ìˆ—
+			UpdatePunchAttack(nCntEnemy);
+		}
 		// “G‚ÌŠp“x‚Ì³‹K‰»
 		if (g_Enemy[nCntEnemy].rotDest.y - g_Enemy[nCntEnemy].rot.y >= D3DX_PI)
 		{
@@ -1556,32 +1519,43 @@ void UpdateKickAttack(int nCntEnemy)
 	// Å‘åƒtƒŒ[ƒ€
 	int EndFrame = g_Enemy[nCntEnemy].Motion.aMotionInfo[Motiontype].aKeyInfo[LastKey].nFrame;
 
-	// ƒvƒŒƒCƒ„[‚Ìƒ‚ƒfƒ‹‚Ìî•ñ‚ğ‘ã“ü
-	D3DXVECTOR3 PlayerModel = SetMtxConversion(pPlayer->Motion.aModel[0].mtxWorld);
-
-	// “G‚Ìƒ‚ƒfƒ‹‚Ìî•ñ‚ğ‘ã“ü
-	D3DXVECTOR3 EnemyModel = SetMtxConversion(g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld);
-	
-	// ”ÍˆÍ“à‚É‚¢‚é‚©‚ğ”»’è
-	const bool is_sphereBounds = sphererange(&PlayerModel, &EnemyModel, 20.0f, 50.0f) == true;
-
-	// “G‚ªUŒ‚ó‘Ô‚©‚ğ”»’è
-	const bool is_EnemyNotAction = g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_ATTACK;
-
-	// ƒvƒŒƒCƒ„[‚ªƒ_ƒ[ƒWó‘Ô‚©‚Ç‚¤‚©‚ğ”»’è
-	const bool is_PlayerNotDamage = pPlayer->state != PLAYERSTATE_DAMAGE;
-
-	// UŒ‚‚ğ‚Å‚«‚é‚©‚ğ”»’è
-	const bool CanDamage = is_sphereBounds == true && is_EnemyNotAction == true && is_PlayerNotDamage == true;
-
 	// ƒLƒbƒNƒAƒNƒVƒ‡ƒ“‚ÌXVˆ—
 	KickActionSet(nCntEnemy, nKey, nCounter, EndFrame, LastKey, pPlayer);
 
 	// UŒ‚”ÍˆÍ‚É“ü‚Á‚½
-	if (CanDamage == true && CheckMotionBounds(nKey, nCounter,4, LastKey,0, EndFrame) == true)
+	if (isKickAttack(nCntEnemy,pPlayer) == true && CheckMotionBounds(nKey, nCounter,4, LastKey,0, EndFrame) == true)
 	{
 		// ƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
-		HitPlayer(50,false, 0, 0);
+		HitPlayer(69,false, 0, 0);
+	}
+}
+//===============================================================================================================
+// “G‚Ì‰£‚èUŒ‚‚ÌXVˆ—
+//===============================================================================================================
+void UpdatePunchAttack(int nCntEnemy)
+{
+	Player* pPlayer = GetPlayer();
+
+	// ƒ‚[ƒVƒ‡ƒ“‚Ìí—Ş
+	int Motiontype = g_Enemy[nCntEnemy].Motion.motionType;
+
+	// ƒL[
+	int nKey = g_Enemy[nCntEnemy].Motion.nKey;
+
+	// ÅŒã‚ÌƒL[
+	int LastKey = g_Enemy[nCntEnemy].Motion.aMotionInfo[Motiontype].nNumkey - 1;
+
+	// ƒ‚[ƒVƒ‡ƒ“‚ÌƒJƒEƒ“ƒg
+	int nCounter = g_Enemy[nCntEnemy].Motion.nCountMotion;
+
+	// Å‘åƒtƒŒ[ƒ€
+	int EndFrame = g_Enemy[nCntEnemy].Motion.aMotionInfo[Motiontype].aKeyInfo[LastKey].nFrame;
+
+	// UŒ‚”ÍˆÍ‚É“ü‚Á‚½
+	if (isPunchAttack(nCntEnemy, pPlayer) == true && CheckMotionBounds(nKey, nCounter, 3, LastKey, 0, EndFrame) == true)
+	{
+		// ƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
+		HitPlayer(50, false, 0, 0);
 	}
 }
 //===============================================================================================================
@@ -2509,6 +2483,170 @@ void UpdateScoreAndGage(int nCntEnemy)
 	}
 
 
+}
+//==============================================================================================================
+// ƒLƒbƒNUŒ‚‚ª‚Å‚«‚é‚©
+//==============================================================================================================
+bool isKickAttack(int nCntEnemy, Player* pPlayer)
+{
+	// ƒvƒŒƒCƒ„[‚Ìƒ‚ƒfƒ‹‚Ìî•ñ‚ğ‘ã“ü
+	D3DXVECTOR3 PlayerModel = SetMtxConversion(pPlayer->Motion.aModel[0].mtxWorld);
+
+	// “G‚Ìƒ‚ƒfƒ‹‚Ìî•ñ‚ğ‘ã“ü
+	D3DXVECTOR3 EnemyModel = SetMtxConversion(g_Enemy[nCntEnemy].Motion.aModel[6].mtxWorld);
+
+	// ”ÍˆÍ“à‚É‚¢‚é‚©‚ğ”»’è
+	const bool is_sphereBounds = sphererange(&PlayerModel, &EnemyModel, 20.0f, 50.0f) == true;
+
+	// ğŒ‚ªˆá‚Á‚½‚çŠÖ”‚ğ”²‚¯‚é
+	if (is_sphereBounds == false) return false;
+
+	// “G‚ªUŒ‚ó‘Ô‚©‚ğ”»’è
+	const bool is_EnemyNotAction = g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_ATTACK;
+
+	// ğŒ‚ªˆá‚Á‚½‚çŠÖ”‚ğ”²‚¯‚é
+	if (is_EnemyNotAction == false) return false;
+
+	// ƒvƒŒƒCƒ„[‚ªƒ_ƒ[ƒWó‘Ô‚©‚Ç‚¤‚©‚ğ”»’è
+	const bool is_PlayerNotDamage = pPlayer->state != PLAYERSTATE_DAMAGE;
+
+	// ğŒ‚ªˆá‚Á‚½‚çŠÖ”‚ğ”²‚¯‚é
+	if (is_PlayerNotDamage == false) return false;
+
+	// UŒ‚‚ğ‚Å‚«‚é‚©‚ğ”»’è
+	const bool CanDamage = is_sphereBounds == true && is_EnemyNotAction == true && is_PlayerNotDamage == true;
+
+	// ğŒ‚ªˆá‚Á‚½‚çŠÖ”‚ğ”²‚¯‚é
+	if (CanDamage == false) return false;
+
+	// UŒ‚‚Å‚«‚é
+	return true;
+}
+//==============================================================================================================
+// ƒpƒ“ƒ`UŒ‚‚Å‚«‚é‚©
+//==============================================================================================================
+bool isPunchAttack(int nCntEnemy, Player* pPlayer)
+{
+	// ƒvƒŒƒCƒ„[‚Ìƒ‚ƒfƒ‹‚Ìî•ñ‚ğ‘ã“ü
+	D3DXVECTOR3 PlayerModel = SetMtxConversion(pPlayer->Motion.aModel[0].mtxWorld);
+
+	// “G‚Ìƒ‚ƒfƒ‹‚Ìî•ñ‚ğ‘ã“ü
+	D3DXVECTOR3 EnemyModel = SetMtxConversion(g_Enemy[nCntEnemy].Motion.aModel[3].mtxWorld);
+
+	// ”ÍˆÍ“à‚É‚¢‚é‚©‚ğ”»’è
+	const bool is_sphereBounds = sphererange(&PlayerModel, &EnemyModel, 20.0f, 50.0f) == true;
+
+	// ğŒ‚ªˆá‚Á‚½‚çŠÖ”‚ğ”²‚¯‚é
+	if (is_sphereBounds == false) return false;
+
+	// “G‚ªUŒ‚ó‘Ô‚©‚ğ”»’è
+	const bool is_EnemyNotAction = g_Enemy[nCntEnemy].AttackState == ENEMYATTACK_ATTACK;
+
+	// ğŒ‚ªˆá‚Á‚½‚çŠÖ”‚ğ”²‚¯‚é
+	if (is_EnemyNotAction == false) return false;
+
+	// ƒvƒŒƒCƒ„[‚ªƒ_ƒ[ƒWó‘Ô‚©‚Ç‚¤‚©‚ğ”»’è
+	const bool is_PlayerNotDamage = pPlayer->state != PLAYERSTATE_DAMAGE;
+
+	// ğŒ‚ªˆá‚Á‚½‚çŠÖ”‚ğ”²‚¯‚é
+	if (is_PlayerNotDamage == false) return false;
+
+	// UŒ‚‚ğ‚Å‚«‚é‚©‚ğ”»’è
+	const bool CanDamage = is_sphereBounds == true && is_EnemyNotAction == true && is_PlayerNotDamage == true;
+
+	// ğŒ‚ªˆá‚Á‚½‚çŠÖ”‚ğ”²‚¯‚é
+	if (CanDamage == false) return false;
+
+	return true;
+}
+//==============================================================================================================
+// ƒqƒbƒgƒXƒgƒbƒv‚µ‚½‚Æ‚«‚Ék‚¦‚éˆ—
+//==============================================================================================================
+void SetHitStopVibration(int nCntEnemy)
+{
+	// ƒqƒbƒgƒXƒgƒbƒv‚µ‚Ä‚¢‚é
+	if (g_Enemy[nCntEnemy].HitStopCount > 0)
+	{
+		g_Enemy[nCntEnemy].pos.x += (float)(rand() % 30 - 15.0f);
+		g_Enemy[nCntEnemy].pos.z += (float)(rand() % 30 - 15.0f);
+	}
+}
+//==============================================================================================================
+// HP‚Ì§ŒÀˆ—
+//==============================================================================================================
+void LimitToMaxHP(int nCntEnemy)
+{
+	// Å‘å‘Ì—Í‚ğ’´‚¦‚Ä‚½‚ç’²®
+	if (g_Enemy[nCntEnemy].nMaxLife < g_Enemy[nCntEnemy].nLife)
+	{
+		g_Enemy[nCntEnemy].nLife = g_Enemy[nCntEnemy].nMaxLife;
+	}
+}
+//==============================================================================================================
+// “G‚Ìó‘Ô‚Ì‘JˆÚ
+//==============================================================================================================
+void UpdateEnemyState(int nCntEnemy)
+{
+	// “G‚Ìó‘Ô
+	switch (g_Enemy[nCntEnemy].state)
+	{
+	case ENEMYSTATE_NORMAL:
+		break;
+	case ENEMYSTATE_AGENT:
+		break;
+	case ENEMYSTATE_ATTACK:
+		g_Enemy[nCntEnemy].nCounterState--;
+
+		if (g_Enemy[nCntEnemy].nCounterState <= 0)
+		{
+			g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;
+		}
+		break;
+	case ENEMYSTATE_DAMAGE:
+		g_Enemy[nCntEnemy].nCounterState--;
+
+		if (g_Enemy[nCntEnemy].nCounterState <= 0)
+		{
+			g_Enemy[nCntEnemy].state = ENEMYSTATE_NORMAL;
+		}
+		break;
+	case ENEMYSTATE_DEATH:
+		break;
+	default:
+		break;
+	}
+}
+//==============================================================================================================
+// “G‚ÌˆÊ’u‚ÌXVˆ—
+//==============================================================================================================
+void UpdatePositionEnemy(int nCntEnemy)
+{
+	// ˆÚ“®—Ê‚ÌŒ¸Š
+	g_Enemy[nCntEnemy].move.x += (0.0f - g_Enemy[nCntEnemy].move.x) * 0.5f;
+	g_Enemy[nCntEnemy].move.z += (0.0f - g_Enemy[nCntEnemy].move.z) * 0.5f;
+
+	// ‘O‰ñ‚ÌˆÊ’u‚ğ•Û‘¶
+	g_Enemy[nCntEnemy].posOld = g_Enemy[nCntEnemy].pos;
+
+	// ˆÊ’u‚ÌXV
+	g_Enemy[nCntEnemy].pos += g_Enemy[nCntEnemy].move;
+
+	if (g_Enemy[nCntEnemy].nType == ENEMYTYPE_SIX)
+	{
+		g_Enemy[nCntEnemy].pos.y = 170.0f;
+	}
+}
+//==============================================================================================================
+// ƒ‚[ƒVƒ‡ƒ“‚ÌXVˆ—‚Ìİ’è
+//==============================================================================================================
+void SetUpdateMotion(int nCntEnemy)
+{
+	// 6”Ô–Ú‚Ì“GˆÈŠO && 7”Ô–Ú‚Ì“GˆÈŠO
+	if (g_Enemy[nCntEnemy].nType != ENEMYTYPE_SIX && g_Enemy[nCntEnemy].nType != ENEMYTYPE_SEVEN)
+	{
+		//ƒ‚[ƒVƒ‡ƒ“‚ÌXV
+		UpdateMotion(&g_Enemy[nCntEnemy].Motion);
+	}
 }
 //==============================================================================================================
 // ƒqƒbƒgƒXƒgƒbƒv‚Ìİ’èˆ—

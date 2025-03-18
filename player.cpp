@@ -1389,32 +1389,28 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
 	{
-		// 使用状態のみ
-		if (pEnemy[nCnt].bUse && pEnemy[nCnt].nType != ENEMYTYPE_SIX)
+		// 距離を求める
+		float DisposX = pEnemy[nCnt].pos.x - g_player.pos.x;
+		float DisposY = pEnemy[nCnt].pos.y - g_player.pos.y;
+		float DisposZ = pEnemy[nCnt].pos.z - g_player.pos.z;
+
+		// 距離を求める
+		fDistanceNow = sqrtf((DisposX * DisposX) + (DisposY * DisposY) + (DisposZ * DisposZ));
+
+		// 最初だけ通す
+		if (bFirst)
 		{
-			// 距離を求める
-			float DisposX = pEnemy[nCnt].pos.x - g_player.pos.x;
-			float DisposY = pEnemy[nCnt].pos.y - g_player.pos.y;
-			float DisposZ = pEnemy[nCnt].pos.z - g_player.pos.z;
-
-			// 距離を求める
-			fDistanceNow = sqrtf((DisposX * DisposX) + (DisposY * DisposY) + (DisposZ * DisposZ));
-
-			// 最初だけ通す
-			if (bFirst)
+			fDistanceStock = fDistanceNow;
+			bFirst = false;
+			nIdxEnemy = nCnt;
+		}
+		else
+		{
+			// 今の距離がストックされた距離より小さかったら
+			if (fDistanceNow < fDistanceStock)
 			{
-				fDistanceStock = fDistanceNow;
-				bFirst = false;
-				nIdxEnemy = nCnt;
-			}
-			else
-			{
-				// 今の距離がストックされた距離より小さかったら
-				if (fDistanceNow < fDistanceStock)
-				{
-					fDistanceStock = fDistanceNow; // 距離を保存
-					nIdxEnemy = nCnt; // 近い敵のインデックスを保存
-				}
+				fDistanceStock = fDistanceNow; // 距離を保存
+				nIdxEnemy = nCnt; // 近い敵のインデックスを保存
 			}
 		}
 	}
