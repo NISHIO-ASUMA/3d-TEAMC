@@ -297,6 +297,12 @@ void UpdateTitle(void)
 		// タイトルメニューのアニメーション処理
 		TitleMenuAnimation(g_Title[nCnt].TitleMenu);
 	}
+
+	if (JoypadTrigger(JOYKEY_BACK) == true)
+	{// BACKボタンを押した
+		// ウィンドウを閉じる
+		PostQuitMessage(0);
+	}
 }
 //==============================================================================================================
 // タイトルの描画処理
