@@ -736,8 +736,6 @@ void CraftMixItem(int HoldIdx,int StockIdx)
 	// SEを出す
 	PlaySound(SOUND_LABEL_CRAFT);
 
-	g_Item[pPlayer->ItemIdx].Power = g_aItemInfo[nMixWepon].Power;
-
 	// 持っているアイテムを変更
 	Itemchange(HoldIdx, nMixWepon);
 
@@ -773,6 +771,8 @@ void CraftMixItem(int HoldIdx,int StockIdx)
 
 	// ステータスの変更
 	LoadItemChange(nMixWepon, g_Item[HoldIdx].Size.y);
+
+	g_Item[HoldIdx].bTracking = false;
 }
 //==============================================================================================================
 // アイテムの出現
@@ -1228,9 +1228,6 @@ void UpdateCraftItemParam(int nCnt)
 			// ミニマップのアイテムのアイコンのリセット
 			ResetItemMinimap();
 
-			// クラフトアイコンのアニメーション処理
-			EnableCraftIconAnim(true);
-
 			// プレイヤーが最初のクラフトタイムでクラフトを実行したら
 			if (pPlayer->bFirstCraft == false && GetFirstCraftTIme() == true)
 			{
@@ -1240,6 +1237,9 @@ void UpdateCraftItemParam(int nCnt)
 				// クラフトモードを解除
 				EnableFirstCraftTime(false);
 			}
+
+			// クラフトアイコンのアニメーション処理
+			EnableCraftIconAnim(true);
 		}
 	}
 }
