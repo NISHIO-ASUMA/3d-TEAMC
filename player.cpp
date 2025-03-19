@@ -42,6 +42,7 @@
 #include "math.h"
 #include "easing.h"
 #include "particle2d.h"
+#include "craftui.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -53,7 +54,7 @@
 #define MAX_MOVE (1.0f)			// プレイヤーの移動量
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
-#define HEAL_VALUE (100)		// 回復量
+#define HEAL_VALUE (200)		// 回復量
 #define AVOID_MOVE (18.0f)      // 回避の移動量
 #define DAMAGEBLOW (20.0f)      // ダメージを受けた時の吹き飛び量
 #define BLOWCOUNT (5)           // 吹っ飛びカウント

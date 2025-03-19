@@ -1225,6 +1225,10 @@ void UpdateCraftItemParam(int nCnt)
 		// クラフトの素材が揃っていたら
 		if (CheckMatItem == true)
 		{
+			// パーティクルを生成
+			SetParticle2D(UIPOTISION, D3DXVECTOR3(3.0f, 3.0f, 0.0f), 180, COLOR_MIDIUMPURPLE, 10.0f, PARTICLE2D_ICON, 10);
+			SetParticle2D(UIPOTISION, D3DXVECTOR3(3.0f, 3.0f, 0.0f), 180, COLOR_RED, 10.0f, PARTICLE2D_ICON, 10);
+
 			// ミニマップのアイテムのアイコンのリセット
 			ResetItemMinimap();
 

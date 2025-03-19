@@ -13,6 +13,7 @@
 #include"math.h"
 #include "easing.h"
 #include "craftui.h"
+#include "particle2d.h"
 
 //******************************************************************************************************************
 // プロトタイプ宣言
@@ -588,11 +589,17 @@ void ShowCraftingAnim(int nCnt)
 	// クラフト画面を開いてるとき
 	if (CheckHoldItem(nCnt) == true && pPlayer->bCraft == true)
 	{
+		// 角度を加算
 		g_Icon[nCnt].rot.z += 0.05f;
+
+		// 目的の値に近づける
 		g_Icon[nCnt].fWidth += SetSmoothAprroach(0.0f, g_Icon[nCnt].fWidth, 0.02f);
 		g_Icon[nCnt].fHeight += SetSmoothAprroach(0.0f, g_Icon[nCnt].fHeight, 0.02f);
 
+		// 目的の値に近づける
 		g_Icon[nCnt].fDistance += SetSmoothAprroach(0.0f, g_Icon[nCnt].fDistance, 0.02f);
+
+		// 位置を更新
 		g_Icon[nCnt].pos.x = UIPOTISION.x + sinf(g_Icon[nCnt].rot.z) * g_Icon[nCnt].fDistance;
 		g_Icon[nCnt].pos.y = UIPOTISION.y + cosf(g_Icon[nCnt].rot.z) * g_Icon[nCnt].fDistance;
 
@@ -602,19 +609,31 @@ void ShowCraftingAnim(int nCnt)
 	// クラフト画面を開いてるとき
 	if (CheckStockItem(nCnt) == true && pPlayer->bCraft == true)
 	{
+		//SetParticle2D(UIPOTISION,180,COLOR_MIDIUMPURPLE,10.0f,1,10);
+
+		// 角度を加算
 		g_Icon[nCnt].rot.z += 0.05f;
 
+		// 目的の値に近づける
 		g_Icon[nCnt].fWidth += SetSmoothAprroach(0.0f, g_Icon[nCnt].fWidth, 0.02f);
 		g_Icon[nCnt].fHeight += SetSmoothAprroach(0.0f, g_Icon[nCnt].fHeight, 0.02f);
 
+		// 目的の値に近づける
 		g_Icon[nCnt].fDistance += SetSmoothAprroach(0.0f, g_Icon[nCnt].fDistance, 0.02f);
+
+		// 位置を更新
 		g_Icon[nCnt].pos.x = UIPOTISION.x - sinf(g_Icon[nCnt].rot.z) * g_Icon[nCnt].fDistance;
 		g_Icon[nCnt].pos.y = UIPOTISION.y - cosf(g_Icon[nCnt].rot.z) * g_Icon[nCnt].fDistance;
 
 		// 横幅が0に近くなったら
-		if (g_Icon[nCnt].fWidth <= 3.0f)
+		if (g_Icon[nCnt].fWidth <= 3.0f && g_bSetMixItemAnim == false)
 		{// クラフトアイコンのアニメーションOK
 			g_bSetMixItemAnim = true;
+
+			// アイテムができる瞬間のパーティクル
+			SetParticle2D(UIPOTISION, D3DXVECTOR3(5.0f, 5.0f, 0.0f), 60, COLOR_GOLD, 10.0f, PARTICLE2D_CRAFT, 10);
+			SetParticle2D(UIPOTISION, D3DXVECTOR3(5.0f, 5.0f, 0.0f), 60, COLOR_RED, 10.0f, PARTICLE2D_CRAFT, 10);
+			SetParticle2D(UIPOTISION, D3DXVECTOR3(5.0f, 5.0f, 0.0f), 60, COLOR_ORANGE, 10.0f, PARTICLE2D_CRAFT, 10);
 		}
 
 		// 頂点座標の更新
