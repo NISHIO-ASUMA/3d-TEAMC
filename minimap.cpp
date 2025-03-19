@@ -300,10 +300,10 @@ void SetMiniMapPotision(int nIdx, D3DXVECTOR3* pPos)
 		else if (g_MiniMap[nIdx].nType == MINIMAPTEX_ITEM)
 		{// 種類がボスの時
 			// 頂点座標の更新
-			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 5.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 5.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 5.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 8.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 8.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 8.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y - 8.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x - 8.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 8.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(MapFiledPos.x + g_MiniMap[nIdx].pos.x + 8.0f, MapFiledPos.y + g_MiniMap[nIdx].pos.y + 8.0f, 0.0f);
 		}
 	}
 	// 頂点バッファのアンロック

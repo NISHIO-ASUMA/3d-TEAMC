@@ -812,19 +812,20 @@ void SetFirstCraftItem(D3DXVECTOR3 pos, int nType)
 {
 	Player* pPlayer = GetPlayer();
 
+	// 全アイテム分回す
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		if (g_Item[nCntItem].bUse == false && pPlayer->ItemIdx != nCntItem && pPlayer->StockItemIdx != nCntItem)
 		{// 未使用状態なら
 
-			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType]; // 必要な情報を代入
-			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;
-			g_Item[nCntItem].Maxdurability = g_aItemInfo[nType].Maxdurability;
-			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;
-			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
-			g_Item[nCntItem].bTracking = true;
-			g_Item[nCntItem].state = ITEMSTATE_NORMAL;
-			g_Item[nCntItem].move = NULLVECTOR3;
+			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType];					// 必要な情報を代入
+			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;					// 攻撃力
+			g_Item[nCntItem].Maxdurability = g_aItemInfo[nType].Maxdurability;  // 最大の耐久力
+			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;		// 耐久力
+			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;			// 属性
+			g_Item[nCntItem].bTracking = true;									// 追従する
+			g_Item[nCntItem].state = ITEMSTATE_NORMAL;							// 状態を初期化
+			g_Item[nCntItem].move = NULLVECTOR3;								// 移動量を初期化
 
 			g_Item[nCntItem].pos = pos;			 // 座標
 			g_Item[nCntItem].nType = nType;		 // 種類
