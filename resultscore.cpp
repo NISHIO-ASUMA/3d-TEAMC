@@ -178,7 +178,7 @@ void UpdateResultScore(void)
 	g_pVtxBuffResultScore->Unlock();
 
 	// 3秒かけて目的のスコアにする
-	g_nResultScore += g_nResultScoreDest / 180.0f;
+	g_nResultScore += g_nResultScoreDest / 120.0f;
 
 	// 目的のスコアを超えたら
 	if (g_nResultScore >= g_nResultScoreDest)

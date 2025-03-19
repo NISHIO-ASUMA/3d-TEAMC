@@ -49,6 +49,7 @@ void SetTerritoryEnemyUI(int nCnt);		// テリトリーに敵が出た時のUIの設定
 void UIScalAnimation(int nCnt,float widthEx,float widthdec,float heightEx,float heigthDec, float MaxtimeWidth,float MaxtimeHeight); // 拡大縮小のアニメーション
 void UpdateCraftTimeUI(int nCnt);		// クラフトの時間中のUI
 void UpdateCraftTimeMenuUI(int nCnt);	// クラフトメニューのUIの設定
+void UpdateDestroyTerritoryUI(int nCnt);			// テリトリーを破壊した時のUI
 
 float fcolorA;
 
@@ -367,6 +368,12 @@ void UpdateGameUI(void)
 				break;
 			case UITYPE_CRAFTTIMEMENU:
 				UpdateCraftTimeMenuUI(nCnt);
+				break;
+			case UITYPE_SPINFO:
+				break;
+			case UITYPE_SPONBREAK:
+				// テリトリーを破壊したときのUI
+				UpdateDestroyTerritoryUI(nCnt);
 				break;
 			}
 
@@ -1078,4 +1085,30 @@ void UpdateCraftTimeMenuUI(int nCnt)
 		// 未使用にする
 		g_GameUI[nCnt].bUse = false;
 	}
+}
+//==============================================================================================================
+// テリトリーを破壊した時のUI
+//==============================================================================================================
+void UpdateDestroyTerritoryUI(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
 }

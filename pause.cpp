@@ -119,6 +119,9 @@ void InitPause(void)
 
 	// ポーズ中UIの設定
 	SetPause(D3DXVECTOR3(1100.0f, 660.0f, 0.0f), PAUSE_TEXTURE_PAUSEUI, 100.0f, 35.0f);
+
+	// クラフトのレシピの設定
+	SetPause(D3DXVECTOR3(900.0f, 350.0f, 0.0f), PAUSE_TEXTURE_RECIPE, 200.0f, 200.0f);
 }
 //=====================================================================================================
 //ポーズの終了処理

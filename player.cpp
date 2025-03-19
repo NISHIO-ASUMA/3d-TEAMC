@@ -861,6 +861,8 @@ void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage)
 //===============================================================================================================
 void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 {
+	if (g_player.HandState == PLAYERHOLD_HOLD) return;
+
 	Item* pItem = GetItem();
 
 	bool bHit = false;
@@ -3305,6 +3307,7 @@ void SetUpPlayerAttack(void)
 
 	if (isJumpAttack == true && (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)))
 	{
+		g_player.move.y = 0.0f;
 		ResetMeshSword();
 		PlayerComb(MOTIONTYPE_JUMPACTION, 70, 70, COMBO_ATTACK4);
 	}

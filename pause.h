@@ -23,6 +23,7 @@ typedef enum
 	PAUSE_TEXTURE_RETRY,
 	PAUSE_TEXTURE_QUIT,
 	PAUSE_TEXTURE_PAUSEUI,
+	PAUSE_TEXTURE_RECIPE,
 	PAUSE_TEXTURE_MAX
 }PAUSETEXTURE;
 
@@ -36,6 +37,7 @@ static const char* PAUSE_TEXTURE[PAUSE_TEXTURE_MAX] =
 	"data\\TEXTURE\\pause_retry.png",
 	"data\\TEXTURE\\pause_quit.png",
 	"data\\TEXTURE\\pauseui.png",
+	"data\\TEXTURE\\pauseUIrecipe.png",
 };
 
 //**************************************************************************************************************

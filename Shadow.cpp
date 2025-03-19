@@ -120,6 +120,10 @@ void DrawShadow(void)
 	// 計算用のマトリックスを宣言
 	D3DXMATRIX mtxRot, mtxTrans;
 
+	//ゼットテスト
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
 	// 透明度オプション追加
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -160,6 +164,10 @@ void DrawShadow(void)
 			}
 		}
 	}
+
+	//ゼットテスト
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);

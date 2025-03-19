@@ -270,13 +270,13 @@ void InitGame(void)
 	SetBarrier(D3DXVECTOR3(0.0f,300.0f,1820.0f),D3DXVECTOR3(1600.0f,50.0f,50.0f),D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
 
 	// カメラから見て背面
-	SetBarrier(D3DXVECTOR3(0.0f, 300.0f, -1820.0f), D3DXVECTOR3(1600.0f, 50.0f, 50.0f), D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+	SetBarrier(D3DXVECTOR3(0.0f, 300.0f, -1870.0f), D3DXVECTOR3(1600.0f, 50.0f, 50.0f), D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て右の面
+	SetBarrier(D3DXVECTOR3(1530.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1900.0f), D3DXVECTOR3(-50.0f, 0.0f, -1900.0f));
 
 	// カメラから見て左の面
-	SetBarrier(D3DXVECTOR3(1430.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1800.0f), D3DXVECTOR3(-50.0f, 0.0f, -1800.0f));
-
-	//// カメラから見て左の面
-	//SetBarrier(D3DXVECTOR3(1430.0f, 0.0f, 0.0f), D3DXVECTOR3(-50.0f, 50.0f, 1500.0f), D3DXVECTOR3(50.0f, 0.0f, -1500.0f));
+	SetBarrier(D3DXVECTOR3(-1580.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1900.0f), D3DXVECTOR3(-50.0f, 0.0f, -1900.0f));
 
 	g_gameState = GAMESTATE_NORMAL; // 通常状態に設定
 	g_nCounterGameState = 0;		// 画面遷移の時間

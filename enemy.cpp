@@ -2136,7 +2136,11 @@ void DeletTerritory(void)
 
 				// クラフトタイムをオン
 				bFirstCraftTime = true;
+				return;
 			}
+
+			// テリトリー破壊UI
+			SetGameUI(D3DXVECTOR3(640.0f, 460.0f, 0.0f), UITYPE_SPONBREAK, 150.0f, 50.0f, true, 120.0f);
 		}
 	}
 }
