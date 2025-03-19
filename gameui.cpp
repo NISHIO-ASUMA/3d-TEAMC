@@ -79,7 +79,7 @@ void InitGameUI(void)
 	}
 
 	// 頂点バッファの生成・頂点情報の設定
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * UITYPE_MAX,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_UI,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,

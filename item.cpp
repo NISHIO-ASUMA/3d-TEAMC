@@ -44,7 +44,6 @@ void LoadItemModel(void); // アイテムのロード処理
 void CraftItem(int nCnt);
 void LoadItemInfo(void); // アイテムの情報のロード処理
 void PickUpItemAnimation(int nCntItem); // アイテムを拾える時の演出
-bool CheckMixItemMat(int pCraftMat, int pStockMat,int HoldIdx,int StockIdx);		// アイテムがクラフトできるかどうか
 void UpdateCraftItemParam(int nCnt);                                                // クラフトアイテムのパラメータ設定
 void SetUpFirstWepon(int nCnt);														// 最初のアイテムの設定
 void UpdateTrackingItem(int nCnt);													// 追従するアイテムの更新処理
@@ -767,7 +766,11 @@ void CraftMixItem(int HoldIdx,int StockIdx)
 	// 文字をコピー
 	strcpy(&g_Item[HoldIdx].Itemtag[0], &g_aItemInfo[nMixWepon].Itemtag[0]);
 
+	// インデックスを上書きする
 	pPlayer->StockItemIdx = pPlayer->ItemIdx;
+
+	// プレイヤーの状態をリセット
+	pPlayer->HandState = PLAYERHOLD_NO;
 
 	// ステータスの変更
 	LoadItemChange(nMixWepon, g_Item[HoldIdx].Size.y);

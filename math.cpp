@@ -101,6 +101,7 @@ void SetTextureAnimation(int pPosX,int pPosY,int pAnimSpeed,int *pCounterAnim,in
 	float Uv = 1.0f / pPosX;
 	float Hv = 1.0f / pPosY;
 
+
 	// アニメーションのスピード
 	if (*pCounterAnim >= pAnimSpeed)
 	{
@@ -117,7 +118,7 @@ void SetTextureAnimation(int pPosX,int pPosY,int pAnimSpeed,int *pCounterAnim,in
 		pVtx[3].tex = D3DXVECTOR2(Uv + *pPatternAnim * Uv, (*pPatternAnim / pPosX) * Hv + Hv);
 
 		// パターンが最大になったら
-		if (*pPatternAnim > (pPosX * pPosY))
+		if (*pPatternAnim >= (pPosX * pPosY))
 		{
 			*pPatternAnim = 0;//パターンナンバーを初期値に戻す
 		}

@@ -299,12 +299,11 @@ void UpdateManager(void)
 	}
 	else if (nSteps == 7 && fALv2 == 1.0f)
 	{// 8番目
-		if (pItem[pPlayer->StockItemIdx].nType == ITEMTYPE_STONE && pItem[pPlayer->ItemIdx].nType == ITEMTYPE_BAT)
-		{
-			PlaySound(SOUND_LABEL_TUTOCLEARSE);
-			bAmove = -0.01f;
-		}
-		else if (pItem[pPlayer->StockItemIdx].nType == ITEMTYPE_BAT && pItem[pPlayer->ItemIdx].nType == ITEMTYPE_STONE)
+
+		// プレイヤーが持っているアイテムがレシピと一致するか確認
+		const bool CheckMatItem = CheckMixItemMat(pItem[pPlayer->ItemIdx].nType, pItem[pPlayer->StockItemIdx].nType, pPlayer->ItemIdx, pPlayer->StockItemIdx) == true;
+
+		if (CheckMatItem == true)
 		{
 			PlaySound(SOUND_LABEL_TUTOCLEARSE);
 			bAmove = -0.01f;
