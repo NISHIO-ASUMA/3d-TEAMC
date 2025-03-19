@@ -79,7 +79,7 @@ void InitResultScore(void)
 		g_aResult[nCnt].fHeight = MAX_HEIGHT * SCALVALUE; // ‚‚³‚ğŒˆ‚ß‚é
 		g_aResult[nCnt].fWidth = MAX_WIDTH * SCALVALUE;   // ‰¡•‚ğŒˆ‚ß‚é
 
-		g_aResult[nCnt].pos = D3DXVECTOR3(10.0f,450.0f,0.0f);
+		g_aResult[nCnt].pos = D3DXVECTOR3(200.0f,460.0f,0.0f);
 
 		// ’¸“_À•W‚Ìİ’è
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
