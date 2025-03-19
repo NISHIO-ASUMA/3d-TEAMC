@@ -20,14 +20,14 @@
 //**************************************************************************************************************
 typedef enum
 {
-	TYPE_0 = 0, // 移動
-	TYPE_1,     // ジャンプ
-	TYPE_2,     // 回避
-	TYPE_3,		// 攻撃
-	TYPE_4,		// SP攻撃
-	TYPE_5,		// 拾う
-	TYPE_6,     // ストック
-	TYPE_7,     // 合成
+	TYPE_MOVE = 0, // 移動
+	TYPE_JUMP,     // ジャンプ
+	TYPE_AVOID,     // 回避
+	TYPE_ATTACK,		// 攻撃
+	TYPE_SPATTACK,		// SP攻撃
+	TYPE_PICKUP,		// 拾う
+	TYPE_STOCK,     // ストック
+	TYPE_ITEMMIX,     // 合成
 	TYPE_8,     // 
 	TYPE_9,		// 自由操作
 	OK_MARK,    // 丸マーク
@@ -256,22 +256,22 @@ void UpdateManager(void)
 		AddSpgauge(1.0f);
 	}
 
-	if (nSteps == 0 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_MOVE && fALv2 == 1.0f)
+	if (nSteps == TYPE_MOVE && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_MOVE && fALv2 == 1.0f)
 	{// 最初
 		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
-	else if (nSteps == 1 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_JUMP && fALv2 == 1.0f)
+	else if (nSteps == TYPE_JUMP && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_JUMP && fALv2 == 1.0f)
 	{// 2番目
 		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
-	else if (nSteps == 2 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_AVOID && fALv2 == 1.0f)
+	else if (nSteps == TYPE_AVOID && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_AVOID && fALv2 == 1.0f)
 	{// 3番目
 		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
-	else if (nSteps == 3 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION && fALv2 == 1.0f)
+	else if (nSteps == TYPE_ATTACK && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION && fALv2 == 1.0f)
 	{// 4番目
 		if (pPlayer->AttackSp == false)
 		{
@@ -279,7 +279,7 @@ void UpdateManager(void)
 			bAmove = -0.01f;
 		}
 	}
-	else if (nSteps == 4 && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION && fALv2 == 1.0f)
+	else if (nSteps == TYPE_SPATTACK && pPlayer->Motion.motiontypeBlend == MOTIONTYPE_ACTION && fALv2 == 1.0f)
 	{// 5番目
 		if (pPlayer->AttackSp == true)
 		{
@@ -287,17 +287,17 @@ void UpdateManager(void)
 			bAmove = -0.01f;
 		}
 	}
-	else if (nSteps == 5 && pPlayer->Motion.nNumModel == 16 && fALv2 == 1.0f)
+	else if (nSteps == TYPE_PICKUP && pItem[pPlayer->ItemIdx].nType == ITEMTYPE_BAT && fALv2 == 1.0f)
 	{// 6番目
 		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
-	else if (nSteps == 6 && pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && fALv2 == 1.0f)
+	else if (nSteps == TYPE_STOCK && pItem[pPlayer->StockItemIdx].state == ITEMSTATE_STOCK && fALv2 == 1.0f)
 	{// 7番目
 		PlaySound(SOUND_LABEL_TUTOCLEARSE);
 		bAmove = -0.01f;
 	}
-	else if (nSteps == 7 && fALv2 == 1.0f)
+	else if (nSteps == TYPE_ITEMMIX && fALv2 == 1.0f)
 	{// 8番目
 
 		// プレイヤーが持っているアイテムがレシピと一致するか確認
