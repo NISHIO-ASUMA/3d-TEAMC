@@ -661,10 +661,10 @@ void HitEnemy(int nCnt,int nDamage)
 		g_Enemy[nCnt].isKillCount = false;
 
 		// 左の振動の強さ
-		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
+		int leftmotor = pPlayer->AttackSp ? 45000 : 10000;
 
 		// 右の振動の強さ
-		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
+		int rightmotor = pPlayer->AttackSp ? 45000 : 10000;
 
 		SetVibration(leftmotor, rightmotor, 500);
 
@@ -679,10 +679,10 @@ void HitEnemy(int nCnt,int nDamage)
 			false);
 
 		// 左の振動の強さ
-		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
+		int leftmotor = pPlayer->AttackSp ? 45000 : 10000;
 
 		// 右の振動の強さ
-		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
+		int rightmotor = pPlayer->AttackSp ? 45000 : 10000;
 
 		SetVibration(leftmotor, rightmotor, 1000);
 		if (g_Enemy[nCnt].state != ENEMYSTATE_DAMAGE)
@@ -1776,7 +1776,7 @@ void UpdateEnemySpawn(void)
 		if (g_nNumTerritory == 1 && nNumBoss == 0)
 		{
 			// 敵が出たUIを設定
-			SetGameUI(D3DXVECTOR3(1120.0f, 260.0f, 0.0f), UITYPE_POPENEMY, 150.0f, 50.0f, true, 180.0f);
+			SetGameUI(D3DXVECTOR3(1120.0f, 260.0f, 0.0f), UITYPE_POPENEMY, 150.0f, 50.0f, true, 180);
 		}
 
 		// 敵のテリトリーを設定
@@ -2471,7 +2471,7 @@ void UpdateScoreAndGage(int nCntEnemy)
 	if (isTerritory == true)
 	{
 		// スコアを求める
-		float score = isFeverMode ? (isTypeSeven ? 62000.0f : 26000.0f) : (isTypeSeven ? 36200.0f : 18100.0f);
+		int score = isFeverMode ? (isTypeSeven ? 62000 : 26000) : (isTypeSeven ? 36200 : 18100);
 
 		// スペシャルゲージを求める
 		float spgage = isTypeSeven ? 8.0f : 4.0f;
@@ -2491,7 +2491,7 @@ void UpdateScoreAndGage(int nCntEnemy)
 	else
 	{
 		// スコアを求める
-		float score = isFeverMode ? (isTypeSeven ? 32329.0f : 16000.0f) : (isTypeSeven ? 16200.0f : 8100.0f);
+		int score = isFeverMode ? (isTypeSeven ? 32329 : 16000) : (isTypeSeven ? 16200 : 8100);
 
 		// スペシャルゲージを求める
 		float spgage = isTypeSeven ? 5.0f : 2.5f;
