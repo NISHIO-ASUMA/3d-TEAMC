@@ -29,13 +29,14 @@
 #include <cassert>
 #include "minimap.h"
 #include "particle2d.h"
+#include "mark.h"
 
 //**************************************************************************************************************
 //マクロ定義
 //**************************************************************************************************************
 #define MAX_WORD (256)
 #define MAX_DURABILITY (100) // 耐久力
-#define DESTANCE (25.0f) // 距離
+#define DESTANCE (20.0f) // 距離
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -823,6 +824,7 @@ void SetFirstCraftItem(D3DXVECTOR3 pos, int nType)
 			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
 			g_Item[nCntItem].bTracking = true;
 			g_Item[nCntItem].state = ITEMSTATE_NORMAL;
+			g_Item[nCntItem].move = NULLVECTOR3;
 
 			g_Item[nCntItem].pos = pos;			 // 座標
 			g_Item[nCntItem].nType = nType;		 // 種類
