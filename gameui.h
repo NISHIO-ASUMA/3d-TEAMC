@@ -40,6 +40,7 @@ typedef enum
 	UITYPE_STOCKKEY,	// アイテムをストックするキー
 	UITYPE_CRAFTTIMEMENU,	// クラフトタイムになったら出すUI
 	UITYPE_SPINFO,		// SPゲージの解説UI
+	UITYPE_SPONBREAK,	// スポーン破壊UI
 	UITYPE_MAX
 }UITYPE;
 
@@ -70,6 +71,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\ui_stock_key.png",
 	"data\\TEXTURE\\ui_Manual_Craft.jpg",
 	"data\\TEXTURE\\ui_sp_info.png",
+	"data\\TEXTURE\\ui_Break_suponer.png",
 };
 
 //**************************************************************************************************************

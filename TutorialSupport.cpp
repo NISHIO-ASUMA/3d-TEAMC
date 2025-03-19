@@ -44,7 +44,7 @@ static const char* TUTOTEX[TYPE_MAX] =
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_3.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_2.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_3.5.png",
-	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_5.png",
+	"data\\TEXTURE\\tutorial_Temporary\\tuto_key_5.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_step_6.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_key_5.5.png",
 	"data\\TEXTURE\\tutorial_Temporary\\tuto_key_7.png",
