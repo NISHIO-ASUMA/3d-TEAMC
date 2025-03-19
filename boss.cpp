@@ -194,6 +194,7 @@ void UpdateBoss(void)
 	Player* pPlayer = GetPlayer();
 	GAMESTATE gameState = GetGameState();
 
+	// ‚·‚×‚Ä‚Ìƒ{ƒX•ª‰ñ‚·
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
 		g_Boss[nCnt].nHitStopCount--;
@@ -1286,7 +1287,7 @@ void colisionSword(int nCntBoss)
 	// ƒnƒ“ƒ}[‚ÌƒXƒyƒVƒƒƒ‹UŒ‚
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPHAMMER && CheckMotionBounds(nKey, nCounter, KEY_ONE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, (pPlayer->nDamage * 8) / fCutDamage); // “G‚É“–‚½‚Á‚½
+		HitBoss(nCntBoss, (pPlayer->nDamage * 5) / fCutDamage); // “G‚É“–‚½‚Á‚½
 	}
 	// •ÐŽè‚Ì•KŽE‹Z
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)

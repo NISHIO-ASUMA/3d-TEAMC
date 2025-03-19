@@ -18,6 +18,7 @@
 #include "boss.h"
 #include "manual.h"
 #include "title.h"
+#include "time.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -815,6 +816,13 @@ void SetTerritoryTimeUI(int nCnt)
 	// 大きさを設定
 	g_GameUI[nCnt].fWidth = NotCraftTime ?  0.0f : (isSetUI ? 40.0f : 0.0f);
 	g_GameUI[nCnt].fHeight = NotCraftTime ?  0.0f : (isSetUI ? 25.0f : 0.0f);
+
+	// 時間の取得
+	int nSecond = GetTimeSecond();
+	int nMinute = GetTimeMinute();
+
+	// 時間が残り15秒だったら出さない
+	if (nMinute <= 0 && nSecond <= 10) g_GameUI[nCnt].bUse = false;
 }
 //==============================================================================================================
 // ボスのマニュアルの設定

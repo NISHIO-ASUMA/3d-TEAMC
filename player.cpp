@@ -291,6 +291,16 @@ void UpdatePlayer(void)
 		g_player.nLife = g_player.nMaxLife;
 	}
 
+	if (g_player.AttackSp == true)
+	{
+		// プレイヤーがsp攻撃した時のパーティクル
+		SetParticle2D(D3DXVECTOR3(50.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), 1, COLOR_GOLD, 2.0f, PARTICLE2D_SPMODE, 10);
+		SetParticle2D(D3DXVECTOR3(50.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), 1, COLOR_ORANGE, 2.0f, PARTICLE2D_SPMODE, 10);
+
+		// プレイヤーがsp攻撃した時のパーティクル
+		SetParticle2D(D3DXVECTOR3(75.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), 1, COLOR_GOLD, 2.0f, PARTICLE2D_SPMODE, 10);
+		SetParticle2D(D3DXVECTOR3(50.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), 1, COLOR_ORANGE, 2.0f, PARTICLE2D_SPMODE, 10);
+	}
 	g_player.HitStopCount--;
 
 	if (g_player.HitStopCount > 0)
@@ -2769,6 +2779,7 @@ void HandleSpecialAttack(void)
 	// スペシャルモーションを発動したら
 	if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.AttackSp)
 	{
+
 		// パーティクル
 		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	}

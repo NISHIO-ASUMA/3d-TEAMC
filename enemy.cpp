@@ -2210,7 +2210,7 @@ void SetSpawnCount(void)
 	int nMinute = GetTimeMinute();
 
 	// 時間が残り15秒だったら出さない
-	if (nMinute <= 0 && nSecond <= 15) return;
+	if (nMinute <= 0 && nSecond <= 10) return;
 
 	// 最初のクラフト時間だったら
 	if (bFirstCraftTime == true) return;

@@ -1046,8 +1046,8 @@ void EventCameraAngle(D3DXVECTOR3 pos)
 	g_camera.posR.y += ((g_camera.posRDest.y - g_camera.posR.y) * 0.01f);
 	g_camera.posR.z += ((g_camera.posRDest.z - g_camera.posR.z) * 0.01f);
 
-	g_camera.posV.x = g_camera.posR.x + sinf(g_camera.rot.y) * g_camera.fDistance;
-	g_camera.posV.z = g_camera.posR.z + cosf(g_camera.rot.y) * g_camera.fDistance;
+	g_camera.posV.x = g_camera.posR.x - sinf(g_camera.rot.y) * g_camera.fDistance;
+	g_camera.posV.z = g_camera.posR.z - cosf(g_camera.rot.y) * g_camera.fDistance;
 }
 
 //===========================================================================================================

@@ -24,6 +24,7 @@
 void UpdateNormalParticle(int nCntParticle);	// 普通のパーティクルの設定
 void UpdateIconParticle(int nCntParticle);		// アイコンのパーティクルの設定
 void UpdateMixItemParticle(int nCntParticle);	// クラフト成功時のパーティクル
+void UpdateSpModeParticle(int nCntParticle);	// Sp発動のパーティクル
 
 //**************************************************************************************************************
 //グローバル変数
@@ -77,6 +78,9 @@ void UpdateParticle2D(void)
 
 			// クラフト成功時のパーティクル
 			UpdateMixItemParticle(nCntParticle);
+
+			// Spモードのパーティクル
+			UpdateSpModeParticle(nCntParticle);
 
 			g_aParticle2D[nCntParticle].nLife--;
 
@@ -239,4 +243,37 @@ void UpdateMixItemParticle(int nCntParticle)
 
 	//エフェクトの設定SetEffect
 	SetEffect2D(pos, move, col, fRadius, nLife);
+}
+//===================================================================================================================
+// Sp発動のパーティクル
+//===================================================================================================================
+void UpdateSpModeParticle(int nCntParticle)
+{
+	// 種類がアイコンのパーティクルじゃなかったら
+	if (g_aParticle2D[nCntParticle].nType != PARTICLE2D_SPMODE) return;
+
+	//位置の設定
+	D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
+
+	pos.x = g_aParticle2D[nCntParticle].pos.x + (float)(rand() % 10 - 5.0f);	
+	pos.y = g_aParticle2D[nCntParticle].pos.y;
+
+	// 移動量
+	D3DXVECTOR3 move(0.0f, 0.0f, 0.0f);
+
+	move.x = g_aParticle2D[nCntParticle].speed.x;
+	move.y = g_aParticle2D[nCntParticle].speed.y;
+
+	// 色の設定
+	D3DXCOLOR col = g_aParticle2D[nCntParticle].col;
+
+	// 半径の設定
+	float fRadius = (float)(rand() % (int)g_aParticle2D[nCntParticle].fRadius + 1.0f);
+
+	// 寿命の設定
+	int nLife = rand() % 60 + g_aParticle2D[nCntParticle].nLife;
+
+	//エフェクトの設定SetEffect
+	SetEffect2D(pos, move, col, fRadius, nLife);
+
 }
