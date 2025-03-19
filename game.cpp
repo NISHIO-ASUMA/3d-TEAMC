@@ -202,9 +202,6 @@ void InitGame(void)
 	// カウンターの初期化処理
 	InitCounter();
 
-	// マニュアルの初期化処理
-	InitManual();
-
 	// エフェクト2dの初期化処理
 	InitEffect2D();
 
@@ -408,22 +405,12 @@ void UninitGame(void)
 
 	// カウンターの終了処理
 	UninitCounter();
-
-	// マニュアルの終了処理
-	UninitManual();
 }
 //=========================================================================================================
 //ゲーム画面の更新処理
 //=========================================================================================================
 void UpdateGame(void)
 {
-	// マニュアルモードだったら関数を抜ける
-	if (UpdateManual() == true)
-	{
-		UpdateGameUI();
-		return;
-	}
-
 	if (g_bMovie == true && g_bPause == false)
 	{// ムービー状態じゃない かつ ポーズ中じゃない
 		g_gameState = GAMESTATE_MOVIE; // ムービー状態にする
@@ -784,9 +771,6 @@ void DrawGame(void)
 
 	// エフェクト2dの更新処理
 	DrawEffect2D();
-
-	// マニュアルの描画処理
-	DrawManual();
 
 	if (g_bPause == true)
 	{// ポーズ中

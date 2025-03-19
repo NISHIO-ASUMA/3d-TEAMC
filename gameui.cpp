@@ -357,7 +357,6 @@ void UpdateGameUI(void)
 				break;
 			case UITYPE_BOSSMANUALEXIT:
 				SetBossManual(nCnt);
-				if (GetManualState() == false) g_GameUI[nCnt].bUse = false;
 				break;
 			case UITYPE_POPENEMY:
 				SetTerritoryEnemyUI(nCnt);

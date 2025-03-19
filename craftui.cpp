@@ -405,6 +405,9 @@ Craftui* GetMixUI(void)
 //==============================================================================================================
 void UpdateCraftIconAnim(int nCnt)
 {
+	// モードを取得
+	MODE mode = GetMode();
+
 	// 頂点座標のポインタ
 	VERTEX_2D* pVtx;
 
@@ -471,7 +474,8 @@ void UpdateCraftIconAnim(int nCnt)
 		// クラフト状態を解除
 		EnableCraft(false);
 
-		AddScore(12345);
+		// 今のモードがゲームだったら
+		if(mode == MODE_GAME) AddScore(12345);
 	}
 }
 //==============================================================================================================
