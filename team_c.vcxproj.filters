@@ -190,6 +190,9 @@
     <ClCompile Include="particle2d.cpp">
       <Filter>ソースファイル\2d</Filter>
     </ClCompile>
+    <ClCompile Include="barrier.cpp">
+      <Filter>ソースファイル\obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -380,6 +383,9 @@
     </ClInclude>
     <ClInclude Include="particle2d.h">
       <Filter>ヘッダーファイル\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="barrier.h">
+      <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

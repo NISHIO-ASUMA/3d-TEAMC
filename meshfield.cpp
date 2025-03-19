@@ -187,6 +187,10 @@ void DrawMeshField(void)
 	//計算用のマトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
 
+	//ゼットテスト
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&g_MeshField.mtxWorldMeshField);
 
@@ -215,6 +219,10 @@ void DrawMeshField(void)
 
 	//ポリゴンの描画
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0,VERTEX,0,POLYGON);
+
+	//ゼットテスト
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 }
 //==================================================================================================================
 //メッシュフィールドの当たり判定

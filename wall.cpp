@@ -317,37 +317,6 @@ void CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3* pPosOld,D3DXVECTOR3 *pMove,fl
 
 			// 内積
 			float Dot = D3DXVec3Dot(&vecWall, &VecBLine);
-
-			// プレイヤーが壁の外に出た
-			if (Cross.y < 0)
-			{
-				D3DXVECTOR3 VecMoveF = *pPos - *pPosOld; // 進行ベクトル
-
-				D3DXVECTOR3 Vector1 = g_Wall[nCnt].vtxPos[1] - g_Wall[nCnt].vtxPos[0];
-				D3DXVECTOR3 Vector2 = g_Wall[nCnt].vtxPos[2] - g_Wall[nCnt].vtxPos[0];
-				D3DXVECTOR3 Nor;
-
-				D3DXVec3Cross(&Nor, &Vector1, &Vector2);
-				D3DXVec3Normalize(&Nor, &Nor);
-				float VecA = D3DXVec3Dot(&VecMoveF, &Nor);
-
-				D3DXVECTOR3 WallMove = VecMoveF - VecA * Nor;
-
-				D3DXVec3Normalize(&WallMove, &WallMove);
-
-				D3DXVECTOR3 vector = *pPosOld - WallMove;
-
-				D3DXVec3Normalize(&vector, &vector);
-
-				pMove->x = 0.0f;
-				pMove->z = 0.0f;
-
-				pPos->x -= vector.x * speed;
-				pPos->z -= vector.z * speed;
-
-				pMove->x += WallMove.x;
-				pMove->z += WallMove.z;
-			}
 		}
 	}
 

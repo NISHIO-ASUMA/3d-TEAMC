@@ -58,6 +58,7 @@
 #include "manual.h"
 #include "particle2d.h"
 #include "effect2d.h"
+#include "barrier.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -208,6 +209,9 @@ void InitGame(void)
 	// パーティクル2dの初期化処理
 	InitParticle2D();
 
+	// バリアの初期化処理
+	InitBarrier();
+
 #ifdef _DEBUG
 
 	//エディットの初期化処理
@@ -261,6 +265,18 @@ void InitGame(void)
 	SetWall(D3DXVECTOR3(-1550.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f),0);
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f),0);
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f),0);
+
+	// カメラから見て正面
+	SetBarrier(D3DXVECTOR3(0.0f,300.0f,1820.0f),D3DXVECTOR3(1600.0f,50.0f,50.0f),D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て背面
+	SetBarrier(D3DXVECTOR3(0.0f, 300.0f, -1820.0f), D3DXVECTOR3(1600.0f, 50.0f, 50.0f), D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て左の面
+	SetBarrier(D3DXVECTOR3(1430.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1800.0f), D3DXVECTOR3(-50.0f, 0.0f, -1800.0f));
+
+	//// カメラから見て左の面
+	//SetBarrier(D3DXVECTOR3(1430.0f, 0.0f, 0.0f), D3DXVECTOR3(-50.0f, 50.0f, 1500.0f), D3DXVECTOR3(50.0f, 0.0f, -1500.0f));
 
 	g_gameState = GAMESTATE_NORMAL; // 通常状態に設定
 	g_nCounterGameState = 0;		// 画面遷移の時間

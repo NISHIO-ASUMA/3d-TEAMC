@@ -43,6 +43,7 @@
 #include "easing.h"
 #include "particle2d.h"
 #include "craftui.h"
+#include "barrier.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -436,6 +437,9 @@ void UpdatePlayer(void)
 	{
 		g_player.bJump = false;
 	}
+
+	// バリアの当たり判定
+	CollisionBarrier(&g_player.pos, &g_player.posOld, &g_player.move,&g_player.Size);
 
 	// メッシュウォール
 	CollisionWall(&g_player.pos,&g_player.posOld,&g_player.move,g_player.speed);

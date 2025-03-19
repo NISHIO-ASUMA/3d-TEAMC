@@ -177,8 +177,16 @@ void UpdateResultScore(void)
 	// アンロック
 	g_pVtxBuffResultScore->Unlock();
 
-	// 目的の値に近づける
-	g_nResultScore += (g_nResultScoreDest - g_nResultScore) * 0.1f;
+	// 3秒かけて目的のスコアにする
+	g_nResultScore += g_nResultScoreDest / 180.0f;
+
+	// 目的のスコアを超えたら
+	if (g_nResultScore >= g_nResultScoreDest)
+	{
+		// 目的のスコアにする
+		g_nResultScore = g_nResultScoreDest;
+	}
+
 	SetResultScore(g_nResultScore);		// リザルトスコアの設定
 }
 //========================================================================================================
