@@ -493,6 +493,8 @@ void UpdateGame(void)
 
 	int nNumObj = GetNumobj(); // オブジェクトの数を取得
 
+#ifdef _DEBUG
+
 	// エディットモードだったら
 	if (KeyboardTrigger(DIK_F2) && g_bEditMode)
 	{
@@ -509,6 +511,7 @@ void UpdateGame(void)
 		g_bEditMode = true;
 	}
 
+#endif // DEBUG
 	// カメラ情報の取得
 	Camera* pCamera = GetCamera();
 
