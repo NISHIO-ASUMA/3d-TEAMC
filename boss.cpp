@@ -1277,7 +1277,7 @@ void colisionSword(int nCntBoss)
 	// “‚ÌƒXƒyƒVƒƒƒ‹UŒ‚
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, KEY_THREE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, (pPlayer->nDamage * 18) / fCutDamage); // “G‚É“–‚½‚Á‚½
+		HitBoss(nCntBoss, (pPlayer->nDamage * 14) / fCutDamage); // “G‚É“–‚½‚Á‚½
 	}
 	// —¼ŽèŽ‚¿‚Ì•KŽE‹Z
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPDOUBLE && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
@@ -1297,7 +1297,7 @@ void colisionSword(int nCntBoss)
 	// ‘„‚Ì•KŽE‹Z
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, KEY_EIGHTEEN, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, (pPlayer->nDamage * 20) / fCutDamage); // “G‚É“–‚½‚Á‚½
+		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // “G‚É“–‚½‚Á‚½
 	}
 
 }
