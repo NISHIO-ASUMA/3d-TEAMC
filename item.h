@@ -141,6 +141,7 @@ typedef struct
 	int Power;							// 攻撃力
 	int nMinimapIdx;					// ミニマップのインデックス
 	bool bTracking;						// プレイヤーについていくか
+	int nCylinderIdx;					// シリンダーのインデックス
 }Item;
 
 //***************************
@@ -160,4 +161,5 @@ void EnableCraftIcon(int Item1, int Item2);		// アイテムのアイコン表示処理
 void CraftMixItem(int HoldIdx, int StockIdx);   // アイテムのクラフト処理
 void SpawonItem(D3DXVECTOR3 pos, int nType);    // アイテムのスポーン処理
 void SetFirstCraftItem(D3DXVECTOR3 pos, int nType);  // 最初にクラフトさせるアイテムの設定処理
+bool CheckMixItemMat(int pCraftMat, int pStockMat, int HoldIdx, int StockIdx);		// アイテムがクラフトできるかどうか
 #endif

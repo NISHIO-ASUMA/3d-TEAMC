@@ -14,15 +14,53 @@
 #include"main.h"
 
 //**************************************************************************************************************
-//ポーズメニュー
+// ポーズメニュー
 //**************************************************************************************************************
 typedef enum
 {
-	PAUSE_MENU_CONTINUE=0, // ゲームに戻る
+	PAUSE_TEXTURE_BG = 0,
+	PAUSE_TEXTURE_CONTINUE,
+	PAUSE_TEXTURE_RETRY,
+	PAUSE_TEXTURE_QUIT,
+	PAUSE_TEXTURE_PAUSEUI,
+	PAUSE_TEXTURE_RECIPE,
+	PAUSE_TEXTURE_MAX
+}PAUSETEXTURE;
+
+//**************************************************************************************************************
+// ポーズのテクスチャ
+//**************************************************************************************************************
+static const char* PAUSE_TEXTURE[PAUSE_TEXTURE_MAX] =
+{
+	"data\\TEXTURE\\pausebg.png",
+	"data\\TEXTURE\\pause_continue.png",
+	"data\\TEXTURE\\pause_retry.png",
+	"data\\TEXTURE\\pause_quit.png",
+	"data\\TEXTURE\\pauseui.png",
+	"data\\TEXTURE\\pauseUIrecipe.png",
+};
+
+//**************************************************************************************************************
+// ポーズメニュー
+//**************************************************************************************************************
+typedef enum
+{
+	PAUSE_MENU_CONTINUE = 1, // ゲームに戻る
 	PAUSE_MENU_RETRY,	   // ゲームをやり直す
 	PAUSE_MENU_QUIT,	   // タイトル画面に戻る
 	PAUSE_MENU_MAX
 }PAUSE_MENU;
+
+//**************************************************************************************************************
+// ポーズの構造体
+//**************************************************************************************************************
+typedef struct
+{
+	D3DXVECTOR3 pos; // 位置
+	int nMenu;		 // メニュー
+	bool bUse;		 // 使用状態
+	float fWidth,fHeight;
+}Pause;
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -32,4 +70,5 @@ void UninitPause(void); // ポーズの終了処理
 void UpdatePause(void); // ポーズの更新処理
 void DrawPause(void);	// ポーズの描画処理
 void SelectPause(int nNumSelect); // ポーズの選択処理
+void SetPause(D3DXVECTOR3 pos, int nMenu, float fWidth, float fHeight);	// ポーズの設定処理
 #endif

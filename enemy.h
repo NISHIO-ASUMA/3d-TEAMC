@@ -17,7 +17,7 @@
 //**************************************************************************************************************
 //マクロ定義
 //**************************************************************************************************************
-#define MAX_ENEMY (100)
+#define MAX_ENEMY (150)
 #define ENEMYFILE001 ("data\\enemy.txt")
 #define ENEMYFILE002 ("data\\enemy2.txt")
 #define ENEMYFILE003 ("data\\enemy3.txt")
@@ -141,4 +141,5 @@ void SetUpHitStop(int *pHitStopCount);							  // ヒットストップの設定処理
 int GetNumTeriitory(void);										  // テリトリーが何個あるか
 bool GetFirstCraftTIme(void);									  // 最初強制クラフト状態か
 void EnableFirstCraftTime(bool bEnable);						  // 最初強制のクラフト状態の状態設定処理
+int GetNumWave(void);											  // ウェーブの取得処理
 #endif

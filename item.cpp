@@ -29,13 +29,15 @@
 #include <cassert>
 #include "minimap.h"
 #include "particle2d.h"
+#include "mark.h"
+#include "meshcylinder.h"
 
 //**************************************************************************************************************
 //ƒ}ƒNƒ’è‹`
 //**************************************************************************************************************
 #define MAX_WORD (256)
 #define MAX_DURABILITY (100) // ‘Ï‹v—Í
-#define DESTANCE (25.0f) // ‹——£
+#define DESTANCE (20.0f) // ‹——£
 
 //**************************************************************************************************************
 //ƒvƒƒgƒ^ƒCƒvéŒ¾
@@ -44,7 +46,6 @@ void LoadItemModel(void); // ƒAƒCƒeƒ€‚Ìƒ[ƒhˆ—
 void CraftItem(int nCnt);
 void LoadItemInfo(void); // ƒAƒCƒeƒ€‚Ìî•ñ‚Ìƒ[ƒhˆ—
 void PickUpItemAnimation(int nCntItem); // ƒAƒCƒeƒ€‚ğE‚¦‚é‚Ì‰‰o
-bool CheckMixItemMat(int pCraftMat, int pStockMat,int HoldIdx,int StockIdx);		// ƒAƒCƒeƒ€‚ªƒNƒ‰ƒtƒg‚Å‚«‚é‚©‚Ç‚¤‚©
 void UpdateCraftItemParam(int nCnt);                                                // ƒNƒ‰ƒtƒgƒAƒCƒeƒ€‚Ìƒpƒ‰ƒ[ƒ^İ’è
 void SetUpFirstWepon(int nCnt);														// Å‰‚ÌƒAƒCƒeƒ€‚Ìİ’è
 void UpdateTrackingItem(int nCnt);													// ’Ç]‚·‚éƒAƒCƒeƒ€‚ÌXVˆ—
@@ -57,6 +58,7 @@ void ThrowItemEffect(int nCntItem);													// ƒAƒCƒeƒ€‚ğ“Š‚°‚½‚ÌƒGƒtƒFƒNƒ
 void UpdateHitBlockItem(int nCntItem);												// ƒAƒCƒeƒ€‚ªƒuƒƒbƒN‚É“–‚½‚Á‚½ˆ—
 void UpdateNearItem(int nCntItem);													// ‹ß‚­‚ÌƒAƒCƒeƒ€‚Ìˆ—
 void UpdateThrowItemLife(int nCntItem);												// “Š‚°‚½ƒAƒCƒeƒ€‚Ìõ–½ŠÇ—ˆ—
+void DeletTrackingItem(int nCntItem);												// ’Ç]‚·‚éƒAƒCƒeƒ€‚ğÁ‚·ˆ—
 
 //**************************************************************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -96,6 +98,7 @@ void InitItem(void)
 		g_Item[nCntItem].Itemtag[0] = {};					   // ƒ^ƒO
 		g_Item[nCntItem].Power = 0;							   // UŒ‚—Í
 		g_Item[nCntItem].bTracking = false;					   // ƒvƒŒƒCƒ„[‚É’Ç]‚·‚é‚©‚Ç‚¤‚©
+		g_Item[nCntItem].nCylinderIdx = 0;					   // ƒVƒŠƒ“ƒ_[‚ÌƒCƒ“ƒfƒbƒNƒX
 	}
 
 	LoadItemInfo();  // ƒAƒCƒeƒ€‚Ìî•ñ
@@ -345,6 +348,9 @@ void UpdateItem(void)
 
 		// “Š‚°‚½ƒAƒCƒeƒ€‚Ìõ–½ŠÇ—ˆ—
 		UpdateThrowItemLife(nCntItem);
+
+		// ’Ç]‚·‚éƒAƒCƒeƒ€‚Ìíœˆ—
+		DeletTrackingItem(nCntItem);
 	}
 
 }
@@ -732,8 +738,6 @@ void CraftMixItem(int HoldIdx,int StockIdx)
 	// SE‚ğo‚·
 	PlaySound(SOUND_LABEL_CRAFT);
 
-	g_Item[pPlayer->ItemIdx].Power = g_aItemInfo[nMixWepon].Power;
-
 	// ‚Á‚Ä‚¢‚éƒAƒCƒeƒ€‚ğ•ÏX
 	Itemchange(HoldIdx, nMixWepon);
 
@@ -765,10 +769,16 @@ void CraftMixItem(int HoldIdx,int StockIdx)
 	// •¶š‚ğƒRƒs[
 	strcpy(&g_Item[HoldIdx].Itemtag[0], &g_aItemInfo[nMixWepon].Itemtag[0]);
 
+	// ƒCƒ“ƒfƒbƒNƒX‚ğã‘‚«‚·‚é
 	pPlayer->StockItemIdx = pPlayer->ItemIdx;
+
+	// ƒvƒŒƒCƒ„[‚Ìó‘Ô‚ğƒŠƒZƒbƒg
+	pPlayer->HandState = PLAYERHOLD_NO;
 
 	// ƒXƒe[ƒ^ƒX‚Ì•ÏX
 	LoadItemChange(nMixWepon, g_Item[HoldIdx].Size.y);
+
+	g_Item[HoldIdx].bTracking = false;
 }
 //==============================================================================================================
 // ƒAƒCƒeƒ€‚ÌoŒ»
@@ -804,17 +814,20 @@ void SetFirstCraftItem(D3DXVECTOR3 pos, int nType)
 {
 	Player* pPlayer = GetPlayer();
 
+	// ‘SƒAƒCƒeƒ€•ª‰ñ‚·
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		if (g_Item[nCntItem].bUse == false && pPlayer->ItemIdx != nCntItem && pPlayer->StockItemIdx != nCntItem)
 		{// –¢g—pó‘Ô‚È‚ç
 
-			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType]; // •K—v‚Èî•ñ‚ğ‘ã“ü
-			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;
-			g_Item[nCntItem].Maxdurability = g_aItemInfo[nType].Maxdurability;
-			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;
-			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;
-			g_Item[nCntItem].bTracking = true;
+			g_Item[nCntItem].ItemTex[nType] = g_TexItem[nType];					// •K—v‚Èî•ñ‚ğ‘ã“ü
+			g_Item[nCntItem].Power = g_aItemInfo[nType].Power;					// UŒ‚—Í
+			g_Item[nCntItem].Maxdurability = g_aItemInfo[nType].Maxdurability;  // Å‘å‚Ì‘Ï‹v—Í
+			g_Item[nCntItem].durability = g_aItemInfo[nType].durability;		// ‘Ï‹v—Í
+			g_Item[nCntItem].nElement = g_aItemInfo[nType].nElement;			// ‘®«
+			g_Item[nCntItem].bTracking = true;									// ’Ç]‚·‚é
+			g_Item[nCntItem].state = ITEMSTATE_NORMAL;							// ó‘Ô‚ğ‰Šú‰»
+			g_Item[nCntItem].move = NULLVECTOR3;								// ˆÚ“®—Ê‚ğ‰Šú‰»
 
 			g_Item[nCntItem].pos = pos;			 // À•W
 			g_Item[nCntItem].nType = nType;		 // í—Ş
@@ -1220,11 +1233,15 @@ void UpdateCraftItemParam(int nCnt)
 		// ƒNƒ‰ƒtƒg‚Ì‘fŞ‚ª‘µ‚Á‚Ä‚¢‚½‚ç
 		if (CheckMatItem == true)
 		{
+			// ƒp[ƒeƒBƒNƒ‹‚ğ¶¬
+			SetParticle2D(UIPOTISION, D3DXVECTOR3(3.0f, 3.0f, 0.0f), 180, COLOR_MIDIUMPURPLE, 10.0f, PARTICLE2D_ICON, 10);
+			SetParticle2D(UIPOTISION, D3DXVECTOR3(3.0f, 3.0f, 0.0f), 180, COLOR_RED, 10.0f, PARTICLE2D_ICON, 10);
+
 			// ƒ~ƒjƒ}ƒbƒv‚ÌƒAƒCƒeƒ€‚ÌƒAƒCƒRƒ“‚ÌƒŠƒZƒbƒg
 			ResetItemMinimap();
 
-			// ƒNƒ‰ƒtƒgƒAƒCƒRƒ“‚ÌƒAƒjƒ[ƒVƒ‡ƒ“ˆ—
-			EnableCraftIconAnim(true);
+			// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[‚ÌƒŠƒZƒbƒg
+			ResetItemCylinder();
 
 			// ƒvƒŒƒCƒ„[‚ªÅ‰‚ÌƒNƒ‰ƒtƒgƒ^ƒCƒ€‚ÅƒNƒ‰ƒtƒg‚ğÀs‚µ‚½‚ç
 			if (pPlayer->bFirstCraft == false && GetFirstCraftTIme() == true)
@@ -1235,6 +1252,9 @@ void UpdateCraftItemParam(int nCnt)
 				// ƒNƒ‰ƒtƒgƒ‚[ƒh‚ğ‰ğœ
 				EnableFirstCraftTime(false);
 			}
+
+			// ƒNƒ‰ƒtƒgƒAƒCƒRƒ“‚ÌƒAƒjƒ[ƒVƒ‡ƒ“ˆ—
+			EnableCraftIconAnim(true);
 		}
 	}
 }
@@ -1605,4 +1625,19 @@ void UpdateThrowItemLife(int nCntItem)
 
 	// ƒAƒCƒeƒ€‚Ìõ–½‚ªs‚«‚½‚çÁ‚·
 	if (g_Item[nCntItem].nLife <= 0) g_Item[nCntItem].bUse = false;
+}
+//==============================================================================================================
+// ’Ç]‚·‚éƒAƒCƒeƒ€‚ğÁ‚·ˆ—
+//==============================================================================================================
+void DeletTrackingItem(int nCntItem)
+{
+	// ’Ç]‚µ‚È‚¢ƒAƒCƒeƒ€‚¾‚Á‚½‚ç
+	if (g_Item[nCntItem].bTracking == false) return;
+
+	// Å‰‚ÌƒNƒ‰ƒtƒg‚ÌŠÔ‚ªI‚í‚Á‚½‚ç
+	if (GetFirstCraftTIme() == false) 
+	{
+		g_Item[nCntItem].bTracking = false;
+		g_Item[nCntItem].bUse = false;
+	}
 }

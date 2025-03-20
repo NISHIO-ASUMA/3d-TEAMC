@@ -17,8 +17,9 @@
 //**************************************************************************************************************
 // マクロ定義
 //**************************************************************************************************************
-#define MAX_CYLINDER (20) // シリンダーの数
+#define MAX_CYLINDER (200) // シリンダーの数
 #define CYLINDER_ALV (0.5f) // α値の基準
+#define MAX_WORD (256)      // 最大の文字数
 
 //**************************************************************************************************************
 // プロトタイプ宣言
@@ -26,6 +27,7 @@
 void UpdateHealCylinder(int CylinderIdx);		// 回復の時のシリンダーの更新処理
 void UpdateEventCylinder(int CylinderIdx);		// イベント発生時のシリンダーの設定
 void UpdateTrritoryCylinder(int CylinderIdx);	// テリトリーのシリンダーの設定
+void UpdateItemCylinder(int CylinderIdx);		// アイテムのシリンダーの設定
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -148,6 +150,7 @@ void UpdateMeshCylinder(void)
 			UpdateTrritoryCylinder(nCntCylinder);
 			break;
 		case CYLINDERTYPE_ITEM:
+			UpdateItemCylinder(nCntCylinder);
 			break;
 		default:
 			break;
@@ -604,6 +607,7 @@ void UpdateTrritoryCylinder(int CylinderIdx)
 				(nCntV * (fHeight / vtxZ)),
 				cosf(fAngel) * fRadius);
 
+			g_MeshCylinder[CylinderIdx].col.a = 0.3f;
 			pVtx[nCnt].col = g_MeshCylinder[CylinderIdx].col;
 
 			nCnt++;//加算
@@ -612,6 +616,179 @@ void UpdateTrritoryCylinder(int CylinderIdx)
 
 	//頂点バッファをロック
 	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Unlock();
+}
+//===================================================================================================================
+// アイテムのシリンダーの設定
+//===================================================================================================================
+void UpdateItemCylinder(int CylinderIdx)
+{
+	VERTEX_3D* pVtx;
+
+	//頂点バッファをロック
+	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点のカウント
+	int nCnt = 0;
+
+	// 頂点X
+	int vtxX = g_MeshCylinder[CylinderIdx].nNumPosX;
+
+	// 頂点Z
+	int vtxZ = g_MeshCylinder[CylinderIdx].nNumPosZ;
+
+	// 半径
+	float fRadius = g_MeshCylinder[CylinderIdx].fRadius;
+
+	// 高さ
+	float fHeight = g_MeshCylinder[CylinderIdx].fHeight;
+
+	// 位置を代入
+	D3DXVECTOR3 pos = g_MeshCylinder[CylinderIdx].pos;
+
+	//縦
+	for (int nCntV = 0; nCntV <= vtxZ; nCntV++)
+	{
+		//横
+		for (int nCntH = 0; nCntH <= vtxX; nCntH++)
+		{
+			// 角度を求める
+			float fAngel = (D3DX_PI * 2.0f) / vtxX * nCntH;
+
+			//頂点座標の設定
+			pVtx[nCnt].pos = D3DXVECTOR3(
+				sinf(fAngel) * fRadius,
+				(nCntV * (fHeight / vtxZ)),
+				cosf(fAngel) * fRadius);
+
+			g_MeshCylinder[CylinderIdx].col.a = 0.4f;
+
+			pVtx[nCnt].col = g_MeshCylinder[CylinderIdx].col;
+
+			nCnt++;//加算
+		}
+	}
+
+	//頂点バッファをロック
+	g_MeshCylinder[CylinderIdx].g_pVtxBuffMeshCylinder->Unlock();
+}
+//===================================================================================================================
+// シリンダーの消去
+//===================================================================================================================
+void ResetItemCylinder(void)
+{
+	// アイテムの取得
+	Item* pItem = GetItem();
+
+	// アイテム分回す
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+	{
+		int nIdx = pItem[nCntItem].nCylinderIdx;
+
+		if (g_MeshCylinder[nIdx].nType != CYLINDERTYPE_ITEM) continue;
+
+		g_MeshCylinder[nIdx].bUse = false;
+	}
+}
+//===================================================================================================================
+// シリンダーのインデックス
+//===================================================================================================================
+void SetItemCylinder(int nHaveIdx)
+{
+	// アイテムの取得
+	Item* pItem = GetItem();
+
+	FILE* pFile; // ファイルのポインタ
+
+	// ファイルを開く
+	pFile = fopen("data\\ITEM\\SetminimapItem.txt", "r");
+
+	int playeritem = -1;
+	int minimapItem = -2;
+
+	// ファイルが開けたら
+	if (pFile != NULL)
+	{
+		char aString[MAX_WORD] = {};
+		char skip[10] = {};
+
+		while (1)
+		{
+			// 文字を読み取る
+			int nData = fscanf(pFile, "%s", &aString[0]);
+
+			// PLAYER_ITEMを読み取ったら
+			if (strcmp(&aString[0], "PLAYER_ITEM") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// プレイヤーのアイテムを読み取る
+				nData = fscanf(pFile, "%d", &playeritem);
+			}
+
+			// MINIMAP_ITEMを読み取ったら
+			if (strcmp(&aString[0], "MINIMAP_ITEM") == 0)
+			{
+				// [=]を飛ばす
+				nData = fscanf(pFile, "%s", &skip[0]);
+
+				// 表示するアイテムを読み取る
+				nData = fscanf(pFile, "%d", &minimapItem);
+
+				// 持っているアイテムが一致していたら
+				if (playeritem == pItem[nHaveIdx].nType)
+				{
+					playeritem = -1;
+					break;
+				}
+			}
+
+			// EOFを読み取ったら
+			if (nData == EOF)
+			{
+				playeritem = -1;
+				minimapItem = -2;
+
+				// ファイルを閉じる
+				fclose(pFile);
+
+				// while文を抜ける
+				return;
+			}
+		}
+
+	}
+	else
+	{
+		// メッセージボックスを表示
+		MessageBox(NULL, "ファイルが開けません", "LoadMinimapItem", MB_OK);
+		return;
+	}
+
+	// ファイルを閉じる
+	fclose(pFile);
+
+	// アイテム分回す
+	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
+	{
+		// 未使用だったら
+		if (pItem[nCntItem].bUse == false) continue;
+
+		// 持っているアイテムと同じだったら
+		if (nCntItem == nHaveIdx) continue;
+
+		// 表示したいアイテムじゃなかったら
+		if (pItem[nCntItem].nType != minimapItem) continue;
+
+		// 位置
+		D3DXVECTOR3 pos(pItem[nCntItem].pos.x, 0.0f, pItem[nCntItem].pos.z);
+
+		// アイテムの場所に位置を設定
+		pItem[nCntItem].nCylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_ITEM, 0, 10.0f, COLOR_PINK, 8, 1, 0.0f, 50.0f);
+	}
+
+	// 初期化
+	minimapItem = -2;
 }
 //===================================================================================================================
 // シリンダーの当たり判定
@@ -623,6 +800,8 @@ bool CollisionCylinder(int nIdx, D3DXVECTOR3* pPos)
 	// 全部の頂点分回す
 	for (int nCntvtx = 0; nCntvtx < g_MeshCylinder[nIdx].nNumPosX; nCntvtx++)
 	{
+		if (g_MeshCylinder[nIdx].nType != CYLINDERTYPE_TERRITORY) continue;
+
 		//頂点バッファをロック
 		g_MeshCylinder[nIdx].g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
 

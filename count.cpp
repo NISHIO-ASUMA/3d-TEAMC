@@ -12,6 +12,7 @@
 #include "mark.h"
 #include "game.h"
 #include "event.h"
+#include "time.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -614,8 +615,19 @@ void SetEventTimer(int nCnt)
 //==============================================================================================================
 void SetTerritoryTimer(int nCnt)
 {
+	// 時間の取得
+	int nSecond = GetTimeSecond();
+	int nMinute = GetTimeMinute();
+
 	// カウントが終了したら
 	if (g_Counter[nCnt].nMinute <= 0 && g_Counter[nCnt].nSecond <= 0)
+	{
+		// 未使用にスル
+		g_Counter[nCnt].bUse = false;
+	}
+
+	// カウントが終了したら
+	if (nMinute <= 0 && nSecond <= 10)
 	{
 		// 未使用にスル
 		g_Counter[nCnt].bUse = false;

@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="barrier.cpp" />
     <ClCompile Include="billboard.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="boss.cpp" />
@@ -169,7 +170,6 @@
     <ClCompile Include="gameui.cpp" />
     <ClCompile Include="icon.cpp" />
     <ClCompile Include="itemgage.cpp" />
-    <ClCompile Include="manual.cpp" />
     <ClCompile Include="mark.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="meshcylinder.cpp" />
@@ -210,6 +210,7 @@
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="barrier.h" />
     <ClInclude Include="billboard.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="boss.h" />
@@ -236,7 +237,6 @@
     <ClInclude Include="icon.h" />
     <ClInclude Include="itemgage.h" />
     <ClInclude Include="light.h" />
-    <ClInclude Include="manual.h" />
     <ClInclude Include="mark.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="meshcylinder.h" />

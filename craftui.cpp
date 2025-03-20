@@ -15,6 +15,7 @@
 #include "craftrecipe.h"
 #include "math.h"
 #include "game.h"
+#include "Score.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -26,6 +27,8 @@
 //**************************************************************************************************************
 void UpdateCraftIconAnim(int nCnt); // クラフトアイコンのアニメーションの更新
 void ResetCraftAnim(int nCnt);      // クラフトアイコンのアニメーションの初期化
+void UpdateCraftCloseUI(int nCnt);	// クラフトの閉じるボタンの設定
+void UpdateStartCraftUI(int nCnt);	// クラフトのクラフト開始ボタンの設定
 
 //**************************************************************************************************************
 // グローバル変数
@@ -228,13 +231,23 @@ void UpdateCraftUI(void)
 {
 	Player* pPlayer = GetPlayer();
 
-	//for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
-	//{
-	//	if (g_CraftUI[nCnt].bUse == false)
-	//	{
-	//		continue;
-	//	}
-	//}
+	// クラフトのUI分回す
+	for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
+	{
+		if (g_CraftUI[nCnt].bUse == false) continue;
+
+		switch (g_CraftUI[nCnt].nType)
+		{
+		case CRAFTUITYPE_CRAFT:
+			UpdateStartCraftUI(nCnt);
+			break;
+		case CRAFTUITYPE_CLOSE:
+			UpdateCraftCloseUI(nCnt);
+			break;
+		default:
+			break;
+		}
+	}
 
 	for (int nCnt = 0; nCnt < WEPONTYPE_MAX; nCnt++)
 	{
@@ -404,6 +417,9 @@ Craftui* GetMixUI(void)
 //==============================================================================================================
 void UpdateCraftIconAnim(int nCnt)
 {
+	// モードを取得
+	MODE mode = GetMode();
+
 	// 頂点座標のポインタ
 	VERTEX_2D* pVtx;
 
@@ -469,6 +485,9 @@ void UpdateCraftIconAnim(int nCnt)
 
 		// クラフト状態を解除
 		EnableCraft(false);
+
+		// 今のモードがゲームだったら
+		if(mode == MODE_GAME) AddScore(12345);
 	}
 }
 //==============================================================================================================
@@ -491,4 +510,143 @@ void ResetCraftAnim(int nCnt)
 
 	//頂点ロック解除
 	g_pVtxBuffItemIcon->Unlock();
+}
+//==============================================================================================================
+// クラフトの閉じるボタンの設定
+//==============================================================================================================
+void UpdateCraftCloseUI(int nCnt)
+{
+	// プレイヤーを取得
+	Player* pPlayer = GetPlayer();
+
+	// アイテムを取得
+	Item* pItem = GetItem();
+
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	// 頂点ロック
+	g_pVtxBuffCraftUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	// アルファ値
+	static float fAlv = 1.0f;
+
+	// プレイヤーが持っているアイテムがレシピと一致するか確認
+	const bool CheckMatItem = CheckMixItemMat(pItem[pPlayer->ItemIdx].nType, pItem[pPlayer->StockItemIdx].nType, pPlayer->ItemIdx, pPlayer->StockItemIdx) == true;
+
+	// アルファ値を下げる判定
+	static bool bDecAlv = true;
+
+	// 増やすフレーム
+	const float AddFrame = 60.0f;
+
+	// クラフト可能じゃなかったら
+	if (CheckMatItem == false)
+	{
+		if (bDecAlv == true)
+		{
+			fAlv -= 0.8f / AddFrame;
+		}
+		else
+		{
+			fAlv += 0.8f / AddFrame;
+		}
+
+		// 1.0fを超えたら
+		if (fAlv >= 1.0f)
+		{
+			// 減らす
+			bDecAlv = true;
+		}
+		// 0.0fを下回ったら
+		else if (fAlv <= 0.2f)
+		{
+			// 増やす
+			bDecAlv = false;
+		}
+	}
+	else
+	{
+		fAlv = 1.0f;
+	}
+
+	// 頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+
+	// 頂点ロック解除
+	g_pVtxBuffCraftUI->Unlock();
+}
+//==============================================================================================================
+// クラフトのクラフト開始ボタンの設定
+//==============================================================================================================
+void UpdateStartCraftUI(int nCnt)
+{
+	// プレイヤーを取得
+	Player* pPlayer = GetPlayer();
+
+	// アイテムを取得
+	Item* pItem = GetItem();
+
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx;
+
+	// 頂点ロック
+	g_pVtxBuffCraftUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	// アルファ値
+	static float fAlv = 1.0f;
+
+	// プレイヤーが持っているアイテムがレシピと一致するか確認
+	const bool CheckMatItem = CheckMixItemMat(pItem[pPlayer->ItemIdx].nType, pItem[pPlayer->StockItemIdx].nType, pPlayer->ItemIdx, pPlayer->StockItemIdx) == true;
+
+	// クラフト可能だったら
+	if (CheckMatItem == true)
+	{
+		// アルファ値を下げる判定
+		static bool bDecAlv = true;
+
+		// 増やすフレーム
+		const float AddFrame = 60.0f;
+
+		if (bDecAlv == true)
+		{
+			fAlv -= 0.8f / AddFrame;
+		}
+		else
+		{
+			fAlv += 0.8f / AddFrame;
+		}
+
+		// 1.0fを超えたら
+		if (fAlv >= 1.0f)
+		{
+			// 減らす
+			bDecAlv = true;
+		}
+		// 0.0fを下回ったら
+		else if (fAlv <= 0.2f)
+		{
+			// 増やす
+			bDecAlv = false;
+		}
+	}
+	else
+	{
+		fAlv = 1.0f;
+	}
+	// 頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+
+	// 頂点ロック解除
+	g_pVtxBuffCraftUI->Unlock();
 }

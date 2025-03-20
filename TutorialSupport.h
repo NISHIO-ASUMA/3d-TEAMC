@@ -19,5 +19,5 @@ void InitManager(void);   // チュートリアルサポートの初期化処理
 void UninitManager(void); // チュートリアルサポートの終了処理
 void UpdateManager(void); // チュートリアルサポートの更新処理
 void DrawManager(void);   // チュートリアルサポートの描画処理
-
+int GetStep(void);		  // チュートリアルのステップ取得処理
 #endif

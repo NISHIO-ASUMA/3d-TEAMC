@@ -42,6 +42,8 @@
 #include "math.h"
 #include "easing.h"
 #include "particle2d.h"
+#include "craftui.h"
+#include "barrier.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -53,7 +55,7 @@
 #define MAX_MOVE (1.0f)			// プレイヤーの移動量
 #define NUM_MTX (8)				// 剣の当たり判定のマトリクスの数
 #define LANDINGEXPLOSION (6)	// 着地したときに出る煙
-#define HEAL_VALUE (100)		// 回復量
+#define HEAL_VALUE (200)		// 回復量
 #define AVOID_MOVE (18.0f)      // 回避の移動量
 #define DAMAGEBLOW (20.0f)      // ダメージを受けた時の吹き飛び量
 #define BLOWCOUNT (5)           // 吹っ飛びカウント
@@ -290,6 +292,16 @@ void UpdatePlayer(void)
 		g_player.nLife = g_player.nMaxLife;
 	}
 
+	if (g_player.AttackSp == true)
+	{
+		// プレイヤーがsp攻撃した時のパーティクル
+		SetParticle2D(D3DXVECTOR3(50.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), 1, COLOR_GOLD, 2.0f, PARTICLE2D_SPMODE, 10);
+		SetParticle2D(D3DXVECTOR3(50.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), 1, COLOR_ORANGE, 2.0f, PARTICLE2D_SPMODE, 10);
+
+		// プレイヤーがsp攻撃した時のパーティクル
+		SetParticle2D(D3DXVECTOR3(75.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), 1, COLOR_GOLD, 2.0f, PARTICLE2D_SPMODE, 10);
+		SetParticle2D(D3DXVECTOR3(50.0f, 40.0f, 0.0f), D3DXVECTOR3(0.0f, -1.0f, 0.0f), 1, COLOR_ORANGE, 2.0f, PARTICLE2D_SPMODE, 10);
+	}
 	g_player.HitStopCount--;
 
 	if (g_player.HitStopCount > 0)
@@ -426,6 +438,9 @@ void UpdatePlayer(void)
 		g_player.bJump = false;
 	}
 
+	// バリアの当たり判定
+	CollisionBarrier(&g_player.pos, &g_player.posOld, &g_player.move,&g_player.Size);
+
 	// メッシュウォール
 	CollisionWall(&g_player.pos,&g_player.posOld,&g_player.move,g_player.speed);
 
@@ -441,11 +456,11 @@ void UpdatePlayer(void)
 	if ((JoypadTrigger(JOYKEY_A) || KeyboardTrigger(DIK_SPACE)) && g_player.Motion.motiontypeBlend != MOTIONTYPE_DEATH && g_player.bstiffness == false)
 	{//aボタン or Enterキーが押された
 
-		// 音楽再生
-		PlaySound(SOUND_LABEL_JUMP_SE);
-
 		if (g_player.bJump == true && g_player.Motion.motionType != MOTIONTYPE_LANDING && g_player.AttackSp == false && gameState != GAMESTATE_MOVIE)
 		{
+			// 音楽再生
+			PlaySound(SOUND_LABEL_JUMP_SE);
+
 			g_player.bJump = false;						 // ジャンプをできなくする
 			SetMotion(&g_player.Motion, MOTIONTYPE_JUMP, true, 10);
 			g_player.move.y = 18.0f;					 // ジャンプ量		
@@ -846,6 +861,8 @@ void StatusChange(float speed, D3DXVECTOR3 SwordOffpos, int nDamage)
 //===============================================================================================================
 void HitSowrd(ENEMY* pEnemy,int nCntEnemy)
 {
+	if (g_player.HandState == PLAYERHOLD_HOLD) return;
+
 	Item* pItem = GetItem();
 
 	bool bHit = false;
@@ -1352,6 +1369,12 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 
 			LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
+
+			// メッシュシリンダーのリセット
+			ResetItemCylinder();
+
+			// アイテムのシリンダー
+			SetItemCylinder(g_player.ItemIdx);
 		}
 	}
 
@@ -1389,32 +1412,31 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
 	{
-		// 使用状態のみ
-		if (pEnemy[nCnt].bUse && pEnemy[nCnt].nType != ENEMYTYPE_SIX)
+		// 敵が使われていたら
+		if (pEnemy[nCnt].bUse == false) continue;
+
+		// 距離を求める
+		float DisposX = pEnemy[nCnt].pos.x - g_player.pos.x;
+		float DisposY = pEnemy[nCnt].pos.y - g_player.pos.y;
+		float DisposZ = pEnemy[nCnt].pos.z - g_player.pos.z;
+
+		// 距離を求める
+		fDistanceNow = sqrtf((DisposX * DisposX) + (DisposY * DisposY) + (DisposZ * DisposZ));
+
+		// 最初だけ通す
+		if (bFirst)
 		{
-			// 距離を求める
-			float DisposX = pEnemy[nCnt].pos.x - g_player.pos.x;
-			float DisposY = pEnemy[nCnt].pos.y - g_player.pos.y;
-			float DisposZ = pEnemy[nCnt].pos.z - g_player.pos.z;
-
-			// 距離を求める
-			fDistanceNow = sqrtf((DisposX * DisposX) + (DisposY * DisposY) + (DisposZ * DisposZ));
-
-			// 最初だけ通す
-			if (bFirst)
+			fDistanceStock = fDistanceNow;
+			bFirst = false;
+			nIdxEnemy = nCnt;
+		}
+		else
+		{
+			// 今の距離がストックされた距離より小さかったら
+			if (fDistanceNow < fDistanceStock)
 			{
-				fDistanceStock = fDistanceNow;
-				bFirst = false;
-				nIdxEnemy = nCnt;
-			}
-			else
-			{
-				// 今の距離がストックされた距離より小さかったら
-				if (fDistanceNow < fDistanceStock)
-				{
-					fDistanceStock = fDistanceNow; // 距離を保存
-					nIdxEnemy = nCnt; // 近い敵のインデックスを保存
-				}
+				fDistanceStock = fDistanceNow; // 距離を保存
+				nIdxEnemy = nCnt; // 近い敵のインデックスを保存
 			}
 		}
 	}
@@ -2271,7 +2293,7 @@ void SetMotionContller(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPDOUBLE && g_player.Motion.motionType == MOTIONTYPE_ACTION && CheckMotionBounds(nKey, nCounter, 2, 2, 5, 5) == true)
 	{
 		// コントローラーの振動(1000で一秒)
-		SetVibration(35000, 35000, 500);
+		SetVibration(15000, 35000, 500);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, COLOR_ORANGERED, 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER,20);
@@ -2284,7 +2306,7 @@ void SetMotionContller(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, 4, 4, 5, 5) == true)
 	{
 		// コントローラーの振動(1000で一秒)
-		SetVibration(45000, 45000,300);
+		SetVibration(15000, 45000,300);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 10.0f, 60, IMPACTTYPE_PLAYER, g_player.nDamage * 50);
@@ -2297,7 +2319,7 @@ void SetMotionContller(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, 21, 21, 5, 5) == true)
 	{
 		// コントローラーの振動(1000で一秒)
-		SetVibration(45000, 45000, 300);
+		SetVibration(15000, 45000, 300);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f), 32, 60.0f, 15.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 20);
@@ -2336,7 +2358,7 @@ void SetMotionContller(void)
 	if (g_player.AttackSp == true && g_player.WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, 4, 4, 1, 1) == true)
 	{
 		// コントローラーの振動(1000で一秒)
-		SetVibration(45000, 45000, 300);
+		SetVibration(15000, 45000, 300);
 
 		// 衝撃波を発生指せる
 		SetImpact(g_player.pos, D3DCOLOR_RGBA(0, 161, 255, 255), 32, 40.0f, 20.0f, 35.0f, 60, IMPACTTYPE_NORMAL, 1);
@@ -2348,13 +2370,13 @@ void SetMotionContller(void)
 		// キ一1番目かつカウントが5
 		if (CheckMotionBounds(nKey, nCounter, 1, 1, 5, 5) == true)
 		{
-			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[14].mtxWorld._41, g_player.Motion.aModel[14].mtxWorld._42, g_player.Motion.aModel[14].mtxWorld._43),
+			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[14].mtxWorld._41, g_player.Motion.aModel[14].mtxWorld._42 + 10.0f, g_player.Motion.aModel[14].mtxWorld._43),
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
 		}
 		// キ一3番目かつカウントが5
 		else if (CheckMotionBounds(nKey, nCounter, 3, 3, 5, 5) == true)
 		{
-			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[11].mtxWorld._41, g_player.Motion.aModel[11].mtxWorld._42, g_player.Motion.aModel[11].mtxWorld._43),
+			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[11].mtxWorld._41, g_player.Motion.aModel[11].mtxWorld._42 + 10.0f, g_player.Motion.aModel[11].mtxWorld._43),
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
 		}
 	}
@@ -2365,9 +2387,12 @@ void SetMotionContller(void)
 	// ハンマーのスペシャルモーションの設定
 	if (g_player.WeponMotion == MOTION_SPHAMMER && g_player.AttackSp && g_player.Motion.nKey <= 15)
 	{
-		g_player.speed = 7.0f; // スピードを設定
-		g_player.move.x += sinf(g_player.rot.y + D3DX_PI) * g_player.speed; // 移動量を加算
-		g_player.move.z += cosf(g_player.rot.y + D3DX_PI) * g_player.speed; // 移動量を加算
+		// 移動量
+		D3DXVECTOR3 move = SetMotionMoveAngle();
+
+		g_player.move.x = move.x;
+		g_player.move.z = move.z;
+
 		SetParticle(SwordPos,
 			g_player.rot,
 			D3DXVECTOR3(3.14f, 3.14f, 3.14f),
@@ -2608,6 +2633,9 @@ void DestroyWepon(void)
 		// ミニマップのアイテムのリセット
 		ResetItemMinimap();
 
+		// メッシュシリンダーのリセット
+		ResetItemCylinder();
+
 		// ミニマップのアイテムのロード
 		LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
 
@@ -2769,6 +2797,7 @@ void HandleSpecialAttack(void)
 	// スペシャルモーションを発動したら
 	if (g_player.Motion.motionType == MOTIONTYPE_ACTION && g_player.AttackSp)
 	{
+
 		// パーティクル
 		SetParticle(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 25, g_player.pos.z), D3DXVECTOR3(D3DX_PI / 2.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), 2.0f, 1, 20, 10, 20.0f, 40.0f, true, D3DXVECTOR3(0.0f, 4.0f, 0.0f));
 	}
@@ -2794,6 +2823,8 @@ void HandleSpecialAttack(void)
 	// スペシャルモーションからもとに戻す
 	if (is_restoreMotion == true)
 	{
+		ResetItemMinimap();
+
 		// 音楽再生
 		PlaySound(SPUND_LABEL_WEPONBREAK);
 
@@ -2868,6 +2899,9 @@ void UpdateItemStock(void)
 
 		// プレイヤーの状態を何も持っていない状態にする
 		g_player.HandState = PLAYERHOLD_NO;
+
+		// メッシュシリンダーのリセット
+		ResetItemCylinder();
 
 		// ミニマップのアイテムのリセット
 		ResetItemMinimap();
@@ -3058,6 +3092,11 @@ D3DXVECTOR3 SetMotionMoveAngle(void)
 			// プレイヤーの移動
 			OutPutMove.x = sinf(g_player.rotDestPlayer.y + D3DX_PI) * AVOID_MOVE;
 			OutPutMove.z = cosf(g_player.rotDestPlayer.y + D3DX_PI) * AVOID_MOVE;
+		}
+		else
+		{
+			OutPutMove.x = sinf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
+			OutPutMove.z = cosf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
 		}
 	}
 

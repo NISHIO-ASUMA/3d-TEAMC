@@ -69,6 +69,7 @@ void DeathMotionContlloer(int nCntBoss);													// ボスの死亡モーションの処
 void HitBossAbnormalCondition(int nCntBoss);												// ボスに当たった時のエフェクト
 void HitBossAbnormalConditionParam(int nCntBoss, int nElement, int ChargeValue, int MaxCharge, int stateCnt);  // ボスに当たった時のエフェクトのパラメータ
 void SpawnItem(D3DXVECTOR3 pos);
+bool keepInCylinderBossAndPlayer(int nCntBoss);														// シリンダーの中からボスを出さない処理
 
 //**************************************************************************************************************
 // グローバル変数宣言
@@ -193,6 +194,7 @@ void UpdateBoss(void)
 	Player* pPlayer = GetPlayer();
 	GAMESTATE gameState = GetGameState();
 
+	// すべてのボス分回す
 	for (int nCnt = 0; nCnt < MAX_BOSS; nCnt++)
 	{
 		g_Boss[nCnt].nHitStopCount--;
@@ -297,16 +299,17 @@ void UpdateBoss(void)
 			HitBoss(nCnt, ImpactDamege(0));
 		}
 		
-		// 範囲内にいる
-		if (KeepInCylinder(&pPlayer->pos) == false)
+		// プレイヤーとボスがシリンダーにいるか
+		if (keepInCylinderBossAndPlayer(nCnt) == true)
 		{
 			// ボスの追跡処理の更新
 			UpdateAgentBoss(nCnt);
 
-			// 攻撃していない
-			if (CheckActionMotion(&pPlayer->Motion) == false)
+			// 攻撃している
+			if (isPlayerAttaking() == true)
 			{
-				colisionSword(nCnt);   // 剣との当たり判定
+				// 剣との当たり判定
+				colisionSword(nCnt);  
 			}
 		}
 		else
@@ -314,6 +317,7 @@ void UpdateBoss(void)
 			SetMotion(&g_Boss[nCnt].Motion, MOTIONTYPE_NEUTRAL, true, 10);
 			g_Boss[nCnt].AttackState = BOSSATTACK_NO;
 		}
+
 		// 攻撃範囲に入ったら
 		if (sphererange(&pPlayer->pos, &g_Boss[nCnt].pos, 50.0f, 50.0f) && g_Boss[nCnt].AttackState != BOSSATTACK_ATTACK)
 		{
@@ -673,10 +677,10 @@ void HitBoss(int nCntBoss,int nDamage)
 	else
 	{
 		// 左の振動の強さ
-		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
+		float leftmotor = pPlayer->AttackSp ? 25000 : 10000;
 
 		// 右の振動の強さ
-		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
+		float rightmotor = pPlayer->AttackSp ? 25000 : 10000;
 
 		SetVibration(leftmotor, rightmotor, 500);
 
@@ -698,7 +702,7 @@ void HitBoss(int nCntBoss,int nDamage)
 
 		g_Boss[nCntBoss].state = ENEMYSTATE_DAMAGE;
 		g_Boss[nCntBoss].nCounterState = 20;
-		AddSpgauge(1.0f);   // SPゲージを取得
+		AddSpgauge(5.0f);   // SPゲージを取得
 
 		g_bManual = true;
 
@@ -1236,7 +1240,7 @@ void colisionSword(int nCntBoss)
 	// スペシャル攻撃じゃない
 	if (CanSwordDamage == true && bHit == true && CheckMotionBounds(nKey,nCounter,KEY_ONE,LastKey,0,EndFrame) == true)
 	{
-		HitBoss(nCntBoss, (pPlayer->nDamage * 5) / fCutDamage);
+		HitBoss(nCntBoss, (pPlayer->nDamage * 2) / fCutDamage);
 
 		pItem[pPlayer->ItemIdx].durability--;
 
@@ -1273,22 +1277,22 @@ void colisionSword(int nCntBoss)
 	// 刀のスペシャル攻撃
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SP && CheckMotionBounds(nKey, nCounter, KEY_THREE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 14) / fCutDamage); // 敵に当たった
 	}
 	// 両手持ちの必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPDOUBLE && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 20) / fCutDamage); // 敵に当たった
 	}
 	// ハンマーのスペシャル攻撃
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPHAMMER && CheckMotionBounds(nKey, nCounter, KEY_ONE, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 5) / fCutDamage); // 敵に当たった
 	}
 	// 片手の必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_ONEHANDBLOW && CheckMotionBounds(nKey, nCounter, KEY_FOUR, LastKey, 0, EndFrame / 2) == true)
 	{
-		HitBoss(nCntBoss, (pPlayer->nDamage * 15) / fCutDamage); // 敵に当たった
+		HitBoss(nCntBoss, (pPlayer->nDamage * 25) / fCutDamage); // 敵に当たった
 	}
 	// 槍の必殺技
 	if (is_CanSpDamage == true && pPlayer->WeponMotion == MOTION_SPPIERCING && CheckMotionBounds(nKey, nCounter, KEY_EIGHTEEN, LastKey, 0, EndFrame / 2) == true)
@@ -1788,6 +1792,56 @@ void SpawnItem(D3DXVECTOR3 pos)
 	SetItem(pos, rand() % ITEMTYPE_MAX);
 }
 //========================================================================================================
+// シリンダーの中からボスを出さない処理
+//========================================================================================================
+bool keepInCylinderBossAndPlayer(int nCntBoss)
+{
+	// テリトリーのボスの位置の取得
+	int nBossPos = GetTerritoryBossPos();
+
+	// 位置
+	D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
+
+	// 位置の代入
+	switch (nBossPos)
+	{
+	case 0:
+		pos = TERRITTORYPOS_ONE;
+		break;
+	case 1:
+		pos = TERRITTORYPOS_TWO;
+		break;
+	case 2:
+		pos = TERRITTORYPOS_THREE;
+		break;
+	case 3:
+		pos = TERRITTORYPOS_FOUR;
+		break;
+	default:
+		break;
+	}	
+
+	// シリンダーの当たり判定
+	if (CollisionCylinder(g_Boss[nCntBoss].nIdxCylinder, &g_Boss[nCntBoss].pos))
+	{
+		// 敵を押し戻す
+		g_Boss[nCntBoss].pos = g_Boss[nCntBoss].posOld;
+	}
+
+	// プレイヤーを取得
+	Player* pPlayer = GetPlayer();
+
+	// シリンダーの当たり判定
+	if (CollisionCylinder(g_Boss[nCntBoss].nIdxCylinder, &pPlayer->pos))
+	{
+		// プレイヤーがシリンダーの中に入っていなかったら
+		return false;
+	}
+	
+	// プレイヤーがシリンダーの中にいる
+	return true;
+}
+//========================================================================================================
 // ボスの取得処理
 //========================================================================================================
 Boss* Getboss(void)
@@ -1800,4 +1854,26 @@ Boss* Getboss(void)
 int GetNumBoss(void)
 {
 	return g_nNumBoss;
+}
+//==============================================================================================================
+// ボスにシリンダーのインデックスを渡す処理
+//==============================================================================================================
+void BossPresentCylinderIdx(int nIdx)
+{
+	// インデックス保存用
+	static int oldIdx = -1;
+
+	//// インデックスが同じだったら
+	//if (nIdx == oldIdx) return;
+
+	// すべてのボス分回す
+	for (int nCntBoss = 0; nCntBoss < MAX_BOSS; nCntBoss++)
+	{
+		// ボスが未使用だったら
+		if (g_Boss[nCntBoss].bUse == false) continue;
+
+		g_Boss[nCntBoss].nIdxCylinder = nIdx;
+		oldIdx = nIdx;
+		break;
+	}
 }

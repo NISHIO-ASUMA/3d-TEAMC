@@ -184,14 +184,14 @@
     <ClCompile Include="player.cpp">
       <Filter>ソースファイル\cahrctor</Filter>
     </ClCompile>
-    <ClCompile Include="manual.cpp">
-      <Filter>ソースファイル\UI</Filter>
-    </ClCompile>
     <ClCompile Include="effect2d.cpp">
       <Filter>ソースファイル\2d</Filter>
     </ClCompile>
     <ClCompile Include="particle2d.cpp">
       <Filter>ソースファイル\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="barrier.cpp">
+      <Filter>ソースファイル\obj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -378,14 +378,14 @@
     <ClInclude Include="craftrecipe.h">
       <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
-    <ClInclude Include="manual.h">
-      <Filter>ヘッダーファイル\UI</Filter>
-    </ClInclude>
     <ClInclude Include="effect2d.h">
       <Filter>ヘッダーファイル\2d</Filter>
     </ClInclude>
     <ClInclude Include="particle2d.h">
       <Filter>ヘッダーファイル\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="barrier.h">
+      <Filter>ヘッダーファイル\obj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

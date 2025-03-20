@@ -169,9 +169,12 @@ void UpdateScore(void)
 		}
 	}
 	
-	// 目的のスコアに近づける
-	g_nScore += (g_nDestScore - g_nScore) * 0.1f;
-	
+	g_nScore += g_nDestScore / 180.0f;
+
+	if (g_nScore >= g_nDestScore)
+	{
+		g_nScore = g_nDestScore;
+	}
 	// スコアをセット
 	SetScore(g_nScore);
 }

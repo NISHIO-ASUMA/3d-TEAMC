@@ -20,5 +20,6 @@ void UninitTutorial3d(void);// チュートリアル3d画面の終了処理
 void UpdateTutorial3d(void);// チュートリアル3d画面の更新処理
 void DrawTutorial3d(void);	// チュートリアル3d画面の描画処理
 bool GetEditStatetuto(void);// エディットの状態取得
+void TutoEnablePause(bool bPause); // ポーズの状態設定処理
 #endif
 

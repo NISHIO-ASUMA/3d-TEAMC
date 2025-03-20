@@ -373,7 +373,7 @@ void DrawBlock(void)
 		pDevice->GetMaterial(&matDef);
 
 		// カメラがブロックの近くに無かったら
-		if ((sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, g_Block[nCntBlock].Size.y) == false) || mode == MODE_TITLE)
+		if ((sphererange(&pCamera->posV, &g_Block[nCntBlock].pos, 50.0f, (g_Block[nCntBlock].Size.x + g_Block[nCntBlock].Size.z) * 0.5f) == false) || mode == MODE_TITLE)
 		{
 			for (int nCntMat = 0; nCntMat < (int)g_Block[nCntBlock].BlockTex[nType].g_dwNumMatModel; nCntMat++)
 			{
@@ -897,7 +897,6 @@ void CreateObb(int nCnt)
 	g_Block[nCnt].Obb.Length[0] = fabsf(Length[0]) * 0.5f; // 長さX
 	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.6f; // 長さY
 	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.5f; // 長さZ
-
 }
 //=======================
 // OBBの判定

@@ -18,6 +18,8 @@
 #include "boss.h"
 #include "manual.h"
 #include "title.h"
+#include "time.h"
+#include "TutorialSupport.h"
 
 //**************************************************************************************************************
 //ƒ}ƒNƒ’è‹`
@@ -47,6 +49,10 @@ void UpdateUIFlash(int nCnt, float* pAlv,float Maxtime);	// UI‚Ì“_–Åˆ—(g‚¢‚Ü‚
 void SetTerritoryEnemyUI(int nCnt);		// ƒeƒŠƒgƒŠ[‚É“G‚ªo‚½‚ÌUI‚Ìİ’è
 void UIScalAnimation(int nCnt,float widthEx,float widthdec,float heightEx,float heigthDec, float MaxtimeWidth,float MaxtimeHeight); // Šg‘åk¬‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
 void UpdateCraftTimeUI(int nCnt);		// ƒNƒ‰ƒtƒg‚ÌŠÔ’†‚ÌUI
+void UpdateCraftTimeMenuUI(int nCnt);	// ƒNƒ‰ƒtƒgƒƒjƒ…[‚ÌUI‚Ìİ’è
+void UpdateDestroyTerritoryUI(int nCnt);			// ƒeƒŠƒgƒŠ[‚ğ”j‰ó‚µ‚½‚ÌUI
+void UpdateSpInfoUI(int nCnt);			// ƒXƒyƒVƒƒƒ‹UŒ‚‚ÌUI
+void UpdateCraftRecipeUI(int nCnt);		// ƒNƒ‰ƒtƒg‚ÌƒŒƒVƒs
 float fcolorA;
 
 //**************************************************************************************************************
@@ -77,7 +83,7 @@ void InitGameUI(void)
 	}
 
 	// ’¸“_ƒoƒbƒtƒ@‚Ì¶¬E’¸“_î•ñ‚Ìİ’è
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * UITYPE_MAX,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_UI,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -355,17 +361,28 @@ void UpdateGameUI(void)
 				break;
 			case UITYPE_BOSSMANUALEXIT:
 				SetBossManual(nCnt);
-				if (GetManualState() == false) g_GameUI[nCnt].bUse = false;
 				break;
 			case UITYPE_POPENEMY:
 				SetTerritoryEnemyUI(nCnt);
 				break;
 			case UITYPE_CRAFTTIME:
 				UpdateCraftTimeUI(nCnt);
-				// ƒNƒ‰ƒtƒg‚ÌŠÔ‚ªI‚í‚Á‚½‚ç
-				if (GetFirstCraftTIme() == false) g_GameUI[nCnt].bUse = false;
 				break;
-
+			case UITYPE_CRAFTTIMEMENU:
+				UpdateCraftTimeMenuUI(nCnt);
+				break;
+			case UITYPE_SPINFO:
+				// ƒXƒyƒVƒƒƒ‹UŒ‚‚Ìî•ñUI
+				UpdateSpInfoUI(nCnt);
+				break;
+			case UITYPE_SPONBREAK:
+				// ƒeƒŠƒgƒŠ[‚ğ”j‰ó‚µ‚½‚Æ‚«‚ÌUI
+				UpdateDestroyTerritoryUI(nCnt);
+				break;
+			case UITYPE_CRAFTRECIPE:
+				// ƒNƒ‰ƒtƒg‚ÌƒŒƒVƒs
+				UpdateCraftRecipeUI(nCnt);
+				break;
 			}
 
 			// õ–½‚ª‚ ‚é
@@ -814,6 +831,13 @@ void SetTerritoryTimeUI(int nCnt)
 	// ‘å‚«‚³‚ğİ’è
 	g_GameUI[nCnt].fWidth = NotCraftTime ?  0.0f : (isSetUI ? 40.0f : 0.0f);
 	g_GameUI[nCnt].fHeight = NotCraftTime ?  0.0f : (isSetUI ? 25.0f : 0.0f);
+
+	// ŠÔ‚Ìæ“¾
+	int nSecond = GetTimeSecond();
+	int nMinute = GetTimeMinute();
+
+	// ŠÔ‚ªc‚è15•b‚¾‚Á‚½‚ço‚³‚È‚¢
+	if (nMinute <= 0 && nSecond <= 10) g_GameUI[nCnt].bUse = false;
 }
 //==============================================================================================================
 // ƒ{ƒX‚Ìƒ}ƒjƒ…ƒAƒ‹‚Ìİ’è
@@ -975,13 +999,21 @@ void UpdateCraftTimeUI(int nCnt)
 {
 	VERTEX_2D* pVtx;
 
+	Player* pPlayer = GetPlayer();
+
+	// ƒNƒ‰ƒtƒg‚ÌŠÔ‚ªI‚í‚Á‚½‚ç
+	if (GetFirstCraftTIme() == false)
+	{
+		g_GameUI[nCnt].bUse = false;
+	}
+
 	//’¸“_ƒƒbƒN
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
 
 	pVtx += 4 * nCnt;
 
 	// –Ú“I‚Ì’l‚É‹ß‚Ã‚¯‚é
-	g_GameUI[nCnt].pos.x += SetSmoothAprroach(640.0f, g_GameUI[nCnt].pos.x, 0.1f);
+	g_GameUI[nCnt].pos.x += SetSmoothAprroach(640.0f, g_GameUI[nCnt].pos.x, 0.1f);	
 
 	//’¸“_ƒJƒ‰[‚Ìİ’è
 	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -997,4 +1029,179 @@ void UpdateCraftTimeUI(int nCnt)
 	//’¸“_ƒƒbƒN‰ğœ
 	g_pVtxBuffGameUI->Unlock();
 
+}
+//==============================================================================================================
+// ƒNƒ‰ƒtƒgƒƒjƒ…[‚ÌUI‚Ìİ’è
+//==============================================================================================================
+void UpdateCraftTimeMenuUI(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	static float fAlv = 0.0f;
+
+	//’¸“_ƒƒbƒN
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	// O•b
+	fAlv += 1.0f / 120.0f;
+
+	// ƒJƒEƒ“ƒ^[—p•Ï”
+	static int nCounter = 0;
+
+	// 1.0f‚É§ŒÀ‚·‚é
+	if (fAlv >= 1.0f)
+	{
+		fAlv = 1.0f;
+
+		// 2•b‚½‚Á‚½‚ç
+		if (nCounter >= 60)
+		{
+			// –Ú“I‚ÌˆÊ’u‚É‹ß‚Ã‚¯‚é
+			g_GameUI[nCnt].pos.x += SetSmoothAprroach(1050.0f, g_GameUI[nCnt].pos.x, 0.1f);
+			g_GameUI[nCnt].pos.y += SetSmoothAprroach(500.0f, g_GameUI[nCnt].pos.y, 0.1f);
+		}
+		else
+		{
+			// ƒCƒ“ƒNƒŠƒƒ“ƒg
+			nCounter++;
+		}
+	}
+
+	//’¸“_ƒJƒ‰[‚Ìİ’è
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//’¸“_ƒƒbƒN‰ğœ
+	g_pVtxBuffGameUI->Unlock();
+
+	// Å‰‚ÌƒNƒ‰ƒtƒg‚ÌŠÔ‚ªI‚í‚Á‚½‚ç
+	if (GetFirstCraftTIme() == false)
+	{
+		// ƒŠƒZƒbƒg‚·‚é
+		fAlv = 0.0f;
+		nCounter = 0;
+
+		// –¢g—p‚É‚·‚é
+		g_GameUI[nCnt].bUse = false;
+	}
+}
+//==============================================================================================================
+// ƒeƒŠƒgƒŠ[‚ğ”j‰ó‚µ‚½‚ÌUI
+//==============================================================================================================
+void UpdateDestroyTerritoryUI(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	//’¸“_ƒƒbƒN
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//’¸“_ƒJƒ‰[‚Ìİ’è
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//’¸“_ƒƒbƒN‰ğœ
+	g_pVtxBuffGameUI->Unlock();
+}
+//==============================================================================================================
+// ƒXƒyƒVƒƒƒ‹UŒ‚‚ÌUI
+//==============================================================================================================
+void UpdateSpInfoUI(int nCnt)
+{
+	// ƒ`ƒ…[ƒgƒŠƒAƒ‹‚ÌƒXƒeƒbƒv
+	int nStep = GetStep();
+
+	// ƒXƒeƒbƒv‚ª4‚¾‚Á‚½‚ç
+	const int spAttack = 4;
+
+	static float fAlv = 1.0f;
+
+	// ƒXƒyƒVƒƒƒ‹ƒAƒ^ƒbƒN‚Ìà–¾‚¶‚á‚È‚©‚Á‚½‚ç
+	if (nStep != spAttack)
+	{
+		// ƒAƒ‹ƒtƒ@’l‚ğ‰º‚°‚é
+		fAlv -= 1.0f / 60.0f;
+	}
+	else
+	{
+		fAlv = 1.0f;
+	}
+
+	// “§–¾‚É‚È‚Á‚½‚ç
+	if (fAlv <= 0.0f)
+	{
+		g_GameUI[nCnt].bUse = false;
+	}
+	VERTEX_2D* pVtx;
+
+	if (g_GameUI[nCnt].fWidth <= 200.0f)
+	{
+		// ‰¡•‚ğ‚¾‚ñ‚¾‚ñ‘å‚«‚­‚·‚é
+		g_GameUI[nCnt].fWidth += 200.0f / 60.0f;
+	}
+
+	//’¸“_ƒƒbƒN
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//’¸“_ƒJƒ‰[‚Ìİ’è
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//’¸“_ƒƒbƒN‰ğœ
+	g_pVtxBuffGameUI->Unlock();
+}
+//==============================================================================================================
+// ƒNƒ‰ƒtƒg‚ÌƒŒƒVƒs
+//==============================================================================================================
+void UpdateCraftRecipeUI(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	// ‚¾‚ñ‚¾‚ñ–Ú“I‚Ì’l‚É‹ß‚Ã‚¯‚é
+	g_GameUI[nCnt].pos.x += SetSmoothAprroach(1000.0f, g_GameUI[nCnt].pos.x, 0.1f);
+
+	//’¸“_ƒƒbƒN
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//’¸“_ƒJƒ‰[‚Ìİ’è
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//’¸“_ƒƒbƒN‰ğœ
+	g_pVtxBuffGameUI->Unlock();
 }

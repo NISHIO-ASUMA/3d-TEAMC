@@ -589,7 +589,6 @@ void DrawTime(void)
 	//プレイヤーの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);//プリミティブの種類
 
-
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffContDown, 0, sizeof(VERTEX_2D));
 
@@ -607,8 +606,6 @@ void DrawTime(void)
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTime * 4, 2);//プリミティブの種類
 		}
 	}
-
-
 }
 //=====================================================================================================================================================================
 // タイマーの取得処理

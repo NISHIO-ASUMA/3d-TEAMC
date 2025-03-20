@@ -79,7 +79,7 @@ void InitResultScore(void)
 		g_aResult[nCnt].fHeight = MAX_HEIGHT * SCALVALUE; // 高さを決める
 		g_aResult[nCnt].fWidth = MAX_WIDTH * SCALVALUE;   // 横幅を決める
 
-		g_aResult[nCnt].pos = D3DXVECTOR3(10.0f,450.0f,0.0f);
+		g_aResult[nCnt].pos = D3DXVECTOR3(200.0f,460.0f,0.0f);
 
 		// 頂点座標の設定
 		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -177,8 +177,16 @@ void UpdateResultScore(void)
 	// アンロック
 	g_pVtxBuffResultScore->Unlock();
 
-	// 目的の値に近づける
-	g_nResultScore += (g_nResultScoreDest - g_nResultScore) * 0.1f;
+	// 3秒かけて目的のスコアにする
+	g_nResultScore += g_nResultScoreDest / 120.0f;
+
+	// 目的のスコアを超えたら
+	if (g_nResultScore >= g_nResultScoreDest)
+	{
+		// 目的のスコアにする
+		g_nResultScore = g_nResultScoreDest;
+	}
+
 	SetResultScore(g_nResultScore);		// リザルトスコアの設定
 }
 //========================================================================================================

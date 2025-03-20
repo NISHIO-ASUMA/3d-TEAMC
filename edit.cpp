@@ -25,7 +25,7 @@
 //**************************************************************************************************************
 #define OBJ_MOVE (10.0f) // オブジェクトの移動量
 #define MAX_WORD (256)   // 文字数
-#define MAX_OBJ (512)    // 最大オブジェクト数
+#define MAX_OBJ (712)    // 最大オブジェクト数
 
 //**************************************************************************************************************
 //プロトタイプ宣言
@@ -801,14 +801,12 @@ void ReLoadEdit(void)
 
 	for (int nCnt = 0; nCnt < nCntobj; nCnt++)
 	{
+		g_Edit[g_EditCount].bUse = true; // 置かれていたブロックを使用状態にする
+		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
+		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
 
-			g_Edit[g_EditCount].bUse = true; // 置かれていたブロックを使用状態にする
-			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
-			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
-
-			g_EditCount++;
-			g_nNumBlock++;
-		
+		g_EditCount++;
+		g_nNumBlock++;	
 	}
 		// 使用状態にする
 		g_Edit[g_EditCount].bUse = true;

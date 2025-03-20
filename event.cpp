@@ -228,7 +228,7 @@ void SetEventParam(D3DXVECTOR3 pos)
 	//g_Event[nCnt].nCylinderIdx = SetMeshCylinder(pos, CYLINDERTYPE_EVENT, -1, POSITIONONE_RADIUS, COLOR_YELLOW, 16, 1, 0.0f, 2000.0f);
 
 	// ボスを設定
-	SetBoss(pos, 3.0f, 10000);
+	SetBoss(pos, 3.0f, 7500);
 
 	// ムービーを設定
 	SetMovie(180);

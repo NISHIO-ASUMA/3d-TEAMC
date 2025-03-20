@@ -67,6 +67,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/liferecovery.wav",0},   // 回復音
 	{"data/SE/itemthrowSe.wav",0},    // 投げアイテム音
 	{"data/SE/startSe.wav",0},       // 雑魚敵出現音
+	{"data/SE/se_pause_push.wav",0}  // ポーズキー押したときの音
 };
 //=============================================================================
 // 初期化処理

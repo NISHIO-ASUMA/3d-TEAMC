@@ -58,6 +58,7 @@
 #include "manual.h"
 #include "particle2d.h"
 #include "effect2d.h"
+#include "barrier.h"
 
 //**************************************************************************************************************
 // マクロ定義
@@ -86,7 +87,7 @@ bool g_bMovie = false;
 void InitGame(void)
 {
 	// カーソルを無効化
-	SetCursorVisibility(false);
+	ShowCursor(false);
 
 	// カメラの初期化処理
 	InitCamera();
@@ -202,14 +203,14 @@ void InitGame(void)
 	// カウンターの初期化処理
 	InitCounter();
 
-	// マニュアルの初期化処理
-	InitManual();
-
 	// エフェクト2dの初期化処理
 	InitEffect2D();
 
 	// パーティクル2dの初期化処理
 	InitParticle2D();
+
+	// バリアの初期化処理
+	InitBarrier();
 
 #ifdef _DEBUG
 
@@ -263,7 +264,19 @@ void InitGame(void)
 	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f),0);
 	SetWall(D3DXVECTOR3(-1550.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f),0);
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f),0);
-	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f),0);
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f),0);
+
+	// カメラから見て正面
+	SetBarrier(D3DXVECTOR3(0.0f,300.0f,1820.0f),D3DXVECTOR3(1600.0f,50.0f,50.0f),D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て背面
+	SetBarrier(D3DXVECTOR3(0.0f, 300.0f, -1870.0f), D3DXVECTOR3(1600.0f, 50.0f, 50.0f), D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て右の面
+	SetBarrier(D3DXVECTOR3(1530.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1900.0f), D3DXVECTOR3(-50.0f, 0.0f, -1900.0f));
+
+	// カメラから見て左の面
+	SetBarrier(D3DXVECTOR3(-1580.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1900.0f), D3DXVECTOR3(-50.0f, 0.0f, -1900.0f));
 
 	g_gameState = GAMESTATE_NORMAL; // 通常状態に設定
 	g_nCounterGameState = 0;		// 画面遷移の時間
@@ -408,22 +421,12 @@ void UninitGame(void)
 
 	// カウンターの終了処理
 	UninitCounter();
-
-	// マニュアルの終了処理
-	UninitManual();
 }
 //=========================================================================================================
 //ゲーム画面の更新処理
 //=========================================================================================================
 void UpdateGame(void)
 {
-	// マニュアルモードだったら関数を抜ける
-	if (UpdateManual() == true)
-	{
-		UpdateGameUI();
-		return;
-	}
-
 	if (g_bMovie == true && g_bPause == false)
 	{// ムービー状態じゃない かつ ポーズ中じゃない
 		g_gameState = GAMESTATE_MOVIE; // ムービー状態にする
@@ -490,6 +493,8 @@ void UpdateGame(void)
 
 	int nNumObj = GetNumobj(); // オブジェクトの数を取得
 
+#ifdef _DEBUG
+
 	// エディットモードだったら
 	if (KeyboardTrigger(DIK_F2) && g_bEditMode)
 	{
@@ -506,6 +511,7 @@ void UpdateGame(void)
 		g_bEditMode = true;
 	}
 
+#endif // DEBUG
 	// カメラ情報の取得
 	Camera* pCamera = GetCamera();
 
@@ -654,6 +660,9 @@ void UpdateGame(void)
 
 	if ((KeyboardTrigger(DIK_P) == true || JoypadTrigger(JOYKEY_START) == true) && g_bCraft == false)
 	{//ポーズキー(Pキー)が押された
+		// サウンド再生
+		PlaySound(SOUND_LABEL_PAUSE_STARTSE);
+
 		g_bPause = g_bPause ? false : true;
 	}
 	if (g_bPause == true)
@@ -784,9 +793,6 @@ void DrawGame(void)
 
 	// エフェクト2dの更新処理
 	DrawEffect2D();
-
-	// マニュアルの描画処理
-	DrawManual();
 
 	if (g_bPause == true)
 	{// ポーズ中

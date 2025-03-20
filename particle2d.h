@@ -14,6 +14,18 @@
 #include"main.h"
 
 //**************************************************************************************************************
+// パーティクルの種類
+//**************************************************************************************************************
+typedef enum
+{
+	PARTICLE2D_NORMAL = 0,
+	PARTICLE2D_ICON,
+	PARTICLE2D_CRAFT,
+	PARTICLE2D_SPMODE,
+	PARTICLE2D_MAX
+}PARTICLE2D;
+
+//**************************************************************************************************************
 // パーティクル2D構造体
 //**************************************************************************************************************
 typedef struct
@@ -39,7 +51,7 @@ void InitParticle2D(void);		// パーティクル2Dの初期化処理
 void UninitParticle2D(void);	// パーティクル2Dの終了処理
 void UpdateParticle2D(void);	// パーティクル2Dの更新処理
 void DrawParticle2D(void);		// パーティクル2Dの描画処理
-void SetParticle2D(D3DXVECTOR3 pos, int nLife, D3DXCOLOR col, float fRadius, int nType, int nNumParticle, D3DXVECTOR3 dir, D3DXVECTOR3 speed); // パーティクル2Dの設定処理
+void SetParticle2D(D3DXVECTOR3 pos,D3DXVECTOR3 speed, int nLife, D3DXCOLOR col, float fRadius, int nType, int nNumParticle); // パーティクル2Dの設定処理
 Particle2D* GetParticle2D(void); // パーティクルの取得
 #endif
 

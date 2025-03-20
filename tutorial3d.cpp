@@ -36,6 +36,13 @@
 #include "TutorialSupport.h"
 #include"spgauge.h"
 #include "craftrecipe.h"
+#include "effect2.h"
+#include "meshimpact.h"
+#include "meshcylinder.h"
+#include "particle2.h"
+#include "effect2d.h"
+#include "particle2d.h"
+#include "barrier.h"
 
 //*********************************************************************************************************************
 //グローバル変数
@@ -48,7 +55,7 @@ bool g_bEditMode2;		// 編集モードかどうか
 void InitTutorial3d(void)
 {
 	// カーソルを無効化
-	SetCursorVisibility(false);
+	ShowCursor(false);
 
 	// カメラの初期化処理
 	InitCamera();
@@ -101,6 +108,12 @@ void InitTutorial3d(void)
 	// パーティクルの初期化処理
 	InitParticle();
 
+	// エフェクトの初期化処理
+	InitEffectX();
+
+	// パーティクルの初期化処理
+	InitParticleX();
+
 	// アイコンの初期化処理
 	InitIcon();
 
@@ -113,25 +126,51 @@ void InitTutorial3d(void)
 	// スペシャルゲージの初期化処理
 	InitSPgauge();
 
+	// 衝撃波の初期化処理
+	InitMeshImpact();
+
+	// シリンダーの初期化処理
+	InitMeshCylinder();
+
+	// エフェクト2Dの初期化処理
+	InitEffect2D();
+
+	// パーティクル2Dの初期化処理
+	InitParticle2D();
+
+	// 見えない壁の初期化処理
+	InitBarrier();
+
 	// ステージの読み込み
 	LoadEdit();
 	LoadEdit2d();
 
-	// アイテムをセット
-	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 0);  // バット
-	SetItem(D3DXVECTOR3(-10.0f, 0.0f, 120.0f), 3); // 石
-
 	// UIをセット
-	SetGameUI(D3DXVECTOR3(640.0f, 440.0f, 0.0f), UITYPE_TUTORIAL, 600.0f, 40.0f, false, 0); // チュートリアル
+	SetGameUI(D3DXVECTOR3(965.0f, 40.0f, 0.0f), UITYPE_TUTORIAL, 300.0f, 45.0f, false, 0); // チュートリアル
 	SetGameUI(D3DXVECTOR3(70.0f, 640.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, false, 0);  // アイコンのフレーム
 	SetGameUI(D3DXVECTOR3(200.0f, 660.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false, 0); // アイコンのストックフレーム
 	SetGameUI(D3DXVECTOR3(60.0f, 120.0f, 0.0f), UITYPE_SP, 55.0f, 50.0f, false, 0);              // SP操作
-	
+
+	// ストックキーのUI
+	SetGameUI(D3DXVECTOR3(75.0f, 520.0f, 0.0f), UITYPE_STOCKKEY, 50.0f, 30.0f, false, 0);
+
 	// 壁を設置する
 	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f), 0);
 	SetWall(D3DXVECTOR3(-1550.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f), 0);
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f), 0);
-	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f), 0);
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f), 0);
+
+	// カメラから見て正面
+	SetBarrier(D3DXVECTOR3(0.0f, 300.0f, 1820.0f), D3DXVECTOR3(1600.0f, 50.0f, 50.0f), D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て背面
+	SetBarrier(D3DXVECTOR3(0.0f, 300.0f, -1870.0f), D3DXVECTOR3(1600.0f, 50.0f, 50.0f), D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て右の面
+	SetBarrier(D3DXVECTOR3(1530.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1900.0f), D3DXVECTOR3(-50.0f, 0.0f, -1900.0f));
+
+	// カメラから見て左の面
+	SetBarrier(D3DXVECTOR3(-1580.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1900.0f), D3DXVECTOR3(-50.0f, 0.0f, -1900.0f));
 
 	// ストックアイテムのアイコンをセット
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0, ICONTYPE_HOLDITEM);
@@ -204,6 +243,9 @@ void UninitTutorial3d(void)
 	// エフェクトの終了処理
 	UninitEffect();
 
+	// エフェクトの終了処理
+	UninitEffectX();
+
 	// アイコンの終了処理
 	UninitIcon();
 
@@ -218,6 +260,15 @@ void UninitTutorial3d(void)
 
 	// スペシャルゲージの終了処理
 	UninitSPgauge();
+
+	// 衝撃波の終了処理
+	UninitMeshImpact();
+
+	// シリンダーの終了処理
+	UninitMeshCylinder();
+
+	// エフェクト2Dの終了処理
+	UninitEffect2D();
 
 }
 //==============================================================================================================
@@ -266,7 +317,6 @@ void UpdateTutorial3d(void)
 		UpdateGauge();
 	}
 
-
 	// アイコンの更新処理
 	UpdateIcon();
 
@@ -299,9 +349,6 @@ void DrawTutorial3d(void)
 	// メッシュフィールドの描画処理
 	DrawMeshField();
 
-	// 壁の描画処理
-	DrawWall();
-
 	// プレイヤーの描画処理
 	DrawPlayer();
 
@@ -326,8 +373,11 @@ void DrawTutorial3d(void)
 	// 剣の軌跡の描画処理
 	DrawMeshSword();
 
-	// エフェクトの描画処理
+	//// エフェクトの描画処理
 	//DrawEffect();
+
+	// 壁の描画処理
+	DrawWall();
 
 	// スペシャルゲージの描画処理
 	DrawSPgauge();
