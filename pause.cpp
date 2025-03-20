@@ -16,6 +16,7 @@
 #include "mark.h"
 #include "math.h"
 #include "tutorial3d.h"
+#include "sound.h"
 
 //**************************************************************************************************************
 // プロトタイプ宣言
@@ -128,6 +129,9 @@ void InitPause(void)
 //=====================================================================================================
 void UninitPause(void)
 {
+	// 音楽を停止
+	StopSound();
+
 	// テクスチャの破棄
 	for (int nCntPause = 0; nCntPause < PAUSE_TEXTURE_MAX; nCntPause++)
 	{
@@ -155,10 +159,16 @@ void UpdatePause(void)
 		
 		if ((KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN)==true || KeyboardTrigger(DIK_S) == true) && bSelect == false)
 		{
+			// サウンド再生
+			PlaySound(SOUND_LABEL_SELECT_SE);
+
 			g_PauseMenu = PAUSE_MENU_RETRY; // リトライ選択
 		}
 		else if ((KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true) && bSelect == false)
 		{
+			// サウンド再生
+			PlaySound(SOUND_LABEL_SELECT_SE);
+
 			g_PauseMenu = PAUSE_MENU_QUIT; // やめる選択
 		}
 		SelectPause(PAUSE_MENU_CONTINUE);
@@ -168,10 +178,16 @@ void UpdatePause(void)
 	case PAUSE_MENU_RETRY:
 		if ((KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true || KeyboardTrigger(DIK_S) == true && bSelect == false))
 		{
+			// サウンド再生
+			PlaySound(SOUND_LABEL_SELECT_SE);
+
 			g_PauseMenu = PAUSE_MENU_QUIT; // やめる選択
 		}
 		else if ((KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true && bSelect == false))
 		{
+			// サウンド再生
+			PlaySound(SOUND_LABEL_SELECT_SE);
+
 			g_PauseMenu = PAUSE_MENU_CONTINUE; // 続ける選択	
 		}
 		SelectPause(PAUSE_MENU_RETRY);
@@ -182,10 +198,16 @@ void UpdatePause(void)
 		
 		if ((KeyboardTrigger(DIK_DOWN) == true || JoypadTrigger(JOYKEY_DOWN) == true || KeyboardTrigger(DIK_S) == true) && bSelect == false)
 		{
+			// サウンド再生
+			PlaySound(SOUND_LABEL_SELECT_SE);
+
 			g_PauseMenu = PAUSE_MENU_CONTINUE; // 続ける選択
 		}
 		else if ((KeyboardTrigger(DIK_UP) == true || JoypadTrigger(JOYKEY_UP) == true || KeyboardTrigger(DIK_W) == true) && bSelect == false)
 		{
+			// サウンド再生
+			PlaySound(SOUND_LABEL_SELECT_SE);
+
 			g_PauseMenu = PAUSE_MENU_RETRY; // リトライ選択
 		}
 		SelectPause(PAUSE_MENU_QUIT);
@@ -196,6 +218,10 @@ void UpdatePause(void)
 	// 決定したら
 	if ((KeyboardTrigger(DIK_RETURN) == true || JoypadTrigger(JOYKEY_A) == true || OnMouseTriggerDown(LEFT_MOUSE) == true) && bSelect == false)
 	{// Enterキー or Aボタン or 左クリック
+
+		// サウンド再生
+		PlaySound(SOUND_LABEL_ENTER_SE);
+
 		switch (g_PauseMenu)
 		{
 		case PAUSE_MENU_CONTINUE:

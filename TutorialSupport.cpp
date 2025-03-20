@@ -17,6 +17,11 @@
 #include "gameui.h"
 
 //**************************************************************************************************************
+// マクロ定義
+//**************************************************************************************************************
+#define NUM_SHIFT_VTX (2) // 既存の4頂点生成に掛ける値 (今回は8頂点ほしいので 4*2 をする)
+
+//**************************************************************************************************************
 // 種類の列挙型宣言
 //**************************************************************************************************************
 typedef enum
@@ -95,7 +100,7 @@ void InitManager(void)
 	}
 
 	// 頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 8, 
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * NUM_SHIFT_VTX,
 		D3DUSAGE_WRITEONLY, 
 		FVF_VERTEX_2D, 
 		D3DPOOL_MANAGED, 
@@ -108,56 +113,35 @@ void InitManager(void)
 	// 頂点バッファをロックして頂点情報へのポインタを取得
 	g_pVtxBuffManager->Lock(0, 0, (void**)&pVtx, 0);
 
-	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(950.0f + fPlusX, 70.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1250.0f + fPlusX, 70.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 240.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1250.0f + fPlusX, 240.0f, 0.0f);
+	for (int nCnt = 0; nCnt < NUM_SHIFT_VTX; nCnt++)
+	{// 今回はポリゴン二枚分の頂点バッファ生成 (〇と2Dポリゴン)をしているためその分を設定する
+		// 頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	// rhwの設定
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
+		// rhwの設定
+		pVtx[0].rhw = 1.0f;
+		pVtx[1].rhw = 1.0f;
+		pVtx[2].rhw = 1.0f;
+		pVtx[3].rhw = 1.0f;
 
-	// 頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+		// 頂点カラーの設定
+		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
+		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
 
-	// テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		// テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	//ここからは〇の頂点バッファ
-	pVtx += 4;
-
-	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(950.0f + fPlusX, 70.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1000.0f + fPlusX, 70.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 120.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1000.0f + fPlusX, 120.0f, 0.0f);
-
-	// rhwの設定
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
-
-	// 頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
-
-	// テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		// 〇の頂点バッファのためにずらす
+		pVtx += 4;
+	}
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffManager->Unlock();
@@ -205,10 +189,10 @@ void UpdateManager(void)
 	g_pVtxBuffManager->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(950.0f + fPlusX, 70.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1250.0f + fPlusX, 70.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 240.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1250.0f + fPlusX, 240.0f, 0.0f);
+	pVtx[0].pos = D3DXVECTOR3(950.0f + fPlusX, 110.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(1250.0f + fPlusX, 110.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 280.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(1250.0f + fPlusX, 280.0f, 0.0f);
 
 	// 頂点カラーの設定
 	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fALv2);
@@ -219,7 +203,7 @@ void UpdateManager(void)
 	//〇の処理
 	pVtx += 4;
 
-	// 頂点座標の設定
+	// 〇の頂点座標の設定
 	pVtx[0].pos = D3DXVECTOR3(950.0f + fPlusX, 70.0f, 0.0f);
 	pVtx[1].pos = D3DXVECTOR3(1100.0f + fPlusX, 70.0f, 0.0f);
 	pVtx[2].pos = D3DXVECTOR3(950.0f + fPlusX, 220.0f, 0.0f);
