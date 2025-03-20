@@ -1546,7 +1546,7 @@ void UpdateKickAttack(int nCntEnemy)
 	if (isKickAttack(nCntEnemy,pPlayer) == true && CheckMotionBounds(nKey, nCounter,4, LastKey,0, EndFrame) == true)
 	{
 		// プレイヤーにダメージを与える
-		HitPlayer(69,false, 0, 0);
+		HitPlayer(59,false, 0, 0);
 	}
 }
 //===============================================================================================================
@@ -1575,7 +1575,7 @@ void UpdatePunchAttack(int nCntEnemy)
 	if (isPunchAttack(nCntEnemy, pPlayer) == true && CheckMotionBounds(nKey, nCounter, 3, LastKey, 0, EndFrame) == true)
 	{
 		// プレイヤーにダメージを与える
-		HitPlayer(50, false, 0, 0);
+		HitPlayer(10, false, 0, 0);
 	}
 }
 //===============================================================================================================
