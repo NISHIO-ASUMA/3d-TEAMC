@@ -145,12 +145,8 @@ void InitTutorial3d(void)
 	LoadEdit();
 	LoadEdit2d();
 
-	// アイテムをセット
-	SetItem(D3DXVECTOR3(70.0f, 0.0f, 120.0f), 0);  // バット
-	SetItem(D3DXVECTOR3(-10.0f, 0.0f, 120.0f), 3); // 石
-
 	// UIをセット
-	SetGameUI(D3DXVECTOR3(640.0f, 440.0f, 0.0f), UITYPE_TUTORIAL, 600.0f, 40.0f, false, 0); // チュートリアル
+	SetGameUI(D3DXVECTOR3(965.0f, 40.0f, 0.0f), UITYPE_TUTORIAL, 300.0f, 45.0f, false, 0); // チュートリアル
 	SetGameUI(D3DXVECTOR3(70.0f, 640.0f, 0.0f), UITYPE_ICONFRAME, 70.0f, 80.0f, false, 0);  // アイコンのフレーム
 	SetGameUI(D3DXVECTOR3(200.0f, 660.0f, 0.0f), UITYPE_ICONFRAMESTOCK, 60.0f, 60.0f, false, 0); // アイコンのストックフレーム
 	SetGameUI(D3DXVECTOR3(60.0f, 120.0f, 0.0f), UITYPE_SP, 55.0f, 50.0f, false, 0);              // SP操作

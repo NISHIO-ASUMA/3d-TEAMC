@@ -657,6 +657,9 @@ void UpdateGame(void)
 
 	if ((KeyboardTrigger(DIK_P) == true || JoypadTrigger(JOYKEY_START) == true) && g_bCraft == false)
 	{//ポーズキー(Pキー)が押された
+		// サウンド再生
+		PlaySound(SOUND_LABEL_PAUSE_STARTSE);
+
 		g_bPause = g_bPause ? false : true;
 	}
 	if (g_bPause == true)
