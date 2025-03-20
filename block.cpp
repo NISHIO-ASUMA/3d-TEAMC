@@ -922,9 +922,9 @@ bool collisionObb(int nCnt)
 	//D3DXVECTOR3 Min(10.0f,0.0f,10.0f);
 
 	// Player
-	PlayerLength[0] = fabsf(pPlayer->Motion.aModel[0].Size.x);
-	PlayerLength[1] = fabsf(pPlayer->Motion.aModel[0].Size.y);
-	PlayerLength[2] = fabsf(pPlayer->Motion.aModel[0].Size.z);
+	PlayerLength[0] = fabsf(pPlayer->Size.x);
+	PlayerLength[1] = fabsf(pPlayer->Size.y);
+	PlayerLength[2] = fabsf(pPlayer->Size.z);
 
 	// Player
 	D3DXVECTOR3 NBe1 = NULLVECTOR3;

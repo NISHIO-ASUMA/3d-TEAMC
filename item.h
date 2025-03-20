@@ -141,6 +141,7 @@ typedef struct
 	int Power;							// 攻撃力
 	int nMinimapIdx;					// ミニマップのインデックス
 	bool bTracking;						// プレイヤーについていくか
+	int nCylinderIdx;					// シリンダーのインデックス
 }Item;
 
 //***************************

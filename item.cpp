@@ -30,6 +30,7 @@
 #include "minimap.h"
 #include "particle2d.h"
 #include "mark.h"
+#include "meshcylinder.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -97,6 +98,7 @@ void InitItem(void)
 		g_Item[nCntItem].Itemtag[0] = {};					   // タグ
 		g_Item[nCntItem].Power = 0;							   // 攻撃力
 		g_Item[nCntItem].bTracking = false;					   // プレイヤーに追従するかどうか
+		g_Item[nCntItem].nCylinderIdx = 0;					   // シリンダーのインデックス
 	}
 
 	LoadItemInfo();  // アイテムの情報
@@ -1237,6 +1239,9 @@ void UpdateCraftItemParam(int nCnt)
 
 			// ミニマップのアイテムのアイコンのリセット
 			ResetItemMinimap();
+
+			// メッシュシリンダーのリセット
+			ResetItemCylinder();
 
 			// プレイヤーが最初のクラフトタイムでクラフトを実行したら
 			if (pPlayer->bFirstCraft == false && GetFirstCraftTIme() == true)

@@ -1056,7 +1056,7 @@ void UpdateCraftTimeMenuUI(int nCnt)
 		fAlv = 1.0f;
 
 		// 2•b‚½‚Á‚½‚ç
-		if (nCounter >= 120)
+		if (nCounter >= 60)
 		{
 			// –Ú“I‚ÌˆÊ’u‚É‹ß‚Ã‚¯‚é
 			g_GameUI[nCnt].pos.x += SetSmoothAprroach(1050.0f, g_GameUI[nCnt].pos.x, 0.1f);

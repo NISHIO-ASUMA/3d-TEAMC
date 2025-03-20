@@ -1369,6 +1369,12 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 
 			LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
+
+			// メッシュシリンダーのリセット
+			ResetItemCylinder();
+
+			// アイテムのシリンダー
+			SetItemCylinder(g_player.ItemIdx);
 		}
 	}
 
@@ -1406,6 +1412,9 @@ void PlayerComb(MOTIONTYPE motiontype, int AttackState, int nCounterState, COMBO
 	// 敵の最大数分求める
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
 	{
+		// 敵が使われていたら
+		if (pEnemy[nCnt].bUse == false) continue;
+
 		// 距離を求める
 		float DisposX = pEnemy[nCnt].pos.x - g_player.pos.x;
 		float DisposY = pEnemy[nCnt].pos.y - g_player.pos.y;
@@ -2624,6 +2633,9 @@ void DestroyWepon(void)
 		// ミニマップのアイテムのリセット
 		ResetItemMinimap();
 
+		// メッシュシリンダーのリセット
+		ResetItemCylinder();
+
 		// ミニマップのアイテムのロード
 		LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
 
@@ -2811,6 +2823,8 @@ void HandleSpecialAttack(void)
 	// スペシャルモーションからもとに戻す
 	if (is_restoreMotion == true)
 	{
+		ResetItemMinimap();
+
 		// 音楽再生
 		PlaySound(SPUND_LABEL_WEPONBREAK);
 
@@ -2885,6 +2899,9 @@ void UpdateItemStock(void)
 
 		// プレイヤーの状態を何も持っていない状態にする
 		g_player.HandState = PLAYERHOLD_NO;
+
+		// メッシュシリンダーのリセット
+		ResetItemCylinder();
 
 		// ミニマップのアイテムのリセット
 		ResetItemMinimap();

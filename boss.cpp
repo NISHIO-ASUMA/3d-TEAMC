@@ -677,10 +677,10 @@ void HitBoss(int nCntBoss,int nDamage)
 	else
 	{
 		// 左の振動の強さ
-		float leftmotor = pPlayer->AttackSp ? 45000 : 10000;
+		float leftmotor = pPlayer->AttackSp ? 25000 : 10000;
 
 		// 右の振動の強さ
-		float rightmotor = pPlayer->AttackSp ? 45000 : 10000;
+		float rightmotor = pPlayer->AttackSp ? 25000 : 10000;
 
 		SetVibration(leftmotor, rightmotor, 500);
 
@@ -702,7 +702,7 @@ void HitBoss(int nCntBoss,int nDamage)
 
 		g_Boss[nCntBoss].state = ENEMYSTATE_DAMAGE;
 		g_Boss[nCntBoss].nCounterState = 20;
-		AddSpgauge(1.0f);   // SPゲージを取得
+		AddSpgauge(5.0f);   // SPゲージを取得
 
 		g_bManual = true;
 

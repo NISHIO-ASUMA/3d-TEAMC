@@ -75,4 +75,7 @@ void SetPotisionCylinder(int nIdx,D3DXVECTOR3 pos); // シリンダーの位置設定処理
 void DeleteCylinder(int nIdx);
 bool KeepInCylinder(D3DXVECTOR3 *pPos);
 bool CollisionCylinder(int nIdx, D3DXVECTOR3* pPos);
+void SetItemCylinder(int nHaveIdx);		// シリンダーのインデックス
+void ResetItemCylinder(void);		// シリンダーの消去
+
 #endif
