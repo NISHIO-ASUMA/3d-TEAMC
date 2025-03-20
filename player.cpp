@@ -3307,7 +3307,6 @@ void SetUpPlayerAttack(void)
 
 	if (isJumpAttack == true && (OnMouseTriggerDown(LEFT_MOUSE) || JoypadTrigger(JOYKEY_X)))
 	{
-		g_player.move.y = 0.0f;
 		ResetMeshSword();
 		PlayerComb(MOTIONTYPE_JUMPACTION, 70, 70, COMBO_ATTACK4);
 	}

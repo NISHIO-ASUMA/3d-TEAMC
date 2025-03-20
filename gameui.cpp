@@ -19,6 +19,7 @@
 #include "manual.h"
 #include "title.h"
 #include "time.h"
+#include "TutorialSupport.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -50,7 +51,8 @@ void UIScalAnimation(int nCnt,float widthEx,float widthdec,float heightEx,float 
 void UpdateCraftTimeUI(int nCnt);		// クラフトの時間中のUI
 void UpdateCraftTimeMenuUI(int nCnt);	// クラフトメニューのUIの設定
 void UpdateDestroyTerritoryUI(int nCnt);			// テリトリーを破壊した時のUI
-
+void UpdateSpInfoUI(int nCnt);			// スペシャル攻撃のUI
+void UpdateCraftRecipeUI(int nCnt);		// クラフトのレシピ
 float fcolorA;
 
 //**************************************************************************************************************
@@ -370,10 +372,16 @@ void UpdateGameUI(void)
 				UpdateCraftTimeMenuUI(nCnt);
 				break;
 			case UITYPE_SPINFO:
+				// スペシャル攻撃の情報UI
+				UpdateSpInfoUI(nCnt);
 				break;
 			case UITYPE_SPONBREAK:
 				// テリトリーを破壊したときのUI
 				UpdateDestroyTerritoryUI(nCnt);
+				break;
+			case UITYPE_CRAFTRECIPE:
+				// クラフトのレシピ
+				UpdateCraftRecipeUI(nCnt);
 				break;
 			}
 
@@ -1092,6 +1100,91 @@ void UpdateCraftTimeMenuUI(int nCnt)
 void UpdateDestroyTerritoryUI(int nCnt)
 {
 	VERTEX_2D* pVtx;
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
+}
+//==============================================================================================================
+// スペシャル攻撃のUI
+//==============================================================================================================
+void UpdateSpInfoUI(int nCnt)
+{
+	// チュートリアルのステップ
+	int nStep = GetStep();
+
+	// ステップが4だったら
+	const int spAttack = 4;
+
+	static float fAlv = 1.0f;
+
+	// スペシャルアタックの説明じゃなかったら
+	if (nStep != spAttack)
+	{
+		// アルファ値を下げる
+		fAlv -= 1.0f / 60.0f;
+	}
+	else
+	{
+		fAlv = 1.0f;
+	}
+
+	// 透明になったら
+	if (fAlv <= 0.0f)
+	{
+		g_GameUI[nCnt].bUse = false;
+	}
+	VERTEX_2D* pVtx;
+
+	if (g_GameUI[nCnt].fWidth <= 200.0f)
+	{
+		// 横幅をだんだん大きくする
+		g_GameUI[nCnt].fWidth += 200.0f / 60.0f;
+	}
+
+	//頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, fAlv);
+
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
+}
+//==============================================================================================================
+// クラフトのレシピ
+//==============================================================================================================
+void UpdateCraftRecipeUI(int nCnt)
+{
+	VERTEX_2D* pVtx;
+
+	// だんだん目的の値に近づける
+	g_GameUI[nCnt].pos.x += SetSmoothAprroach(1000.0f, g_GameUI[nCnt].pos.x, 0.1f);
 
 	//頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);

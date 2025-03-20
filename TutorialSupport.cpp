@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "input.h"
 #include "spgauge.h"
+#include "gameui.h"
 
 //**************************************************************************************************************
 // 種類の列挙型宣言
@@ -317,6 +318,34 @@ void UpdateManager(void)
 			bAmove = -0.01f;
 		}
 	}
+
+	// UIをセットできるか
+	static bool bSetUI = true;
+
+	// スペシャル攻撃の説明だったら
+	if (nSteps == TYPE_SPATTACK && bSetUI == true)
+	{
+		SetGameUI(D3DXVECTOR3(640.0f, 500.0f, 0.0f), UITYPE_SPINFO, 0.0f, 100.0f, false, 0);
+		bSetUI = false;
+	}
+	else if (nSteps != TYPE_SPATTACK)
+	{
+		bSetUI = true;
+	}
+
+	static bool bSetRecipe = true;
+
+	// スペシャル攻撃の説明だったら
+	if (nSteps == 9 && bSetRecipe == true)
+	{
+		SetGameUI(D3DXVECTOR3(1500.0f, 600.0f, 0.0f), UITYPE_CRAFTRECIPE, 200.0f, 100.0f, false, 0);
+		bSetRecipe = false;
+	}
+	else if (nSteps != 9)
+	{
+		bSetRecipe = true;
+	}
+
 }
 //==============================================================================================================
 // チュートリアルサポートの描画処理
@@ -349,4 +378,11 @@ void DrawManager(void)
 		// ポリゴン描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4, 2);
 	}
+}
+//=====================================================================================================================
+// チュートリアルのステップ取得処理
+//=====================================================================================================================
+int GetStep(void)
+{
+	return nSteps;
 }

@@ -587,6 +587,11 @@ void Draw(void)
 			}
 		}
 
+		if (pCamera->bEditMode == true)
+		{
+			DrawCameraEdit();
+		}
+
 		if (g_mode == MODE_EFFECT)
 		{
 			// エフェクトエディター画面の描画
@@ -1091,11 +1096,11 @@ void DrawCameraEdit(void)
 	char aStrrectoperation[256];
 	char aStrKey[256];
 
-	wsprintf(&aStrBlockComent[0], "+*******************************************************************+\n"
+	snprintf(&aStrBlockComent[0],sizeof(aStrBlockComent), "+*******************************************************************+\n"
 								  "+                 モード切替:[F6]       < EDITMODE >                +\n"
 								  "+*******************************************************************+\n");
 
-	wsprintf(&aStrBlockComent1[0], "+*******************************************************************+\n"
+	snprintf(&aStrBlockComent1[0],sizeof(aStrBlockComent1),"+*******************************************************************+\n"
 								   "+                       アニメーションの設定                        +\n"
 								   "+*******************************************************************+\n");
 	int nType = pCamera->AnimType;
@@ -1103,34 +1108,34 @@ void DrawCameraEdit(void)
 
 	if (pCamera->aAnimInfo[nType].bTracking == true)
 	{
-		wsprintf(&aStrTracking[0], "[カメラ追従]:[F3]【オン】\n");
+		snprintf(&aStrTracking[0], sizeof(aStrTracking),"[カメラ追従]:[F3]【オン】\n");
 	}
 	else if (pCamera->aAnimInfo[nType].bTracking == false)
 	{
-		wsprintf(&aStrTracking[0], "[カメラ追従]:[F3]【オフ】\n");
+		snprintf(&aStrTracking[0], sizeof(aStrTracking), "[カメラ追従]:[F3]【オフ】\n");
 	}
 
-	wsprintf(&aStrrectoperation[0], "移動:[ WASD ]:視点移動:[ マウス右 ]:注視点移動:[ マウス左 ]\n");
+	snprintf(&aStrrectoperation[0], sizeof(aStrrectoperation), "移動:[ WASD ]:視点移動:[ マウス右 ]:注視点移動:[ マウス左 ]\n");
 
-	wsprintf(&aStrType[0], "種類選択:[ 1 / 2 ]  タイプ【 %d / %d 】", pCamera->AnimType, CAMERAANIM_MAX);
-
-
-	wsprintf(&aStrKey[0], "[ キー変更 ]:[ ← / → ]【 %d / %d 】\n", pCamera->nAnimKey, pCamera->aAnimInfo[nType].nNumKey);
+	snprintf(&aStrType[0], sizeof(aStrType), "種類選択:[ 1 / 2 ]  タイプ【 %d / %d 】", pCamera->AnimType, CAMERAANIM_MAX);
 
 
-	wsprintf(&aStrFrame[0], "[ フレーム変更 ]:[ ↑ / ↓ ] 【 %d 】\n", pCamera->aAnimInfo[nType].Anim_KeyInfo[nKey].nAnimFrame);
+	snprintf(&aStrKey[0], sizeof(aStrKey), "[ キー変更 ]:[ ← / → ]【 %d / %d 】\n", pCamera->nAnimKey, pCamera->aAnimInfo[nType].nNumKey);
 
-	wsprintf(&aStrSet[0], "[ 位置を決定する ]:[ RETURN ]");
 
-	wsprintf(&aStrSave[0], "[ 保存する ]:[ F7 ] << data\\cameraInfo.txt >>");
+	snprintf(&aStrFrame[0], sizeof(aStrFrame), "[ フレーム変更 ]:[ ↑ / ↓ ] 【 %d 】\n", pCamera->aAnimInfo[nType].Anim_KeyInfo[nKey].nAnimFrame);
+
+	snprintf(&aStrSet[0], sizeof(aStrSet), "[ 位置を決定する ]:[ RETURN ]");
+
+	snprintf(&aStrSave[0], sizeof(aStrSave), "[ 保存する ]:[ F7 ] << data\\cameraInfo.txt >>");
 
 	if (pCamera->aAnimInfo[nType].bLoopAnimation == true)
 	{
-		wsprintf(&aStrLoop[0], "[ LOOP ]:[ F8 ]【 ループする 】");
+		snprintf(&aStrLoop[0], sizeof(aStrLoop), "[ LOOP ]:[ F8 ]【 ループする 】");
 	}
 	else if (pCamera->aAnimInfo[nType].bLoopAnimation == false)
 	{
-		wsprintf(&aStrLoop[0], "[ LOOP ]:[ F8 ]【 ループしない 】");
+		snprintf(&aStrLoop[0], sizeof(aStrLoop), "[ LOOP ]:[ F8 ]【 ループしない 】");
 	}
 
 	g_pFont->DrawText(NULL, &aStrBlockComent[0], -1, &rectBlockComent000, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));

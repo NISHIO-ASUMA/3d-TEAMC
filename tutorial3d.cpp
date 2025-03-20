@@ -36,6 +36,12 @@
 #include "TutorialSupport.h"
 #include"spgauge.h"
 #include "craftrecipe.h"
+#include "effect2.h"
+#include "meshimpact.h"
+#include "meshcylinder.h"
+#include "particle2.h"
+#include "effect2d.h"
+#include "particle2d.h"
 
 //*********************************************************************************************************************
 //グローバル変数
@@ -101,6 +107,12 @@ void InitTutorial3d(void)
 	// パーティクルの初期化処理
 	InitParticle();
 
+	// エフェクトの初期化処理
+	InitEffectX();
+
+	// パーティクルの初期化処理
+	InitParticleX();
+
 	// アイコンの初期化処理
 	InitIcon();
 
@@ -112,6 +124,18 @@ void InitTutorial3d(void)
 
 	// スペシャルゲージの初期化処理
 	InitSPgauge();
+
+	// 衝撃波の初期化処理
+	InitMeshImpact();
+
+	// シリンダーの初期化処理
+	InitMeshCylinder();
+
+	// エフェクト2Dの初期化処理
+	InitEffect2D();
+
+	// パーティクル2Dの初期化処理
+	InitParticle2D();
 
 	// ステージの読み込み
 	LoadEdit();
@@ -207,6 +231,9 @@ void UninitTutorial3d(void)
 	// エフェクトの終了処理
 	UninitEffect();
 
+	// エフェクトの終了処理
+	UninitEffectX();
+
 	// アイコンの終了処理
 	UninitIcon();
 
@@ -221,6 +248,15 @@ void UninitTutorial3d(void)
 
 	// スペシャルゲージの終了処理
 	UninitSPgauge();
+
+	// 衝撃波の終了処理
+	UninitMeshImpact();
+
+	// シリンダーの終了処理
+	UninitMeshCylinder();
+
+	// エフェクト2Dの終了処理
+	UninitEffect2D();
 
 }
 //==============================================================================================================

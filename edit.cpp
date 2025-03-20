@@ -801,14 +801,12 @@ void ReLoadEdit(void)
 
 	for (int nCnt = 0; nCnt < nCntobj; nCnt++)
 	{
+		g_Edit[g_EditCount].bUse = true; // 置かれていたブロックを使用状態にする
+		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
+		g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
 
-			g_Edit[g_EditCount].bUse = true; // 置かれていたブロックを使用状態にする
-			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType] = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].pModel[g_Edit[g_EditCount].nType];
-			g_Edit[g_EditCount].Category[g_Edit[g_EditCount].EditCategory].nNumModel = g_BlockTexInfo[g_Edit[g_EditCount].EditCategory].nNumModel;
-
-			g_EditCount++;
-			g_nNumBlock++;
-		
+		g_EditCount++;
+		g_nNumBlock++;	
 	}
 		// 使用状態にする
 		g_Edit[g_EditCount].bUse = true;

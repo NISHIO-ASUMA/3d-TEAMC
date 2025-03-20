@@ -761,6 +761,9 @@ void SetEnemy(D3DXVECTOR3 pos,int nType,int nLife,float Speed,int TerritoryNumbe
 			// 影を設定
 			g_Enemy[nCntEnemy].nIdxShadow = SetShadow(D3DXVECTOR3(g_Enemy[nCntEnemy].pos.x, 1.0f, g_Enemy[nCntEnemy].pos.z), D3DXVECTOR3(0.0f,0.0f,0.0f), 40.0f, 1.0f);
 
+			// ミニマップの位置の設定処理
+			SetMiniMapPotision(g_Enemy[nCntEnemy].nIdxMap, &g_Enemy[nCntEnemy].pos);
+
 			g_nNumEnemy++; // インクリメント
 			break;
 		}
@@ -2138,6 +2141,9 @@ void DeletTerritory(void)
 				bFirstCraftTime = true;
 				return;
 			}
+
+			// 音楽再生
+			PlaySound(SOUND_LABEL_ITEM_SE);
 
 			// テリトリー破壊UI
 			SetGameUI(D3DXVECTOR3(640.0f, 460.0f, 0.0f), UITYPE_SPONBREAK, 150.0f, 50.0f, true, 120.0f);
