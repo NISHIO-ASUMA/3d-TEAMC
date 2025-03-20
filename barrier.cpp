@@ -99,6 +99,8 @@ void CollisionBarrier(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMov
 			isCollisionBehindZ(pPos, pPosOld, pMove, pSize, nCnt); 
 		}
 
+#ifdef _DEBUG
+
 		float MaxX = g_Barrier[nCnt].pos.x + g_Barrier[nCnt].Size.x * 0.5f;
 		float MaxY = g_Barrier[nCnt].pos.y + g_Barrier[nCnt].Size.y * 0.5f;
 		float MaxZ = g_Barrier[nCnt].pos.z + g_Barrier[nCnt].Size.z * 0.5f;
@@ -113,6 +115,7 @@ void CollisionBarrier(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMov
 		//SetEffectX(D3DXVECTOR3(MinX, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), COLOR_RED, 10, 10.0f, 0.0f, 0);
 		//SetEffectX(D3DXVECTOR3(0.0f, MinY, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), COLOR_RED, 10, 10.0f, 0.0f, 0);
 		//SetEffectX(D3DXVECTOR3(0.0f, 0.0f, MinZ), D3DXVECTOR3(0.0f, 0.0f, 0.0f), COLOR_RED, 10, 10.0f, 0.0f, 0);
+#endif // DEBUG
 	}
 }
 //==============================================================================================================

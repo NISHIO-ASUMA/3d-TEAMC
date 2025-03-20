@@ -1,34 +1,402 @@
 +================================================+
-+	          [1]アニメーションの情報            +
++	          [0]アニメーションの情報            +
 +================================================+
 ANIMATIONSET
-	LOOP = 0 
-	NUM_KEY = 3 
+	LOOP = 1 
+	NUM_KEY = 49 
 
-	TRACKING = 1 
+	TRACKING = 0 
 
-	KEYSET		# --- << KEY  0 / 3 >> --- 
-		FRAME = 16 
-		POSV = 37.93 261.27 -639.18 
-		POSR = 38.87 12.20 -88.76 
-		ROT = 2.00 0.00 0.00 
+	KEYSET		# --- << KEY  0 / 49 >> --- 
+		FRAME = 133 
+		POSV = -1406.41 154.62 -1678.42 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.73 -0.01 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  1 / 49 >> --- 
+		FRAME = 141 
+		POSV = -1416.51 154.62 -93.46 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.73 -0.01 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  2 / 49 >> --- 
+		FRAME = 43 
+		POSV = -1427.44 154.62 1621.50 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.73 -0.01 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  3 / 49 >> --- 
+		FRAME = 198 
+		POSV = -1427.44 154.62 1621.50 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.70 1.56 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  4 / 49 >> --- 
+		FRAME = 151 
+		POSV = -7.47 154.62 1631.69 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.70 1.56 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  5 / 49 >> --- 
+		FRAME = 51 
+		POSV = 1367.49 154.62 1641.56 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.70 1.56 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  6 / 49 >> --- 
+		FRAME = 166 
+		POSV = 1367.49 154.62 1641.56 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.69 3.10 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  7 / 49 >> --- 
+		FRAME = 165 
+		POSV = 1350.32 154.62 -2.20 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.72 -3.13 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  8 / 49 >> --- 
+		FRAME = 42 
+		POSV = 1330.22 154.62 -1672.07 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.72 -3.13 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  9 / 49 >> --- 
+		FRAME = 121 
+		POSV = 1330.22 154.62 -1672.07 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.73 -1.58 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  10 / 49 >> --- 
+		FRAME = 134 
+		POSV = 25.67 154.62 -1647.27 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.71 -1.54 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  11 / 49 >> --- 
+		FRAME = 150 
+		POSV = -37.27 154.62 -43.16 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.72 0.01 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  12 / 49 >> --- 
+		FRAME = 87 
+		POSV = -19.84 154.62 1626.75 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.72 0.01 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  13 / 49 >> --- 
+		FRAME = 120 
+		POSV = -19.84 154.62 1626.75 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.94 2.47 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  14 / 49 >> --- 
+		FRAME = 124 
+		POSV = 254.90 8.61 1220.09 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.69 2.30 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  15 / 49 >> --- 
+		FRAME = 124 
+		POSV = 474.80 8.61 1023.44 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.69 2.30 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  16 / 49 >> --- 
+		FRAME = 128 
+		POSV = 498.76 375.66 873.71 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.55 -3.10 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  17 / 49 >> --- 
+		FRAME = 139 
+		POSV = 325.54 800.69 -116.93 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.16 0.86 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  18 / 49 >> --- 
+		FRAME = 144 
+		POSV = 1319.30 983.39 -62.77 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.26 -0.76 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  19 / 49 >> --- 
+		FRAME = 230 
+		POSV = 1428.91 934.63 907.60 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.19 -2.08 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  20 / 49 >> --- 
+		FRAME = 82 
+		POSV = 692.08 555.54 1432.59 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.17 -1.82 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  21 / 49 >> --- 
+		FRAME = 40 
+		POSV = -277.01 73.83 1279.28 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.75 -1.56 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  22 / 49 >> --- 
+		FRAME = 124 
+		POSV = -683.90 73.83 1274.28 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.65 -2.32 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  23 / 49 >> --- 
+		FRAME = 40 
+		POSV = -737.20 73.83 127.89 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.59 3.13 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  24 / 49 >> --- 
+		FRAME = 81 
+		POSV = -736.08 73.83 -12.10 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.61 -2.18 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  25 / 49 >> --- 
+		FRAME = 122 
+		POSV = -969.89 73.83 -175.08 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.48 2.79 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  26 / 49 >> --- 
+		FRAME = 40 
+		POSV = -812.08 105.72 -557.38 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.80 2.92 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  27 / 49 >> --- 
+		FRAME = 106 
+		POSV = -766.32 105.72 -629.60 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.85 2.29 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  28 / 49 >> --- 
+		FRAME = 120 
+		POSV = -524.53 94.33 -755.51 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.87 -3.11 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  29 / 49 >> --- 
+		FRAME = 121 
+		POSV = -534.14 94.33 -1055.36 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.87 -3.11 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  30 / 49 >> --- 
+		FRAME = 40 
+		POSV = -417.29 94.33 -1586.05 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.46 2.81 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  31 / 49 >> --- 
+		FRAME = 134 
+		POSV = -417.29 94.33 -1586.05 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.56 1.63 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  32 / 49 >> --- 
+		FRAME = 40 
+		POSV = 905.26 220.63 -1645.22 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.85 1.46 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  33 / 49 >> --- 
+		FRAME = 121 
+		POSV = 905.26 220.63 -1645.22 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.30 0.13 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  34 / 49 >> --- 
+		FRAME = 101 
+		POSV = 1015.38 23.84 -1359.90 
+		POSR = 498.07 -5.87 -1049.25 
+		ROT = 1.62 -1.03 0.00 
 		DISTANCE = 604.15 
 	END_KEYSET
 
-	KEYSET		# --- << KEY  1 / 3 >> --- 
-		FRAME = 41 
-		POSV = 26.02 104.67 -260.68 
-		POSR = 17.30 33.57 -80.23 
-		ROT = 1.95 -0.05 0.00 
-		DISTANCE = 194.15 
+	KEYSET		# --- << KEY  35 / 49 >> --- 
+		FRAME = 120 
+		POSV = 783.32 29.73 -1230.67 
+		POSR = 286.70 248.65 -965.27 
+		ROT = 1.20 -1.08 0.00 
+		DISTANCE = 604.15 
 	END_KEYSET
 
-	KEYSET		# --- << KEY  2 / 3 >> --- 
+	KEYSET		# --- << KEY  36 / 49 >> --- 
+		FRAME = 125 
+		POSV = 606.02 212.31 -1157.68 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.55 -0.43 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  37 / 49 >> --- 
+		FRAME = 122 
+		POSV = 644.12 252.22 -676.74 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.08 0.09 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  38 / 49 >> --- 
+		FRAME = 40 
+		POSV = 618.53 64.50 -491.02 
+		POSR = 246.93 -60.97 -31.49 
+		ROT = 1.78 -0.68 0.00 
+		DISTANCE = 604.15 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  39 / 49 >> --- 
+		FRAME = 122 
+		POSV = 640.74 40.33 -445.05 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.70 -0.80 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  40 / 49 >> --- 
 		FRAME = 123 
-		POSV = 77.23 522.16 -1320.25 
-		POSR = 17.30 33.57 -80.23 
-		ROT = 1.95 -0.05 0.00 
-		DISTANCE = 1334.15 
+		POSV = 413.17 22.30 -316.45 
+		POSR = -12.35 136.88 96.83 
+		ROT = 1.38 -0.80 0.00 
+		DISTANCE = 604.15 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  41 / 49 >> --- 
+		FRAME = 181 
+		POSV = 53.60 104.67 -52.33 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.64 -0.85 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  42 / 49 >> --- 
+		FRAME = 120 
+		POSV = 36.35 1039.53 -23.22 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.44 -1.01 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  43 / 49 >> --- 
+		FRAME = 119 
+		POSV = 36.35 1039.53 -23.22 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.20 0.99 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  44 / 49 >> --- 
+		FRAME = 121 
+		POSV = 36.35 1039.53 -23.22 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.21 2.44 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  45 / 49 >> --- 
+		FRAME = 119 
+		POSV = 36.35 1039.53 -23.22 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.10 -2.32 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  46 / 49 >> --- 
+		FRAME = 122 
+		POSV = -613.51 325.31 -686.74 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.16 -2.33 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  47 / 49 >> --- 
+		FRAME = 115 
+		POSV = -1127.10 234.61 -1180.85 
+		POSR = 0.00 0.00 0.00 
+		ROT = 2.50 3.14 0.00 
+		DISTANCE = 0.00 
+	END_KEYSET
+
+	KEYSET		# --- << KEY  48 / 49 >> --- 
+		FRAME = 182 
+		POSV = -1112.33 89.68 -1676.37 
+		POSR = 0.00 0.00 0.00 
+		ROT = 1.72 -1.57 0.00 
+		DISTANCE = 0.00 
 	END_KEYSET
 
 END_ANIMATIONSET

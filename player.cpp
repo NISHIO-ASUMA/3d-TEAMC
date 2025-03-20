@@ -2361,13 +2361,13 @@ void SetMotionContller(void)
 		// キ一1番目かつカウントが5
 		if (CheckMotionBounds(nKey, nCounter, 1, 1, 5, 5) == true)
 		{
-			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[14].mtxWorld._41, g_player.Motion.aModel[14].mtxWorld._42, g_player.Motion.aModel[14].mtxWorld._43),
+			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[14].mtxWorld._41, g_player.Motion.aModel[14].mtxWorld._42 + 10.0f, g_player.Motion.aModel[14].mtxWorld._43),
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
 		}
 		// キ一3番目かつカウントが5
 		else if (CheckMotionBounds(nKey, nCounter, 3, 3, 5, 5) == true)
 		{
-			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[11].mtxWorld._41, g_player.Motion.aModel[11].mtxWorld._42, g_player.Motion.aModel[11].mtxWorld._43),
+			SetExplosion(D3DXVECTOR3(g_player.Motion.aModel[11].mtxWorld._41, g_player.Motion.aModel[11].mtxWorld._42 + 10.0f, g_player.Motion.aModel[11].mtxWorld._43),
 				D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 60, 20.0f, 20.0f, 0);
 		}
 	}
@@ -3075,6 +3075,11 @@ D3DXVECTOR3 SetMotionMoveAngle(void)
 			// プレイヤーの移動
 			OutPutMove.x = sinf(g_player.rotDestPlayer.y + D3DX_PI) * AVOID_MOVE;
 			OutPutMove.z = cosf(g_player.rotDestPlayer.y + D3DX_PI) * AVOID_MOVE;
+		}
+		else
+		{
+			OutPutMove.x = sinf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
+			OutPutMove.z = cosf(g_player.rot.y + D3DX_PI) * AVOID_MOVE;
 		}
 	}
 

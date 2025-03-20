@@ -42,6 +42,7 @@
 #include "particle2.h"
 #include "effect2d.h"
 #include "particle2d.h"
+#include "barrier.h"
 
 //*********************************************************************************************************************
 //グローバル変数
@@ -54,7 +55,7 @@ bool g_bEditMode2;		// 編集モードかどうか
 void InitTutorial3d(void)
 {
 	// カーソルを無効化
-	SetCursorVisibility(false);
+	ShowCursor(false);
 
 	// カメラの初期化処理
 	InitCamera();
@@ -137,6 +138,9 @@ void InitTutorial3d(void)
 	// パーティクル2Dの初期化処理
 	InitParticle2D();
 
+	// 見えない壁の初期化処理
+	InitBarrier();
+
 	// ステージの読み込み
 	LoadEdit();
 	LoadEdit2d();
@@ -158,7 +162,19 @@ void InitTutorial3d(void)
 	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f), 0);
 	SetWall(D3DXVECTOR3(-1550.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f), 0);
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f), 0);
-	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f), 0);
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f), 0);
+
+	// カメラから見て正面
+	SetBarrier(D3DXVECTOR3(0.0f, 300.0f, 1820.0f), D3DXVECTOR3(1600.0f, 50.0f, 50.0f), D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て背面
+	SetBarrier(D3DXVECTOR3(0.0f, 300.0f, -1870.0f), D3DXVECTOR3(1600.0f, 50.0f, 50.0f), D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
+
+	// カメラから見て右の面
+	SetBarrier(D3DXVECTOR3(1530.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1900.0f), D3DXVECTOR3(-50.0f, 0.0f, -1900.0f));
+
+	// カメラから見て左の面
+	SetBarrier(D3DXVECTOR3(-1580.0f, 300.0f, 0.0f), D3DXVECTOR3(50.0f, 50.0f, 1900.0f), D3DXVECTOR3(-50.0f, 0.0f, -1900.0f));
 
 	// ストックアイテムのアイコンをセット
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0, ICONTYPE_HOLDITEM);
@@ -305,7 +321,6 @@ void UpdateTutorial3d(void)
 		UpdateGauge();
 	}
 
-
 	// アイコンの更新処理
 	UpdateIcon();
 
@@ -338,9 +353,6 @@ void DrawTutorial3d(void)
 	// メッシュフィールドの描画処理
 	DrawMeshField();
 
-	// 壁の描画処理
-	DrawWall();
-
 	// プレイヤーの描画処理
 	DrawPlayer();
 
@@ -365,8 +377,11 @@ void DrawTutorial3d(void)
 	// 剣の軌跡の描画処理
 	DrawMeshSword();
 
-	// エフェクトの描画処理
+	//// エフェクトの描画処理
 	//DrawEffect();
+
+	// 壁の描画処理
+	DrawWall();
 
 	// スペシャルゲージの描画処理
 	DrawSPgauge();

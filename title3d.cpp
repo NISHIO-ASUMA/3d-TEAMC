@@ -34,7 +34,7 @@
 void InitTitle3d(void)
 {
 	// カーソルを無効化
-	SetCursorVisibility(true);
+	ShowCursor(false);
 
 	// カメラの初期化処理
 	InitCamera();

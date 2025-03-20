@@ -897,7 +897,6 @@ void CreateObb(int nCnt)
 	g_Block[nCnt].Obb.Length[0] = fabsf(Length[0]) * 0.5f; // ’·‚³X
 	g_Block[nCnt].Obb.Length[1] = fabsf(Length[1]) * 0.6f; // ’·‚³Y
 	g_Block[nCnt].Obb.Length[2] = fabsf(Length[2]) * 0.5f; // ’·‚³Z
-
 }
 //=======================
 // OBB‚Ì”»’è
@@ -923,9 +922,9 @@ bool collisionObb(int nCnt)
 	//D3DXVECTOR3 Min(10.0f,0.0f,10.0f);
 
 	// Player
-	PlayerLength[0] = fabsf(pPlayer->Size.x);
-	PlayerLength[1] = fabsf(pPlayer->Size.y);
-	PlayerLength[2] = fabsf(pPlayer->Size.z);
+	PlayerLength[0] = fabsf(pPlayer->Motion.aModel[0].Size.x);
+	PlayerLength[1] = fabsf(pPlayer->Motion.aModel[0].Size.y);
+	PlayerLength[2] = fabsf(pPlayer->Motion.aModel[0].Size.z);
 
 	// Player
 	D3DXVECTOR3 NBe1 = NULLVECTOR3;

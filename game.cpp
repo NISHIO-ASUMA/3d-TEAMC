@@ -87,7 +87,7 @@ bool g_bMovie = false;
 void InitGame(void)
 {
 	// カーソルを無効化
-	SetCursorVisibility(false);
+	ShowCursor(false);
 
 	// カメラの初期化処理
 	InitCamera();
@@ -264,7 +264,7 @@ void InitGame(void)
 	SetWall(D3DXVECTOR3(1500.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f,D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f),0);
 	SetWall(D3DXVECTOR3(-1550.0f, WALL_HEIGHT, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 1.0f, D3DXVECTOR3(19.0f, 1.0f, 1.0f),0);
 	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, 1800.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f),0);
-	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(15.0f, 1.0f, 1.0f),0);
+	SetWall(D3DXVECTOR3(0.0f, WALL_HEIGHT, -1850.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 1.0f, D3DXVECTOR3(16.0f, 1.0f, 1.0f),0);
 
 	// カメラから見て正面
 	SetBarrier(D3DXVECTOR3(0.0f,300.0f,1820.0f),D3DXVECTOR3(1600.0f,50.0f,50.0f),D3DXVECTOR3(-1600.0f, 0.0f, -50.0f));
