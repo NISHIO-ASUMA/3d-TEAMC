@@ -286,7 +286,7 @@ void UpdateGauge(void)
 	pVtx[10].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[11].tex = D3DXVECTOR2(g_fPer, 1.0f);
 
-	pVtx += 12;
+	g_pVtxBuffGauge->Unlock();
 
 	// ここからはフィーバー
 	
@@ -294,6 +294,10 @@ void UpdateGauge(void)
 	// そこからその割合を計算し長さにする、今は100でチャージ完了
 	g_fPer = g_fFeverCharge / 100.0f;
 	g_fLength = g_fPer * FEVERGAGE_LENGTH;
+
+	g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 12;
 
 	// 頂点カラーの設定
 	pVtx[4].col = COLOR_DEEPPINK;
