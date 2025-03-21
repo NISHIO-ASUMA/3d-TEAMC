@@ -326,11 +326,15 @@ void UpdateGauge(void)
 	}
 	else if (pPlayer->FeverMode == true && gameState != GAMESTATE_MOVIE)
 	{
+		g_pVtxBuffGauge->Lock(0, 0, (void**)&pVtx, 0);
+
 		// ’¸“_ƒJƒ‰[‚ÌÝ’è
 		pVtx[4].col = COLOR_YELLOW;
 		pVtx[5].col = COLOR_YELLOW;
 		pVtx[6].col = COLOR_YELLOW;
 		pVtx[7].col = COLOR_YELLOW;
+
+		g_pVtxBuffGauge->Unlock();
 
 		g_fFeverCharge -= 0.2f;
 		if (g_fFeverCharge <= 0.0f)
