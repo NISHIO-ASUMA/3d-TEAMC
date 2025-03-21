@@ -2143,7 +2143,7 @@ void DeletTerritory(void)
 			}
 
 			// 音楽再生
-			PlaySound(SOUND_LABEL_ITEM_SE);
+			PlaySound(SOUND_LABEL_BREAKSUPON_SE);
 
 			// テリトリー破壊UI
 			SetGameUI(D3DXVECTOR3(640.0f, 460.0f, 0.0f), UITYPE_SPONBREAK, 150.0f, 50.0f, true, 120.0f);

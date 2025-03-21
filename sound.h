@@ -50,6 +50,7 @@ typedef enum
 	SOUND_LABEL_ITEMTHROW,      // 投げアイテム音
 	SOUND_LABEL_ENEMYPOP_SE,    // 雑魚敵出現音
 	SOUND_LABEL_PAUSE_STARTSE,  // ポーズキー押したときの音
+	SOUND_LABEL_BREAKSUPON_SE,  // スポーン破壊
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 
