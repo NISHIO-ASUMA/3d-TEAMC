@@ -40,6 +40,7 @@ float g_fMaxLength;
 float g_fPer;
 float g_RedLength;
 float g_EaseCnt;
+float fDestPer;
 
 // フィーバーゲージ用変数
 float g_fFeverCharge;
@@ -82,7 +83,7 @@ void InitGauge(void)
 
 	g_RedLength = fLength;
 	g_EaseCnt = 0;
-
+	fDestPer = 0;
 	// HPゲージ分回す
 	for (int nCnt = 0; nCnt < NUM_HPGAUGE; nCnt++)
 	{
@@ -246,7 +247,7 @@ void UpdateGauge(void)
 	}
 
 	// テクスチャ座標の割合
-	static float fDestPer = g_fPer;
+	fDestPer = g_fPer;
 
 	float t = SetEase(g_EaseCnt, 120.0f);
 
@@ -289,7 +290,6 @@ void UpdateGauge(void)
 	g_pVtxBuffGauge->Unlock();
 
 	// ここからはフィーバー
-	
 	
 	// そこからその割合を計算し長さにする、今は100でチャージ完了
 	g_fPer = g_fFeverCharge / 100.0f;
