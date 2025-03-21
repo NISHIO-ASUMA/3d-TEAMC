@@ -3160,6 +3160,9 @@ void MotionTransition(void)
 	case MOTIONTYPE_ACTION4:
 		SetElementEffect();
 		break;
+	case MOTIONTYPE_JUMPACTION:
+		SetElementEffect();
+		break;
 	default:
 		break;
 	}
@@ -3356,9 +3359,9 @@ void SetUpJumpAction(int nKey,int nCounter,int nLastKey,int EndFrame)
 	// 刀のジャンプモーションか
 	const bool isKatanaMotion = g_player.WeponMotion == MOTION_KATANA && isJumpMotion;
 
-	if (isKatanaMotion && nKey == 0 && nCounter <= 5)
+	if (isKatanaMotion && nKey <= 4)
 	{
-		g_player.move.y = 5.0f;
+		g_player.move.y = -MAX_GLABITY * 0.2f;
 	}
 
 	// 両手武器のジャンプモーションか

@@ -1745,14 +1745,14 @@ void HitBossAbnormalCondition(int nCntBoss)
 		break;
 	case ITEMTYPE_BONESPEAR:
 		//骨槍なら確率で即死効果を与える
-		if (rand() % 40 == 0)
+		if (rand() % 33 == 0)
 		{
 			HitBoss(nCntBoss, 99999);
 		}
 		break;
 	case ITEMTYPE_HEXMANDOLIN:
 		//ダークハープなら確率で即死効果を与える
-		if (rand() % 32 == 0)
+		if (rand() % 33 == 0)
 		{
 			HitBoss(nCntBoss, 99999);
 		}
