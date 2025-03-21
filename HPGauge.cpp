@@ -246,8 +246,9 @@ void UpdateGauge(void)
 		g_EaseCnt++;
 	}
 
-	// テクスチャ座標の割合
-	fDestPer = g_fPer;
+	//// テクスチャ座標の割合
+	//fDestPer = g_fPer;
+
 
 	float t = SetEase(g_EaseCnt, 120.0f);
 
