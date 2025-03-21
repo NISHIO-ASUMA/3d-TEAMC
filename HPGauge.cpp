@@ -81,9 +81,18 @@ void InitGauge(void)
 
 	float fLength = fPer * MAX_HPLENGTH;
 
-	g_RedLength = fLength;
-	g_EaseCnt = 0;
-	fDestPer = 0;
+	g_RedLength = 0.0f;
+	g_EaseCnt = 0.0f;
+	fDestPer = 0.0f;
+	g_fLength = 0.0f;
+	g_fMaxLength = 0.0f;
+	g_fPer = 0.0f;
+
+	// 各ゲージの計算用変数
+
+	g_fFeverCharge = 0.0f;
+	g_bFeverON = 0.0f;
+
 	// HPゲージ分回す
 	for (int nCnt = 0; nCnt < NUM_HPGAUGE; nCnt++)
 	{
