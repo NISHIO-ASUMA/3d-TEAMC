@@ -75,15 +75,12 @@ void InitCamera(void)
 
 	for (int nCntAnim = 0; nCntAnim < CAMERAANIM_MAX; nCntAnim++)
 	{
-		//g_camera.aAnimInfo[nCntAnim].nNumKey = 1;
-		//g_camera.AnimType = CAMERAANIM_ONE;
-
 		for (int nCntKey = 0; nCntKey < MAX_KEY; nCntKey++)
 		{
 			g_camera.aAnimInfo[nCntAnim].Anim_KeyInfo[nCntKey].nAnimFrame = 40;
 		}
-		LoadCameraAnim(nCntAnim);
 	}
+	LoadCameraAnim(0);
 
 	bWaveCamera = false; // カメラを揺らすかどうか
 
@@ -537,30 +534,20 @@ void UpdateCameraAnim(void)
 		}
 
 		// 割合を計算
-		float fRatePosVX = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
-		float fRatePosVY = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
-		float fRatePosVZ = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
-		float fRatePosRX = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
-		float fRatePosRY = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
-		float fRatePosRZ = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
-
-		// 向きの割合を代入
-		float fRateRotX = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
-		float fRateRotY = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
-		float fRateRotZ = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
+		float fRateFrame = (float)g_camera.nCounterAnim / (float)g_camera.aAnimInfo[nType].Anim_KeyInfo[g_camera.nAnimKey].nAnimFrame;
 
 		// 現在の向きを算出
-		float fCurrentRotX = fRotX + DiffRotX * fRateRotX;
-		float fCurrentRotY = fRotY + DiffRotY * fRateRotY;
-		float fCurrentRotZ = fRotZ + DiffRotZ * fRateRotZ;
+		float fCurrentRotX = fRotX + DiffRotX * fRateFrame;
+		float fCurrentRotY = fRotY + DiffRotY * fRateFrame;
+		float fCurrentRotZ = fRotZ + DiffRotZ * fRateFrame;
 
 		// 追従しない
 		if (g_camera.aAnimInfo[nType].bTracking == false)
 		{
 			// 視点を更新
-			g_camera.posV.x = sinf(fCurrentRotY) + fPosVX + DiffPosVX * fRatePosVX;
-			g_camera.posV.y = cosf(fCurrentRotX) + fPosVY + DiffPosVY * fRatePosVY;
-			g_camera.posV.z = cosf(fCurrentRotY) + fPosVZ + DiffPosVZ * fRatePosVZ;
+			g_camera.posV.x = sinf(fCurrentRotY) + fPosVX + DiffPosVX * fRateFrame;
+			g_camera.posV.y = cosf(fCurrentRotX) + fPosVY + DiffPosVY * fRateFrame;
+			g_camera.posV.z = cosf(fCurrentRotY) + fPosVZ + DiffPosVZ * fRateFrame;
 
 			// 注視点を更新
 			g_camera.posR.x = g_camera.posV.x + sinf(fCurrentRotY);
@@ -606,11 +593,6 @@ void UpdateCameraAnim(void)
 		int nNumKey = pPlayer->Motion.aMotionInfo[Motiontype].nNumkey - 1;
 		int Frame = pPlayer->Motion.aMotionInfo[Motiontype].aKeyInfo[pPlayer->Motion.nKey].nFrame;
 
-		// プレイヤーのモーションが終わったら
-		if (CheckMotionBounds(pPlayer->Motion.nKey, pPlayer->Motion.nCountMotion, nNumKey, nNumKey, 0, Frame) == true)
-		{
-			g_camera.CameraState = CAMERAMODE_NORMAL;
-		}
 		//モーションカウントを加算
 		g_camera.nCounterAnim++;
 	}

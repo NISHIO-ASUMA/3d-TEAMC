@@ -31,6 +31,7 @@
 #include "particle2d.h"
 #include "mark.h"
 #include "meshcylinder.h"
+#include "gameui.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -901,7 +902,7 @@ void EnableCraftIcon(int Item1, int Item2)
 			{
 				// 合成先アイテムを表示
 				SetMixUI(UIPOTISION, nMixWepon, 80.0f, 80.0f, 0);
-
+			
 				// ファイルを閉じる
 				fclose(pFile);
 

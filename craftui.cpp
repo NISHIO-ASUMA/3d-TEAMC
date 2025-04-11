@@ -25,10 +25,12 @@
 //**************************************************************************************************************
 // プロトタイプ宣言
 //**************************************************************************************************************
-void UpdateCraftIconAnim(int nCnt); // クラフトアイコンのアニメーションの更新
-void ResetCraftAnim(int nCnt);      // クラフトアイコンのアニメーションの初期化
-void UpdateCraftCloseUI(int nCnt);	// クラフトの閉じるボタンの設定
-void UpdateStartCraftUI(int nCnt);	// クラフトのクラフト開始ボタンの設定
+void UpdateCraftIconAnim(int nCnt);		// クラフトアイコンのアニメーションの更新
+void ResetCraftAnim(int nCnt);			// クラフトアイコンのアニメーションの初期化
+void UpdateCraftCloseUI(int nCnt);		// クラフトの閉じるボタンの設定
+void UpdateStartCraftUI(int nCnt);		// クラフトのクラフト開始ボタンの設定
+void UpdateNoCraftWepon(int nCnt);		// クラフトができない時のUI
+void UpdateTrueCraftWepon(int nCnt);	// クラフトができる時のUI
 
 //**************************************************************************************************************
 // グローバル変数
@@ -244,6 +246,12 @@ void UpdateCraftUI(void)
 		case CRAFTUITYPE_CLOSE:
 			UpdateCraftCloseUI(nCnt);
 			break;
+		case CRAFTUITYPE_NOCRAFTWEPON:
+			UpdateNoCraftWepon(nCnt);
+			break;
+		case CRAFTUITYPE_TRUECRAFTWEPON:
+			UpdateTrueCraftWepon(nCnt);
+			break;
 		default:
 			break;
 		}
@@ -336,15 +344,16 @@ void SetCraftUI(D3DXVECTOR3 pos, int nType, float fWidth, float fHeight, int nUs
 	// 頂点ロック
 	g_pVtxBuffCraftUI->Lock(0, 0, (void**)&pVtx, 0);
 
+	// クラフトのUIの種類ぶん回す
 	for (int nCnt = 0; nCnt < CRAFTUITYPE_MAX; nCnt++)
 	{
 		if (g_CraftUI[nCnt].bUse == false)
 		{
-			g_CraftUI[nCnt].pos = pos;
-			g_CraftUI[nCnt].nType = nType;
-			g_CraftUI[nCnt].fWidth = fWidth;
-			g_CraftUI[nCnt].fHeight = fHeight;
-			g_CraftUI[nCnt].nUseTime = nUseTime;
+			g_CraftUI[nCnt].pos = pos;				// 位置
+			g_CraftUI[nCnt].nType = nType;			// 種類
+			g_CraftUI[nCnt].fWidth = fWidth;		// 横幅
+			g_CraftUI[nCnt].fHeight = fHeight;		// 高さ
+			g_CraftUI[nCnt].nUseTime = nUseTime;	// 使用時間
 			g_CraftUI[nCnt].bUse = true;
 
 			// 頂点座標の設定
@@ -649,4 +658,26 @@ void UpdateStartCraftUI(int nCnt)
 
 	// 頂点ロック解除
 	g_pVtxBuffCraftUI->Unlock();
+}
+//==============================================================================================================
+// クラフトができない時のUI
+//==============================================================================================================
+void UpdateNoCraftWepon(int nCnt)
+{
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
+
+	// クラフト中じゃなかったら、未使用にする
+	if (pPlayer->bCraft == false) g_CraftUI[nCnt].bUse = false;
+}
+//==============================================================================================================
+// クラフトができる時のUI
+//==============================================================================================================
+void UpdateTrueCraftWepon(int nCnt)
+{
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
+
+	// クラフト中じゃなかったら、未使用にする
+	if (pPlayer->bCraft == false) g_CraftUI[nCnt].bUse = false;
 }

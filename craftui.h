@@ -26,6 +26,8 @@ typedef enum
 	CRAFTUITYPE_BACKGROUND = 0,
 	CRAFTUITYPE_CRAFT,
 	CRAFTUITYPE_CLOSE,
+	CRAFTUITYPE_NOCRAFTWEPON,
+	CRAFTUITYPE_TRUECRAFTWEPON,
 	CRAFTUITYPE_MAX
 }CRAFTUITYPE;
 
@@ -37,6 +39,8 @@ static const char* CRAFTUITYPE_INFO[CRAFTUITYPE_MAX] =
 	"data\\TEXTURE\\createwepon_back.png",
 	"data\\TEXTURE\\UI_craft.jpg",
 	"data\\TEXTURE\\Ui_close.png",
+	"data\\TEXTURE\\ui_nocreatwepon.png",
+	"data\\TEXTURE\\ui_Createtrue.png",
 };
 
 //**************************************************************************************************************

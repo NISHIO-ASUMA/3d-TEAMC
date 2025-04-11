@@ -504,13 +504,6 @@ void UpdatePlayer(void)
 		SetImpact(g_player.pos, D3DCOLOR_RGBA(100, 100, 100, 255), 32, 30.0f, 20.0f, 3.0f, 60, IMPACTTYPE_PLAYER, 0);
 
 		AddSpgauge(100.0f);
-
-
-		//// 最初にクラフトする溜めのアイテムの設定
-		//SetFirstCraftItem(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 50.0f, g_player.pos.z), ITEMTYPE_BAT);
-
-		//// 最初にクラフトする溜めのアイテムの設定
-		//SetFirstCraftItem(D3DXVECTOR3(g_player.pos.x, g_player.pos.y + 50.0f, g_player.pos.z), ITEMTYPE_STONE);
 	}
 
 #endif // DEBUG
@@ -2599,16 +2592,38 @@ void UpdatePlayerCraft(void)
 {
 	Item* pItem = GetItem();
 
+	// 手に持ってるアイテムのインデックス
+	int ItemIdx = g_player.ItemIdx;
+
+	// 手に持ってるアイテムのインデックス
+	int StockItemIdx = g_player.StockItemIdx;
+
 	// クラフト状態じゃなかったら
 	if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && g_player.bCraft == false && g_player.AttackSp == false)
 	{
+		// プレイヤーが持っているアイテムがレシピと一致するか確認
+		const bool CheckMatItem = CheckMixItemMat(pItem[ItemIdx].nType, pItem[StockItemIdx].nType, ItemIdx, StockItemIdx) == true;
+
 		// クラフト状態
 		g_player.bCraft = true;
 
 		// クラフト状態にする
 		EnableCraft(true);
 
+		// クラフトのアイコンが表示できるかできないか
 		EnableCraftIcon(pItem[g_player.ItemIdx].nType, pItem[g_player.StockItemIdx].nType);
+
+		// クラフトができなかったら
+		if (CheckMatItem == false)
+		{
+			// クラフトできない時のUIの表示
+			SetCraftUI(D3DXVECTOR3(640.0f, 600.0f, 0.0f), CRAFTUITYPE_NOCRAFTWEPON, 200.0f, 80.0f, 0);
+		}
+		else
+		{
+			// クラフトできない時のUIの表示
+			SetCraftUI(D3DXVECTOR3(640.0f, 600.0f, 0.0f), CRAFTUITYPE_TRUECRAFTWEPON, 200.0f, 80.0f, 0);
+		}
 	}
 	// クラフト状態だったら
 	else if ((KeyboardTrigger(DIK_TAB) || JoypadTrigger(JOYKEY_Y)) && g_player.bCraft == true && g_player.AttackSp == false && GetIconAnim() == false)
@@ -3466,6 +3481,7 @@ void SetFeverTime(void)
 	if (g_player.FeverMode == true)
 	{
 		g_player.speed = g_player.fStockSpeed * 1.8f;
+
 		if (g_player.Motion.motionType == MOTIONTYPE_MOVE)
 		{
 			g_player.Motion.nCountMotion++;

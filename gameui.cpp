@@ -53,6 +53,7 @@ void UpdateCraftTimeMenuUI(int nCnt);	// クラフトメニューのUIの設定
 void UpdateDestroyTerritoryUI(int nCnt);			// テリトリーを破壊した時のUI
 void UpdateSpInfoUI(int nCnt);			// スペシャル攻撃のUI
 void UpdateCraftRecipeUI(int nCnt);		// クラフトのレシピ
+void UpdateNoCraftWepon(int nCnt);		// クラフトできないよの更新
 float fcolorA;
 
 //**************************************************************************************************************
