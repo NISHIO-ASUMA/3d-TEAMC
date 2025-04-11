@@ -2876,44 +2876,63 @@ void UpdateItemStock(void)
 	// アイテムのストック
 	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && is_StockItem == true && CheckActionMotion(&g_player.Motion) == true)
 	{// Fキー or RBボタン
-
 		// ブレンドなしでニュートラルにする
 		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
 
-		if (pItem[g_player.StockItemIdx].state == ITEMSTATE_STOCK)
+		// アイテムのストック
+		if (pItem[g_player.StockItemIdx].state == ITEMSTATE_STOCK && g_player.Motion.nNumModel == MAX_MODEL)
 		{
-			ChangeItemParam(g_player.StockItemIdx, pItem[g_player.StockItemIdx].nType);
+			// 持っているアイテムのインデックスの保存
+			int TempIdx = g_player.StockItemIdx;
+
+			// ストックされたアイテムのインデックスを渡す
+			g_player.StockItemIdx = g_player.ItemIdx;
+
+			// 手に持っているアイテムをストックしているアイテムのする
+			g_player.ItemIdx = TempIdx;
+
+			if (g_player.Itembreak[g_player.ItemIdx] == true)
+			{
+				// アイテムが壊れた判定をリセット
+				g_player.Itembreak[g_player.ItemIdx] = false;
+			}
+
+			// もともとストックしていたアイテムをノーマルに戻す
+			pItem[g_player.ItemIdx].state = ITEMSTATE_HOLD;
+
+			// 持っているアイテムの状態をストックにする
+			pItem[g_player.StockItemIdx].state = ITEMSTATE_STOCK;
+
+			// アイテムの変更
+			Itemchange(g_player.ItemIdx, pItem[g_player.ItemIdx].nType);
+
+			// アイテムのステータス変更
+			LoadItemChange(pItem[g_player.ItemIdx].nType, pItem[g_player.ItemIdx].Size.y);
+		}
+		else
+		{
+			// もともとストックしていたアイテムをノーマルに戻す
+			pItem[g_player.StockItemIdx].state = ITEMSTATE_NORMAL;
+
+			// 持っているアイテムの状態をストックにする
+			pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
+
+			// ストックされたアイテムのインデックスを渡す
+			g_player.StockItemIdx = g_player.ItemIdx;
+
+			// プレイヤーの速度をリセット
+			StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
+
+			// モーションを歩きにする(第2引数に1を入れる)
+			MotionChange(MOTION_DBHAND, 1);
+
+			// 武器を武器を消す
+			g_player.Motion.nNumModel -= 1;
+
+			// プレイヤーの状態を何も持っていない状態にする
+			g_player.HandState = PLAYERHOLD_NO;
 		}
 
-		// もともとストックしていたアイテムをノーマルに戻す
-		pItem[g_player.StockItemIdx].state = ITEMSTATE_RELEASE;
-
-		// 持っているアイテムの状態をストックにする
-		pItem[g_player.ItemIdx].state = ITEMSTATE_STOCK;
-
-		// ストックされたアイテムのインデックスを渡す
-		g_player.StockItemIdx = g_player.ItemIdx;
-
-		// プレイヤーの速度をリセット
-		StatusChange(3.5f, D3DXVECTOR3(0.0f, 30.0f, 0.0f), 50);
-
-		// モーションを歩きにする(第2引数に1を入れる)
-		MotionChange(MOTION_DBHAND, 1);
-		//// 素手の時のモーション情報を代入
-		//for (int nCntModel = 0; nCntModel < g_player.Motion.nNumModel - 1; nCntModel++)
-		//{
-		//	g_player.Motion.aModel[nCntModel] = g_LoadPlayer[1].aModel[nCntModel]; // モデルの情報を代入
-		//}
-		//for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
-		//{
-		//	g_player.Motion.aMotionInfo[nCntMotion] = g_LoadPlayer[1].aMotionInfo[nCntMotion];
-		//}
-
-		// 投げた後に武器を消す
-		g_player.Motion.nNumModel -= 1;
-
-		// プレイヤーの状態を何も持っていない状態にする
-		g_player.HandState = PLAYERHOLD_NO;
 
 		// メッシュシリンダーのリセット
 		ResetItemCylinder();

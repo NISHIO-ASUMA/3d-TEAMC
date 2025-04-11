@@ -96,7 +96,7 @@ void InitItem(void)
 		g_Item[nCntItem].grabity = 0.0f;					   // クラフトできるか否か
 		g_Item[nCntItem].nEasingCnt = 0;					   // イージングのカウント
 		g_Item[nCntItem].nImpactCount = 110;				   // 衝撃波のカウント
-		g_Item[nCntItem].Itemtag[0] = {};					   // タグ
+		g_Item[nCntItem].Itemtag[0] = { NULL };					   // タグ
 		g_Item[nCntItem].Power = 0;							   // 攻撃力
 		g_Item[nCntItem].bTracking = false;					   // プレイヤーに追従するかどうか
 		g_Item[nCntItem].nCylinderIdx = 0;					   // シリンダーのインデックス
