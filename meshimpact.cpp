@@ -458,8 +458,7 @@ void SetImpact(D3DXVECTOR3 pos, D3DXCOLOR col, int nImpactPosX, float OutRadius,
 			g_MeshImpact[nCntImpact].nDamege = nDamege;							    // 攻撃力
 			g_MeshImpact[nCntImpact].nType = nType;							        // 種類
 			g_MeshImpact[nCntImpact].col = col;										// 色
-			g_MeshImpact[nCntImpact].col.a = A_OFFSET;								// あらかじめ薄くしておく
-			g_MeshImpact[nCntImpact].decAlv = A_OFFSET / nLife;                     // a値の減少値
+			g_MeshImpact[nCntImpact].decAlv = col.a / nLife;                     // a値の減少値
 			g_MeshImpact[nCntImpact].bUse = true;							        // 使用する
 
 			// インパクトの作成処理

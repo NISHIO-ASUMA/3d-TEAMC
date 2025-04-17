@@ -42,6 +42,7 @@ typedef enum
 	UITYPE_SPINFO,		// SPゲージの解説UI
 	UITYPE_SPONBREAK,	// スポーン破壊UI
 	UITYPE_CRAFTRECIPE, // クラフトのレシピ
+	UITYPE_CRAFTKEY, // クラフトのレシピ
 	UITYPE_MAX
 }UITYPE;
 
@@ -74,6 +75,7 @@ static const char* UITYPE_INFO[UITYPE_MAX] =
 	"data\\TEXTURE\\ui_sp_info.png",
 	"data\\TEXTURE\\ui_Break_suponer.png",
 	"data\\TEXTURE\\pauseUIrecipe.png",
+	"data\\TEXTURE\\craftkey.png",
 };
 
 //**************************************************************************************************************

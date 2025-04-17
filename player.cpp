@@ -99,6 +99,7 @@ void SetUpJumpAction(int nKey, int nCounter, int nLastKey, int EndFrame);						 
 void SetUpPlayerFirstWepon(void);																 // プレイヤーの初期武器の設定
 void SetFeverTime(void);																		 // プレイヤーのフィーバータイムの設定
 void LoadMinimapMatItem(int nHaveIdx,int nStockIdx);											 // ミニマップの合成のアイテムの材料の表示
+void SetChengeWepon(Item*pItem);																 // ストックアイテムのチェンジ処理
 
 //**************************************************************************************************************
 //グローバル変数宣言
@@ -1362,12 +1363,6 @@ bool CollisionItem(int nIdx, float Itemrange, float plrange)
 			g_player.ItemIdx = nIdx;	   // インデックスを渡す
 
 			LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
-
-			// メッシュシリンダーのリセット
-			ResetItemCylinder();
-
-			// アイテムのシリンダー
-			SetItemCylinder(g_player.ItemIdx);
 		}
 	}
 
@@ -2648,9 +2643,6 @@ void DestroyWepon(void)
 		// ミニマップのアイテムのリセット
 		ResetItemMinimap();
 
-		// メッシュシリンダーのリセット
-		ResetItemCylinder();
-
 		// ミニマップのアイテムのロード
 		LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
 
@@ -2874,40 +2866,13 @@ void UpdateItemStock(void)
 	const bool is_StockItem = is_Alive && is_NotSpAttack && is_HaveWepon && is_Damage;
 
 	// アイテムのストック
-	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && is_StockItem == true && CheckActionMotion(&g_player.Motion) == true)
+	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && is_StockItem == true && CheckActionMotion(&g_player.Motion) == true && g_player.Motion.bFinishMotion == false)
 	{// Fキー or RBボタン
-		// ブレンドなしでニュートラルにする
-		SetMotion(&g_player.Motion, MOTIONTYPE_NEUTRAL, false, 10);
-
 		// アイテムのストック
-		if (pItem[g_player.StockItemIdx].state == ITEMSTATE_STOCK && g_player.Motion.nNumModel == MAX_MODEL)
+		if (pItem[g_player.StockItemIdx].state == ITEMSTATE_STOCK && is_HaveWepon)
 		{
-			// 持っているアイテムのインデックスの保存
-			int TempIdx = g_player.StockItemIdx;
-
-			// ストックされたアイテムのインデックスを渡す
-			g_player.StockItemIdx = g_player.ItemIdx;
-
-			// 手に持っているアイテムをストックしているアイテムのする
-			g_player.ItemIdx = TempIdx;
-
-			if (g_player.Itembreak[g_player.ItemIdx] == true)
-			{
-				// アイテムが壊れた判定をリセット
-				g_player.Itembreak[g_player.ItemIdx] = false;
-			}
-
-			// もともとストックしていたアイテムをノーマルに戻す
-			pItem[g_player.ItemIdx].state = ITEMSTATE_HOLD;
-
-			// 持っているアイテムの状態をストックにする
-			pItem[g_player.StockItemIdx].state = ITEMSTATE_STOCK;
-
-			// アイテムの変更
-			Itemchange(g_player.ItemIdx, pItem[g_player.ItemIdx].nType);
-
-			// アイテムのステータス変更
-			LoadItemChange(pItem[g_player.ItemIdx].nType, pItem[g_player.ItemIdx].Size.y);
+			// 武器チェンジ処理
+			SetChengeWepon(pItem);
 		}
 		else
 		{
@@ -2933,15 +2898,40 @@ void UpdateItemStock(void)
 			g_player.HandState = PLAYERHOLD_NO;
 		}
 
-
-		// メッシュシリンダーのリセット
-		ResetItemCylinder();
-
 		// ミニマップのアイテムのリセット
 		ResetItemMinimap();
 
 		// ミニマップのアイテムのロード
 		LoadMinimapMatItem(g_player.ItemIdx, g_player.StockItemIdx);
+	}
+
+	// アイテムをストックできるかを判定
+	const bool bItemChange = is_Alive && is_NotSpAttack && is_Damage;
+
+	// 武器チェンジ処理
+	if ((KeyboardTrigger(DIK_F) || JoypadTrigger(JOYKEY_RIGHT_B)) && bItemChange == true && CheckActionMotion(&g_player.Motion) == true && g_player.Motion.bFinishMotion == false)
+	{// Fキー or RBボタン
+
+		if (pItem[g_player.StockItemIdx].state == ITEMSTATE_STOCK && !is_HaveWepon)
+		{
+			// ストックされたアイテムのインデックスを渡す
+			g_player.ItemIdx = g_player.StockItemIdx;
+
+			if (g_player.Itembreak[g_player.ItemIdx] == true)
+			{
+				// アイテムが壊れた判定をリセット
+				g_player.Itembreak[g_player.ItemIdx] = false;
+			}
+
+			// もともとストックしていたアイテムをノーマルに戻す
+			pItem[g_player.ItemIdx].state = ITEMSTATE_HOLD;
+
+			// アイテムの変更
+			Itemchange(g_player.ItemIdx, pItem[g_player.ItemIdx].nType);
+
+			// アイテムのステータス変更
+			LoadItemChange(pItem[g_player.ItemIdx].nType, pItem[g_player.ItemIdx].Size.y);
+		}
 	}
 }
 //===============================================================================================================
@@ -2972,9 +2962,6 @@ void UpdatePlayerAvoid(void)
 	// モーションが回避じゃない
 	if ((OnMouseTriggerDown(RIGHT_MOUSE) == true || JoypadTrigger(JOYKEY_B) == true) && CanAvoid == true)
 	{
-		// 音楽再生
-		PlaySound(SOUND_LABEL_AVOIDSE);
-
 		// 無敵
 		g_player.bAvoid = true;
 		g_player.bstiffness = false;
@@ -2984,6 +2971,9 @@ void UpdatePlayerAvoid(void)
 
 		// モーションを回避にする
 		SetMotion(&g_player.Motion, MOTIONTYPE_AVOID, true, 10);
+
+		// 音楽再生
+		PlaySound(SOUND_LABEL_AVOIDSE);
 	}
 
 	// モーションの種類が回避だったら
@@ -3631,6 +3621,46 @@ void LoadMinimapMatItem(int nHaveIdx, int nStockIdx)
 
 	// 初期化
 	minimapItem = -2;
+}
+//===============================================================================================================
+// 武器チェンジ処理
+//===============================================================================================================
+void SetChengeWepon(Item* pItem)
+{
+	// 持っているアイテムのインデックスの保存
+	int TempIdx = g_player.StockItemIdx;
+
+	// ストックされたアイテムのインデックスを渡す
+	g_player.StockItemIdx = g_player.ItemIdx;
+
+	// 手に持っているアイテムをストックしているアイテムのする
+	g_player.ItemIdx = TempIdx;
+
+	if (g_player.Itembreak[g_player.ItemIdx] == true)
+	{
+		// アイテムが壊れた判定をリセット
+		g_player.Itembreak[g_player.ItemIdx] = false;
+	}
+
+	// もともとストックしていたアイテムをノーマルに戻す
+	pItem[g_player.ItemIdx].state = ITEMSTATE_HOLD;
+
+	// 持っているアイテムの状態をストックにする
+	pItem[g_player.StockItemIdx].state = ITEMSTATE_STOCK;
+
+	// アイテムの変更
+	Itemchange(g_player.ItemIdx, pItem[g_player.ItemIdx].nType);
+
+	// アイテムのステータス変更
+	LoadItemChange(pItem[g_player.ItemIdx].nType, pItem[g_player.ItemIdx].Size.y);
+}
+//===============================================================================================================
+// 武器チェンジの更新処理
+//===============================================================================================================
+void UpdateWeponChange(void)
+{
+	Item* pItem = GetItem();
+
 }
 //===============================================================================================================
 // プレイヤーが攻撃状態か

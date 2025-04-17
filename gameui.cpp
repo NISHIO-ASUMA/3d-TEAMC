@@ -54,6 +54,7 @@ void UpdateDestroyTerritoryUI(int nCnt);			// テリトリーを破壊した時のUI
 void UpdateSpInfoUI(int nCnt);			// スペシャル攻撃のUI
 void UpdateCraftRecipeUI(int nCnt);		// クラフトのレシピ
 void UpdateNoCraftWepon(int nCnt);		// クラフトできないよの更新
+void UpdateCraftKey(int nCnt, D3DXVECTOR3 pos, float* pWidth, float* pHeight);
 float fcolorA;
 
 //**************************************************************************************************************
@@ -179,9 +180,6 @@ void UpdateGameUI(void)
 
 	// 拡大する
 	static bool bExpansion = true;
-
-	// 
-	float a = (float)(1 % 10) * 0.1f;
 	
 	// 頂点ロック
 	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
@@ -383,6 +381,10 @@ void UpdateGameUI(void)
 			case UITYPE_CRAFTRECIPE:
 				// クラフトのレシピ
 				UpdateCraftRecipeUI(nCnt);
+				break;
+			case UITYPE_CRAFTKEY:
+				// クラフトのレシピ
+				UpdateCraftKey(nCnt,g_GameUI[nCnt].pos,&g_GameUI[nCnt].fWidth,&g_GameUI[nCnt].fHeight);
 				break;
 			}
 
@@ -1205,4 +1207,71 @@ void UpdateCraftRecipeUI(int nCnt)
 
 	//頂点ロック解除
 	g_pVtxBuffGameUI->Unlock();
+}
+//==============================================================================================================
+// クラフトのキー
+//==============================================================================================================
+void UpdateCraftKey(int nCnt, D3DXVECTOR3 pos, float* pWidth, float* pHeight)
+{
+	// 頂点情報のポインタ
+	VERTEX_2D* pVtx = NULL;
+
+	// プレイヤーの取得
+	Player* pPlayer = GetPlayer();
+
+	// アイテムの取得
+	Item* pItem = GetItem();
+
+	// プレイヤーが持っているアイテムがレシピと一致するか確認
+	const bool CheckMatItem = CheckMixItemMat(pItem[pPlayer->ItemIdx].nType, pItem[pPlayer->StockItemIdx].nType, pPlayer->ItemIdx, pPlayer->StockItemIdx) == true;
+
+	// クラフトの素材を持っていたら
+	if (CheckMatItem == false)
+	{
+		*pWidth = 60.0f;
+		*pHeight = 40.0f;
+		return;
+	}
+
+	// 拡大できるか
+	static bool bExpansion = false;
+
+	// 横幅が60を超えたら
+	if (*pWidth >= 60.0f)
+	{
+		// 縮小開始
+		bExpansion = false;
+	}
+	// 横幅が40以下になったら
+	else if (*pWidth <= 40.0f)
+	{
+		// 拡大開始
+		bExpansion = true;
+	}
+
+	if (bExpansion == true)
+	{
+		*pWidth += 1.0f;
+		*pHeight += 1.0f;
+	}
+	else
+	{
+		*pWidth -= 1.0f;
+		*pHeight -= 1.0f;
+	}
+
+	// 頂点ロック
+	g_pVtxBuffGameUI->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += 4 * nCnt;
+
+	// 頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(pos.x - *pWidth, pos.y - *pHeight, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(pos.x + *pWidth, pos.y - *pHeight, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(pos.x - *pWidth, pos.y + *pHeight, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(pos.x + *pWidth, pos.y + *pHeight, 0.0f);
+
+	// 頂点ロック解除
+	g_pVtxBuffGameUI->Unlock();
+
 }

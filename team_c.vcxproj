@@ -153,6 +153,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="count.cpp" />
     <ClCompile Include="craftrecipe.cpp" />
+    <ClCompile Include="craftsupport.cpp" />
     <ClCompile Include="craftui.cpp" />
     <ClCompile Include="Damegepop.cpp" />
     <ClCompile Include="easing.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="count.h" />
     <ClInclude Include="craftrecipe.h" />
+    <ClInclude Include="craftsupport.h" />
     <ClInclude Include="craftui.h" />
     <ClInclude Include="Damagepop.h" />
     <ClInclude Include="easing.h" />

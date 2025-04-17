@@ -193,6 +193,9 @@
     <ClCompile Include="barrier.cpp">
       <Filter>ソースファイル\obj</Filter>
     </ClCompile>
+    <ClCompile Include="craftsupport.cpp">
+      <Filter>ソースファイル\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h">
@@ -386,6 +389,9 @@
     </ClInclude>
     <ClInclude Include="barrier.h">
       <Filter>ヘッダーファイル\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="craftsupport.h">
+      <Filter>ヘッダーファイル\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

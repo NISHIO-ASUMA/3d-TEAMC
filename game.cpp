@@ -240,6 +240,9 @@ void InitGame(void)
 	// ストックキーのUI
 	SetGameUI(D3DXVECTOR3(75.0f, 520.0f, 0.0f), UITYPE_STOCKKEY, 50.0f, 30.0f, false, 0);
 
+	// クラフトするキーの表示
+	SetGameUI(D3DXVECTOR3(200.0f, 550.0f, 0.0f), UITYPE_CRAFTKEY, 60.0f, 40.0f, false, 0);
+
 	// ホールドアイテムのアイコン
 	SetIcon(D3DXVECTOR3(70.0f, 640.0f, 0.0f), 60.0f, 60.0f, 0,ICONTYPE_HOLDITEM);
 

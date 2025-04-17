@@ -238,6 +238,7 @@ void NormalizeRotation(float* pRotX, float* pRotY, float* pRotZ)
 bool CheckActionMotion(MOTION *pMotion)
 {
 	bool bFrag = false;
+
 	// ƒ‚[ƒVƒ‡ƒ“‚ªUŒ‚‚¶‚á‚È‚©‚Á‚½‚ç
 	if (pMotion->motiontypeBlend != MOTIONTYPE_ACTION &&
 		pMotion->motiontypeBlend != MOTIONTYPE_ACTION2 &&

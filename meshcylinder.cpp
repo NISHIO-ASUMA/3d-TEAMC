@@ -60,17 +60,6 @@ void InitMeshCylinder(void)
 		g_MeshCylinder[nCnt].decAlv = 0.0f;
 		g_MeshCylinder[nCnt].bUse = false;
 	}
-
-	////テクスチャの読み込み
-	//D3DXCreateTextureFromFile(pDevice,
-	//	"data\\TEXTURE\\.jpg",
-	//	&g_pTextureMeshCylinderOrigin[0]);
-	//
-	////テクスチャの読み込み
-	//D3DXCreateTextureFromFile(pDevice,
-	//	"data\\TEXTURE\\healcylinder.jpg",
-	//	&g_pTextureMeshCylinderOrigin[1]);
-
 }
 //===================================================================================================================
 // メッシュシリンダーの終了処理
@@ -104,7 +93,6 @@ void UninitMeshCylinder(void)
 	// すべてのシリンダー分回す
 	for (int nCnt = 0; nCnt < MAX_CYLINDER; nCnt++)
 	{
-
 		// テクスチャがNULLか確認
 		assert(g_MeshCylinder[nCnt].g_pTextureMeshCylinder == NULL && "cylinder.cpp正しくテクスチャを破棄できてません");
 

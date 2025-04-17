@@ -42,6 +42,7 @@
 #include "billboard.h"
 #include "mark.h"
 #include "gameui.h"
+#include "explosion.h"
 
 //**************************************************************************************************************
 //マクロ定義
@@ -1696,17 +1697,27 @@ void UpdateDeathParam(int nCntEnemy)
 	}
 
 	// 吹っ飛びの量
-	float BlowMoveX = pPlayer->AttackSp ? 4.0f : 1.0f;
-	float BlowMoveZ = pPlayer->AttackSp ? 4.0f : 1.0f;
+	float BlowMoveX = pPlayer->AttackSp ? 30.0f : 15.0f;
+	float BlowMoveZ = pPlayer->AttackSp ? 30.0f : 15.0f;
 
 	// キーが3いないだったら
 	if (nKey <= 5)
 	{
-		float fMoveX = sinf(g_Enemy[nCntEnemy].rot.y) * 4.0f + (4.0f / (float)pPlayer->nDamage) * BlowMoveX;
-		float fMoveZ = cosf(g_Enemy[nCntEnemy].rot.y) * 4.0f + (4.0f / (float)pPlayer->nDamage) * BlowMoveZ;
+		float fMoveX = sinf(g_Enemy[nCntEnemy].rot.y) * BlowMoveX;
+		float fMoveZ = cosf(g_Enemy[nCntEnemy].rot.y) * BlowMoveZ;
 
 		g_Enemy[nCntEnemy].move.x = fMoveX;
 		g_Enemy[nCntEnemy].move.z = fMoveZ;
+
+		// 敵のモデルのワールドマトリックスを代入
+		D3DXMATRIX enemyPos = g_Enemy[nCntEnemy].Motion.aModel[7].mtxWorld;
+
+		// 大きさをランダムで抽選
+		float fSize = (float)(rand() % 20 + 10.0f);
+
+		// 煙の設定
+		SetExplosion(SetMtxConversion(enemyPos),COLOR_WHITE,10, fSize, fSize,EXPLOSION_MOVE);
+
 	}
 	// 最後のキーまで行ったら
 	if (nKey >= nLastKey)
