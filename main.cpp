@@ -150,7 +150,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hInstancePrev, 
 	dwExecLastTime = timeGetTime();		// 現在時刻を保存
 
 	// ウインドウの表示
-	ShowWindow(hWnd, SW_SHOWMAXIMIZED); // ウインドウの表示状態の設定
+	ShowWindow(hWnd, nCmdShow); // ウインドウの表示状態の設定
 	UpdateWindow(hWnd);				    // クライアント領域の更新
 
 	// 初期化
